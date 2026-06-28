@@ -54,13 +54,27 @@ function Login() {
 
       const { data } = result;
 
+      const rawRole = data.activeRole || "student";
+      let normalizedRole = typeof rawRole === "string" ? rawRole.toLowerCase() : "student";
+
+      if (normalizedRole === "main_admin" || normalizedRole === "admin") {
+        normalizedRole = "admin";
+      } else if (normalizedRole === "user" || normalizedRole === "student") {
+        normalizedRole = "student";
+      }
+
       const user = {
         id: data.userId,
         email: email,
-        role: data.activeRole,
+        role: normalizedRole,
         token: data.accessToken,
         refreshToken: data.refreshToken,
       };
+
+      // Store credentials in localStorage
+      localStorage.setItem("lms_token", data.accessToken);
+      localStorage.setItem("access_token", data.accessToken);
+      localStorage.setItem("lms_user", JSON.stringify(user));
 
       login(user);
 
