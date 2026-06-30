@@ -21,18 +21,22 @@ import Orders from "./pages/student/Orders";
 import Checkout from "./pages/student/Checkout";
 import Cart from "./pages/student/Cart";
 
+// ✅ Certification & Subscription pages
+import Certifications from "./pages/Certifications";   // already exists
+import Subscription from "./pages/Subscription";     // create this page or import your existing one
+
 // Instructor Pages
 import InstructorDashboard from "./pages/instructor/InstructorDashboard";
 import CreateCourse from "./pages/instructor/CreateCourse";
 import InstructorCourses from "./pages/instructor/MyCourses";
 import InstructorAnalytics from "./pages/instructor/Analytics";
 
-// Existing Admin Pages
+// Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
 import ManageUsers from "./pages/admin/Users";
 import ManageCourses from "./pages/admin/Courses";
 import Instructors from "./pages/admin/Instructors";
-import AdminOrders from "./pages/admin/Orders";   // ✅ Fixed: no "as" syntax
+import AdminOrders from "./pages/admin/Orders";
 import Analytics from "./pages/admin/Analytics.jsx";
 import Certificates from "./pages/admin/Certificates";
 import Notifications from "./pages/admin/Notifications";
@@ -43,8 +47,6 @@ import Settings from "./pages/admin/Settings";
 import Roles from "./pages/admin/Roles";
 import AIFeatures from "./pages/admin/AIFeatures";
 import Gamification from "./pages/admin/Gamification";
-
-// New Admin Pages
 import Payments from "./pages/admin/Payments";
 import Reviews from "./pages/admin/Reviews";
 import AdminProfile from "./pages/admin/Profile";
@@ -65,19 +67,23 @@ function App() {
           <Route path="/reset-otp" element={<ResetOtp />} />
           <Route path="/otp-login" element={<OtpLogin />} />
           <Route path="/otp-verify" element={<OtpVerify />} />
+          <Route path="/cart" element={<Cart />} />
+
+          {/* ✅ New public routes for certification and subscription */}
+          <Route path="/certification" element={<Certifications />} />
+          <Route path="/subscription" element={<Subscription />} />
 
           {/* Admin auth routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/register" element={<AdminRegister />} />
 
-          {/* Student routes */}
+          {/* Student routes (protected) */}
           <Route element={<ProtectedRoute allowedRoles={["student"]}><DashboardLayout /></ProtectedRoute>}>
             <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/student/my-learning" element={<MyLearning />} />
             <Route path="/student/wishlist" element={<Wishlist />} />
             <Route path="/student/orders" element={<Orders />} />
             <Route path="/checkout" element={<Checkout />} />
-            <Route path="/cart" element={<Cart />} />
           </Route>
 
           {/* Instructor routes */}

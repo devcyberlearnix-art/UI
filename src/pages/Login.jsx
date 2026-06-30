@@ -54,16 +54,36 @@ function Login() {
 
       const { data } = result;
 
+      // ✅ Build user object
       const user = {
         id: data.userId,
         email: email,
-        role: data.activeRole,
+        role: data.activeRole || "student",
         token: data.accessToken,
         refreshToken: data.refreshToken,
+        name: data.name || email.split('@')[0], // fallback if name not provided
       };
 
+      // ✅ Store user in localStorage for Navbar / ProtectedRoute
+      localStorage.setItem("lms_user", JSON.stringify({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+      }));
+
+      // ✅ Store token separately if needed
+      if (user.token) {
+        localStorage.setItem("lms_token", user.token);
+      }
+
+      // ✅ Dispatch custom event to notify Navbar (and other components)
+      window.dispatchEvent(new Event("userLoggedIn"));
+
+      // Also update AuthContext (if you use it elsewhere)
       login(user);
 
+      // Redirect based on role
       const roleLower = user.role.toLowerCase();
       const targetRole = roleLower === "user" ? "student" : roleLower;
       navigate(`/${targetRole}/dashboard`);
