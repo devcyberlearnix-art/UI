@@ -450,13 +450,13 @@ function Landing() {
 
       {/* Navbar with Courses dropdown */}
       <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? "bg-white/95 backdrop-blur-md shadow-lg py-2" : "bg-white/80 backdrop-blur-sm py-4"} border-b border-gray-100`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
               <div className="relative">
                 <div className="absolute inset-0 bg-orange-500 blur-lg rounded-full opacity-0 group-hover:opacity-30 transition duration-500"></div>
-                <span className="relative text-2xl font-bold text-orange-600 group-hover:scale-105 transition-transform duration-300 inline-block">LearnMaster</span>
+                <span className="relative text-2xl font-bold text-orange-600 group-hover:scale-105 transition-transform duration-300 inline-block -ml-2">LearnMaster</span>
               </div>
             </Link>
 
