@@ -207,40 +207,44 @@ function ResetOtp() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#0a0f1c]">
-      {/* Background effects (same as previous) */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f1c] via-[#0f1629] to-[#1a1f35]"></div>
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute inset-0" style={{ backgroundImage: `radial-gradient(circle at 2px 2px, rgba(59,130,246,0.15) 1px, transparent 1px)`, backgroundSize: '40px 40px' }}></div>
-      </div>
-      <div className="absolute top-1/4 -left-48 w-96 h-96 bg-blue-500/30 rounded-full blur-[100px] animate-pulse"></div>
-      <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-purple-500/30 rounded-full blur-[100px] animate-pulse delay-1000"></div>
+    <div className="min-h-screen relative overflow-hidden bg-gray-50">
+      {/* Background effects */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100"></div>
+      
+      {/* Light decorative circles */}
+      <div className="absolute top-1/4 -left-48 w-96 h-96 bg-purple-100 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+      <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-indigo-100 rounded-full blur-3xl opacity-30 animate-pulse delay-1000"></div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-50 rounded-full blur-[120px] opacity-20"></div>
 
       <div className="relative z-10 flex w-full min-h-screen">
-        {/* Left Side - Brand Section (simplified for brevity, same as earlier) */}
+        {/* Left Side - Brand Section */}
         <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12">
           <div className="max-w-lg">
             <div className="mb-12">
               <div className="relative inline-block">
-                <div className="absolute inset-0 bg-blue-500 blur-xl rounded-full"></div>
-                <div className="relative bg-gradient-to-r from-blue-500 to-indigo-600 p-3 rounded-2xl">
+                <div className="absolute inset-0 bg-purple-200 blur-xl rounded-full"></div>
+                <div className="relative bg-gradient-to-r from-purple-500 to-indigo-600 p-3 rounded-2xl">
                   <KeyRound className="w-8 h-8 text-white" />
                 </div>
               </div>
             </div>
-            <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
+            <h1 className="text-5xl font-bold text-gray-800 mb-6 leading-tight">
               Reset Password
-              <span className="block bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Secure Your Account</span>
+              <span className="block bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Secure Your Account</span>
             </h1>
-            <p className="text-gray-400 text-lg mb-8">Create a new strong password to secure your account.</p>
+            <p className="text-gray-600 text-lg mb-8 leading-relaxed">Create a new strong password to secure your account.</p>
             <div className="space-y-4">
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
-                <Mail className="w-5 h-5 text-blue-400" />
-                <div><p className="text-white font-medium">Account</p><p className="text-sm text-gray-500">{email || "your email"}</p></div>
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-white shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+                <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                  <Mail className="w-5 h-5 text-purple-600" />
+                </div>
+                <div><p className="text-gray-800 font-medium">Account</p><p className="text-sm text-gray-500">{email || "your email"}</p></div>
               </div>
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
-                <Timer className="w-5 h-5 text-purple-400" />
-                <div><p className="text-white font-medium">OTP Valid for 10 minutes</p><p className="text-sm text-gray-500">Enter the code we sent</p></div>
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-white shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+                <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                  <Timer className="w-5 h-5 text-purple-600" />
+                </div>
+                <div><p className="text-gray-800 font-medium">OTP Valid for 10 minutes</p><p className="text-sm text-gray-500">Enter the code we sent</p></div>
               </div>
             </div>
           </div>
@@ -249,106 +253,106 @@ function ResetOtp() {
         {/* Right Side - Form Section */}
         <div className="flex w-full lg:w-1/2 items-center justify-center p-6 lg:p-12">
           <div className="w-full max-w-md">
-            <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200 p-8 shadow-xl">
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 mb-6 shadow-lg">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-600 mb-6 shadow-lg">
                   <Key className="w-8 h-8 text-white" />
                 </div>
-                <h2 className="text-3xl font-bold text-white mb-2">{otpVerified ? "Set New Password" : "Verify OTP"}</h2>
-                <p className="text-gray-400 text-sm">{otpVerified ? "Create a strong password for your account" : "Enter the 4-digit code sent to your email"}</p>
+                <h2 className="text-3xl font-bold text-gray-800 mb-2">{otpVerified ? "Set New Password" : "Verify OTP"}</h2>
+                <p className="text-gray-500 text-sm">{otpVerified ? "Create a strong password for your account" : "Enter the 4-digit code sent to your email"}</p>
               </div>
 
               {success && (
-                <div className="mb-6 p-3 bg-green-500/10 border border-green-500/20 rounded-xl">
+                <div className="mb-6 p-3 bg-green-50 border border-green-200 rounded-xl">
                   <div className="flex items-center gap-2 justify-center">
-                    <CheckCircle className="w-4 h-4 text-green-400" />
-                    <p className="text-green-400 text-sm">{otpVerified ? "Password updated successfully! Redirecting..." : "OTP sent successfully!"}</p>
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <p className="text-green-600 text-sm">{otpVerified ? "Password updated successfully! Redirecting..." : "OTP sent successfully!"}</p>
                   </div>
                 </div>
               )}
 
               {error && (
-                <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
+                <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-xl">
                   <div className="flex items-center gap-2 justify-center">
-                    <AlertCircle className="w-4 h-4 text-red-400" />
-                    <p className="text-red-400 text-sm">{error}</p>
+                    <AlertCircle className="w-4 h-4 text-red-600" />
+                    <p className="text-red-600 text-sm">{error}</p>
                   </div>
                 </div>
               )}
 
               {!otpVerified ? (
-                // OTP verification UI (unchanged)
+                // OTP verification UI (unchanged logic)
                 <>
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-300 mb-3 text-center">Enter 4-digit OTP</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-3 text-center">Enter 4-digit OTP</label>
                     <div className="flex justify-center gap-3">
                       {otp.map((digit, index) => (
                         <input key={index} ref={(el) => (inputRefs.current[index] = el)} type="text" maxLength="1" value={digit}
                           onChange={(e) => handleOtpChange(e.target.value, index)} onKeyDown={(e) => handleKeyDown(e, index)}
                           onPaste={index === 0 ? handlePaste : undefined} disabled={blocked}
-                          className={`w-14 h-14 text-center text-xl font-semibold border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 ${error && !blocked ? 'border-red-500/50 bg-red-500/10' : 'border-white/20 bg-white/10'} text-white`} />
+                          className={`w-14 h-14 text-center text-xl font-semibold border-2 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200 ${error && !blocked ? 'border-red-300 bg-red-50 text-red-900' : 'border-gray-300 bg-white text-gray-800'}`} />
                       ))}
                     </div>
                   </div>
                   <button onClick={handleVerifyOtp} disabled={loading || blocked || otp.some(d => d === "")}
-                    className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading || blocked || otp.some(d => d === "") ? 'bg-gray-600 cursor-not-allowed' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-lg hover:shadow-blue-500/25'}`}>
+                    className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading || blocked || otp.some(d => d === "") ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-lg hover:shadow-purple-500/25'}`}>
                     {loading ? <><svg className="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg> Verifying...</> : <><Shield size={18} /> Verify OTP</>}
                   </button>
                   <div className="mt-6 text-center">
-                    {blocked ? <div className="flex items-center justify-center gap-2 text-red-400"><AlertTriangle size={14} /><span>Too many attempts. Try again later.</span></div>
+                    {blocked ? <div className="flex items-center justify-center gap-2 text-red-600"><AlertTriangle size={14} /><span>Too many attempts. Try again later.</span></div>
                     : timer > 0 ? <p className="text-sm text-gray-500 flex items-center justify-center gap-2"><Timer size={14} /> Resend OTP in {Math.floor(timer / 60)}:{String(timer % 60).padStart(2, '0')}</p>
-                    : <button onClick={handleResend} className="text-blue-400 hover:text-blue-300 text-sm flex items-center justify-center gap-1 mx-auto"><RefreshCw size={14} /> Resend OTP</button>}
+                    : <button onClick={handleResend} className="text-purple-600 hover:text-purple-700 text-sm flex items-center justify-center gap-1 mx-auto"><RefreshCw size={14} /> Resend OTP</button>}
                   </div>
-                  {attempts > 0 && !blocked && <p className="text-xs text-center text-orange-400 mt-2">{3 - attempts} attempt{3 - attempts !== 1 ? 's' : ''} remaining</p>}
+                  {attempts > 0 && !blocked && <p className="text-xs text-center text-orange-600 mt-2">{3 - attempts} attempt{3 - attempts !== 1 ? 's' : ''} remaining</p>}
                 </>
               ) : (
                 // Password reset form
                 <>
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">New Password <span className="text-red-400">*</span></label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">New Password <span className="text-red-500">*</span></label>
                     <div className={`relative transition-all duration-300 ${focusedField === 'password' ? 'scale-[1.02]' : ''}`}>
-                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                       <input type={showPassword ? "text" : "password"} placeholder="Create a strong password"
-                        className="w-full pl-12 pr-12 py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-white placeholder-gray-500"
+                        className="w-full pl-12 pr-12 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-gray-800 placeholder-gray-400"
                         value={password} onChange={handlePasswordChange}
                         onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField(null)} />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
                     {password && (
                       <div className="mt-2">
-                        <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden"><div className="h-full transition-all duration-300" style={{ width: `${(passwordStrength / 5) * 100}%`, backgroundColor: getStrengthColor() }}></div></div>
+                        <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden"><div className="h-full transition-all duration-300" style={{ width: `${(passwordStrength / 5) * 100}%`, backgroundColor: getStrengthColor() }}></div></div>
                         <p className="text-xs mt-1" style={{ color: getStrengthColor() }}>{getStrengthText()}</p>
                       </div>
                     )}
                   </div>
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Confirm Password <span className="text-red-400">*</span></label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password <span className="text-red-500">*</span></label>
                     <div className={`relative transition-all duration-300 ${focusedField === 'confirmPassword' ? 'scale-[1.02]' : ''}`}>
-                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                       <input type={showConfirmPassword ? "text" : "password"} placeholder="Confirm your password"
-                        className="w-full pl-12 pr-12 py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-white placeholder-gray-500"
+                        className="w-full pl-12 pr-12 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-gray-800 placeholder-gray-400"
                         value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
                         onFocus={() => setFocusedField('confirmPassword')} onBlur={() => setFocusedField(null)} />
-                      <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                      <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
                         {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
                   </div>
                   <button onClick={handleUpdatePassword} disabled={loading || !password || !confirmPassword}
-                    className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading || !password || !confirmPassword ? 'bg-gray-600 cursor-not-allowed' : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:shadow-lg hover:shadow-green-500/25'}`}>
+                    className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading || !password || !confirmPassword ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-lg hover:shadow-purple-500/25'}`}>
                     {loading ? <><svg className="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg> Updating...</> : <><CheckCircle size={18} /> Update Password</>}
                   </button>
                 </>
               )}
 
-              <div className="text-center mt-6 pt-4 border-t border-white/10">
-                <button onClick={() => navigate("/login")} className="text-sm text-gray-500 hover:text-blue-400 transition-colors flex items-center justify-center gap-1 mx-auto">
+              <div className="text-center mt-6 pt-4 border-t border-gray-200">
+                <button onClick={() => navigate("/login")} className="text-sm text-gray-500 hover:text-purple-600 transition-colors flex items-center justify-center gap-1 mx-auto">
                   <ArrowLeft size={14} /> Back to Login
                 </button>
               </div>
-              <div className="mt-4 text-center"><div className="flex items-center justify-center gap-2 text-xs text-gray-500"><Shield size={12} /><span>Secure • 256-bit encryption</span></div></div>
+              <div className="mt-4 text-center"><div className="flex items-center justify-center gap-2 text-xs text-gray-400"><Shield size={12} /><span>Secure • 256-bit encryption</span></div></div>
             </div>
           </div>
         </div>

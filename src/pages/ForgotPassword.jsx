@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, ArrowLeft, Send, Shield, AlertCircle, KeyRound, CheckCircle } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowLeft, Send, Shield, AlertCircle, KeyRound, CheckCircle, TrendingUp, Award, Users } from "lucide-react";
 
 function ForgotPassword() {
   const navigate = useNavigate();
@@ -150,21 +150,19 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen flex relative overflow-hidden bg-[#0a0f1c]">
-      {/* Background effects – keep your existing background JSX */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f1c] via-[#0f1629] to-[#1a1f35]"></div>
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 2px 2px, rgba(59,130,246,0.15) 1px, transparent 1px)`,
-          backgroundSize: '40px 40px'
-        }}></div>
-      </div>
-      <div className="absolute top-1/4 -left-48 w-96 h-96 bg-blue-500/30 rounded-full blur-[100px] animate-pulse"></div>
-      <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-purple-500/30 rounded-full blur-[100px] animate-pulse delay-1000"></div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-500/10 rounded-full blur-[120px]"></div>
+    <div className="min-h-screen flex relative overflow-hidden bg-gray-50">
+      {/* Light gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100"></div>
+      
+      {/* Light decorative circles */}
+      <div className="absolute top-1/4 -left-48 w-96 h-96 bg-purple-100 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+      <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-indigo-100 rounded-full blur-3xl opacity-30 animate-pulse delay-1000"></div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-50 rounded-full blur-[120px] opacity-20"></div>
+      
+      {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
-          <div key={i} className="absolute w-1 h-1 bg-blue-400/40 rounded-full animate-float" style={{
+          <div key={i} className="absolute w-1 h-1 bg-purple-300/50 rounded-full animate-float" style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
             animationDelay: `${Math.random() * 5}s`,
@@ -174,27 +172,68 @@ function ForgotPassword() {
       </div>
 
       <div className="relative z-10 flex w-full">
-        {/* Left side brand content – keep your existing left panel JSX */}
+        {/* Left side brand content */}
         <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12">
-          {/* ... your existing left side content ... */}
+          <div className="max-w-lg">
+            <div className="mb-12">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-purple-200 blur-xl rounded-full"></div>
+                  <div className="relative bg-gradient-to-r from-purple-500 to-indigo-600 p-3 rounded-2xl">
+                    <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="1.5"/>
+                      <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="1.5"/>
+                      <path d="M2 12L17L22 12" stroke="currentColor" strokeWidth="1.5"/>
+                    </svg>
+                  </div>
+                </div>
+                <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">LearnMaster</span>
+              </div>
+              <p className="text-gray-500 text-sm">Premium Learning Platform</p>
+            </div>
+            <h1 className="text-5xl font-bold text-gray-800 mb-6 leading-tight">
+              Reset Password
+              <span className="block bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Secure Your Account</span>
+            </h1>
+            <p className="text-gray-600 text-lg mb-8 leading-relaxed">Create a new strong password to secure your account and resume your learning journey.</p>
+            <div className="grid grid-cols-3 gap-6 mb-12">
+              <div className="text-center"><div className="text-2xl font-bold text-gray-800 mb-1">50K+</div><div className="text-xs text-gray-500">Active Students</div></div>
+              <div className="text-center"><div className="text-2xl font-bold text-gray-800 mb-1">500+</div><div className="text-xs text-gray-500">Expert Courses</div></div>
+              <div className="text-center"><div className="text-2xl font-bold text-gray-800 mb-1">98%</div><div className="text-xs text-gray-500">Success Rate</div></div>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-white shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+                <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center"><TrendingUp className="w-5 h-5 text-purple-600" /></div>
+                <div><p className="text-gray-800 font-medium">Career Growth</p><p className="text-sm text-gray-500">Accelerate your professional journey</p></div>
+              </div>
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-white shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+                <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center"><Award className="w-5 h-5 text-purple-600" /></div>
+                <div><p className="text-gray-800 font-medium">Certified Programs</p><p className="text-sm text-gray-500">Industry-recognized certificates</p></div>
+              </div>
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-white shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+                <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center"><Users className="w-5 h-5 text-purple-600" /></div>
+                <div><p className="text-gray-800 font-medium">Expert Mentors</p><p className="text-sm text-gray-500">Learn from industry leaders</p></div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Right side form */}
         <div className="flex w-full lg:w-1/2 items-center justify-center p-6 lg:p-12">
           <div className="w-full max-w-md">
-            <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200 p-8 shadow-xl">
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 mb-6 shadow-lg">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-600 mb-6 shadow-lg">
                   {step === 1 && <Mail className="w-8 h-8 text-white" />}
                   {step === 2 && <KeyRound className="w-8 h-8 text-white" />}
                   {step === 3 && <Lock className="w-8 h-8 text-white" />}
                 </div>
-                <h2 className="text-3xl font-bold text-white mb-2">
+                <h2 className="text-3xl font-bold text-gray-800 mb-2">
                   {step === 1 && "Reset Password"}
                   {step === 2 && "Verify OTP"}
                   {step === 3 && "Set New Password"}
                 </h2>
-                <p className="text-gray-400 text-sm">
+                <p className="text-gray-500 text-sm">
                   {step === 1 && "We'll send you an OTP to reset your password"}
                   {step === 2 && `Enter the 6-digit code sent to ${email}`}
                   {step === 3 && "Create a strong new password for your account"}
@@ -202,10 +241,10 @@ function ForgotPassword() {
               </div>
 
               {success && (
-                <div className="mb-6 p-3 bg-green-500/10 border border-green-500/20 rounded-xl">
+                <div className="mb-6 p-3 bg-green-50 border border-green-200 rounded-xl">
                   <div className="flex items-center gap-2 justify-center">
-                    <CheckCircle className="w-4 h-4 text-green-400" />
-                    <p className="text-green-400 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <p className="text-green-600 text-sm">
                       {step === 1 && "✓ OTP sent! Redirecting..."}
                       {step === 2 && "✓ OTP verified! Redirecting..."}
                       {step === 3 && "✓ Password reset successful! Redirecting to login..."}
@@ -215,10 +254,10 @@ function ForgotPassword() {
               )}
 
               {error && (
-                <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
+                <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-xl">
                   <div className="flex items-center gap-2 justify-center">
-                    <AlertCircle className="w-4 h-4 text-red-400" />
-                    <p className="text-red-400 text-sm">{error}</p>
+                    <AlertCircle className="w-4 h-4 text-red-600" />
+                    <p className="text-red-600 text-sm">{error}</p>
                   </div>
                 </div>
               )}
@@ -226,13 +265,13 @@ function ForgotPassword() {
               {step === 1 && (
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                     <div className={`relative transition-all duration-300 ${focusedField === 'email' ? 'scale-[1.02]' : ''}`}>
-                      <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+                      <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                       <input
                         type="email"
                         placeholder="you@example.com"
-                        className="w-full pl-12 pr-4 py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white placeholder-gray-500"
+                        className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-all text-gray-800 placeholder-gray-400"
                         value={email}
                         onChange={(e) => { setEmail(e.target.value); setError(""); }}
                         onFocus={() => setFocusedField('email')}
@@ -244,7 +283,7 @@ function ForgotPassword() {
                   <button
                     onClick={handleSendOtp}
                     disabled={loading}
-                    className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading ? 'bg-gray-600 cursor-not-allowed' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-lg hover:shadow-blue-500/25'}`}
+                    className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-lg hover:shadow-purple-500/25'}`}
                   >
                     {!loading && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>}
                     {loading ? (
@@ -268,13 +307,13 @@ function ForgotPassword() {
               {step === 2 && (
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">OTP Code</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">OTP Code</label>
                     <div className={`relative transition-all duration-300 ${focusedField === 'otp' ? 'scale-[1.02]' : ''}`}>
-                      <KeyRound className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+                      <KeyRound className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                       <input
                         type="text"
                         placeholder="6-digit code"
-                        className="w-full pl-12 pr-4 py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white placeholder-gray-500"
+                        className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-all text-gray-800 placeholder-gray-400"
                         value={otp}
                         onChange={(e) => { setOtp(e.target.value); setError(""); }}
                         onFocus={() => setFocusedField('otp')}
@@ -285,7 +324,7 @@ function ForgotPassword() {
                   <button
                     onClick={handleVerifyOtp}
                     disabled={loading}
-                    className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading ? 'bg-gray-600 cursor-not-allowed' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-lg hover:shadow-blue-500/25'}`}
+                    className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-lg hover:shadow-purple-500/25'}`}
                   >
                     {!loading && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>}
                     {loading ? (
@@ -309,13 +348,13 @@ function ForgotPassword() {
               {step === 3 && (
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">New Password</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
                     <div className={`relative transition-all duration-300 ${focusedField === 'newPassword' ? 'scale-[1.02]' : ''}`}>
-                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                       <input
                         type={showPassword ? "text" : "password"}
                         placeholder="Create a strong password"
-                        className="w-full pl-12 pr-12 py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white placeholder-gray-500"
+                        className="w-full pl-12 pr-12 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-all text-gray-800 placeholder-gray-400"
                         value={newPassword}
                         onChange={(e) => { setNewPassword(e.target.value); setError(""); }}
                         onFocus={() => setFocusedField('newPassword')}
@@ -324,20 +363,20 @@ function ForgotPassword() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                       >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
                     <div className={`relative transition-all duration-300 ${focusedField === 'confirmPassword' ? 'scale-[1.02]' : ''}`}>
-                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                       <input
                         type="password"
                         placeholder="Confirm your new password"
-                        className="w-full pl-12 pr-4 py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-white placeholder-gray-500"
+                        className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-all text-gray-800 placeholder-gray-400"
                         value={confirmPassword}
                         onChange={(e) => { setConfirmPassword(e.target.value); setError(""); }}
                         onFocus={() => setFocusedField('confirmPassword')}
@@ -348,7 +387,7 @@ function ForgotPassword() {
                   <button
                     onClick={handleResetPassword}
                     disabled={loading}
-                    className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading ? 'bg-gray-600 cursor-not-allowed' : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:shadow-lg hover:shadow-green-500/25'}`}
+                    className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:shadow-lg hover:shadow-green-500/25'}`}
                   >
                     {!loading && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>}
                     {loading ? (
@@ -372,7 +411,7 @@ function ForgotPassword() {
               <div className="text-center mt-6">
                 <button
                   onClick={() => navigate("/login")}
-                  className="text-sm text-gray-400 hover:text-blue-400 transition-colors flex items-center justify-center gap-1 mx-auto"
+                  className="text-sm text-gray-500 hover:text-purple-600 transition-colors flex items-center justify-center gap-1 mx-auto"
                 >
                   <ArrowLeft size={14} />
                   Back to Login
@@ -380,7 +419,7 @@ function ForgotPassword() {
               </div>
 
               <div className="mt-6 text-center">
-                <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+                <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
                   <Shield size={12} />
                   <span>Secure • 256-bit encrypted</span>
                 </div>
