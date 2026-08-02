@@ -21,7 +21,7 @@ const OrderDetails = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://iodine-pesticide-bulge.ngrok-free.dev/admin/orders/${orderId}`,
+        `https://matted-ascent-specimen.ngrok-free.dev/admin/orders/${orderId}`,
         { headers: getAuthHeaders() }
       );
       if (!response.ok) throw new Error(await response.text());

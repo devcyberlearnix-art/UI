@@ -51,7 +51,7 @@ const Settings = () => {
     const loadPlatformSettings = async () => {
       setPlatformLoading(true);
       try {
-        const response = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/admin/settings/platform", {
+        const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/admin/settings/platform", {
           headers: getAuthHeaders(),
         });
         if (!response.ok) {
@@ -78,7 +78,7 @@ const Settings = () => {
     setPlatformError("");
     setPlatformSuccess("");
     try {
-      const response = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/admin/settings/platform", {
+      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/admin/settings/platform", {
         method: "POST", // or PUT – adjust to your backend
         headers: getAuthHeaders(),
         body: JSON.stringify({
@@ -104,7 +104,7 @@ const Settings = () => {
     const loadPaymentSettings = async () => {
       setPaymentLoading(true);
       try {
-        const response = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/admin/settings/payment", {
+        const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/admin/settings/payment", {
           headers: getAuthHeaders(),
         });
         if (!response.ok) {
@@ -131,7 +131,7 @@ const Settings = () => {
     setPaymentError("");
     setPaymentSuccess("");
     try {
-      const response = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/admin/settings/payment", {
+      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/admin/settings/payment", {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify({
@@ -157,7 +157,7 @@ const Settings = () => {
     const loadNotifSettings = async () => {
       setNotifLoading(true);
       try {
-        const response = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/auth/admin/settings/notifications", {
+        const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/auth/admin/settings/notifications", {
           headers: getAuthHeaders(),
         });
         if (!response.ok) {
@@ -184,7 +184,7 @@ const Settings = () => {
     setNotifError("");
     setNotifSuccess("");
     try {
-      const response = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/auth/admin/settings/notifications", {
+      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/auth/admin/settings/notifications", {
         method: "PUT",
         headers: getAuthHeaders(),
         body: JSON.stringify({

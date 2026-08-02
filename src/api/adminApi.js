@@ -1,147 +1,255 @@
+// src/api/adminApi.js
+// Updated with complete new workflow endpoints
+// Base URL: https://matted-ascent-specimen.ngrok-free.dev
 import axiosInstance from "./axiosInstance";
 
 export const adminApi = {
-  // Get admin dashboard data
-  getDashboardData: async () => {
-    const response = await axiosInstance.get("/admin/dashboard");
+  // ======================== AUTHENTICATION ========================
+  login: async (email, password) => {
+    const response = await axiosInstance.post('/api/v1/auth/login', { email, password });
     return response.data;
   },
 
-  // Get all users
-  getAllUsers: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/users", { params });
+  // ======================== SUB-ADMIN MANAGEMENT ========================
+  getSubAdminProfile: async () => {
+    const response = await axiosInstance.get('/api/v1/admins/me');
     return response.data;
   },
 
-  // Get user by ID
+  updateSubAdminProfile: async (profileData) => {
+    const response = await axiosInstance.put('/api/v1/admins/me', profileData);
+    return response.data;
+  },
+
+  registerSubAdmin: async (adminData) => {
+    const response = await axiosInstance.post('/api/v1/admins/register', adminData);
+    return response.data;
+  },
+
+  // ======================== DASHBOARD REPORTS ========================
+  getDashboardStats: {
+    users: async () => {
+      const response = await axiosInstance.get('/api/v1/admin/reports/users');
+      return response.data;
+    },
+    courses: async () => {
+      const response = await axiosInstance.get('/api/v1/admin/reports/courses');
+      return response.data;
+    },
+    revenue: async () => {
+      const response = await axiosInstance.get('/api/v1/admin/reports/revenue');
+      return response.data;
+    },
+    orders: async () => {
+      const response = await axiosInstance.get('/api/v1/admin/reports/orders');
+      return response.data;
+    },
+  },
+
+  // ======================== USER MANAGEMENT ========================
+  getUsers: async (params = {}) => {
+    const response = await axiosInstance.get('/api/v1/admin/users', { params });
+    return response.data;
+  },
+
   getUserById: async (userId) => {
-    const response = await axiosInstance.get(`/admin/users/${userId}`);
+    const response = await axiosInstance.get(`/api/v1/admin/users/${userId}`);
     return response.data;
   },
 
-  // Update user
-  updateUser: async (userId, userData) => {
-    const response = await axiosInstance.put(`/admin/users/${userId}`, userData);
+  updateUserStatus: async (userId, status) => {
+    const response = await axiosInstance.put(`/api/v1/admin/users/${userId}/status`, { status });
     return response.data;
   },
 
-  // Delete user
   deleteUser: async (userId) => {
-    const response = await axiosInstance.delete(`/admin/users/${userId}`);
+    const response = await axiosInstance.delete(`/api/v1/admin/users/${userId}`);
     return response.data;
   },
 
-  // Ban user
-  banUser: async (userId) => {
-    const response = await axiosInstance.post(`/admin/users/${userId}/ban`);
-    return response.data;
-  },
-
-  // Unban user
-  unbanUser: async (userId) => {
-    const response = await axiosInstance.post(`/admin/users/${userId}/unban`);
-    return response.data;
-  },
-
-  // Get all instructors
+  // ======================== INSTRUCTOR MANAGEMENT ========================
   getInstructors: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/instructors", { params });
+    const response = await axiosInstance.get('/api/v1/admin/instructors', { params });
     return response.data;
   },
 
-  // Approve instructor request
-  approveInstructor: async (instructorId) => {
-    const response = await axiosInstance.post(`/admin/instructors/${instructorId}/approve`);
+  getInstructorApplications: async (params = {}) => {
+    const response = await axiosInstance.get('/api/v1/admin/instructors/applications', { params });
     return response.data;
   },
 
-  // Reject instructor request
-  rejectInstructor: async (instructorId) => {
-    const response = await axiosInstance.post(`/admin/instructors/${instructorId}/reject`);
+  approveInstructorApplication: async (userId) => {
+    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/approve`);
     return response.data;
   },
 
-  // Get all courses
-  getAllCourses: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/courses", { params });
+  rejectInstructorApplication: async (userId) => {
+    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/reject`);
     return response.data;
   },
 
-  // Update course status
-  updateCourseStatus: async (courseId, status) => {
-    const response = await axiosInstance.put(`/admin/courses/${courseId}/status`, { status });
+  getInstructorCourses: async (instructorId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/instructors/${instructorId}/courses`);
     return response.data;
   },
 
-  // Delete course
+  // ======================== COURSE MANAGEMENT ====================
+  getCourses: async (params = {}) => {
+    const response = await axiosInstance.get('/api/v1/admin/courses', { params });
+    return response.data;
+  },
+
+  getCourseById: async (courseId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/courses/${courseId}`);
+    return response.data;
+  },
+
+  getCourseContent: async (courseId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/content/${courseId}`);
+    return response.data;
+  },
+
+  approveCourse: async (courseId) => {
+    const response = await axiosInstance.put(`/api/v1/admin/courses/${courseId}/approve`);
+    return response.data;
+  },
+
+  rejectCourse: async (courseId) => {
+    const response = await axiosInstance.put(`/api/v1/admin/courses/${courseId}/reject`);
+    return response.data;
+  },
+
   deleteCourse: async (courseId) => {
-    const response = await axiosInstance.delete(`/admin/courses/${courseId}`);
+    const response = await axiosInstance.delete(`/api/v1/admin/courses/${courseId}`);
     return response.data;
   },
 
-  // Get categories
-  getCategories: async () => {
-    const response = await axiosInstance.get("/admin/categories");
+  // ======================== COURSE CONTENT MANAGEMENT (SECTIONS & LECTURES) ====================
+  createSection: async (courseId, sectionData) => {
+    const response = await axiosInstance.post(`/api/v1/admin/courses/${courseId}/sections`, sectionData);
     return response.data;
   },
 
-  // Create category
-  createCategory: async (categoryData) => {
-    const response = await axiosInstance.post("/admin/categories", categoryData);
+  deleteSection: async (sectionId) => {
+    const response = await axiosInstance.delete(`/api/v1/admin/sections/${sectionId}`);
     return response.data;
   },
 
-  // Update category
-  updateCategory: async (categoryId, categoryData) => {
-    const response = await axiosInstance.put(`/admin/categories/${categoryId}`, categoryData);
+  createLecture: async (sectionId, lectureData) => {
+    const response = await axiosInstance.post(`/api/v1/admin/sections/${sectionId}/lectures`, lectureData);
     return response.data;
   },
 
-  // Delete category
-  deleteCategory: async (categoryId) => {
-    const response = await axiosInstance.delete(`/admin/categories/${categoryId}`);
+  approveLecture: async (sectionId, lectureId) => {
+    const response = await axiosInstance.put(`/api/v1/admin/sections/${sectionId}/lectures/${lectureId}/approve`);
     return response.data;
   },
 
-  // Get platform analytics
-  getAnalytics: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/analytics", { params });
+  rejectLecture: async (sectionId, lectureId) => {
+    const response = await axiosInstance.put(`/api/v1/admin/sections/${sectionId}/lectures/${lectureId}/reject`);
     return response.data;
   },
 
-  // Get revenue data
-  getRevenue: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/revenue", { params });
+  deleteLecture: async (sectionId, lectureId) => {
+    const response = await axiosInstance.delete(`/api/v1/admin/sections/${sectionId}/lectures/${lectureId}`);
     return response.data;
   },
 
-  // Get reports
-  getReports: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/reports", { params });
+  // ======================== ORDERS & PAYMENTS ====================
+  getOrders: async (params = {}) => {
+    const response = await axiosInstance.get('/api/v1/admin/orders', { params });
     return response.data;
   },
 
-  // Resolve report
-  resolveReport: async (reportId) => {
-    const response = await axiosInstance.put(`/admin/reports/${reportId}/resolve`);
+  getOrderById: async (orderId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/orders/${orderId}`);
     return response.data;
   },
 
-  // Get system settings
-  getSettings: async () => {
-    const response = await axiosInstance.get("/admin/settings");
+  updateOrderStatus: async (orderId, status) => {
+    const response = await axiosInstance.put(`/api/v1/admin/orders/${orderId}/status`, { status });
     return response.data;
   },
 
-  // Update system settings
-  updateSettings: async (settingsData) => {
-    const response = await axiosInstance.put("/admin/settings", settingsData);
+  processOrderRefund: async (orderId, refundData) => {
+    const response = await axiosInstance.post(`/api/v1/admin/orders/${orderId}/refund`, refundData);
     return response.data;
   },
 
-  // Get user activity logs
-  getActivityLogs: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/activity-logs", { params });
+  getPayments: async (params = {}) => {
+    const response = await axiosInstance.get('/api/v1/admin/payments', { params });
     return response.data;
+  },
+
+  getPaymentById: async (paymentId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/payments/${paymentId}`);
+    return response.data;
+  },
+
+  // ======================== REVIEWS ====================
+  getReviews: async (params = {}) => {
+    const response = await axiosInstance.get('/api/v1/admin/reviews', { params });
+    return response.data;
+  },
+
+  deleteReview: async (reviewId) => {
+    const response = await axiosInstance.delete(`/api/v1/admin/reviews/${reviewId}`);
+    return response.data;
+  },
+
+  // ======================== SETTINGS ====================
+  updatePlatformSettings: async (settingsData) => {
+    const response = await axiosInstance.put('/api/v1/admin/settings/platform', settingsData);
+    return response.data;
+  },
+
+  updatePaymentSettings: async (settingsData) => {
+    const response = await axiosInstance.put('/api/v1/admin/settings/payment', settingsData);
+    return response.data;
+  },
+
+  updateNotificationSettings: async (settingsData) => {
+    const response = await axiosInstance.put('/api/v1/admin/settings/notifications', settingsData);
+    return response.data;
+  },
+
+  // ======================== NOTIFICATIONS & SYSTEM ====================
+  broadcastNotification: async (notificationData) => {
+    const response = await axiosInstance.post('/api/v1/admin/broadcast', notificationData);
+    return response.data;
+  },
+
+  reprocessDLQ: async () => {
+    const response = await axiosInstance.post('/api/v1/admin/reprocess-dlq');
+    return response.data;
+  },
+
+  getSystemHealth: async () => {
+    const response = await axiosInstance.get('/api/v1/admin/system-health');
+    return response.data;
+  },
+
+  // ======================== LEGACY COMPATIBILITY ====================
+  // These methods provide backward compatibility with existing components
+  getAllUsers: async (params = {}) => {
+    return adminApi.getUsers(params);
+  },
+
+  getAllCourses: async (params = {}) => {
+    return adminApi.getCourses(params);
+  },
+
+  approveInstructor: async (instructorId) => {
+    return adminApi.approveInstructorApplication(instructorId);
+  },
+
+  rejectInstructor: async (instructorId) => {
+    return adminApi.rejectInstructorApplication(instructorId);
+  },
+
+  updateCourseStatus: async (courseId, status) => {
+    if (status === 'approved') return adminApi.approveCourse(courseId);
+    if (status === 'rejected') return adminApi.rejectCourse(courseId);
+    throw new Error('Invalid status. Use approve or reject.');
   },
 };

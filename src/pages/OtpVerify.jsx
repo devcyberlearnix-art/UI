@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
-const API_BASE_URL = "https://iodine-pesticide-bulge.ngrok-free.dev";
+const API_BASE_URL = "https://matted-ascent-specimen.ngrok-free.dev";
 
 function OtpVerify() {
   const navigate = useNavigate();

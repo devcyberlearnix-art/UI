@@ -103,7 +103,7 @@ const Register = () => {
 
     try {
       // Replace with your actual upload API endpoint
-      const response = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/auth/upload/profile-photo", {
+      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/auth/upload/profile-photo", {
         method: "POST",
         body: formDataPhoto,
       });
@@ -184,7 +184,7 @@ const Register = () => {
     };
 
     try {
-      const response = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/auth/register", {
+      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

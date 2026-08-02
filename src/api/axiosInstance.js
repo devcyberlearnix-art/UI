@@ -1,53 +1,78 @@
+// src/api/axiosInstance.js
 import axios from "axios";
 
-const BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-  ? ""
-  : "https://iodine-pesticide-bulge.ngrok-free.dev";
+const BASE_URL = "https://matted-ascent-specimen.ngrok-free.dev";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
-    "ngrok-skip-browser-warning": "true",
+    "Accept": "application/json",
   },
-  timeout: 10000,
+  timeout: 30000,
 });
 
-// Request interceptor to add token
+// ✅ Request interceptor - Log and add token
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("lms_token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Skip auth header for public endpoints (forgot password, verify email, etc.)
+    const publicEndpoints = [
+      '/admin/password/forgot',
+      '/admin/password/verify-otp',
+      '/admin/password/reset',
+      '/admin/verify-email',
+      '/admin/internal/login',
+      '/admin/internal/login/otp/request',
+      '/admin/internal/login/otp/verify',
+      '/admin/resend-otp',
+      '/admin/register'
+    ];
+    
+    const isPublicEndpoint = publicEndpoints.some(endpoint => config.url.includes(endpoint));
+    
+    if (!isPublicEndpoint) {
+      const token = localStorage.getItem('lms_token') || 
+                    localStorage.getItem('access_token') || 
+                    sessionStorage.getItem('lms_token');
+      
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
+    
+    console.log(`[API] ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => {
+    console.error('[API Request Error]', error);
     return Promise.reject(error);
   }
 );
 
-// Response interceptor for error handling
+// ✅ Response interceptor
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(`[API] ${response.config.url} - ${response.status}`);
+    return response;
+  },
   (error) => {
+    console.error('[API Response Error]', error);
+    
     if (error.response) {
-      const { status, data } = error.response;
+      const { status, config } = error.response;
       
-      if (status === 401) {
-        // Unauthorized - clear token and redirect to login
-        localStorage.removeItem("lms_token");
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("lms_user");
-        window.location.href = "/login";
-      } else if (status === 403) {
-        // Forbidden
-        console.error("Access denied");
-      } else if (status === 500) {
-        // Server error
-        console.error("Server error:", data?.message || "Internal server error");
+      if (status === 401 && !config?.url?.includes('/login')) {
+        localStorage.removeItem('lms_token');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('lms_user');
+        sessionStorage.removeItem('lms_token');
+        
+        if (!window.location.pathname.includes('/admin/login')) {
+          window.location.href = '/admin/login';
+        }
       }
     }
+    
     return Promise.reject(error);
   }
 );

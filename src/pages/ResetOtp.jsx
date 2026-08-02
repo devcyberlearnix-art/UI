@@ -163,7 +163,7 @@ function ResetOtp() {
     setError("");
 
     try {
-      const response = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/auth/password/verify-otp", {
+      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/auth/password/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

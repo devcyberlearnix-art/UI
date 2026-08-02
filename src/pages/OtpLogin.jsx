@@ -26,7 +26,7 @@ function OtpLogin() {
     setSuccess(false);
 
     try {
-      const response = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/login/otp/request", {
+      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/login/otp/request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

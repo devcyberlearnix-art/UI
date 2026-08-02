@@ -1,55 +1,130 @@
 import React from "react";
-import { Bell, Shield, User, Menu, Settings, Database } from "lucide-react";
+import {
+  Menu,
+  Search,
+  Bell,
+  Mail,
+  Settings,
+  ChevronDown,
+} from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
-const AdminNavbar = ({ setSidebarOpen, sidebarOpen }) => {
+const AdminNavbar = ({ sidebarOpen, setSidebarOpen }) => {
   const { user } = useAuth();
 
   return (
-    <div className="sticky top-0 bg-slate-900 text-white px-6 py-3 flex justify-between items-center z-30 shadow-xl">
-      <div className="flex items-center gap-4">
-        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
-          <Menu size={20} className="text-slate-400" />
+    <header className="sticky top-0 z-40 h-20 bg-white border-b border-gray-200 px-8 flex items-center justify-between">
+
+      {/* Left */}
+      <div className="flex items-center gap-5">
+
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-orange-50 transition"
+        >
+          <Menu size={20} />
         </button>
-        <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full">
-          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-red-500">Live System Monitor</span>
+
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">
+            Dashboard
+          </h2>
+
+          <p className="text-sm text-gray-500">
+            Welcome back,
+            <span className="font-semibold ml-1 text-orange-500">
+              {user?.firstName || user?.name || "Admin"}
+            </span>
+          </p>
         </div>
+
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="hidden lg:flex items-center gap-4 mr-6">
-          <div className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
-            <Database size={16} />
-            <span className="text-xs font-medium">Database: Healthy</span>
-          </div>
-          <div className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
-            <Settings size={16} />
-            <span className="text-xs font-medium">Settings</span>
-          </div>
+      {/* Search */}
+
+      <div className="hidden lg:flex items-center w-[420px]">
+
+        <div className="relative w-full">
+
+          <Search
+            size={18}
+            className="absolute left-4 top-3 text-gray-400"
+          />
+
+          <input
+            type="text"
+            placeholder="Search stock, orders, users..."
+            className="w-full h-11 rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 outline-none focus:ring-2 focus:ring-orange-400"
+          />
+
         </div>
 
-        <button className="relative p-2 hover:bg-slate-800 rounded-lg transition-colors">
-          <Bell size={20} className="text-slate-400" />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full border-2 border-slate-900"></span>
+      </div>
+
+      {/* Right */}
+
+      <div className="flex items-center gap-4">
+
+        <button className="relative w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-orange-50">
+
+          <Mail size={18} />
+
+          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-orange-500 text-white text-[10px] flex items-center justify-center">
+            4
+          </span>
+
         </button>
 
-        <div className="h-8 w-[1px] bg-slate-800 mx-2"></div>
+        <button className="relative w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-orange-50">
+
+          <Bell size={18} />
+
+          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
+            8
+          </span>
+
+        </button>
+
+        <button className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-orange-50">
+
+          <Settings size={18} />
+
+        </button>
+
+        <div className="h-8 border-l border-gray-300"></div>
 
         <div className="flex items-center gap-3 cursor-pointer">
-          <div className="text-right hidden sm:block">
-            <p className="text-sm font-bold text-white">{user?.name || "Admin"}</p>
-            <div className="flex items-center gap-1 justify-end">
-              <Shield size={10} className="text-blue-400" />
-              <p className="text-[10px] text-blue-400 font-bold uppercase tracking-tight">Super Admin</p>
-            </div>
+
+          <img
+            src={`https://ui-avatars.com/api/?name=${
+              user?.name || "Admin"
+            }&background=f97316&color=fff`}
+            className="w-11 h-11 rounded-xl"
+            alt=""
+          />
+
+          <div className="hidden md:block">
+
+            <h4 className="text-sm font-bold text-gray-800">
+              {user?.name || "Marcus George"}
+            </h4>
+
+            <p className="text-xs text-gray-500">
+              Super Admin
+            </p>
+
           </div>
-          <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center shadow-inner">
-            <User size={20} className="text-slate-400" />
-          </div>
+
+          <ChevronDown
+            size={18}
+            className="text-gray-500"
+          />
+
         </div>
+
       </div>
-    </div>
+
+    </header>
   );
 };
 
