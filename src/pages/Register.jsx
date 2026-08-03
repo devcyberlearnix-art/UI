@@ -103,7 +103,7 @@ const Register = () => {
 
     try {
       // Replace with your actual upload API endpoint
-      const response = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/auth/upload/profile-photo", {
+      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/auth/upload/profile-photo", {
         method: "POST",
         body: formDataPhoto,
       });
@@ -184,7 +184,7 @@ const Register = () => {
     };
 
     try {
-      const response = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/auth/register", {
+      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -218,32 +218,28 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#0a0f1c] py-12 px-4">
-      {/* Background effects (same as before) */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f1c] via-[#0f1629] to-[#1a1f35]"></div>
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 2px 2px, rgba(59,130,246,0.15) 1px, transparent 1px)`,
-          backgroundSize: '40px 40px'
-        }}></div>
-      </div>
-      <div className="absolute top-1/4 -left-48 w-96 h-96 bg-blue-500/30 rounded-full blur-[100px] animate-pulse"></div>
-      <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-purple-500/30 rounded-full blur-[100px] animate-pulse delay-1000"></div>
+    <div className="min-h-screen relative overflow-hidden bg-gray-50 py-12 px-4">
+      {/* Background effects */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100"></div>
+      
+      {/* Light decorative circles */}
+      <div className="absolute top-1/4 -left-48 w-96 h-96 bg-purple-100 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+      <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-indigo-100 rounded-full blur-3xl opacity-30 animate-pulse delay-1000"></div>
       
       <div className="relative z-10 max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 mb-6 shadow-lg">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-600 mb-6 shadow-lg">
             <Users className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">Create Your Account</h1>
-          <p className="text-gray-400 mt-2">Join 50,000+ learners and start your journey</p>
+          <h1 className="text-3xl font-bold text-gray-800">Create Your Account</h1>
+          <p className="text-gray-500 mt-2">Join 50,000+ learners and start your journey</p>
         </div>
 
-        <form onSubmit={handleRegister} className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 md:p-8 shadow-2xl">
+        <form onSubmit={handleRegister} className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200 p-6 md:p-8 shadow-xl">
           {message && (
-            <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 ${messageType === 'success' ? 'bg-green-500/10 border border-green-500/20' : 'bg-red-500/10 border border-red-500/20'}`}>
-              {messageType === 'success' ? <CheckCircle className="text-green-400" size={20} /> : <AlertCircle className="text-red-400" size={20} />}
-              <p className={`text-sm ${messageType === 'success' ? 'text-green-400' : 'text-red-400'}`}>{message}</p>
+            <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 ${messageType === 'success' ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+              {messageType === 'success' ? <CheckCircle className="text-green-600" size={20} /> : <AlertCircle className="text-red-600" size={20} />}
+              <p className={`text-sm ${messageType === 'success' ? 'text-green-600' : 'text-red-600'}`}>{message}</p>
             </div>
           )}
 
@@ -251,142 +247,142 @@ const Register = () => {
           <div className="flex flex-col items-center mb-8">
             <div className="relative group">
               <label htmlFor="photoInput" className="cursor-pointer">
-                <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 p-1 shadow-lg group-hover:scale-105 transition-transform duration-300">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 p-1 shadow-lg group-hover:scale-105 transition-transform duration-300">
                   <img
                     src={photoPreview || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
                     alt="avatar"
-                    className="w-full h-full rounded-full object-cover bg-[#0a0f1c]"
+                    className="w-full h-full rounded-full object-cover bg-gray-100"
                   />
                 </div>
-                <div className="absolute bottom-0 right-0 bg-blue-600 rounded-full p-1.5 border-2 border-[#0a0f1c] group-hover:scale-110 transition-transform">
+                <div className="absolute bottom-0 right-0 bg-purple-600 rounded-full p-1.5 border-2 border-white group-hover:scale-110 transition-transform">
                   {photoUploading ? <Loader2 className="w-3 h-3 text-white animate-spin" /> : <Upload size={12} className="text-white" />}
                 </div>
               </label>
             </div>
             <input type="file" id="photoInput" className="hidden" onChange={handlePhotoChange} accept="image/*" />
             <p className="text-xs text-gray-500 mt-2">Click to upload photo (Max 5MB)</p>
-            {photoUrl && <p className="text-xs text-green-400 mt-1">✓ Photo uploaded</p>}
+            {photoUrl && <p className="text-xs text-green-600 mt-1">✓ Photo uploaded</p>}
           </div>
 
           {/* Name fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">First Name <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">First Name <span className="text-red-500">*</span></label>
               <div className={`relative transition-all duration-300 ${focusedField === 'firstName' ? 'scale-[1.02]' : ''}`}>
-                <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                <input type="text" placeholder="John" value={formData.firstName} onChange={(e) => updateField("firstName", e.target.value)} onFocus={() => setFocusedField('firstName')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-4 py-3.5 bg-white/10 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-white placeholder-gray-500 ${errors.firstName ? 'border-red-500/50' : 'border-white/20'}`} />
+                <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <input type="text" placeholder="John" value={formData.firstName} onChange={(e) => updateField("firstName", e.target.value)} onFocus={() => setFocusedField('firstName')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-4 py-3.5 bg-white border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-gray-800 placeholder-gray-400 ${errors.firstName ? 'border-red-300' : 'border-gray-300'}`} />
               </div>
-              {errors.firstName && <p className="mt-1 text-xs text-red-400">{errors.firstName}</p>}
+              {errors.firstName && <p className="mt-1 text-xs text-red-600">{errors.firstName}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Last Name <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Last Name <span className="text-red-500">*</span></label>
               <div className={`relative transition-all duration-300 ${focusedField === 'lastName' ? 'scale-[1.02]' : ''}`}>
-                <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                <input type="text" placeholder="Doe" value={formData.lastName} onChange={(e) => updateField("lastName", e.target.value)} onFocus={() => setFocusedField('lastName')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-4 py-3.5 bg-white/10 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-white placeholder-gray-500 ${errors.lastName ? 'border-red-500/50' : 'border-white/20'}`} />
+                <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <input type="text" placeholder="Doe" value={formData.lastName} onChange={(e) => updateField("lastName", e.target.value)} onFocus={() => setFocusedField('lastName')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-4 py-3.5 bg-white border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-gray-800 placeholder-gray-400 ${errors.lastName ? 'border-red-300' : 'border-gray-300'}`} />
               </div>
-              {errors.lastName && <p className="mt-1 text-xs text-red-400">{errors.lastName}</p>}
+              {errors.lastName && <p className="mt-1 text-xs text-red-600">{errors.lastName}</p>}
             </div>
           </div>
 
           {/* Email */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-300 mb-2">Email Address <span className="text-red-400">*</span></label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address <span className="text-red-500">*</span></label>
             <div className={`relative transition-all duration-300 ${focusedField === 'email' ? 'scale-[1.02]' : ''}`}>
-              <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-              <input type="email" placeholder="you@example.com" value={formData.email} onChange={(e) => updateField("email", e.target.value)} onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-4 py-3.5 bg-white/10 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-white placeholder-gray-500 ${errors.email ? 'border-red-500/50' : 'border-white/20'}`} />
+              <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              <input type="email" placeholder="you@example.com" value={formData.email} onChange={(e) => updateField("email", e.target.value)} onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-4 py-3.5 bg-white border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-gray-800 placeholder-gray-400 ${errors.email ? 'border-red-300' : 'border-gray-300'}`} />
             </div>
-            {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email}</p>}
+            {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
           </div>
 
           {/* Password fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Password <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Password <span className="text-red-500">*</span></label>
               <div className={`relative transition-all duration-300 ${focusedField === 'password' ? 'scale-[1.02]' : ''}`}>
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                <input type={showPassword ? "text" : "password"} placeholder="Create password" value={formData.password} onChange={handlePasswordChange} onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-12 py-3.5 bg-white/10 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-white placeholder-gray-500 ${errors.password ? 'border-red-500/50' : 'border-white/20'}`} />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <input type={showPassword ? "text" : "password"} placeholder="Create password" value={formData.password} onChange={handlePasswordChange} onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-12 py-3.5 bg-white border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-gray-800 placeholder-gray-400 ${errors.password ? 'border-red-300' : 'border-gray-300'}`} />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
               </div>
               {formData.password && (
                 <div className="mt-2">
-                  <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden"><div className="h-full transition-all duration-300" style={{ width: `${(passwordStrength / 5) * 100}%`, backgroundColor: getStrengthColor() }}></div></div>
+                  <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden"><div className="h-full transition-all duration-300" style={{ width: `${(passwordStrength / 5) * 100}%`, backgroundColor: getStrengthColor() }}></div></div>
                   <p className="text-xs mt-1" style={{ color: getStrengthColor() }}>{getStrengthText()}</p>
                 </div>
               )}
-              {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password}</p>}
+              {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Confirm Password <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password <span className="text-red-500">*</span></label>
               <div className={`relative transition-all duration-300 ${focusedField === 'confirmPassword' ? 'scale-[1.02]' : ''}`}>
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                <input type={showConfirmPassword ? "text" : "password"} placeholder="Confirm password" value={formData.confirmPassword} onChange={(e) => updateField("confirmPassword", e.target.value)} onFocus={() => setFocusedField('confirmPassword')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-12 py-3.5 bg-white/10 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-white placeholder-gray-500 ${errors.confirmPassword ? 'border-red-500/50' : 'border-white/20'}`} />
-                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300">{showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <input type={showConfirmPassword ? "text" : "password"} placeholder="Confirm password" value={formData.confirmPassword} onChange={(e) => updateField("confirmPassword", e.target.value)} onFocus={() => setFocusedField('confirmPassword')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-12 py-3.5 bg-white border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-gray-800 placeholder-gray-400 ${errors.confirmPassword ? 'border-red-300' : 'border-gray-300'}`} />
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">{showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
               </div>
-              {errors.confirmPassword && <p className="mt-1 text-xs text-red-400">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && <p className="mt-1 text-xs text-red-600">{errors.confirmPassword}</p>}
             </div>
           </div>
 
           {/* Mobile & DOB (with countryCode) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Mobile Number <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Mobile Number <span className="text-red-500">*</span></label>
               <div className="flex gap-2">
                 <div className="w-24">
-                  <select value={formData.countryCode} onChange={(e) => updateField("countryCode", e.target.value)} className="w-full py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-white">
-                    <option value="+91">+91 (India)</option>
-                    <option value="+1">+1 (USA)</option>
-                    <option value="+44">+44 (UK)</option>
+                  <select value={formData.countryCode} onChange={(e) => updateField("countryCode", e.target.value)} className="w-full py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-gray-800">
+                    <option value="+91">+91</option>
+                    <option value="+1">+1</option>
+                    <option value="+44">+44</option>
                   </select>
                 </div>
                 <div className="flex-1">
                   <div className={`relative transition-all duration-300 ${focusedField === 'mobile' ? 'scale-[1.02]' : ''}`}>
-                    <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                    <input type="tel" placeholder="9876543210" value={formData.mobile} onChange={(e) => updateField("mobile", e.target.value)} onFocus={() => setFocusedField('mobile')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-4 py-3.5 bg-white/10 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-white placeholder-gray-500 ${errors.mobile ? 'border-red-500/50' : 'border-white/20'}`} />
+                    <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                    <input type="tel" placeholder="9876543210" value={formData.mobile} onChange={(e) => updateField("mobile", e.target.value)} onFocus={() => setFocusedField('mobile')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-4 py-3.5 bg-white border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-gray-800 placeholder-gray-400 ${errors.mobile ? 'border-red-300' : 'border-gray-300'}`} />
                   </div>
                 </div>
               </div>
-              {errors.mobile && <p className="mt-1 text-xs text-red-400">{errors.mobile}</p>}
+              {errors.mobile && <p className="mt-1 text-xs text-red-600">{errors.mobile}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Date of Birth <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth <span className="text-red-500">*</span></label>
               <div className={`relative transition-all duration-300 ${focusedField === 'dob' ? 'scale-[1.02]' : ''}`}>
-                <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                <input type="date" value={formData.dob} onChange={(e) => updateField("dob", e.target.value)} onFocus={() => setFocusedField('dob')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-4 py-3.5 bg-white/10 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-white ${errors.dob ? 'border-red-500/50' : 'border-white/20'}`} />
+                <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <input type="date" value={formData.dob} onChange={(e) => updateField("dob", e.target.value)} onFocus={() => setFocusedField('dob')} onBlur={() => setFocusedField(null)} className={`w-full pl-12 pr-4 py-3.5 bg-white border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-gray-800 ${errors.dob ? 'border-red-300' : 'border-gray-300'}`} />
               </div>
-              {errors.dob && <p className="mt-1 text-xs text-red-400">{errors.dob}</p>}
+              {errors.dob && <p className="mt-1 text-xs text-red-600">{errors.dob}</p>}
             </div>
           </div>
 
           {/* Location fields (city, state, country) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">City <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">City <span className="text-red-500">*</span></label>
               <div className="relative">
-                <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                <select value={formData.city} onChange={(e) => updateField("city", e.target.value)} className={`w-full pl-12 pr-4 py-3.5 bg-white/10 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none appearance-none text-white ${errors.city ? 'border-red-500/50' : 'border-white/20'}`}>
-                  <option value="" className="bg-[#0a0f1c]">Select City</option>
+                <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <select value={formData.city} onChange={(e) => updateField("city", e.target.value)} className={`w-full pl-12 pr-4 py-3.5 bg-white border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none appearance-none text-gray-800 ${errors.city ? 'border-red-300' : 'border-gray-300'}`}>
+                  <option value="">Select City</option>
                   {cities.map(city => <option key={city} value={city}>{city}</option>)}
                 </select>
               </div>
               {errors.city && <p className="mt-1 text-xs text-red-400">{errors.city}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">State <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">State <span className="text-red-500">*</span></label>
               <div className="relative">
-                <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                <select value={formData.state} onChange={(e) => updateField("state", e.target.value)} className={`w-full pl-12 pr-4 py-3.5 bg-white/10 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none appearance-none text-white ${errors.state ? 'border-red-500/50' : 'border-white/20'}`}>
-                  <option value="" className="bg-[#0a0f1c]">Select State</option>
+                <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <select value={formData.state} onChange={(e) => updateField("state", e.target.value)} className={`w-full pl-12 pr-4 py-3.5 bg-white border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none appearance-none text-gray-800 ${errors.state ? 'border-red-300' : 'border-gray-300'}`}>
+                  <option value="">Select State</option>
                   {states.map(state => <option key={state} value={state}>{state}</option>)}
                 </select>
               </div>
               {errors.state && <p className="mt-1 text-xs text-red-400">{errors.state}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Country <span className="text-red-400">*</span></label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Country <span className="text-red-500">*</span></label>
               <div className="relative">
-                <Globe className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                <select value={formData.country} onChange={(e) => updateField("country", e.target.value)} className={`w-full pl-12 pr-4 py-3.5 bg-white/10 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none appearance-none text-white ${errors.country ? 'border-red-500/50' : 'border-white/20'}`}>
-                  <option value="" className="bg-[#0a0f1c]">Select Country</option>
+                <Globe className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <select value={formData.country} onChange={(e) => updateField("country", e.target.value)} className={`w-full pl-12 pr-4 py-3.5 bg-white border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none appearance-none text-gray-800 ${errors.country ? 'border-red-300' : 'border-gray-300'}`}>
+                  <option value="">Select Country</option>
                   {countries.map(country => <option key={country} value={country}>{country}</option>)}
                 </select>
               </div>
@@ -396,11 +392,11 @@ const Register = () => {
 
           {/* Preferred Language */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-300 mb-2">Preferred Language <span className="text-red-400">*</span></label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Language <span className="text-red-500">*</span></label>
             <div className="relative">
-              <Languages className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-              <select value={formData.preferredLanguage} onChange={(e) => updateField("preferredLanguage", e.target.value)} className={`w-full pl-12 pr-4 py-3.5 bg-white/10 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none appearance-none text-white ${errors.preferredLanguage ? 'border-red-500/50' : 'border-white/20'}`}>
-                <option value="" className="bg-[#0a0f1c]">Select Language</option>
+              <Languages className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              <select value={formData.preferredLanguage} onChange={(e) => updateField("preferredLanguage", e.target.value)} className={`w-full pl-12 pr-4 py-3.5 bg-white border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none appearance-none text-gray-800 ${errors.preferredLanguage ? 'border-red-300' : 'border-gray-300'}`}>
+                <option value="">Select Language</option>
                 {languages.map(lang => <option key={lang} value={lang}>{lang}</option>)}
               </select>
             </div>
@@ -410,34 +406,34 @@ const Register = () => {
           {/* Optional fields (organization, skills, fieldOfStudy, highestQualification) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Organization</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Organization</label>
               <div className="relative">
-                <Building className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                <input type="text" placeholder="Company/University" value={formData.organization} onChange={(e) => updateField("organization", e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-white placeholder-gray-500" />
+                <Building className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <input type="text" placeholder="Company/University" value={formData.organization} onChange={(e) => updateField("organization", e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-gray-800 placeholder-gray-400" />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Skills</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Skills</label>
               <div className="relative">
-                <Code className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                <input type="text" placeholder="React, Python, etc." value={formData.skills} onChange={(e) => updateField("skills", e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-white placeholder-gray-500" />
+                <Code className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <input type="text" placeholder="React, Python, etc." value={formData.skills} onChange={(e) => updateField("skills", e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-gray-800 placeholder-gray-400" />
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Field of Study</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Field of Study</label>
               <div className="relative">
-                <BookOpen className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                <input type="text" placeholder="Computer Science" value={formData.fieldOfStudy} onChange={(e) => updateField("fieldOfStudy", e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-white placeholder-gray-500" />
+                <BookOpen className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <input type="text" placeholder="Computer Science" value={formData.fieldOfStudy} onChange={(e) => updateField("fieldOfStudy", e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-gray-800 placeholder-gray-400" />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Highest Qualification</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Highest Qualification</label>
               <div className="relative">
-                <Award className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                <input type="text" placeholder="Bachelor's Degree" value={formData.highestQualification} onChange={(e) => updateField("highestQualification", e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-white/10 border border-white/20 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-white placeholder-gray-500" />
+                <Award className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                <input type="text" placeholder="Bachelor's Degree" value={formData.highestQualification} onChange={(e) => updateField("highestQualification", e.target.value)} className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-gray-800 placeholder-gray-400" />
               </div>
             </div>
           </div>
@@ -445,24 +441,24 @@ const Register = () => {
           {/* Terms and conditions */}
           <div className="mb-6">
             <label className="flex items-center cursor-pointer">
-              <input type="checkbox" checked={formData.agreeToTerms} onChange={(e) => updateField("agreeToTerms", e.target.checked)} className="w-4 h-4 text-blue-600 rounded border-white/20 bg-white/10 focus:ring-blue-500" />
-              <span className="ml-2 text-sm text-gray-400">I agree to the <a href="#" className="text-blue-400 hover:text-blue-300">Terms of Service</a> and <a href="#" className="text-blue-400 hover:text-blue-300">Privacy Policy</a></span>
+              <input type="checkbox" checked={formData.agreeToTerms} onChange={(e) => updateField("agreeToTerms", e.target.checked)} className="w-4 h-4 text-purple-600 rounded border-gray-300 bg-white focus:ring-purple-500" />
+              <span className="ml-2 text-sm text-gray-500">I agree to the <a href="#" className="text-purple-600 hover:text-purple-700">Terms of Service</a> and <a href="#" className="text-purple-600 hover:text-purple-700">Privacy Policy</a></span>
             </label>
-            {errors.agreeToTerms && <p className="mt-1 text-xs text-red-400">{errors.agreeToTerms}</p>}
+            {errors.agreeToTerms && <p className="mt-1 text-xs text-red-600">{errors.agreeToTerms}</p>}
           </div>
 
           {/* Register Button */}
           <button
             type="submit"
             disabled={loading || photoUploading}
-            className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading || photoUploading ? 'bg-gray-600 cursor-not-allowed' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-lg hover:shadow-blue-500/25'}`}
+            className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading || photoUploading ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-lg hover:shadow-purple-500/25'}`}
           >
             {!loading && !photoUploading && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>}
             {loading ? <><Loader2 className="animate-spin h-5 w-5" /> Creating Account...</> : <>Create Account <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" /></>}
           </button>
 
-          <p className="text-center text-sm text-gray-400 mt-6">Already have an account? <button type="button" onClick={() => navigate("/login")} className="text-blue-400 hover:text-blue-300 font-semibold">Sign in</button></p>
-          <div className="mt-6 text-center"><div className="flex items-center justify-center gap-2 text-xs text-gray-500"><Shield size={12} /><span>Your data is secure • 256-bit encryption</span></div></div>
+          <p className="text-center text-sm text-gray-500 mt-6">Already have an account? <button type="button" onClick={() => navigate("/login")} className="text-purple-600 hover:text-purple-700 font-semibold">Sign in</button></p>
+          <div className="mt-6 text-center"><div className="flex items-center justify-center gap-2 text-xs text-gray-400"><Shield size={12} /><span>Your data is secure • 256-bit encryption</span></div></div>
         </form>
       </div>
     </div>

@@ -65,8 +65,15 @@ export const login = (email, role) => {
 };
 
 export const logout = () => {
+  const user = getUser();
+  const role = user?.role;
+  const shouldRedirectToLanding = role === "admin" || role === "student";
   removeUser();
   localStorage.removeItem("lms_token");
   localStorage.removeItem("access_token");
-  window.location.href = "/login";
+  if (shouldRedirectToLanding) {
+    window.location.href = "/";
+  } else {
+    window.location.href = "/login";
+  }
 };

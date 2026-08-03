@@ -55,7 +55,7 @@ const VerifyEmail = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/auth/admin/verify-email", {
+      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/auth/admin/verify-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp: otpValue }),

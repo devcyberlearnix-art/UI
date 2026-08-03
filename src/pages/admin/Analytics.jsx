@@ -24,7 +24,7 @@ const Analytics = () => {
     const fetchAnalytics = async () => {
       try {
         // Fetch revenue reports
-        const revenueRes = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/admin/reports/revenue", {
+        const revenueRes = await fetch("https://matted-ascent-specimen.ngrok-free.dev/admin/reports/revenue", {
           headers: getAuthHeaders(),
         });
         if (!revenueRes.ok) throw new Error(await revenueRes.text());
@@ -32,7 +32,7 @@ const Analytics = () => {
         setRevenueData(revenueData.revenue || revenueData);
 
         // Fetch order analytics
-        const orderRes = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/admin/analytics/orders", {
+        const orderRes = await fetch("https://matted-ascent-specimen.ngrok-free.dev/admin/analytics/orders", {
           headers: getAuthHeaders(),
         });
         if (!orderRes.ok) throw new Error(await orderRes.text());
@@ -40,7 +40,7 @@ const Analytics = () => {
         setOrderAnalytics(orderData.orders || orderData);
 
         // ✅ NEW: Fetch course statistics
-        const courseRes = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/admin/reports/courses", {
+        const courseRes = await fetch("https://matted-ascent-specimen.ngrok-free.dev/admin/reports/courses", {
           headers: getAuthHeaders(),
         });
         if (!courseRes.ok) throw new Error(await courseRes.text());

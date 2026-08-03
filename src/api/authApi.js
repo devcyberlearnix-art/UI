@@ -1,64 +1,158 @@
+// src/api/authApi.js
+// Updated with new workflow endpoints
+// Base URL: https://matted-ascent-specimen.ngrok-free.dev
 import axiosInstance from "./axiosInstance";
 
+// ✅ Export authApi as a named export
 export const authApi = {
-  // Login with email and password
   login: async (email, password) => {
-    const response = await axiosInstance.post("/login/password", {
-      email,
-      password,
-    });
-    return response.data;
+    try {
+      console.log('[Auth] Login attempt for:', email);
+      console.log('[Auth] Password length:', password?.length || 0);
+      
+      const emailStr = typeof email === 'string' ? email : String(email || '');
+      const passwordStr = typeof password === 'string' ? password : String(password || '');
+      
+      const requestData = {
+        email: emailStr.trim(),
+        password: passwordStr
+      };
+      
+      console.log('[Auth] Request data:', JSON.stringify(requestData, null, 2));
+      
+      const response = await axiosInstance.post('/api/v1/auth/login', requestData);
+      
+      console.log('[Auth] Response status:', response.status);
+      console.log('[Auth] Response data:', response.data);
+      
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Login error:', error);
+      
+      if (error.response) {
+        console.error('[Auth] Error status:', error.response.status);
+        console.error('[Auth] Error data:', error.response.data);
+        console.error('[Auth] Error headers:', error.response.headers);
+      } else if (error.request) {
+        console.error('[Auth] No response received:', error.request);
+      }
+      
+      throw error;
+    }
   },
 
-  // Register new user
-  register: async (userData) => {
-    const response = await axiosInstance.post("/auth/register", userData);
-    return response.data;
-  },
-
-  // Login with OTP
-  loginWithOtp: async (mobile) => {
-    const response = await axiosInstance.post("/auth/login/otp", { mobile });
-    return response.data;
-  },
-
-  // Verify OTP
-  verifyOtp: async (mobile, otp) => {
-    const response = await axiosInstance.post("/auth/verify-otp", { mobile, otp });
-    return response.data;
-  },
-
-  // Forgot password
-  forgotPassword: async (email) => {
-    const response = await axiosInstance.post("/auth/forgot-password", { email });
-    return response.data;
-  },
-
-  // Reset password with OTP
-  resetPassword: async (email, otp, newPassword) => {
-    const response = await axiosInstance.post("/auth/reset-password", {
-      email,
-      otp,
-      newPassword,
-    });
-    return response.data;
-  },
-
-  // Logout
   logout: async () => {
-    const response = await axiosInstance.post("/auth/logout");
-    return response.data;
+    try {
+      const response = await axiosInstance.post('/admin/logout');
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Logout error:', error);
+      return { success: false };
+    }
   },
 
-  // Upload profile photo
-  uploadProfilePhoto: async (file) => {
-    const formData = new FormData();
-    formData.append("profilePhoto", file);
-    const response = await axiosInstance.post("/auth/upload/profile-photo", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
+  // ======================== SUB-ADMIN MANAGEMENT ========================
+  getSubAdminProfile: async () => {
+    try {
+      const response = await axiosInstance.get('/api/v1/admins/me');
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Get profile error:', error);
+      throw error;
+    }
   },
+
+  updateSubAdminProfile: async (profileData) => {
+    try {
+      const response = await axiosInstance.put('/api/v1/admins/me', profileData);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Update profile error:', error);
+      throw error;
+    }
+  },
+
+  registerSubAdmin: async (adminData) => {
+    try {
+      const response = await axiosInstance.post('/api/v1/admins/register', adminData);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Register error:', error);
+      throw error;
+    }
+  },
+
+  forgotPassword: async (email) => {
+    try {
+      const response = await axiosInstance.post('/admin/password/forgot', { email });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Forgot password error:', error);
+      throw error;
+    }
+  },
+
+  verifyPasswordOtp: async (email, otp) => {
+    try {
+      const response = await axiosInstance.post('/admin/password/verify-otp', { email, otp });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Verify password OTP error:', error);
+      throw error;
+    }
+  },
+
+  resetPassword: async (data) => {
+    try {
+      const response = await axiosInstance.post('/admin/password/reset', data);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Reset password error:', error);
+      throw error;
+    }
+  },
+
+  // ✅ OTP-based authentication endpoints - Updated with correct backend endpoints
+  verifyEmail: async (email) => {
+    try {
+      const response = await axiosInstance.post('/admin/verify-email', { email });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Verify email error:', error);
+      throw error;
+    }
+  },
+
+  requestLoginOtp: async (email) => {
+    try {
+      const response = await axiosInstance.post('/admin/internal/login/otp/request', { email });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Request login OTP error:', error);
+      throw error;
+    }
+  },
+
+  verifyLoginOtp: async (email, otp) => {
+    try {
+      const response = await axiosInstance.post('/admin/internal/login/otp/verify', { email, otp });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Verify login OTP error:', error);
+      throw error;
+    }
+  },
+
+  resendOtp: async (email) => {
+    try {
+      const response = await axiosInstance.post('/admin/resend-otp', { email });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Resend OTP error:', error);
+      throw error;
+    }
+  }
 };
+
+// ✅ Default export for flexibility
+export default authApi;
