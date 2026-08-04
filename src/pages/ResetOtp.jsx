@@ -6,6 +6,8 @@ import {
   AlertTriangle, Mail, KeyRound
 } from "lucide-react";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+
 function ResetOtp() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -163,7 +165,7 @@ function ResetOtp() {
     setError("");
 
     try {
-      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/auth/password/verify-otp", {
+      const response = await fetch(`${API_BASE_URL}/api/v1/auth/password/verify-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

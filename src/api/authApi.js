@@ -43,7 +43,8 @@ export const authApi = {
 
   logout: async () => {
     try {
-      const response = await axiosInstance.post('/admin/logout');
+      const refreshToken = localStorage.getItem("refresh_token") || null;
+      const response = await axiosInstance.post('/api/v1/auth/logout', refreshToken ? { refreshToken } : {});
       return response.data;
     } catch (error) {
       console.error('[Auth] Logout error:', error);
@@ -84,7 +85,7 @@ export const authApi = {
 
   forgotPassword: async (email) => {
     try {
-      const response = await axiosInstance.post('/admin/password/forgot', { email });
+      const response = await axiosInstance.post('/api/v1/auth/password/forgot', { email });
       return response.data;
     } catch (error) {
       console.error('[Auth] Forgot password error:', error);
@@ -92,9 +93,13 @@ export const authApi = {
     }
   },
 
-  verifyPasswordOtp: async (email, otp) => {
+  verifyPasswordOtp: async ({ email, otpSessionId, otp }) => {
     try {
-      const response = await axiosInstance.post('/admin/password/verify-otp', { email, otp });
+      const response = await axiosInstance.post('/api/v1/auth/password/verify-otp', {
+        email,
+        otpSessionId,
+        otp,
+      });
       return response.data;
     } catch (error) {
       console.error('[Auth] Verify password OTP error:', error);
@@ -104,7 +109,7 @@ export const authApi = {
 
   resetPassword: async (data) => {
     try {
-      const response = await axiosInstance.post('/admin/password/reset', data);
+      const response = await axiosInstance.post('/api/v1/auth/password/reset', data);
       return response.data;
     } catch (error) {
       console.error('[Auth] Reset password error:', error);
@@ -112,10 +117,9 @@ export const authApi = {
     }
   },
 
-  // ✅ OTP-based authentication endpoints - Updated with correct backend endpoints
-  verifyEmail: async (email) => {
+  verifyEmail: async ({ email, otp }) => {
     try {
-      const response = await axiosInstance.post('/admin/verify-email', { email });
+      const response = await axiosInstance.post('/api/v1/auth/verify-email', { email, otp });
       return response.data;
     } catch (error) {
       console.error('[Auth] Verify email error:', error);
@@ -125,7 +129,7 @@ export const authApi = {
 
   requestLoginOtp: async (email) => {
     try {
-      const response = await axiosInstance.post('/admin/internal/login/otp/request', { email });
+      const response = await axiosInstance.post('/api/v1/auth/login/otp/request', { email });
       return response.data;
     } catch (error) {
       console.error('[Auth] Request login OTP error:', error);
@@ -133,9 +137,13 @@ export const authApi = {
     }
   },
 
-  verifyLoginOtp: async (email, otp) => {
+  verifyLoginOtp: async ({ email, otpSessionId, otp }) => {
     try {
-      const response = await axiosInstance.post('/admin/internal/login/otp/verify', { email, otp });
+      const response = await axiosInstance.post('/api/v1/auth/login/otp/verify', {
+        email,
+        otpSessionId,
+        otp,
+      });
       return response.data;
     } catch (error) {
       console.error('[Auth] Verify login OTP error:', error);
@@ -143,15 +151,44 @@ export const authApi = {
     }
   },
 
-  resendOtp: async (email) => {
+  requestForgotPasswordOtp: async (email) => {
     try {
-      const response = await axiosInstance.post('/admin/resend-otp', { email });
+      const response = await axiosInstance.post('/api/v1/auth/password/forgot', { email });
       return response.data;
+    } catch (error) {
+      console.error('[Auth] Request forgot password OTP error:', error);
+      throw error;
+    }
+  },
+
+  resendOtp: async ({ flow, email }) => {
+    try {
+      if (flow === 'password_reset') {
+        return await authApi.requestForgotPasswordOtp(email);
+      }
+
+      if (flow === 'login') {
+        return await authApi.requestLoginOtp(email);
+      }
+
+      // Registration OTP resend endpoint is not part of the provided contract.
+      // Fallback to verify-email flow by reusing login request semantics when needed.
+      return await authApi.requestLoginOtp(email);
     } catch (error) {
       console.error('[Auth] Resend OTP error:', error);
       throw error;
     }
-  }
+  },
+
+  changePassword: async (payload) => {
+    try {
+      const response = await axiosInstance.post('/api/v1/auth/change-password', payload);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Change password error:', error);
+      throw error;
+    }
+  },
 };
 
 // ✅ Default export for flexibility

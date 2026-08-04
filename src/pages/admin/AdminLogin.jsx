@@ -1,27 +1,38 @@
-// src/pages/admin/AdminLogin.jsx
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Mail, Lock, LogIn, AlertCircle, Eye, EyeOff, Key, RefreshCw } from "lucide-react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { AlertCircle, Eye, EyeOff, KeyRound, Lock, LogIn, Mail, RefreshCw } from "lucide-react";
+import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { authApi } from "../../api/authApi";
-import toast from "react-hot-toast";
+import AuthShell from "../../components/ui/AuthShell";
 
 const AdminLogin = () => {
-  const location = useLocation();
-  const [loginMethod, setLoginMethod] = useState("password"); // 'password' or 'otp'
-  const [email, setEmail] = useState(location.state?.email || "");
-  const [password, setPassword] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpResending, setOtpResending] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, isAuthenticated, loading: authLoading, user } = useAuth();
 
-  // Show success message from registration
+  const [loginMethod, setLoginMethod] = useState("password");
+  const [email, setEmail] = useState(location.state?.email || "");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpSessionId, setOtpSessionId] = useState("");
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [otpResending, setOtpResending] = useState(false);
+  const [error, setError] = useState("");
+
+  const canResend = cooldownSeconds === 0;
+
+  const getRedirectByRole = (roleValue) => {
+    const role = String(roleValue || "").toLowerCase();
+    if (role.includes("sub")) return "/admin/sub-dashboard";
+    if (role.includes("admin") || role.includes("super")) return "/admin/dashboard";
+    if (role.includes("instructor")) return "/instructor/dashboard";
+    return "/student/dashboard";
+  };
+
   useEffect(() => {
     if (location.state?.message) {
       toast.success(location.state.message);
@@ -31,87 +42,64 @@ const AdminLogin = () => {
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
-      console.log('[AdminLogin] Already authenticated, checking role...');
-      console.log('[AdminLogin] User:', user);
-      
-      const userRole = user?.role || user?.role1 || user?.userRole || '';
-      console.log('[AdminLogin] User role:', userRole);
-      
-      // ✅ Redirect based on role
-      if (userRole.toLowerCase().includes('super_admin') || userRole.toLowerCase().includes('admin')) {
-        window.location.href = "/admin/dashboard";
-      } else if (userRole.toLowerCase().includes('sub_admin')) {
-        window.location.href = "/admin/sub-dashboard";
-      } else {
-        window.location.href = "/student/dashboard";
-      }
+      navigate(getRedirectByRole(user?.role || user?.role1 || user?.userRole), { replace: true });
     }
-  }, [isAuthenticated, authLoading, user]);
+  }, [authLoading, isAuthenticated, navigate, user]);
+
+  useEffect(() => {
+    if (cooldownSeconds <= 0) return;
+    const timer = setTimeout(() => {
+      setCooldownSeconds((prev) => Math.max(prev - 1, 0));
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [cooldownSeconds]);
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-orange-500" />
+          <p className="text-slate-600">Loading...</p>
         </div>
       </div>
     );
   }
 
+  const validateEmail = () => {
+    if (!email || !email.trim()) {
+      setError("Email is required");
+      toast.error("Email is required");
+      return false;
+    }
+    return true;
+  };
+
   const handlePasswordLogin = async (e) => {
     e.preventDefault();
     setError("");
-    
-    const emailStr = typeof email === 'string' ? email : String(email || '');
-    const passwordStr = typeof password === 'string' ? password : String(password || '');
-    
-    if (!emailStr || emailStr.trim() === "") {
-      setError("Email is required");
-      toast.error("Email is required");
-      return;
-    }
-    if (!passwordStr || passwordStr.trim() === "") {
+
+    if (!validateEmail()) return;
+    if (!password || !password.trim()) {
       setError("Password is required");
       toast.error("Password is required");
       return;
     }
 
     setLoading(true);
-    
     try {
-      console.log('[AdminLogin] Attempting password login for:', emailStr);
-      
-      const result = await login(emailStr.trim(), passwordStr);
-      
-      console.log('[AdminLogin] Login result:', result);
-      
-      if (result.success) {
-        console.log('[AdminLogin] Login successful!');
-        console.log('[AdminLogin] User data:', result.user);
-        
-        const userRole = result.user?.role || result.user?.role1 || '';
-        console.log('[AdminLogin] User role:', userRole);
-        
-        toast.success("Login successful!");
-        
-        // ✅ Redirect based on role
-        if (userRole.toLowerCase().includes('super_admin') || userRole.toLowerCase().includes('admin')) {
-          console.log('[AdminLogin] Redirecting to Admin Dashboard');
-          window.location.href = "/admin/dashboard";
-        } else if (userRole.toLowerCase().includes('sub_admin')) {
-          console.log('[AdminLogin] Redirecting to Sub-Admin Dashboard');
-          window.location.href = "/admin/sub-dashboard";
-        } else {
-          console.log('[AdminLogin] Redirecting to Student Dashboard');
-          window.location.href = "/student/dashboard";
-        }
-      } else {
-        setError(result.error || "Login failed");
-        toast.error(result.error || "Login failed");
+      const result = await login(email.trim(), password);
+      if (!result.success) {
+        const message = result.error || "Login failed";
+        setError(message);
+        toast.error(message);
+        return;
       }
-    } catch (err) {
-      console.error('[AdminLogin] Error:', err);
+
+      toast.success("Login successful!");
+      navigate(getRedirectByRole(result.user?.role || result.user?.role1 || result.user?.userRole), {
+        replace: true,
+      });
+    } catch {
       setError("An unexpected error occurred");
       toast.error("An unexpected error occurred");
     } finally {
@@ -122,29 +110,20 @@ const AdminLogin = () => {
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setError("");
-    
-    const emailStr = typeof email === 'string' ? email : String(email || '');
-    
-    if (!emailStr || emailStr.trim() === "") {
-      setError("Email is required");
-      toast.error("Email is required");
-      return;
-    }
+
+    if (!validateEmail()) return;
 
     setLoading(true);
-    
     try {
-      console.log('[AdminLogin] Requesting OTP for:', emailStr);
-      
-      await authApi.requestLoginOtp(emailStr.trim());
-      
+      const res = await authApi.requestLoginOtp(email.trim());
+      setOtpSessionId(res.otpSessionId || "");
+      setCooldownSeconds(Number(res.cooldownSeconds || 30));
       setOtpSent(true);
-      toast.success("OTP sent to your email!");
-      console.log('[AdminLogin] OTP sent successfully');
+      toast.success(res.message || "OTP sent to your email");
     } catch (err) {
-      console.error('[AdminLogin] Error sending OTP:', err);
-      setError(err.response?.data?.message || "Failed to send OTP");
-      toast.error(err.response?.data?.message || "Failed to send OTP");
+      const message = err.response?.data?.message || "Failed to send OTP";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -153,304 +132,251 @@ const AdminLogin = () => {
   const handleOtpLogin = async (e) => {
     e.preventDefault();
     setError("");
-    
-    const emailStr = typeof email === 'string' ? email : String(email || '');
-    const otpStr = typeof otp === 'string' ? otp : String(otp || '');
-    
-    if (!emailStr || emailStr.trim() === "") {
-      setError("Email is required");
-      toast.error("Email is required");
-      return;
-    }
-    if (!otpStr || otpStr.trim() === "") {
+
+    if (!validateEmail()) return;
+    if (!otp || !otp.trim()) {
       setError("OTP is required");
       toast.error("OTP is required");
       return;
     }
 
     setLoading(true);
-    
     try {
-      console.log('[AdminLogin] Verifying OTP for:', emailStr);
-      
-      const response = await authApi.verifyLoginOtp(emailStr.trim(), otpStr.trim());
-      console.log('[AdminLogin] OTP verification response:', response);
-      
-      // Extract token and user data from OTP response
-      const tokenData = response.authentication?.accessToken || 
-                      response.authentication?.token ||
-                      response.accessToken || 
-                      response.token || 
-                      response.access_token;
-      
+      if (!otpSessionId) {
+        throw new Error("OTP session expired. Please request OTP again.");
+      }
+
+      const response = await authApi.verifyLoginOtp({
+        email: email.trim(),
+        otpSessionId,
+        otp: otp.trim(),
+      });
+      const tokenData =
+        response.authentication?.accessToken ||
+        response.authentication?.token ||
+        response.accessToken ||
+        response.token ||
+        response.access_token;
+
+      if (!tokenData) {
+        throw new Error("No token received from OTP verification");
+      }
+
       const userInfo = response.user || response;
       const userData = {
         id: userInfo.id || userInfo.userId,
-        firstName: userInfo.firstName || userInfo.name || '',
-        lastName: userInfo.lastName || '',
-        name: userInfo.firstName ? `${userInfo.firstName} ${userInfo.lastName || ''}`.trim() : userInfo.name || '',
-        email: userInfo.email || emailStr,
-        mobileNumber: userInfo.mobileNumber || userInfo.mobile || '',
-        role: userInfo.role || userInfo.role1 || userInfo.userRole || 'admin',
+        firstName: userInfo.firstName || userInfo.name || "",
+        lastName: userInfo.lastName || "",
+        name: userInfo.firstName
+          ? `${userInfo.firstName} ${userInfo.lastName || ""}`.trim()
+          : userInfo.name || "",
+        email: userInfo.email || email,
+        mobileNumber: userInfo.mobileNumber || userInfo.mobile || "",
+        role: userInfo.role || userInfo.role1 || userInfo.userRole || "admin",
         permissions: userInfo.permissions || [],
-        assignedService: userInfo.assignedService || '',
+        assignedService: userInfo.assignedService || "",
       };
-      
-      // Store in localStorage
-      localStorage.setItem('lms_token', tokenData);
-      localStorage.setItem('access_token', tokenData);
-      sessionStorage.setItem('lms_token', tokenData);
-      localStorage.setItem('lms_user', JSON.stringify(userData || {}));
-      
-      const userRole = userData.role;
-      console.log('[AdminLogin] User role:', userRole);
-      
-      toast.success("Login successful!");
-      
-      // ✅ Redirect based on role
-      if (userRole.toLowerCase().includes('super_admin') || userRole.toLowerCase().includes('admin')) {
-        console.log('[AdminLogin] Redirecting to Admin Dashboard');
-        window.location.href = "/admin/dashboard";
-      } else if (userRole.toLowerCase().includes('sub_admin')) {
-        console.log('[AdminLogin] Redirecting to Sub-Admin Dashboard');
-        window.location.href = "/admin/sub-dashboard";
-      } else {
-        console.log('[AdminLogin] Redirecting to Student Dashboard');
-        window.location.href = "/student/dashboard";
+
+      localStorage.setItem("lms_token", tokenData);
+      localStorage.setItem("access_token", tokenData);
+      const refreshToken = response.authentication?.refreshToken || response.refreshToken || null;
+      if (refreshToken) {
+        localStorage.setItem("refresh_token", refreshToken);
       }
+      sessionStorage.setItem("lms_token", tokenData);
+      localStorage.setItem("lms_user", JSON.stringify(userData || {}));
+
+      toast.success("Login successful!");
+      window.location.href = getRedirectByRole(userData.role);
     } catch (err) {
-      console.error('[AdminLogin] Error verifying OTP:', err);
-      setError(err.response?.data?.message || "Invalid OTP");
-      toast.error(err.response?.data?.message || "Invalid OTP");
+      const message = err.response?.data?.message || err.message || "Invalid OTP";
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleResendOtp = async () => {
-    const emailStr = typeof email === 'string' ? email : String(email || '');
-    
-    if (!emailStr || emailStr.trim() === "") {
-      setError("Email is required");
-      toast.error("Email is required");
-      return;
-    }
+    setError("");
+    if (!validateEmail()) return;
+    if (!canResend) return;
 
     setOtpResending(true);
-    
     try {
-      await authApi.resendOtp(emailStr.trim());
-      toast.success("OTP resent successfully!");
+      const res = await authApi.resendOtp({ flow: "login", email: email.trim() });
+      setOtpSessionId(res.otpSessionId || "");
+      setCooldownSeconds(Number(res.cooldownSeconds || 30));
+      toast.success(res.message || "OTP resent successfully");
     } catch (err) {
-      console.error('[AdminLogin] Error resending OTP:', err);
-      toast.error("Failed to resend OTP");
+      toast.error(err.response?.data?.message || "Failed to resend OTP");
     } finally {
       setOtpResending(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }} 
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md"
-      >
-        <div className="text-center mb-8">
-          <div className="inline-flex p-3 bg-orange-100 rounded-full">
-            <LogIn size={32} className="text-orange-600" />
-          </div>
-          <h1 className="text-2xl font-bold mt-2 text-gray-900">Admin Login</h1>
-          <p className="text-sm text-gray-500 mt-1">Sign in to access your dashboard</p>
+    <AuthShell
+      title="Admin Control Access"
+      subtitle="Secure gateway for operations, analytics, and platform orchestration with frictionless authentication."
+      eyebrow="LearnMaster Operations"
+      highlights={[
+        { value: "SOC", label: "Secure" },
+        { value: "OTP", label: "Enabled" },
+        { value: "24/7", label: "Control" },
+      ]}
+    >
+      <div className="mb-8 text-center">
+        <div className="inline-flex rounded-2xl bg-gradient-to-r from-orange-500 to-cyan-600 p-3 text-white shadow-lg">
+          <LogIn size={30} />
         </div>
+        <h1 className="mt-3 text-2xl font-bold text-slate-900">Admin Sign In</h1>
+        <p className="mt-1 text-sm text-slate-500">Choose password or one-time code login</p>
+      </div>
 
-        {/* Login Method Tabs */}
-        <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
-          <button
-            type="button"
-            onClick={() => {
-              setLoginMethod('password');
-              setOtpSent(false);
-              setError("");
-            }}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition ${
-              loginMethod === 'password'
-                ? 'bg-white text-orange-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Password
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setLoginMethod('otp');
-              setOtpSent(false);
-              setError("");
-            }}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition ${
-              loginMethod === 'otp'
-                ? 'bg-white text-orange-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            OTP
-          </button>
+      <div className="mb-6 grid grid-cols-2 rounded-xl border border-slate-200 bg-slate-100 p-1">
+        <button
+          type="button"
+          onClick={() => {
+            setLoginMethod("password");
+            setOtpSent(false);
+            setError("");
+          }}
+          className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
+            loginMethod === "password" ? "bg-white text-orange-600 shadow" : "text-slate-600"
+          }`}
+        >
+          Password
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setLoginMethod("otp");
+            setOtpSent(false);
+            setError("");
+          }}
+          className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
+            loginMethod === "otp" ? "bg-white text-orange-600 shadow" : "text-slate-600"
+          }`}
+        >
+          OTP
+        </button>
+      </div>
+
+      {error && (
+        <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-red-700">
+          <AlertCircle size={18} className="mt-0.5 flex-shrink-0" />
+          <span className="text-sm">{error}</span>
         </div>
+      )}
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2 text-red-700">
-            <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
-            <span className="text-sm">{error}</span>
+      {loginMethod === "password" && (
+        <form onSubmit={handlePasswordLogin} className="space-y-4">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">Email Address</label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input
+                type="email"
+                className="lms-input pl-10"
+                placeholder="admin@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+              />
+            </div>
           </div>
-        )}
-
-        {loginMethod === 'password' ? (
-          <form onSubmit={handlePasswordLogin} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                  type="email"
-                  placeholder="admin@example.com"
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={loading}
-                />
-              </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input
+                type={showPassword ? "text" : "password"}
+                className="lms-input pl-10 pr-10"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
+          </div>
+          <button type="submit" disabled={loading} className="lms-btn-primary">
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
+      )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  className="w-full pl-10 pr-12 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={loading}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
+      {loginMethod === "otp" && (
+        <div className="space-y-4">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">Email Address</label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input
+                type="email"
+                className="lms-input pl-10"
+                placeholder="admin@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading || otpSent}
+              />
             </div>
+          </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-orange-600 text-white py-2.5 rounded-lg hover:bg-orange-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                  Logging in...
-                </span>
-              ) : (
-                "Login with Password"
-              )}
+          {!otpSent ? (
+            <button onClick={handleSendOtp} disabled={loading} className="lms-btn-primary" type="button">
+              {loading ? "Sending OTP..." : "Send OTP"}
             </button>
-          </form>
-        ) : (
-          <form onSubmit={otpSent ? handleOtpLogin : handleSendOtp} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                  type="email"
-                  placeholder="admin@example.com"
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={loading || otpSent}
-                />
-              </div>
-            </div>
-
-            {otpSent && (
+          ) : (
+            <form onSubmit={handleOtpLogin} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  OTP
-                </label>
+                <label className="mb-1 block text-sm font-medium text-slate-700">One-Time Password</label>
                 <div className="relative">
-                  <Key className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                   <input
                     type="text"
-                    placeholder="Enter OTP"
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition"
+                    className="lms-input pl-10"
+                    placeholder="Enter 6-digit OTP"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
-                    required
-                    disabled={loading}
                     maxLength={6}
+                    disabled={loading}
                   />
                 </div>
-                <div className="mt-2 flex items-center justify-between">
-                  <span className="text-xs text-gray-500">OTP sent to your email</span>
-                  <button
-                    type="button"
-                    onClick={handleResendOtp}
-                    disabled={otpResending}
-                    className="text-xs text-orange-600 hover:text-orange-700 font-medium flex items-center gap-1 disabled:opacity-50"
-                  >
-                    {otpResending ? (
-                      <>
-                        <div className="animate-spin rounded-full h-3 w-3 border-2 border-orange-600 border-t-transparent"></div>
-                        Resending...
-                      </>
-                    ) : (
-                      <>
-                        <RefreshCw size={12} />
-                        Resend OTP
-                      </>
-                    )}
-                  </button>
-                </div>
               </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-orange-600 text-white py-2.5 rounded-lg hover:bg-orange-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                  {otpSent ? 'Verifying...' : 'Sending...'}
-                </span>
-              ) : (
-                otpSent ? 'Verify OTP' : 'Send OTP'
-              )}
-            </button>
-          </form>
-        )}
-
-        <div className="mt-6 text-center">
-          <Link to="/forgot-password" className="text-sm text-orange-600 hover:text-orange-700 transition">
-            Forgot Password?
-          </Link>
+              <button type="submit" disabled={loading} className="lms-btn-primary">
+                {loading ? "Verifying..." : "Verify and Sign In"}
+              </button>
+              <button
+                type="button"
+                onClick={handleResendOtp}
+                disabled={otpResending || !canResend}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-600"
+              >
+                <RefreshCw size={16} className={otpResending ? "animate-spin" : ""} />
+                {otpResending ? "Resending..." : canResend ? "Resend OTP" : `Resend in ${cooldownSeconds}s`}
+              </button>
+            </form>
+          )}
         </div>
-      </motion.div>
-    </div>
+      )}
+
+      <div className="mt-6 space-y-2 text-center">
+        <Link to="/forgot-password" className="lms-link text-sm">
+          Forgot Password?
+        </Link>
+        <p className="text-sm text-slate-500">
+          Need user login? <Link to="/login" className="lms-link">Go to learner sign in</Link>
+        </p>
+      </div>
+    </AuthShell>
   );
 };
 

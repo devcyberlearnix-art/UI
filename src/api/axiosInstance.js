@@ -1,7 +1,7 @@
 // src/api/axiosInstance.js
 import axios from "axios";
 
-const BASE_URL = "https://matted-ascent-specimen.ngrok-free.dev";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -17,15 +17,15 @@ axiosInstance.interceptors.request.use(
   (config) => {
     // Skip auth header for public endpoints (forgot password, verify email, etc.)
     const publicEndpoints = [
-      '/admin/password/forgot',
-      '/admin/password/verify-otp',
-      '/admin/password/reset',
-      '/admin/verify-email',
-      '/admin/internal/login',
-      '/admin/internal/login/otp/request',
-      '/admin/internal/login/otp/verify',
-      '/admin/resend-otp',
-      '/admin/register'
+      '/api/v1/auth/register',
+      '/api/v1/auth/verify-email',
+      '/api/v1/auth/login',
+      '/api/v1/auth/login/otp/request',
+      '/api/v1/auth/login/otp/verify',
+      '/api/v1/auth/password/forgot',
+      '/api/v1/auth/password/verify-otp',
+      '/api/v1/auth/password/reset',
+      '/api/v1/auth/refresh'
     ];
     
     const isPublicEndpoint = publicEndpoints.some(endpoint => config.url.includes(endpoint));
@@ -61,9 +61,12 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       const { status, config } = error.response;
       
-      if (status === 401 && !config?.url?.includes('/login')) {
+      const isPublicAuthCall = config?.url?.includes('/api/v1/auth/');
+
+      if (status === 401 && !isPublicAuthCall && !config?.url?.includes('/login')) {
         localStorage.removeItem('lms_token');
         localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         localStorage.removeItem('lms_user');
         sessionStorage.removeItem('lms_token');
         

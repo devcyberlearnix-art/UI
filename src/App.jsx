@@ -1,8 +1,10 @@
 // src/App.jsx
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 import { OrderProvider } from "./context/OrderContext";
+import ScrollToTop from "./components/ScrollToTop";
 
 // Auth Pages
 import Login from "./pages/Login";
@@ -56,9 +58,20 @@ import InstructorApplications from "./pages/admin/InstructorApplications";
 import SubDashboard from "./pages/admin/SubDashboard";
 
 function App() {
+  const location = useLocation();
+
   return (
     <OrderProvider>
-      <Routes>
+      <ScrollToTop />
+      <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -6 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+      >
+      <Routes location={location}>
         {/* ✅ Landing page - public */}
         <Route path="/" element={<Landing />} />
         
@@ -140,6 +153,8 @@ function App() {
         {/* ✅ Fallback - redirect to landing */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </motion.div>
+      </AnimatePresence>
     </OrderProvider>
   );
 }

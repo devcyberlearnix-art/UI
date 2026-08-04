@@ -72,6 +72,7 @@ export const AuthProvider = ({ children }) => {
       console.log('[AuthProvider] Login response:', response);
       
       let tokenData = null;
+      let refreshTokenData = null;
       let userData = null;
 
       // ✅ Handle the response structure from /admin/internal/login
@@ -83,6 +84,8 @@ export const AuthProvider = ({ children }) => {
                     response.token || 
                     response.access_token;
 
+        refreshTokenData = response.authentication?.refreshToken || response.refreshToken || response.refresh_token || null;
+
         // ✅ Extract user data from response
         const userInfo = response.user || response;
         userData = {
@@ -92,7 +95,7 @@ export const AuthProvider = ({ children }) => {
           name: userInfo.firstName ? `${userInfo.firstName} ${userInfo.lastName || ''}`.trim() : userInfo.name || '',
           email: userInfo.email || emailStr,
           mobileNumber: userInfo.mobileNumber || userInfo.mobile || '',
-          role: userInfo.role || userInfo.role1 || userInfo.userRole || 'admin',
+          role: userInfo.role || userInfo.role1 || userInfo.userRole || userInfo.effectiveRole || 'student',
           permissions: userInfo.permissions || [],
           assignedService: userInfo.assignedService || '',
         };
@@ -109,6 +112,9 @@ export const AuthProvider = ({ children }) => {
       // ✅ Store in multiple locations
       localStorage.setItem('lms_token', tokenData);
       localStorage.setItem('access_token', tokenData);
+      if (refreshTokenData) {
+        localStorage.setItem('refresh_token', refreshTokenData);
+      }
       sessionStorage.setItem('lms_token', tokenData);
       localStorage.setItem('lms_user', JSON.stringify(userData || {}));
       
@@ -163,6 +169,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       localStorage.removeItem('lms_token');
       localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
       localStorage.removeItem('lms_user');
       sessionStorage.removeItem('lms_token');
       sessionStorage.removeItem('lms_user');

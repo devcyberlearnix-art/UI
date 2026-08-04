@@ -1,128 +1,44 @@
 // src/components/dashboard/Sidebar.jsx
-import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import React, { useMemo, useState } from 'react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard,
-  Users,
-  BookOpen,
-  UserCog,
-  DollarSign,
-  Star,
-  BarChart3,
-  Award,
-  Bell,
-  Shield,
-  HelpCircle,
-  Globe,
-  Settings,
-  Sparkles,
-  Trophy,
-  CreditCard,
   LogOut,
   ChevronLeft,
   ChevronRight,
-  User,
-  ShoppingCart,
-  FileText,
-  UserCheck,
-  MessageSquare,
   Crown
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { getDashboardRole, sidebarByRole } from '../../config/navigation';
 import toast from 'react-hot-toast';
-
-const menuItems = [
-  { 
-    section: "Main",
-    items: [
-      { path: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    ]
-  },
-  {
-    section: "Management",
-    items: [
-      { path: '/admin/users', icon: Users, label: 'Users' },
-      { path: '/admin/courses', icon: BookOpen, label: 'Courses' },
-      { path: '/admin/instructors', icon: UserCog, label: 'Instructors' },
-      { path: '/admin/instructor-applications', icon: UserCheck, label: 'Applications' },
-      { path: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
-      { path: '/admin/payments', icon: CreditCard, label: 'Payments' },
-      { path: '/admin/certificates', icon: Award, label: 'Certificates' },
-    ]
-  },
-  {
-    section: "Analytics",
-    items: [
-      { path: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
-      { path: '/admin/reports', icon: FileText, label: 'Reports' },
-    ]
-  },
-  {
-    section: "Engagement",
-    items: [
-      { path: '/admin/reviews', icon: Star, label: 'Reviews' },
-      { path: '/admin/notifications', icon: Bell, label: 'Notifications' },
-    ]
-  },
-  {
-    section: "Administration",
-    items: [
-      { path: '/admin/admins', icon: Shield, label: 'Admin Management' },
-      { path: '/admin/roles', icon: Shield, label: 'Roles & Permissions' },
-      { path: '/admin/moderation', icon: MessageSquare, label: 'Moderation' },
-      { path: '/admin/support', icon: HelpCircle, label: 'Support' },
-      { path: '/admin/cms', icon: Globe, label: 'CMS' },
-      { path: '/admin/settings', icon: Settings, label: 'Settings' },
-    ]
-  },
-  {
-    section: "Advanced",
-    items: [
-      { path: '/admin/ai-features', icon: Sparkles, label: 'AI Features' },
-      { path: '/admin/gamification', icon: Trophy, label: 'Gamification' },
-    ]
-  },
-  {
-    section: "Account",
-    items: [
-      { path: '/admin/profile', icon: User, label: 'Profile' },
-    ]
-  }
-];
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const location = window.location;
   const currentPath = location.pathname;
 
-  // ✅ Check user role - Updated to match TopNav logic with precise detection
   const userRole = user?.role || user?.role1 || user?.userRole || '';
-  const roleLower = userRole.toLowerCase();
-  
-  // Check for Super Admin first (must contain 'super')
-  const isSuperAdmin = roleLower.includes('super_admin') || roleLower.includes('superadmin');
-  // Check for Sub Admin (must contain 'sub' but not 'super')
-  const isSubAdmin = (roleLower.includes('sub_admin') || roleLower.includes('subadmin')) && !isSuperAdmin;
-  // Regular admin (only 'admin' without 'super' or 'sub')
-  const isRegularAdmin = roleLower.includes('admin') && !isSuperAdmin && !isSubAdmin;
-  
-  // Display role name
-  const displayRole = isSuperAdmin ? 'Super Admin' : isSubAdmin ? 'Sub Admin' : isRegularAdmin ? 'Admin' : 'User';
+  const roleKey = getDashboardRole(currentPath, userRole);
+  const isSuperAdmin = roleKey === 'super_admin';
 
-  console.log('[Sidebar] User role:', userRole);
-  console.log('[Sidebar] Is Super Admin:', isSuperAdmin);
-  console.log('[Sidebar] Is Sub Admin:', isSubAdmin);
-  console.log('[Sidebar] Is Regular Admin:', isRegularAdmin);
-  console.log('[Sidebar] Display Role:', displayRole);
+  const displayRole =
+    roleKey === 'super_admin'
+      ? 'Super Admin'
+      : roleKey === 'sub_admin'
+      ? 'Sub Admin'
+      : roleKey === 'admin'
+      ? 'Admin'
+      : roleKey === 'instructor'
+      ? 'Instructor'
+      : 'Student';
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
       await logout();
-      toast.success('Logged out successfully');
-      navigate('/admin/login');
+      const loginPath = currentPath.startsWith('/admin') ? '/admin/login' : '/login';
+      navigate(loginPath);
     } catch (error) {
       toast.error('Failed to logout');
       console.error('Logout error:', error);
@@ -137,28 +53,36 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     }
   };
 
-  // ✅ Filter menu items based on user role
-  const filteredMenuItems = menuItems.map(section => {
-    // For Administration section, filter items based on role
-    if (section.section === "Administration") {
-      const filteredItems = section.items.filter(item => {
-        // Super Admin can see all
-        if (isSuperAdmin) return true;
-        // Sub Admin cannot see Admin Management, Roles, Settings, Moderation
-        if (isSubAdmin) {
-          if (item.path === '/admin/admins') return false;
-          if (item.path === '/admin/roles') return false;
-          if (item.path === '/admin/settings') return false;
-          if (item.path === '/admin/moderation') return false;
-          return true;
+  const filteredMenuItems = useMemo(() => {
+    const baseRole = roleKey === 'super_admin' || roleKey === 'sub_admin' ? 'admin' : roleKey;
+    const menuItems = sidebarByRole[baseRole] || sidebarByRole.student;
+
+    return menuItems
+      .map((section) => {
+        if (baseRole !== 'admin') return section;
+
+        if (section.section === 'Management' && roleKey === 'sub_admin') {
+          return {
+            ...section,
+            items: section.items.filter((item) => item.path !== '/admin/admins'),
+          };
         }
-        // Default: show all
-        return true;
-      });
-      return { ...section, items: filteredItems };
-    }
-    return section;
-  }).filter(section => section.items.length > 0);
+
+        if (section.section === 'System' && roleKey === 'sub_admin') {
+          return {
+            ...section,
+            items: section.items.filter(
+              (item) => item.path !== '/admin/roles' && item.path !== '/admin/settings'
+            ),
+          };
+        }
+
+        return section;
+      })
+      .filter((section) => section.items.length > 0);
+  }, [roleKey]);
+
+  const panelTitle = roleKey === 'instructor' ? 'Instructor' : roleKey === 'student' ? 'Student' : 'Admin';
 
   return (
     <aside 
@@ -175,7 +99,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           {sidebarOpen && (
             <div>
               <h1 className="font-bold text-lg tracking-tight text-gray-800">
-                LMS Admin
+                LMS {panelTitle}
               </h1>
               <p className="text-[10px] text-orange-500 tracking-wider uppercase font-medium">
                 {displayRole} Panel
@@ -207,7 +131,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             
             <div className="space-y-1">
               {section.items.map((item) => {
-                const isActive = currentPath.startsWith(item.path);
+                const isActive =
+                  currentPath === item.path ||
+                  (item.path !== '/admin/orders' && currentPath.startsWith(`${item.path}/`)) ||
+                  currentPath.startsWith(item.path);
                 const Icon = item.icon;
                 
                 return (
@@ -256,7 +183,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   {user?.firstName || user?.name || 'Admin'}
                 </p>
                 <p className="text-[10px] text-orange-500 font-medium truncate">
-                  {isSuperAdmin ? '👑 ' : ''}{displayRole}
+                  {isSuperAdmin ? 'Crown ' : ''}{displayRole}
                 </p>
               </div>
             </div>

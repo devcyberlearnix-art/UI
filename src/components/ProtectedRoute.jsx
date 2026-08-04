@@ -4,17 +4,11 @@ import { useAuth } from '../context/AuthContext';
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const { user, isAuthenticated, loading } = useAuth();
-  
-  console.log('[ProtectedRoute] Loading:', loading);
-  console.log('[ProtectedRoute] IsAuthenticated:', isAuthenticated);
-  console.log('[ProtectedRoute] User:', user);
-  
+
   const hasToken = !!localStorage.getItem('lms_token') || 
                    !!localStorage.getItem('access_token') ||
                    !!sessionStorage.getItem('lms_token');
-  
-  console.log('[ProtectedRoute] Has token in storage:', hasToken);
-  
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -27,26 +21,24 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   }
   
   const isAuth = isAuthenticated || hasToken;
+  const adminOnly = allowedRoles.some((role) => String(role).toLowerCase().includes('admin'));
+  const loginPath = adminOnly ? '/admin/login' : '/login';
   
   if (!isAuth) {
-    console.log('[ProtectedRoute] Not authenticated, redirecting to login');
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to={loginPath} replace />;
   }
   
-  // ✅ Check if user has required role
   if (allowedRoles.length > 0) {
-    const userRole = user?.role || user?.role1 || user?.userRole;
+    const userRole = String(user?.role || user?.role1 || user?.userRole || '').toLowerCase();
     const hasAllowedRole = allowedRoles.some(role => 
-      userRole?.toLowerCase().includes(role.toLowerCase())
+      userRole.includes(String(role).toLowerCase())
     );
     
     if (!hasAllowedRole) {
-      console.log('[ProtectedRoute] Role not allowed, redirecting to landing');
       return <Navigate to="/" replace />;
     }
   }
-  
-  console.log('[ProtectedRoute] Authenticated, rendering children');
+
   return children;
 };
 
