@@ -22,7 +22,8 @@ export const adminApi = {
   },
 
   registerSubAdmin: async (adminData) => {
-    const response = await axiosInstance.post('/api/v1/admins/register', adminData);
+    // Backend expects singular 'admin' in the register path
+    const response = await axiosInstance.post('/api/v1/admin/register', adminData);
     return response.data;
   },
 

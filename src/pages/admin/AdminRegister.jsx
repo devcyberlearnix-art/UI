@@ -8,12 +8,12 @@ import {
   AlertCircle, ArrowLeft, Crown, Server
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import axiosInstance from "../../api/axiosInstance";
+import { adminApi } from "../../api/adminApi";
 import toast from "react-hot-toast";
 
 const AdminRegister = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   
   const isSuperAdmin = user?.role === "super_admin" || user?.role === "admin" || user?.role === "ADMIN";
   
@@ -173,11 +173,34 @@ const AdminRegister = () => {
       return;
     }
 
-    // Password validation
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!form.password || !passwordRegex.test(form.password)) {
-      setError("Password must be at least 8 characters with uppercase, lowercase, number, and special character");
-      toast.error("Password must be at least 8 characters with uppercase, lowercase, number, and special character");
+    // Password validation with detailed feedback (do NOT log the raw password)
+    const pwd = form.password || "";
+    const hasLower = /[a-z]/.test(pwd);
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasDigit = /\d/.test(pwd);
+    const hasSpecial = /[^A-Za-z0-9]/.test(pwd);
+    const isLong = pwd.length >= 8;
+
+    if (!pwd || !isLong || !hasLower || !hasUpper || !hasDigit || !hasSpecial) {
+      const missing = [];
+      if (!isLong) missing.push('at least 8 characters');
+      if (!hasUpper) missing.push('an uppercase letter');
+      if (!hasLower) missing.push('a lowercase letter');
+      if (!hasDigit) missing.push('a number');
+      if (!hasSpecial) missing.push('a special character');
+
+      const message = `Password must include ${missing.join(', ')}.`;
+      setError(message);
+      toast.error(message);
+
+      // Useful non-sensitive debug info for developer console
+      console.log('[AdminRegister] Password validation failed', {
+        length: pwd.length,
+        hasUpper,
+        hasLower,
+        hasDigit,
+        hasSpecial,
+      });
       return;
     }
 
@@ -219,24 +242,29 @@ const AdminRegister = () => {
 
       console.log("[AdminRegister] Payload being sent:", JSON.stringify(payload, null, 2));
 
-      const response = await axiosInstance.post("/admin/register", payload);
+      const response = await adminApi.registerSubAdmin(payload);
       
-      console.log("[AdminRegister] Response status:", response.status);
-      console.log("[AdminRegister] Response data:", response.data);
+      console.log("[AdminRegister] Response:", response);
 
       const registeredEmail = form.email;
       const registeredRole = form.role;
 
       setSuccess(`${form.role === "super_admin" ? "Super Admin" : "Sub-Admin"} registered successfully!`);
       toast.success(`${form.role === "super_admin" ? "Super Admin" : "Sub-Admin"} registered!`);
-      
-      // ✅ Logout current user (Super Admin) before redirecting
-      localStorage.removeItem('lms_token');
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('lms_user');
-      sessionStorage.removeItem('lms_token');
-      sessionStorage.removeItem('lms_user');
-      
+
+      // ✅ Properly logout current user (clears in-memory auth state and storage)
+      try {
+        await logout();
+      } catch (e) {
+        // If logout helper fails for any reason, fallback to clearing storage
+        console.warn('[AdminRegister] logout() failed, clearing storage manually', e);
+        localStorage.removeItem('lms_token');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('lms_user');
+        sessionStorage.removeItem('lms_token');
+        sessionStorage.removeItem('lms_user');
+      }
+
       // ✅ Redirect to registration success page
       setTimeout(() => {
         navigate("/admin/registration-success", { 
