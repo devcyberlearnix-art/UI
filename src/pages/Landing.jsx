@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import ProfileDropdown from "../utils/profiledropdown";
 import { useAuth } from "../context/AuthContext"; // ✅ Import useAuth
+import logoImage from "../assets/learnmaster-logo.png";
+import { landingApi } from "../api/landingApi";
 
 function Landing() {
   const navigate = useNavigate();
@@ -30,6 +32,14 @@ function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [landingLoading, setLandingLoading] = useState(true);
+  const [landingError, setLandingError] = useState("");
+  const [slides, setSlides] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [categoryData, setCategoryData] = useState([]);
+  const [features, setFeatures] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
+  const [statsTarget, setStatsTarget] = useState({ students: 0, courses: 0, instructors: 0, satisfaction: 0 });
   
   // Dashboard dropdown state
   const [dashboardDropdownOpen, setDashboardDropdownOpen] = useState(false);
@@ -83,77 +93,80 @@ function Landing() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ---------- Banner slides ----------
-  const slides = [
-    { id: 1, title: "30% off for a limited time", description: "Start learning high-demand skills from top instructors.", cta: "Start Learning", bgImage: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1400&auto=format", link: "/register" },
-    { id: 2, title: "Become an AI Expert", description: "Master machine learning and earn a certificate.", cta: "Explore AI Courses", bgImage: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1400&auto=format", link: "/courses" },
-    { id: 3, title: "Learn from Industry Leaders", description: "Join 50,000+ students learning real-world skills.", cta: "Browse Courses", bgImage: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1400&auto=format", link: "/courses" },
-    { id: 4, title: "Learn Python in 4.5 Hours", description: "Become a certified Python programmer with hands-on projects & free PyCharm Pro.", cta: "View Python Course", bgImage: "https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?w=1400&auto=format", link: "/courses/python-pcep" },
-    { id: 5, title: "Master UI/UX Design", description: "Learn Figma, prototyping, and user research from industry experts.", cta: "Explore Design Courses", bgImage: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1400&auto=format", link: "/courses/design" },
-    { id: 6, title: "Cloud Computing with AWS", description: "Get AWS certified and boost your cloud career.", cta: "Start Learning Cloud", bgImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1400&auto=format", link: "/courses/cloud" },
-  ];
+  const iconCycle = [Zap, Users, Award, Globe, TrendingUp, Target, BookOpen, Shield, Briefcase, Code];
 
-  // ---------- Courses (with subcategories) ----------
-  const courses = [
-    {
-      id: 1,
-      title: "Full Stack Web Development",
-      category: "Development",
-      subcategory: "Web Development",
-      students: 12450,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500",
-      duration: "24 weeks",
-      level: "Beginner to Advanced",
-      tag: "Most Popular",
-      price: 49,
-      description: "Learn to build full-stack web applications using React, Node.js, MongoDB, and Express. Master frontend and backend development with hands-on projects.",
-      instructor: "Dr. Sarah Johnson",
-    },
-    // ... rest of your courses array (keep the same)
-    {
-      id: 2,
-      title: "Data Science & Machine Learning",
-      category: "Data Science",
-      subcategory: "Machine Learning",
-      students: 8932,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500",
-      duration: "32 weeks",
-      level: "Intermediate",
-      tag: "Trending",
-      price: 79,
-      description: "Master data analysis, visualization, and machine learning algorithms using Python, Pandas, Scikit-learn, and TensorFlow.",
-      instructor: "Prof. Michael Chen",
-    },
-    // ... add all your other courses here
-  ];
+  useEffect(() => {
+    const loadLandingData = async () => {
+      setLandingLoading(true);
+      setLandingError("");
 
-  // Categories with subcategories mapping
-  const categoryData = [
-    { name: "Development", icon: Code, subcategories: ["Web Development", "Mobile Development", "Programming Languages", "Game Development"] },
-    { name: "Data Science", icon: TrendingUp, subcategories: ["Machine Learning", "Data Analysis", "Deep Learning", "NLP"] },
-    { name: "Design", icon: Award, subcategories: ["UI/UX", "Graphic Design", "Web Design", "3D Animation"] },
-    { name: "IT & Software", icon: BookOpen, subcategories: ["Cloud Computing", "Cyber Security", "DevOps", "Networking", "Blockchain"] },
-    { name: "Marketing", icon: Briefcase, subcategories: ["Digital Marketing", "SEO", "Social Media", "Content Marketing"] },
-    { name: "Business", icon: Briefcase, subcategories: ["Entrepreneurship", "Management", "Sales", "Finance"] },
-  ];
+      try {
+        const payload = await landingApi.getLandingPageData();
 
-  // Features and testimonials
-  const features = [
-    { icon: Zap, title: "Learn by Doing", desc: "Hands-on projects & real-world assignments" },
-    { icon: Users, title: "Expert Mentors", desc: "Industry professionals as guides" },
-    { icon: Award, title: "Certified Programs", desc: "Industry-recognized certificates" },
-    { icon: Globe, title: "Global Community", desc: "Connect with learners worldwide" },
-    { icon: TrendingUp, title: "Career Support", desc: "Job placement assistance" },
-    { icon: Target, title: "Personalized Learning", desc: "Adaptive learning paths" }
-  ];
+        const backendSlides = (payload.slides || []).map((slide, index) => ({
+          id: slide.id || index + 1,
+          title: slide.title || "Learn Smarter",
+          description: slide.description || "Explore professional learning journeys.",
+          cta: slide.cta || "Explore Courses",
+          bgImage: slide.bgImage || slide.image || "",
+          link: slide.link || "/courses",
+        }));
 
-  const testimonials = [
-    { name: "Sarah Johnson", role: "Software Engineer at Google", content: "This platform completely transformed my career. The hands-on projects and expert mentors made all the difference.", rating: 5, image: "https://randomuser.me/api/portraits/women/1.jpg" },
-    { name: "Michael Chen", role: "Data Analyst at Amazon", content: "Best learning platform I've ever used. The courses are up-to-date and the community support is amazing.", rating: 5, image: "https://randomuser.me/api/portraits/men/2.jpg" },
-    { name: "Priya Sharma", role: "Product Designer at Microsoft", content: "The UI/UX course was phenomenal. I got a promotion within 3 months of completing it!", rating: 5, image: "https://randomuser.me/api/portraits/women/3.jpg" }
-  ];
+        const backendCourses = (payload.courses || []).map((course, index) => ({
+          id: course.id || index + 1,
+          title: course.title || "Untitled Course",
+          category: course.category || "General",
+          subcategory: course.subcategory || "General",
+          students: Number(course.students || course.enrollments || 0),
+          rating: Number(course.rating || 0),
+          image: course.image || course.thumbnail || "https://via.placeholder.com/500x300?text=Course",
+          duration: course.duration || "Self-paced",
+          level: course.level || "All levels",
+          tag: course.tag || "",
+          premium: Boolean(course.premium),
+          featuredScore: Number(course.featuredScore || 0),
+          totalReviews: Number(course.totalReviews || 0),
+          price: Number(course.price || 0),
+          description: course.description || "",
+          instructor: course.instructor || course.instructorName || "Instructor",
+        }));
+
+        const backendCategories = (payload.categories || []).map((category, index) => ({
+          name: category.name || `Category ${index + 1}`,
+          icon: iconCycle[index % iconCycle.length],
+          subcategories: category.subcategories || [],
+        }));
+
+        const backendFeatures = (payload.features || []).map((feature, index) => ({
+          icon: iconCycle[index % iconCycle.length],
+          title: feature.title || "Feature",
+          desc: feature.desc || feature.description || "",
+        }));
+
+        const backendTestimonials = (payload.testimonials || []).map((item) => ({
+          name: item.name || "Student",
+          role: item.role || "Learner",
+          content: item.content || item.review || "",
+          rating: Number(item.rating || 5),
+          image: item.image || "https://via.placeholder.com/80",
+        }));
+
+        setSlides(backendSlides);
+        setCourses(backendCourses);
+        setCategoryData(backendCategories);
+        setFeatures(backendFeatures);
+        setTestimonials(backendTestimonials);
+        setStatsTarget(payload.stats || { students: 0, courses: 0, instructors: 0, satisfaction: 0 });
+      } catch (error) {
+        console.error("[Landing] Failed to load backend content", error);
+        setLandingError("Unable to load landing content from backend.");
+      } finally {
+        setLandingLoading(false);
+      }
+    };
+
+    loadLandingData();
+  }, []);
 
   // Filter logic
   const filteredCourses = courses.filter(course => {
@@ -259,7 +272,13 @@ function Landing() {
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
-    const targets = { students: 50000, courses: 200, instructors: 150, satisfaction: 98 };
+    const targets = {
+      students: Number(statsTarget.students || 0),
+      courses: Number(statsTarget.courses || 0),
+      instructors: Number(statsTarget.instructors || 0),
+      satisfaction: Number(statsTarget.satisfaction || 0),
+    };
+
     const interval = setInterval(() => {
       setCounters(prev => {
         let newState = { ...prev };
@@ -278,14 +297,15 @@ function Landing() {
       window.removeEventListener("scroll", handleScroll);
       clearInterval(interval);
     };
-  }, []);
+  }, [statsTarget]);
 
   useEffect(() => {
+    if (!testimonials.length) return;
     const interval = setInterval(() => {
       setActiveTestimonial(prev => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [testimonials]);
 
   const nextSlide = () => {
     setDirection(1);
@@ -296,9 +316,10 @@ function Landing() {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
   useEffect(() => {
+    if (slides.length <= 1) return;
     const interval = setInterval(() => nextSlide(), 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [slides]);
 
   const sliderVariants = {
     enter: (direction) => ({
@@ -313,6 +334,10 @@ function Landing() {
   };
 
   const openCoursePopup = (course) => {
+    const impressionSource = searchQuery.trim() ? "SEARCH" : "HOME";
+    landingApi.trackCourseImpression(course.id, impressionSource).catch((error) => {
+      console.warn("[Landing] Failed to track course impression", error);
+    });
     setSelectedCourse(course);
     setShowPopup(true);
     document.body.style.overflow = 'hidden';
@@ -349,6 +374,8 @@ function Landing() {
     return null; // Will redirect via useEffect
   }
 
+  const currentSlideData = slides[currentSlide] || null;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-orange-500 origin-left z-50" style={{ scaleX }} />
@@ -359,9 +386,9 @@ function Landing() {
           <div className="flex justify-between items-center">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
-              <div className="relative">
-                <div className="absolute inset-0 bg-orange-500 blur-lg rounded-full opacity-0 group-hover:opacity-30 transition duration-500"></div>
-                <span className="relative text-2xl font-bold text-orange-600 group-hover:scale-105 transition-transform duration-300 inline-block -ml-2">LearnMaster</span>
+              <div className="relative flex items-center gap-3">
+                <img src={logoImage} alt="LearnMaster" className="h-16 w-auto rounded-lg shadow-md group-hover:scale-105 transition-transform duration-300" />
+                <span className="text-lg font-semibold text-slate-800 hidden sm:inline">LearnMaster</span>
               </div>
             </Link>
 
@@ -633,19 +660,26 @@ function Landing() {
       
       {/* Hero Banner */}
       <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden rounded-2xl shadow-xl mt-20">
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.div key={currentSlide} custom={direction} variants={sliderVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.5, ease: "easeInOut" }} className="absolute inset-0 w-full h-full">
-            <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${slides[currentSlide].bgImage})` }}>
-              <div className="absolute inset-0 bg-black/30"></div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+        {landingLoading ? (
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 animate-pulse" />
+        ) : currentSlideData ? (
+          <AnimatePresence initial={false} custom={direction}>
+            <motion.div key={currentSlide} custom={direction} variants={sliderVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.5, ease: "easeInOut" }} className="absolute inset-0 w-full h-full">
+              <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${currentSlideData.bgImage})` }}>
+                <div className="absolute inset-0 bg-black/30"></div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900" />
+        )}
         <div className="absolute inset-0 flex items-center justify-start px-6 md:px-12 lg:px-24">
           <div className="bg-white/95 backdrop-blur-md rounded-2xl p-6 md:p-8 max-w-md shadow-2xl border border-white/30">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">{slides[currentSlide].title}</h2>
-            <p className="text-gray-600 mb-6">{slides[currentSlide].description}</p>
-            <button onClick={() => (window.location.href = slides[currentSlide].link)} className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition shadow-md flex items-center gap-2">
-              {slides[currentSlide].cta} →
+            <img src={logoImage} alt="LearnMaster" className="h-20 w-auto mb-4" />
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">{currentSlideData?.title || "Learn • Skill • Grow"}</h2>
+            <p className="text-gray-600 mb-6">{currentSlideData?.description || "Dynamic learning paths, real outcomes, and premium mentorship."}</p>
+            <button onClick={() => (window.location.href = (currentSlideData?.link || "/courses"))} className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition shadow-md flex items-center gap-2">
+              {currentSlideData?.cta || "Explore Courses"} →
             </button>
           </div>
         </div>
@@ -661,6 +695,12 @@ function Landing() {
           ))}
         </div>
       </div>
+
+      {landingError && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+          <div className="rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm">{landingError}</div>
+        </div>
+      )}
 
       {/* Stats Section */}
       <section className="py-16 bg-white border-y border-gray-100">
@@ -868,6 +908,7 @@ function Landing() {
             <h2 className="text-3xl font-bold text-gray-900 mb-4">What Our Students Say</h2>
             <p className="text-gray-600">Join thousands of satisfied learners</p>
           </div>
+          {testimonials.length > 0 ? (
           <div className="relative max-w-4xl mx-auto">
             <AnimatePresence mode="wait">
               <motion.div key={activeTestimonial} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} transition={{ duration: 0.5 }} className="bg-gray-50 rounded-2xl p-8 border border-gray-100 shadow-sm">
@@ -879,6 +920,9 @@ function Landing() {
             </AnimatePresence>
             <div className="flex justify-center gap-2 mt-6">{testimonials.map((_, idx) => (<button key={idx} onClick={() => setActiveTestimonial(idx)} className={`w-2 h-2 rounded-full transition-all duration-300 ${activeTestimonial === idx ? 'w-6 bg-orange-600' : 'bg-gray-300'}`} />))}</div>
           </div>
+          ) : (
+            <div className="text-center text-gray-500">No testimonials available right now.</div>
+          )}
         </div>
       </section>
 
@@ -899,7 +943,7 @@ function Landing() {
       <footer className="bg-white border-t border-gray-100 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
-            <div><div className="flex items-center gap-2 mb-4"><span className="text-gray-800 font-bold text-xl">LearnMaster</span></div><p className="text-gray-500 text-sm">Empowering learners worldwide with quality education.</p></div>
+            <div><div className="flex items-center gap-3 mb-4"><img src={logoImage} alt="LearnMaster" className="h-16 w-auto" /><span className="text-gray-800 font-bold text-xl">LearnMaster</span></div><p className="text-gray-500 text-sm">Empowering learners worldwide with quality education.</p></div>
             <div><h4 className="text-gray-800 font-semibold mb-4">Quick Links</h4><ul className="space-y-2 text-gray-500 text-sm"><li><a href="#courses" className="hover:text-orange-600 transition">Courses</a></li><li><a href="#features" className="hover:text-orange-600 transition">Features</a></li><li><a href="#" className="hover:text-orange-600 transition">About Us</a></li><li><a href="#" className="hover:text-orange-600 transition">Contact</a></li></ul></div>
             <div><h4 className="text-gray-800 font-semibold mb-4">Support</h4><ul className="space-y-2 text-gray-500 text-sm"><li><a href="#" className="hover:text-orange-600 transition">Help Center</a></li><li><a href="#" className="hover:text-orange-600 transition">Terms of Service</a></li><li><a href="#" className="hover:text-orange-600 transition">Privacy Policy</a></li><li><a href="#" className="hover:text-orange-600 transition">Refund Policy</a></li></ul></div>
             <div><h4 className="text-gray-800 font-semibold mb-4">Contact Us</h4><ul className="space-y-2 text-gray-500 text-sm"><li className="flex items-center gap-2"><Mail size={14} /> support@learnmaster.com</li><li className="flex items-center gap-2"><Phone size={14} /> +1 234 567 890</li><li className="flex items-center gap-2"><MapPin size={14} /> 123 Learning St, Silicon Valley</li></ul></div>

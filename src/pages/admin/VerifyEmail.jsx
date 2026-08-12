@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, KeyRound, CheckCircle, AlertCircle, ArrowLeft } from "lucide-react";
+import { adminApi } from "../../api/adminApi";
 
 const VerifyEmail = () => {
   const navigate = useNavigate();
@@ -55,16 +56,7 @@ const VerifyEmail = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/auth/admin/verify-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp: otpValue }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Invalid OTP. Please try again.");
-      }
+      await adminApi.verifyAdminEmail({ email, otp: otpValue });
 
       setSuccess(true);
       setTimeout(() => {

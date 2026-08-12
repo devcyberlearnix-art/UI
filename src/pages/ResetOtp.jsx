@@ -5,8 +5,7 @@ import {
   CheckCircle, AlertCircle, ArrowLeft, Timer,
   AlertTriangle, Mail, KeyRound
 } from "lucide-react";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+import authApi from "../api/authApi";
 
 function ResetOtp() {
   const navigate = useNavigate();
@@ -165,23 +164,11 @@ function ResetOtp() {
     setError("");
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/password/verify-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          otp: otp.join(""),    // send the OTP entered
-          newPassword: password,
-        }),
+      await authApi.verifyResetOtpAndPassword({
+        email,
+        otp: otp.join(""),
+        newPassword: password,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Password reset failed. Please try again.");
-      }
 
       // Success
       setSuccess(true);

@@ -6,10 +6,9 @@ import {
   GraduationCap, Building2, Phone, Star
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { instructorApi } from "../../api/instructorApi";
 
-const API_BASE_URL = "https://matted-ascent-specimen.ngrok-free.dev";
-
-// ─── Document field config ────────────────────────────────────────────────────
+// G��G��G�� Document field config G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
 const DOCUMENT_FIELDS = [
   {
     key: "resume",
@@ -93,7 +92,7 @@ const COLORS = {
   indigo: { bg: "bg-indigo-50", border: "border-indigo-200", icon: "text-indigo-600", badge: "bg-indigo-100 text-indigo-700", hover: "hover:border-indigo-400", ring: "ring-indigo-400" },
 };
 
-// ─── Single File Upload Card ──────────────────────────────────────────────────
+// G��G��G�� Single File Upload Card G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
 function FileUploadCard({ field, file, onFileChange, onRemove }) {
   const inputRef = useRef(null);
   const [dragging, setDragging] = useState(false);
@@ -163,7 +162,7 @@ function FileUploadCard({ field, file, onFileChange, onRemove }) {
           >
             <Upload className="w-5 h-5 text-gray-400 mx-auto mb-1.5" />
             <p className="text-xs font-medium text-gray-600">Drop file here or <span className={`${c.icon} font-semibold`}>browse</span></p>
-            <p className="text-[10px] text-gray-400 mt-0.5">{field.acceptLabel} • Max 10MB</p>
+            <p className="text-[10px] text-gray-400 mt-0.5">{field.acceptLabel} G�� Max 10MB</p>
           </div>
         )}
         <input
@@ -178,7 +177,7 @@ function FileUploadCard({ field, file, onFileChange, onRemove }) {
   );
 }
 
-// ─── Step Indicator ───────────────────────────────────────────────────────────
+// G��G��G�� Step Indicator G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
 function StepIndicator({ steps, current }) {
   return (
     <div className="flex items-center justify-center gap-0 mb-8">
@@ -199,7 +198,7 @@ function StepIndicator({ steps, current }) {
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// G��G��G�� Main Component G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
 export default function InstructorApplication({ onBack, applicationStatus, onStatusChange }) {
   const { user } = useAuth();
   const [step, setStep] = useState(0);
@@ -229,7 +228,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
 
   const STEPS = ["Personal Info", "Documents", "Review & Submit"];
 
-  // ── Computed ────────────────────────────────────────────────────────────────
+  // G��G�� Computed G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
   const requiredFields = DOCUMENT_FIELDS.filter((f) => f.required);
   const uploadedRequired = requiredFields.filter((f) => files[f.key]).length;
   const uploadProgress = Math.round((uploadedRequired / requiredFields.length) * 100);
@@ -237,7 +236,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
   const step0Valid = info.contentType.trim() && info.specialization.trim() && info.experience && info.bio.trim().length >= 30;
   const step1Valid = requiredFields.every((f) => files[f.key]);
 
-  // ── Handlers ────────────────────────────────────────────────────────────────
+  // G��G�� Handlers G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
   const handleFileChange = (key, file) => setFiles((prev) => ({ ...prev, [key]: file }));
   const handleFileRemove = (key) => setFiles((prev) => ({ ...prev, [key]: null }));
 
@@ -261,31 +260,17 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         if (file) formData.append(key, file);
       });
 
-      const token = localStorage.getItem("lms_token") || localStorage.getItem("access_token");
-      const response = await fetch(`${API_BASE_URL}/instructor/apply`, {
-        method: "POST",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: formData,
-      });
-
-      // Treat 2xx or even errors gracefully in demo
-      if (response.ok || response.status === 201 || response.status === 200) {
-        onStatusChange("pending");
-      } else {
-        // Even if the API isn't live yet, store pending locally so user sees feedback
-        onStatusChange("pending");
-      }
+      await instructorApi.applyForInstructorRole(formData);
+      onStatusChange("pending");
     } catch (err) {
-      // Network error — still simulate pending for demo
+      // Network error G�� still simulate pending for demo
       onStatusChange("pending");
     } finally {
       setSubmitting(false);
     }
   };
 
-  // ─── Status screen ─────────────────────────────────────────────────────────
+  // G��G��G�� Status screen G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
   if (applicationStatus === "pending") {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
@@ -293,13 +278,13 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
           <Loader2 className="w-10 h-10 text-white animate-spin" />
         </div>
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Application Under Review</h2>
-        <p className="text-gray-500 max-w-md mb-6">Your instructor application has been submitted successfully. Our team will review your documents and get back to you within 3–5 business days.</p>
+        <p className="text-gray-500 max-w-md mb-6">Your instructor application has been submitted successfully. Our team will review your documents and get back to you within 3G��5 business days.</p>
         <div className="bg-amber-50 border border-amber-200 rounded-2xl px-6 py-4 text-sm text-amber-700 max-w-sm">
-          <p className="font-semibold mb-1">📬 What happens next?</p>
+          <p className="font-semibold mb-1">=��� What happens next?</p>
           <ul className="text-left space-y-1 text-amber-600">
-            <li>• Admin reviews your documents</li>
-            <li>• You get an email once approved</li>
-            <li>• Your role switches to Instructor</li>
+            <li>G�� Admin reviews your documents</li>
+            <li>G�� You get an email once approved</li>
+            <li>G�� Your role switches to Instructor</li>
           </ul>
         </div>
       </div>
@@ -312,13 +297,13 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         <div className="w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-green-200">
           <CheckCircle className="w-10 h-10 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">🎉 Application Approved!</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">=��� Application Approved!</h2>
         <p className="text-gray-500 max-w-md">Congratulations! You are now an instructor. Please log out and log back in to access the Instructor Dashboard.</p>
       </div>
     );
   }
 
-  // ─── Confirmation modal ────────────────────────────────────────────────────
+  // G��G��G�� Confirmation modal G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
   const ConfirmModal = () => (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 animate-[fadeInUp_0.3s_ease]">
@@ -341,7 +326,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         <div className="flex gap-3">
           <button onClick={() => setShowConfirm(false)} className="flex-1 px-4 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition-colors">Cancel</button>
           <button onClick={handleSubmit} disabled={submitting} className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-purple-200 transition-all disabled:opacity-70 flex items-center justify-center gap-2">
-            {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</> : "✅ Confirm & Submit"}
+            {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> SubmittingGǪ</> : "G�� Confirm & Submit"}
           </button>
         </div>
       </div>
@@ -376,7 +361,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
       {/* Step indicator */}
       <StepIndicator steps={STEPS} current={step} />
 
-      {/* ── STEP 0: Personal Info ──────────────────────────────────────────── */}
+      {/* G��G�� STEP 0: Personal Info G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G�� */}
       {step === 0 && (
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
           <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
@@ -393,7 +378,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
                 onChange={(e) => setInfo((p) => ({ ...p, contentType: e.target.value }))}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-gray-800 text-sm"
               >
-                <option value="">Select content type…</option>
+                <option value="">Select content typeGǪ</option>
                 <option>Programming & Development</option>
                 <option>Data Science & AI/ML</option>
                 <option>Design & Creative</option>
@@ -433,11 +418,11 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
                 onChange={(e) => setInfo((p) => ({ ...p, experience: e.target.value }))}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm"
               >
-                <option value="">Select…</option>
+                <option value="">SelectGǪ</option>
                 <option value="0-1">Less than 1 year</option>
-                <option value="1-3">1–3 years</option>
-                <option value="3-5">3–5 years</option>
-                <option value="5-10">5–10 years</option>
+                <option value="1-3">1G��3 years</option>
+                <option value="3-5">3G��5 years</option>
+                <option value="5-10">5G��10 years</option>
                 <option value="10+">10+ years</option>
               </select>
             </div>
@@ -486,7 +471,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
               </label>
               <textarea
                 rows={4}
-                placeholder="Tell us about your teaching philosophy, expertise, and what students will learn from you…"
+                placeholder="Tell us about your teaching philosophy, expertise, and what students will learn from youGǪ"
                 value={info.bio}
                 onChange={(e) => setInfo((p) => ({ ...p, bio: e.target.value }))}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm resize-none"
@@ -509,7 +494,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         </div>
       )}
 
-      {/* ── STEP 1: Document Uploads ───────────────────────────────────────── */}
+      {/* G��G�� STEP 1: Document Uploads G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G�� */}
       {step === 1 && (
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
           <div className="flex items-center justify-between mb-6">
@@ -562,7 +547,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         </div>
       )}
 
-      {/* ── STEP 2: Review & Submit ────────────────────────────────────────── */}
+      {/* G��G�� STEP 2: Review & Submit G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G�� */}
       {step === 2 && (
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
           <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
@@ -574,13 +559,13 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
             <h3 className="font-semibold text-purple-800 mb-3 flex items-center gap-2"><User className="w-4 h-4" /> Personal Information</h3>
             <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
               {[
-                ["Email", user?.email || "—"],
-                ["Content Type", info.contentType || "—"],
-                ["Specialization", info.specialization || "—"],
-                ["Experience", info.experience || "—"],
-                ["Phone", info.phone || "—"],
-                ["LinkedIn", info.linkedIn || "—"],
-                ["Website", info.website || "—"],
+                ["Email", user?.email || "G��"],
+                ["Content Type", info.contentType || "G��"],
+                ["Specialization", info.specialization || "G��"],
+                ["Experience", info.experience || "G��"],
+                ["Phone", info.phone || "G��"],
+                ["LinkedIn", info.linkedIn || "G��"],
+                ["Website", info.website || "G��"],
               ].map(([label, value]) => (
                 <div key={label}>
                   <span className="text-gray-500">{label}: </span>
@@ -625,7 +610,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
               disabled={submitting}
               className="flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold shadow-lg shadow-purple-200 transition-all text-sm"
             >
-              {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</> : <><Award className="w-4 h-4" /> Submit Application</>}
+              {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> SubmittingGǪ</> : <><Award className="w-4 h-4" /> Submit Application</>}
             </button>
           </div>
         </div>

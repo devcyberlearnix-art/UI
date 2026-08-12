@@ -4,7 +4,7 @@
 export const getActingRole = () => {
   const acting = localStorage.getItem('lms_acting_role');
   const user = JSON.parse(localStorage.getItem('lms_user') || '{}');
-  if (acting && user.role === 'admin' || user.role === 'instructor') {
+  if (acting && (user.role === 'admin' || user.role === 'instructor')) {
     return acting;
   }
   return user.role;

@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
+import { adminApi } from "../../api/adminApi";
 
 const OrderDetails = () => {
   const { orderId } = useParams();
@@ -12,20 +13,10 @@ const OrderDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const getAuthHeaders = () => ({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-  });
-
   const fetchOrderDetails = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `https://matted-ascent-specimen.ngrok-free.dev/admin/orders/${orderId}`,
-        { headers: getAuthHeaders() }
-      );
-      if (!response.ok) throw new Error(await response.text());
-      const data = await response.json();
+      const data = await adminApi.getOrderDetails(orderId);
       setOrder(data);
     } catch (err) {
       setError(err.message);

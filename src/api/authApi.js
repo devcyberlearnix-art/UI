@@ -1,6 +1,6 @@
 // src/api/authApi.js
 // Updated with new workflow endpoints
-// Base URL: https://matted-ascent-specimen.ngrok-free.dev
+// Uses shared API base URL from src/config/api.js via axiosInstance
 import axiosInstance from "./axiosInstance";
 
 // ✅ Export authApi as a named export
@@ -55,7 +55,7 @@ export const authApi = {
   // ======================== SUB-ADMIN MANAGEMENT ========================
   getSubAdminProfile: async () => {
     try {
-      const response = await axiosInstance.get('/api/v1/admins/me');
+      const response = await axiosInstance.get('/api/v1/admin/me');
       return response.data;
     } catch (error) {
       console.error('[Auth] Get profile error:', error);
@@ -65,7 +65,7 @@ export const authApi = {
 
   updateSubAdminProfile: async (profileData) => {
     try {
-      const response = await axiosInstance.put('/api/v1/admins/me', profileData);
+      const response = await axiosInstance.put('/api/v1/admin/me', profileData);
       return response.data;
     } catch (error) {
       console.error('[Auth] Update profile error:', error);
@@ -75,7 +75,7 @@ export const authApi = {
 
   registerSubAdmin: async (adminData) => {
     try {
-      const response = await axiosInstance.post('/api/v1/admins/register', adminData);
+      const response = await axiosInstance.post('/api/v1/admin/register', adminData);
       return response.data;
     } catch (error) {
       console.error('[Auth] Register error:', error);
@@ -117,9 +117,13 @@ export const authApi = {
     }
   },
 
-  verifyEmail: async ({ email, otp }) => {
+  verifyEmail: async ({ email, otp, otpSessionId }) => {
     try {
-      const response = await axiosInstance.post('/api/v1/auth/verify-email', { email, otp });
+      const response = await axiosInstance.post('/api/v1/auth/verify-email', {
+        email,
+        otp,
+        otpSessionId,
+      });
       return response.data;
     } catch (error) {
       console.error('[Auth] Verify email error:', error);
@@ -161,7 +165,7 @@ export const authApi = {
     }
   },
 
-  resendOtp: async ({ flow, email }) => {
+  resendOtp: async ({ flow, email, otpSessionId }) => {
     try {
       if (flow === 'password_reset') {
         return await authApi.requestForgotPasswordOtp(email);
@@ -171,9 +175,10 @@ export const authApi = {
         return await authApi.requestLoginOtp(email);
       }
 
-      // Registration OTP resend endpoint is not part of the provided contract.
-      // Fallback to verify-email flow by reusing login request semantics when needed.
-      return await authApi.requestLoginOtp(email);
+      const response = await axiosInstance.post('/api/v1/auth/register/resend-otp', {
+        otpSessionId,
+      });
+      return response.data;
     } catch (error) {
       console.error('[Auth] Resend OTP error:', error);
       throw error;
@@ -186,6 +191,59 @@ export const authApi = {
       return response.data;
     } catch (error) {
       console.error('[Auth] Change password error:', error);
+      throw error;
+    }
+  },
+
+  register: async (payload) => {
+    try {
+      const response = await axiosInstance.post('/api/v1/auth/register', payload);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Register error:', error);
+      throw error;
+    }
+  },
+
+  changeRegistrationEmail: async ({ email, otpSessionId }) => {
+    try {
+      const response = await axiosInstance.patch('/api/v1/auth/register/email', {
+        email,
+        otpSessionId,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Change registration email error:', error);
+      throw error;
+    }
+  },
+
+  uploadProfilePhoto: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('profilePhoto', file);
+      const response = await axiosInstance.post('/api/v1/auth/upload/profile-photo', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Upload profile photo error:', error);
+      throw error;
+    }
+  },
+
+  verifyResetOtpAndPassword: async ({ email, otp, newPassword }) => {
+    try {
+      const response = await axiosInstance.post('/api/v1/auth/password/verify-otp', {
+        email,
+        otp,
+        newPassword,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Verify reset OTP and password error:', error);
       throw error;
     }
   },

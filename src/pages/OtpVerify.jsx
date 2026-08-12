@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AlertCircle, CheckCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, ArrowLeft, CheckCircle, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import AuthShell from "../components/ui/AuthShell";
 import { authApi } from "../api/authApi";
@@ -22,6 +22,7 @@ function OtpVerify() {
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
@@ -56,7 +57,7 @@ function OtpVerify() {
     setLoading(true);
     try {
       if (flow === "register") {
-        const res = await authApi.verifyEmail({ email, otp });
+        const res = await authApi.verifyEmail({ email, otp, otpSessionId });
         setSuccess(true);
         toast.success(res.message || "Email verified successfully");
         setTimeout(() => navigate("/login", { replace: true }), 900);
@@ -126,24 +127,30 @@ function OtpVerify() {
     setError("");
     if (!canResend) return;
 
-    setLoading(true);
-    try {
-      if (flow === "register") {
-        setError("Registration OTP resend is not enabled in current backend contract.");
-        setLoading(false);
-        return;
-      }
+    if (!otpSessionId) {
+      setError("OTP session expired. Please register again.");
+      return;
+    }
 
-      const res = await authApi.requestLoginOtp(email);
-      setOtpSessionId(res.otpSessionId || "");
+    setResending(true);
+    try {
+      const response = await authApi.resendOtp({ flow, email, otpSessionId });
+      const res = response.data || response;
+      setOtpSessionId(res.otpSessionId || otpSessionId);
+      setOtp("");
       setCooldown(Number(res.cooldownSeconds || 30));
       toast.success(res.message || "OTP resent");
     } catch (err) {
-      const message = err.response?.data?.message || "Failed to resend OTP";
+      const responseData = err.response?.data;
+      const retryAfter = Number(responseData?.data?.cooldownSeconds || 0);
+      if (retryAfter > 0) {
+        setCooldown(retryAfter);
+      }
+      const message = responseData?.message || "Failed to resend OTP";
       setError(message);
       toast.error(message);
     } finally {
-      setLoading(false);
+      setResending(false);
     }
   };
 
@@ -159,7 +166,30 @@ function OtpVerify() {
       ]}
     >
       <h1 className="mb-2 text-2xl font-bold text-slate-900">OTP Verification</h1>
-      <p className="mb-6 text-sm text-slate-500">Code sent to {email || "your email"}</p>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-slate-500">Code sent to {email || "your email"}</p>
+        {flow === "register" && (
+          <button
+            type="button"
+            onClick={() =>
+              navigate("/register", {
+                state: {
+                  registrationDraft: {
+                    ...location.state?.registrationDraft,
+                    email: "",
+                  },
+                  photoUrl: location.state?.photoUrl,
+                  emailCorrection: { email, otpSessionId },
+                },
+              })
+            }
+            disabled={loading || success}
+            className="inline-flex items-center gap-1 text-sm font-semibold text-orange-600 transition hover:text-orange-700 disabled:opacity-60"
+          >
+            <ArrowLeft size={15} /> Wrong email? Go back
+          </button>
+        )}
+      </div>
 
       {error && (
         <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-red-700">
@@ -194,17 +224,15 @@ function OtpVerify() {
           {loading ? "Verifying..." : "Verify OTP"}
         </button>
 
-        {flow === "login" && (
-          <button
-            type="button"
-            onClick={onResend}
-            disabled={loading || !canResend}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-600 disabled:opacity-60"
-          >
-            <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
-            {canResend ? "Resend OTP" : `Resend in ${cooldown}s`}
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onResend}
+          disabled={loading || resending || success || !canResend}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-600 disabled:opacity-60"
+        >
+          <RefreshCw size={16} className={resending ? "animate-spin" : ""} />
+          {resending ? "Sending..." : canResend ? "Resend OTP" : `Resend in ${cooldown}s`}
+        </button>
       </div>
     </AuthShell>
   );

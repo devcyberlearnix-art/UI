@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart, Globe, Menu, X, Heart, User, LogOut } from "lucide-react";
 import { motion } from "framer-motion";
+import logoImage from "../assets/learnmaster-logo.png";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -44,8 +45,9 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-purple-700">LearnMaster</span>
+          <Link to="/" className="flex items-center gap-3">
+            <img src={logoImage} alt="LearnMaster" className="h-14 w-auto" />
+            <span className="text-xl font-bold text-slate-800">LearnMaster</span>
           </Link>
 
           {/* Desktop Menu Items (common) */}

@@ -1,10 +1,9 @@
 // src/api/axiosInstance.js
 import axios from "axios";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+import API_BASE_URL from "../config/api";
 
 const axiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
     "Accept": "application/json",
@@ -18,6 +17,7 @@ axiosInstance.interceptors.request.use(
     // Skip auth header for public endpoints (forgot password, verify email, etc.)
     const publicEndpoints = [
       '/api/v1/auth/register',
+      '/api/v1/auth/register/email',
       '/api/v1/auth/verify-email',
       '/api/v1/auth/login',
       '/api/v1/auth/login/otp/request',

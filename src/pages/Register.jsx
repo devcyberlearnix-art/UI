@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertCircle,
@@ -21,6 +21,7 @@ import {
   User,
 } from "lucide-react";
 import AuthShell from "../components/ui/AuthShell";
+import authApi from "../api/authApi";
 
 const cities = ["Hyderabad", "Visakhapatnam", "Vijayawada", "Guntur", "Tirupati", "Nellore"];
 const states = ["Andhra Pradesh", "Telangana", "Karnataka", "Tamil Nadu", "Maharashtra"];
@@ -33,10 +34,11 @@ const steps = [
   { id: 3, title: "Profile" },
 ];
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
-
 const Register = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const registrationDraft = location.state?.registrationDraft || {};
+  const emailCorrection = location.state?.emailCorrection || null;
 
   const [currentStep, setCurrentStep] = useState(1);
   const [message, setMessage] = useState("");
@@ -44,7 +46,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState("");
-  const [photoUrl, setPhotoUrl] = useState("");
+  const [photoUrl, setPhotoUrl] = useState(location.state?.photoUrl || "");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -66,6 +68,7 @@ const Register = () => {
     fieldOfStudy: "",
     highestQualification: "",
     agreeToTerms: false,
+    ...registrationDraft,
   });
 
   const [errors, setErrors] = useState({});
@@ -73,11 +76,11 @@ const Register = () => {
   const passwordStrength = useMemo(() => {
     const password = formData.password;
     let strength = 0;
-    if (password.length >= 6) strength += 1;
+    if (password.length >= 8) strength += 1;
     if (/[a-z]/.test(password)) strength += 1;
     if (/[A-Z]/.test(password)) strength += 1;
     if (/\d/.test(password)) strength += 1;
-    if (/[$@#&!]/.test(password)) strength += 1;
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 1;
     return strength;
   }, [formData.password]);
 
@@ -106,8 +109,11 @@ const Register = () => {
     }
 
     if (step === 2) {
-      if (formData.password.length < 6) nextErrors.password = "Password must be at least 6 characters";
-      if (passwordStrength < 3) nextErrors.password = "Password is too weak";
+      if (formData.password.length < 8) {
+        nextErrors.password = "Password must be at least 8 characters";
+      } else if (passwordStrength < 5) {
+        nextErrors.password = "Use uppercase, lowercase, number, and special character";
+      }
       if (formData.password !== formData.confirmPassword) {
         nextErrors.confirmPassword = "Passwords do not match";
       }
@@ -120,6 +126,7 @@ const Register = () => {
       if (!formData.state) nextErrors.state = "State is required";
       if (!formData.country) nextErrors.country = "Country is required";
       if (!formData.preferredLanguage) nextErrors.preferredLanguage = "Preferred language is required";
+      if (!formData.skills.trim()) nextErrors.skills = "At least one skill is required";
       if (!formData.agreeToTerms) nextErrors.agreeToTerms = "Please accept terms";
     }
 
@@ -141,17 +148,9 @@ const Register = () => {
     setPhotoUploading(true);
 
     const payload = new FormData();
-    payload.append("profilePhoto", file);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/upload/profile-photo`, {
-        method: "POST",
-        body: payload,
-      });
-
-      if (!response.ok) throw new Error("Upload failed");
-
-      const data = await response.json();
+      const data = await authApi.uploadProfilePhoto(file);
       setPhotoUrl(data.photoUrl || data.url || data.filePath || "");
       setMessage("Photo uploaded successfully");
       setMessageType("success");
@@ -215,18 +214,22 @@ const Register = () => {
         highestQualification: formData.highestQualification || "",
       };
 
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
+      if (emailCorrection && formData.email === emailCorrection.email) {
+        setMessage("Enter the correct email address before continuing");
+        setMessageType("error");
+        setCurrentStep(1);
+        return;
       }
 
-      setMessage("Registration successful. Redirecting to sign in...");
+      const registration = emailCorrection
+        ? await authApi.changeRegistrationEmail({
+            email: formData.email,
+            otpSessionId: emailCorrection.otpSessionId,
+          })
+        : await authApi.register(payload);
+      const registrationData = registration?.data || registration || {};
+
+      setMessage(emailCorrection ? "Email updated. Sending a new OTP..." : "Registration successful. Opening verification...");
       setMessageType("success");
       setTimeout(
         () =>
@@ -234,12 +237,21 @@ const Register = () => {
             state: {
               email: formData.email,
               flow: "register",
+              otpSessionId: registrationData.otpSessionId,
+              cooldownSeconds: registrationData.cooldownSeconds || 30,
+              registrationDraft: formData,
+              photoUrl,
             },
           }),
         900
       );
     } catch (err) {
-      setMessage(err.message || "Registration failed. Please try again");
+      const errorMessage =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        "Registration failed. Please try again";
+      setMessage(errorMessage);
       setMessageType("error");
     } finally {
       setLoading(false);
@@ -527,6 +539,7 @@ const Register = () => {
                 <div>
                   <label className="mb-1 block text-sm font-medium text-slate-700">Skills</label>
                   <input className="lms-input" value={formData.skills} onChange={(e) => updateField("skills", e.target.value)} />
+                  <FieldError name="skills" />
                 </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-slate-700">Highest Qualification</label>

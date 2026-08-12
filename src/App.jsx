@@ -24,7 +24,7 @@ import Checkout from "./pages/student/Checkout";
 import Cart from "./pages/student/Cart";
 
 // Instructor Pages
-import InstructorDashboard from "./pages/instructor/InstructorDashboard";
+import InstructorDashboard from "./pages/instructor/Dashboard";
 import CreateCourse from "./pages/instructor/CreateCourse";
 import InstructorCourses from "./pages/instructor/MyCourses";
 import InstructorAnalytics from "./pages/instructor/Analytics";
