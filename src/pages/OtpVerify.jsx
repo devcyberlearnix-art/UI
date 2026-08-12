@@ -139,7 +139,7 @@ function OtpVerify() {
       setOtpSessionId(res.otpSessionId || otpSessionId);
       setOtp("");
       setCooldown(Number(res.cooldownSeconds || 30));
-      toast.success(res.message || "OTP resent");
+      toast.success(response.message || res.message || "OTP resent");
     } catch (err) {
       const responseData = err.response?.data;
       const retryAfter = Number(responseData?.data?.cooldownSeconds || 0);
