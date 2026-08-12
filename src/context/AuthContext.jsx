@@ -5,6 +5,17 @@ import toast from 'react-hot-toast';
 
 const AuthContext = createContext(null);
 
+const normalizeRole = (roleValue = '') => {
+  const role = String(roleValue || '').trim().toLowerCase();
+  if (role.includes('super')) return 'super_admin';
+  if (role.includes('sub')) return 'sub_admin';
+  if (role.includes('main')) return 'admin';
+  if (role.includes('admin')) return 'admin';
+  if (role.includes('instructor')) return 'instructor';
+  if (role.includes('student')) return 'student';
+  return role || 'student';
+};
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -31,7 +42,10 @@ export const AuthProvider = ({ children }) => {
           try {
             const parsedUser = JSON.parse(storedUser);
             setToken(storedToken);
-            setUser(parsedUser);
+            setUser({
+              ...parsedUser,
+              role: normalizeRole(parsedUser?.role),
+            });
             console.log('[AuthProvider] Session restored successfully');
           } catch (err) {
             console.error('[AuthProvider] Failed to parse stored user:', err);
@@ -91,11 +105,11 @@ export const AuthProvider = ({ children }) => {
         userData = {
           id: userInfo.id || userInfo.userId,
           firstName: userInfo.firstName || userInfo.name || '',
-          lastName: userInfo.lastName || '',
+          lastName: userInfo.lastName || userInfo.lastName || '',
           name: userInfo.firstName ? `${userInfo.firstName} ${userInfo.lastName || ''}`.trim() : userInfo.name || '',
           email: userInfo.email || emailStr,
           mobileNumber: userInfo.mobileNumber || userInfo.mobile || '',
-          role: userInfo.role || userInfo.role1 || userInfo.userRole || userInfo.effectiveRole || 'student',
+          role: normalizeRole(userInfo.role || userInfo.role1 || userInfo.userRole || userInfo.effectiveRole || 'student'),
           permissions: userInfo.permissions || [],
           assignedService: userInfo.assignedService || '',
         };
