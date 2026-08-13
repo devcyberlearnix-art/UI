@@ -9,6 +9,8 @@ const OrderCard = ({ order, onCancel }) => {
   const [expanded, setExpanded] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const { handleCancelOrder } = useOrders();
+  const status = String(order.status || "pending").toLowerCase();
+  const items = Array.isArray(order.items) ? order.items : [];
 
   const handleCancel = async () => {
     if (window.confirm("Are you sure you want to cancel this order?")) {
@@ -19,7 +21,7 @@ const OrderCard = ({ order, onCancel }) => {
     }
   };
 
-  const canCancel = order.status === "pending" || order.status === "processing";
+  const canCancel = status === "pending" || status === "processing";
 
   return (
     <motion.div
@@ -29,11 +31,11 @@ const OrderCard = ({ order, onCancel }) => {
       <div className="p-4">
         <div className="flex justify-between items-start">
           <div>
-            <p className="text-sm text-gray-500">Order #{order.id.slice(-8)}</p>
-            <p className="font-medium">{new Date(order.createdAt).toLocaleDateString()}</p>
+            <p className="text-sm text-gray-500">Order #{String(order.id || "").slice(-8)}</p>
+            <p className="font-medium">{new Date(order.createdAt || Date.now()).toLocaleDateString()}</p>
           </div>
           <div className="flex items-center gap-3">
-            <OrderStatusBadge status={order.status} />
+            <OrderStatusBadge status={status} />
             {canCancel && (
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -51,8 +53,8 @@ const OrderCard = ({ order, onCancel }) => {
           </div>
         </div>
         <div className="mt-2 flex justify-between">
-          <span className="text-gray-700">Total: ${order.totalAmount.toFixed(2)}</span>
-          <span className="text-gray-500 text-sm">{order.items.length} item(s)</span>
+          <span className="text-gray-700">Total: ${Number(order.totalAmount || 0).toFixed(2)}</span>
+          <span className="text-gray-500 text-sm">{items.length} item(s)</span>
         </div>
       </div>
 
@@ -65,15 +67,15 @@ const OrderCard = ({ order, onCancel }) => {
             className="border-t px-4 py-3 space-y-2 bg-gray-50 rounded-b-xl"
           >
             <p className="text-sm font-medium">Order Details</p>
-            {order.items.map((item, idx) => (
+            {items.map((item, idx) => (
               <div key={idx} className="flex justify-between text-sm">
-                <span>{item.title} x{item.quantity || 1}</span>
-                <span>${(item.price * (item.quantity || 1)).toFixed(2)}</span>
+                <span>{item.title || item.name || "Course"} x{item.quantity || 1}</span>
+                <span>${(Number(item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
               </div>
             ))}
             <div className="border-t pt-2 mt-2">
-              <p className="text-sm"><strong>Shipping Address:</strong> {order.shippingAddress}</p>
-              <p className="text-sm"><strong>Payment Method:</strong> {order.paymentMethod}</p>
+              <p className="text-sm"><strong>Shipping Address:</strong> {order.shippingAddress || "-"}</p>
+              <p className="text-sm"><strong>Payment Method:</strong> {order.paymentMethod || "-"}</p>
             </div>
           </motion.div>
         )}

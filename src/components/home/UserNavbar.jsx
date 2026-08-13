@@ -13,6 +13,7 @@ import {
 } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
+import logoImage from '../../assets/learnmaster-logo.png';
 
 const UserNavbar = () => {
   const { user, logout } = useAuth();
@@ -27,11 +28,12 @@ const UserNavbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 md:px-8 h-16 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 md:px-8 h-20 flex items-center justify-between">
       {/* Left: Logo */}
       <div className="flex items-center gap-8">
-        <Link to="/" className="text-2xl font-bold text-purple-700 tracking-tight">
-          LearnMaster
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logoImage} alt="LearnMaster" className="h-14 w-auto" />
+          <span className="text-xl font-bold text-slate-800 tracking-tight">LearnMaster</span>
         </Link>
         
         {/* Hidden on small screens */}

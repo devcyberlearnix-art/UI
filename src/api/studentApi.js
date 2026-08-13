@@ -1,83 +1,57 @@
 import axiosInstance from "./axiosInstance";
 
 export const studentApi = {
-  // Get student dashboard data
-  getDashboardData: async () => {
-    const response = await axiosInstance.get("/student/dashboard");
-    return response.data;
-  },
-
   // Get student profile
   getProfile: async () => {
-    const response = await axiosInstance.get("/student/profile");
+    const response = await axiosInstance.get("/api/v1/users/me");
     return response.data;
   },
 
   // Update student profile
   updateProfile: async (profileData) => {
-    const response = await axiosInstance.put("/student/profile", profileData);
-    return response.data;
-  },
-
-  // Get certificates
-  getCertificates: async () => {
-    const response = await axiosInstance.get("/student/certificates");
-    return response.data;
-  },
-
-  // Download certificate
-  downloadCertificate: async (certificateId) => {
-    const response = await axiosInstance.get(`/student/certificates/${certificateId}/download`, {
-      responseType: "blob",
-    });
+    const response = await axiosInstance.put("/api/v1/users/me", profileData);
     return response.data;
   },
 
   // Get cart items
   getCart: async () => {
-    const response = await axiosInstance.get("/student/cart");
+    const response = await axiosInstance.get("/api/v1/cart");
     return response.data;
   },
 
   // Add to cart
   addToCart: async (courseId) => {
-    const response = await axiosInstance.post("/student/cart", { courseId });
+    const response = await axiosInstance.post("/api/v1/cart", { courseId });
     return response.data;
   },
 
   // Remove from cart
   removeFromCart: async (courseId) => {
-    const response = await axiosInstance.delete(`/student/cart/${courseId}`);
+    const response = await axiosInstance.delete(`/api/v1/cart/${courseId}`);
     return response.data;
   },
 
   // Clear cart
   clearCart: async () => {
-    const response = await axiosInstance.delete("/student/cart");
+    const response = await axiosInstance.delete("/api/v1/cart");
     return response.data;
   },
 
   // Checkout
-  checkout: async (paymentData) => {
-    const response = await axiosInstance.post("/student/checkout", paymentData);
+  checkout: async () => {
+    const response = await axiosInstance.post("/api/v1/cart/checkout");
     return response.data;
   },
 
   // Get notifications
   getNotifications: async () => {
-    const response = await axiosInstance.get("/student/notifications");
+    const response = await axiosInstance.get("/api/v1/users/me/notifications");
     return response.data;
   },
 
   // Mark notification as read
   markNotificationRead: async (notificationId) => {
-    const response = await axiosInstance.put(`/student/notifications/${notificationId}/read`);
-    return response.data;
-  },
-
-  // Get learning history
-  getLearningHistory: async () => {
-    const response = await axiosInstance.get("/student/learning-history");
+    const response = await axiosInstance.put(`/api/v1/users/me/read/${notificationId}`);
     return response.data;
   },
 };

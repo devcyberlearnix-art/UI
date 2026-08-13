@@ -1,3 +1,4 @@
+// src/pages/Landing.jsx
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
@@ -5,25 +6,46 @@ import {
   BookOpen, Code, Briefcase, TrendingUp, Award, Users, Star, ChevronRight, Play, 
   Clock, User, Mail, Phone, MapPin, ArrowRight, Sparkles, Zap, Globe, Shield, 
   Quote, ThumbsUp, Target, ShoppingCart, Search, Menu, X, Heart, LogOut, Filter,
-  ChevronDown, UserCircle, Settings, HelpCircle
+  ChevronDown
 } from "lucide-react";
 import ProfileDropdown from "../utils/profiledropdown";
+import { useAuth } from "../context/AuthContext"; // ✅ Import useAuth
+import logoImage from "../assets/learnmaster-logo.png";
+import { landingApi } from "../api/landingApi";
 
 function Landing() {
   const navigate = useNavigate();
+  const { user: authUser, isAuthenticated, loading: authLoading, logout } = useAuth(); // ✅ Use AuthContext
+  
+  // ✅ Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      console.log('[Landing] User already authenticated, redirecting to dashboard');
+      navigate('/admin/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, authLoading, navigate]);
+
   const [scrolled, setScrolled] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [counters, setCounters] = useState({ students: 0, courses: 0, instructors: 0, satisfaction: 0 });
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(authUser); // ✅ Use authUser from context
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [landingLoading, setLandingLoading] = useState(true);
+  const [landingError, setLandingError] = useState("");
+  const [slides, setSlides] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [categoryData, setCategoryData] = useState([]);
+  const [features, setFeatures] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
+  const [statsTarget, setStatsTarget] = useState({ students: 0, courses: 0, instructors: 0, satisfaction: 0 });
   
   // Dashboard dropdown state
   const [dashboardDropdownOpen, setDashboardDropdownOpen] = useState(false);
   const dashboardRef = useRef(null);
 
-  // NEW: Courses dropdown state
+  // Courses dropdown state
   const [coursesDropdownOpen, setCoursesDropdownOpen] = useState(false);
   const coursesDropdownRef = useRef(null);
   
@@ -44,37 +66,10 @@ function Landing() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
-  // Check user on load and storage changes
+  // ✅ Update user when authUser changes
   useEffect(() => {
-    const storedUser = localStorage.getItem('lms_user');
-    if (storedUser) {
-      try {
-        const userData = JSON.parse(storedUser);
-        setUser(userData);
-        console.log("✅ User loaded:", userData);
-      } catch (e) {
-        console.error("Error parsing user data:", e);
-        localStorage.removeItem('lms_user');
-      }
-    }
-
-    const handleStorage = () => {
-      const updated = localStorage.getItem('lms_user');
-      if (updated) {
-        try {
-          const userData = JSON.parse(updated);
-          setUser(userData);
-        } catch (e) {
-          console.error("Error parsing user data:", e);
-        }
-      } else {
-        setUser(null);
-      }
-    };
-    
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, []);
+    setUser(authUser);
+  }, [authUser]);
 
   // Close dashboard dropdown when clicking outside
   useEffect(() => {
@@ -98,195 +93,80 @@ function Landing() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ---------- Banner slides ----------
-  const slides = [
-    { id: 1, title: "30% off for a limited time", description: "Start learning high-demand skills from top instructors.", cta: "Start Learning", bgImage: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1400&auto=format", link: "/register" },
-    { id: 2, title: "Become an AI Expert", description: "Master machine learning and earn a certificate.", cta: "Explore AI Courses", bgImage: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1400&auto=format", link: "/courses" },
-    { id: 3, title: "Learn from Industry Leaders", description: "Join 50,000+ students learning real-world skills.", cta: "Browse Courses", bgImage: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1400&auto=format", link: "/courses" },
-    { id: 4, title: "Learn Python in 4.5 Hours", description: "Become a certified Python programmer with hands-on projects & free PyCharm Pro.", cta: "View Python Course", bgImage: "https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?w=1400&auto=format", link: "/courses/python-pcep" },
-    { id: 5, title: "Master UI/UX Design", description: "Learn Figma, prototyping, and user research from industry experts.", cta: "Explore Design Courses", bgImage: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1400&auto=format", link: "/courses/design" },
-    { id: 6, title: "Cloud Computing with AWS", description: "Get AWS certified and boost your cloud career.", cta: "Start Learning Cloud", bgImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1400&auto=format", link: "/courses/cloud" },
-  ];
+  const iconCycle = [Zap, Users, Award, Globe, TrendingUp, Target, BookOpen, Shield, Briefcase, Code];
 
-  // ---------- Courses (with subcategories) ----------
-  const courses = [
-    {
-      id: 1,
-      title: "Full Stack Web Development",
-      category: "Development",
-      subcategory: "Web Development",
-      students: 12450,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500",
-      duration: "24 weeks",
-      level: "Beginner to Advanced",
-      tag: "Most Popular",
-      price: 49,
-      description: "Learn to build full-stack web applications using React, Node.js, MongoDB, and Express. Master frontend and backend development with hands-on projects.",
-      instructor: "Dr. Sarah Johnson",
-    },
-    {
-      id: 2,
-      title: "Data Science & Machine Learning",
-      category: "Data Science",
-      subcategory: "Machine Learning",
-      students: 8932,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500",
-      duration: "32 weeks",
-      level: "Intermediate",
-      tag: "Trending",
-      price: 79,
-      description: "Master data analysis, visualization, and machine learning algorithms using Python, Pandas, Scikit-learn, and TensorFlow.",
-      instructor: "Prof. Michael Chen",
-    },
-    {
-      id: 3,
-      title: "UI/UX Design Masterclass",
-      category: "Design",
-      subcategory: "UI/UX",
-      students: 5621,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500",
-      duration: "16 weeks",
-      level: "Beginner",
-      tag: "New",
-      price: 39,
-      description: "Learn user interface and user experience design principles, wireframing, prototyping, and user testing using Figma and Adobe XD.",
-      instructor: "Emily Davis",
-    },
-    {
-      id: 4,
-      title: "Cloud Computing with AWS",
-      category: "IT & Software",
-      subcategory: "Cloud Computing",
-      students: 7340,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500",
-      duration: "20 weeks",
-      level: "Intermediate",
-      tag: "Certificate",
-      price: 69,
-      description: "Learn AWS services, cloud architecture, deployment, and management. Prepare for AWS certification exams.",
-      instructor: "Mike Ross",
-    },
-    {
-      id: 5,
-      title: "Python PCEP: Become Certified Entry-Level Python Programmer",
-      category: "Development",
-      subcategory: "Programming Languages",
-      students: 15890,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?w=500",
-      duration: "4.5 hours",
-      level: "Beginner",
-      tag: "Premium",
-      price: 49,
-      description: "Learn Python from scratch and pass the PCEP-30-02 exam. Get 6 months free PyCharm Pro. Start programming from scratch, understand Python basics, prepare for certification.",
-      instructor: "Dr. Sarah Johnson",
-    },
-    {
-      id: 6,
-      title: "React Native: Mobile Apps",
-      category: "Development",
-      subcategory: "Mobile Development",
-      students: 6540,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=500",
-      duration: "22 weeks",
-      level: "Intermediate",
-      tag: "Hot & New",
-      price: 59,
-      description: "Build cross-platform mobile apps using React Native. Learn navigation, state management, and API integration.",
-      instructor: "John Doe",
-    },
-    {
-      id: 7,
-      title: "DevOps with Kubernetes",
-      category: "IT & Software",
-      subcategory: "DevOps",
-      students: 4210,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=500",
-      duration: "28 weeks",
-      level: "Advanced",
-      tag: "Top Rated",
-      price: 89,
-      description: "Master container orchestration with Kubernetes, Docker, CI/CD pipelines, and cloud deployment strategies.",
-      instructor: "Jane Smith",
-    },
-    {
-      id: 8,
-      title: "Digital Marketing Mastery",
-      category: "Marketing",
-      subcategory: "Digital Marketing",
-      students: 11230,
-      rating: 4.6,
-      image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=500",
-      duration: "12 weeks",
-      level: "All Levels",
-      tag: "Bestseller",
-      price: 34,
-      description: "Learn SEO, social media marketing, email campaigns, Google Analytics, and content strategy.",
-      instructor: "Lisa Wong",
-    },
-    {
-      id: 9,
-      title: "Cyber Security Fundamentals",
-      category: "IT & Software",
-      subcategory: "Cyber Security",
-      students: 7890,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=500",
-      duration: "24 weeks",
-      level: "Beginner",
-      tag: "Trending",
-      price: 74,
-      description: "Understand network security, cryptography, threat analysis, and ethical hacking principles.",
-      instructor: "David Kim",
-    },
-    {
-      id: 10,
-      title: "Blockchain & Cryptocurrency",
-      category: "IT & Software",
-      subcategory: "Blockchain",
-      students: 3450,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=500",
-      duration: "14 weeks",
-      level: "Intermediate",
-      tag: "New",
-      price: 84,
-      description: "Learn blockchain fundamentals, smart contracts, cryptocurrency trading, and decentralized applications.",
-      instructor: "Alex Turner",
-    },
-  ];
+  useEffect(() => {
+    const loadLandingData = async () => {
+      setLandingLoading(true);
+      setLandingError("");
 
-  // Categories with subcategories mapping
-  const categoryData = [
-    { name: "Development", icon: Code, subcategories: ["Web Development", "Mobile Development", "Programming Languages", "Game Development"] },
-    { name: "Data Science", icon: TrendingUp, subcategories: ["Machine Learning", "Data Analysis", "Deep Learning", "NLP"] },
-    { name: "Design", icon: Award, subcategories: ["UI/UX", "Graphic Design", "Web Design", "3D Animation"] },
-    { name: "IT & Software", icon: BookOpen, subcategories: ["Cloud Computing", "Cyber Security", "DevOps", "Networking", "Blockchain"] },
-    { name: "Marketing", icon: Briefcase, subcategories: ["Digital Marketing", "SEO", "Social Media", "Content Marketing"] },
-    { name: "Business", icon: Briefcase, subcategories: ["Entrepreneurship", "Management", "Sales", "Finance"] },
-  ];
+      try {
+        const payload = await landingApi.getLandingPageData();
 
-  // Features and testimonials
-  const features = [
-    { icon: Zap, title: "Learn by Doing", desc: "Hands-on projects & real-world assignments" },
-    { icon: Users, title: "Expert Mentors", desc: "Industry professionals as guides" },
-    { icon: Award, title: "Certified Programs", desc: "Industry-recognized certificates" },
-    { icon: Globe, title: "Global Community", desc: "Connect with learners worldwide" },
-    { icon: TrendingUp, title: "Career Support", desc: "Job placement assistance" },
-    { icon: Target, title: "Personalized Learning", desc: "Adaptive learning paths" }
-  ];
+        const backendSlides = (payload.slides || []).map((slide, index) => ({
+          id: slide.id || index + 1,
+          title: slide.title || "Learn Smarter",
+          description: slide.description || "Explore professional learning journeys.",
+          cta: slide.cta || "Explore Courses",
+          bgImage: slide.bgImage || slide.image || "",
+          link: slide.link || "/courses",
+        }));
 
-  const testimonials = [
-    { name: "Sarah Johnson", role: "Software Engineer at Google", content: "This platform completely transformed my career. The hands-on projects and expert mentors made all the difference.", rating: 5, image: "https://randomuser.me/api/portraits/women/1.jpg" },
-    { name: "Michael Chen", role: "Data Analyst at Amazon", content: "Best learning platform I've ever used. The courses are up-to-date and the community support is amazing.", rating: 5, image: "https://randomuser.me/api/portraits/men/2.jpg" },
-    { name: "Priya Sharma", role: "Product Designer at Microsoft", content: "The UI/UX course was phenomenal. I got a promotion within 3 months of completing it!", rating: 5, image: "https://randomuser.me/api/portraits/women/3.jpg" }
-  ];
+        const backendCourses = (payload.courses || []).map((course, index) => ({
+          id: course.id || index + 1,
+          title: course.title || "Untitled Course",
+          category: course.category || "General",
+          subcategory: course.subcategory || "General",
+          students: Number(course.students || course.enrollments || 0),
+          rating: Number(course.rating || 0),
+          image: course.image || course.thumbnail || "https://via.placeholder.com/500x300?text=Course",
+          duration: course.duration || "Self-paced",
+          level: course.level || "All levels",
+          tag: course.tag || "",
+          premium: Boolean(course.premium),
+          featuredScore: Number(course.featuredScore || 0),
+          totalReviews: Number(course.totalReviews || 0),
+          price: Number(course.price || 0),
+          description: course.description || "",
+          instructor: course.instructor || course.instructorName || "Instructor",
+        }));
+
+        const backendCategories = (payload.categories || []).map((category, index) => ({
+          name: category.name || `Category ${index + 1}`,
+          icon: iconCycle[index % iconCycle.length],
+          subcategories: category.subcategories || [],
+        }));
+
+        const backendFeatures = (payload.features || []).map((feature, index) => ({
+          icon: iconCycle[index % iconCycle.length],
+          title: feature.title || "Feature",
+          desc: feature.desc || feature.description || "",
+        }));
+
+        const backendTestimonials = (payload.testimonials || []).map((item) => ({
+          name: item.name || "Student",
+          role: item.role || "Learner",
+          content: item.content || item.review || "",
+          rating: Number(item.rating || 5),
+          image: item.image || "https://via.placeholder.com/80",
+        }));
+
+        setSlides(backendSlides);
+        setCourses(backendCourses);
+        setCategoryData(backendCategories);
+        setFeatures(backendFeatures);
+        setTestimonials(backendTestimonials);
+        setStatsTarget(payload.stats || { students: 0, courses: 0, instructors: 0, satisfaction: 0 });
+      } catch (error) {
+        console.error("[Landing] Failed to load backend content", error);
+        setLandingError("Unable to load landing content from backend.");
+      } finally {
+        setLandingLoading(false);
+      }
+    };
+
+    loadLandingData();
+  }, []);
 
   // Filter logic
   const filteredCourses = courses.filter(course => {
@@ -357,6 +237,13 @@ function Landing() {
     alert(`Added "${course.title}" to cart.`);
   };
 
+  // ✅ Updated handleLogout using AuthContext
+  const handleLogout = async () => {
+    await logout();
+    setUser(null);
+    navigate('/');
+  };
+
   // Auth, counters, slider, etc.
   useEffect(() => {
     const savedWishlist = localStorage.getItem('lms_wishlist');
@@ -376,20 +263,6 @@ function Landing() {
     }
   };
 
-  // 🔥 LOGOUT FUNCTION - Fixed to update state properly
-  const handleLogout = () => {
-    localStorage.removeItem('lms_user');
-    localStorage.removeItem('lms_token');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('tempUserData');
-    setUser(null);
-    setDashboardDropdownOpen(false);
-    setMobileMenuOpen(false);
-    navigate('/');
-    // Force refresh to update UI
-    window.location.reload();
-  };
-
   useEffect(() => {
     updateCartCount();
     window.addEventListener("storage", updateCartCount);
@@ -399,7 +272,13 @@ function Landing() {
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
-    const targets = { students: 50000, courses: 200, instructors: 150, satisfaction: 98 };
+    const targets = {
+      students: Number(statsTarget.students || 0),
+      courses: Number(statsTarget.courses || 0),
+      instructors: Number(statsTarget.instructors || 0),
+      satisfaction: Number(statsTarget.satisfaction || 0),
+    };
+
     const interval = setInterval(() => {
       setCounters(prev => {
         let newState = { ...prev };
@@ -418,14 +297,15 @@ function Landing() {
       window.removeEventListener("scroll", handleScroll);
       clearInterval(interval);
     };
-  }, []);
+  }, [statsTarget]);
 
   useEffect(() => {
+    if (!testimonials.length) return;
     const interval = setInterval(() => {
       setActiveTestimonial(prev => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [testimonials]);
 
   const nextSlide = () => {
     setDirection(1);
@@ -436,9 +316,10 @@ function Landing() {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
   useEffect(() => {
+    if (slides.length <= 1) return;
     const interval = setInterval(() => nextSlide(), 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [slides]);
 
   const sliderVariants = {
     enter: (direction) => ({
@@ -453,6 +334,10 @@ function Landing() {
   };
 
   const openCoursePopup = (course) => {
+    const impressionSource = searchQuery.trim() ? "SEARCH" : "HOME";
+    landingApi.trackCourseImpression(course.id, impressionSource).catch((error) => {
+      console.warn("[Landing] Failed to track course impression", error);
+    });
     setSelectedCourse(course);
     setShowPopup(true);
     document.body.style.overflow = 'hidden';
@@ -466,45 +351,44 @@ function Landing() {
 
   const getRoleLabel = () => {
     if (!user) return null;
-    if (user.role === 'admin') return 'Admin';
-    if (user.role === 'instructor') return 'Instructor';
-    if (user.role === 'student' || user.role === 'user') return 'Student';
+    if (user.role === 'admin' || user.role === 'Admin' || user.role === 'ADMIN') return 'Admin';
+    if (user.role === 'instructor' || user.role === 'Instructor') return 'Instructor';
     return null;
   };
   const roleLabel = getRoleLabel();
 
-  // Get user initial for avatar
-  const getUserInitial = () => {
-    if (!user) return '';
-    if (user.firstName) return user.firstName.charAt(0).toUpperCase();
-    if (user.name) return user.name.charAt(0).toUpperCase();
-    if (user.email) return user.email.charAt(0).toUpperCase();
-    return 'U';
-  };
+  // ✅ Show loading while auth is initializing
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-  // Get user display name
-  const getUserName = () => {
-    if (!user) return '';
-    if (user.firstName && user.lastName) return `${user.firstName} ${user.lastName}`;
-    if (user.firstName) return user.firstName;
-    if (user.name) return user.name;
-    if (user.email) return user.email.split('@')[0];
-    return 'User';
-  };
+  // ✅ If authenticated, redirect (this is a safety net)
+  if (!authLoading && isAuthenticated) {
+    return null; // Will redirect via useEffect
+  }
+
+  const currentSlideData = slides[currentSlide] || null;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-orange-500 origin-left z-50" style={{ scaleX }} />
 
-      {/* Navbar with Courses dropdown */}
+      {/* Navbar with Courses dropdown - Updated to use authUser */}
       <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? "bg-white/95 backdrop-blur-md shadow-lg py-2" : "bg-white/80 backdrop-blur-sm py-4"} border-b border-gray-100`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
-              <div className="relative">
-                <div className="absolute inset-0 bg-orange-500 blur-lg rounded-full opacity-0 group-hover:opacity-30 transition duration-500"></div>
-                <span className="relative text-2xl font-bold text-orange-600 group-hover:scale-105 transition-transform duration-300 inline-block">LearnMaster</span>
+              <div className="relative flex items-center gap-3">
+                <img src={logoImage} alt="LearnMaster" className="h-16 w-auto rounded-lg shadow-md group-hover:scale-105 transition-transform duration-300" />
+                <span className="text-lg font-semibold text-slate-800 hidden sm:inline">LearnMaster</span>
               </div>
             </Link>
 
@@ -521,6 +405,7 @@ function Landing() {
                 </button>
                 {coursesDropdownOpen && (
                   <div className="absolute left-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 animate-fade-in">
+                    {/* Categories section */}
                     <div className="px-4 py-2">
                       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Categories</p>
                       <div className="grid grid-cols-2 gap-1">
@@ -543,6 +428,7 @@ function Landing() {
                       </div>
                     </div>
                     <div className="border-t border-gray-100 my-1"></div>
+                    {/* Popular courses section */}
                     <div className="px-4 py-2">
                       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Popular Courses</p>
                       <div className="space-y-1">
@@ -573,6 +459,7 @@ function Landing() {
                 )}
               </div>
 
+              {/* Other menu links */}
               <Link to="/certification" className="relative group text-gray-600 hover:text-orange-600 transition-colors duration-300">
                 Get Certified
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 group-hover:w-full transition-all duration-300 ease-out"></span>
@@ -618,19 +505,15 @@ function Landing() {
               </div>
 
               {/* Role label */}
-              {roleLabel && user && (
-                <span className="text-xs font-medium bg-orange-100 text-orange-700 px-3 py-1 rounded-full border border-orange-200 shadow-sm">
+              {roleLabel && (
+                <span className="text-xs font-medium bg-gray-100 text-gray-700 px-3 py-1 rounded-full border border-gray-200 shadow-sm">
                   {roleLabel}
                 </span>
               )}
 
               {user ? (
                 <>
-                  {/* Wishlist Button */}
-                  <button 
-                    onClick={() => navigate("/student/wishlist")} 
-                    className="relative text-gray-600 hover:text-orange-600 transition-transform duration-200 hover:scale-110"
-                  >
+                  <button className="relative text-gray-600 hover:text-orange-600 transition-transform duration-200 hover:scale-110">
                     <Heart size={20} className={wishlist.length > 0 ? "fill-red-500 text-red-500" : ""} />
                     {wishlist.length > 0 && (
                       <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center shadow-md animate-pulse">
@@ -638,8 +521,6 @@ function Landing() {
                       </span>
                     )}
                   </button>
-                  
-                  {/* Cart Button */}
                   <button onClick={() => navigate("/cart")} className="relative text-gray-600 hover:text-orange-600 transition-transform duration-200 hover:scale-110">
                     <ShoppingCart size={20} />
                     {cartCount > 0 && (
@@ -648,52 +529,9 @@ function Landing() {
                       </span>
                     )}
                   </button>
-
-                  {/* ✅ Profile Dropdown - Shows user avatar and name */}
                   <ProfileDropdown user={user} onLogout={handleLogout} />
-
-                  {/* Alternative: Custom User Profile Button */}
-                  {/* <div className="relative">
-                    <button 
-                      onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-semibold text-sm">
-                        {getUserInitial()}
-                      </div>
-                      <span className="text-sm text-gray-700 font-medium">{getUserName()}</span>
-                      <ChevronDown size={14} className="text-gray-500" />
-                    </button>
-                    {profileDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
-                        <div className="px-4 py-3 border-b border-gray-100">
-                          <p className="font-semibold text-gray-800">{getUserName()}</p>
-                          <p className="text-sm text-gray-500">{user.email}</p>
-                          {roleLabel && (
-                            <span className="inline-block mt-1 text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
-                              {roleLabel}
-                            </span>
-                          )}
-                        </div>
-                        <button onClick={() => { navigate("/student/dashboard"); setProfileDropdownOpen(false); }} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                          <UserCircle className="inline mr-2 w-4 h-4" /> Dashboard
-                        </button>
-                        <button onClick={() => { navigate("/student/profile"); setProfileDropdownOpen(false); }} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                          <Settings className="inline mr-2 w-4 h-4" /> Profile Settings
-                        </button>
-                        <button onClick={() => { navigate("/help"); setProfileDropdownOpen(false); }} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                          <HelpCircle className="inline mr-2 w-4 h-4" /> Help Center
-                        </button>
-                        <div className="border-t border-gray-100 my-1"></div>
-                        <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                          <LogOut className="inline mr-2 w-4 h-4" /> Logout
-                        </button>
-                      </div>
-                    )}
-                  </div> */}
                 </>
               ) : (
-                // 🔥 Show Login/Signup buttons only when NOT logged in
                 <div className="flex items-center gap-4">
                   <button onClick={() => navigate("/login")} className="text-gray-700 hover:text-orange-600 transition-colors duration-300 font-medium">Log in</button>
                   <button onClick={() => navigate("/register")} className="px-5 py-2 bg-orange-600 text-white rounded-full hover:bg-orange-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105">Sign up</button>
@@ -707,7 +545,7 @@ function Landing() {
             </button>
           </div>
 
-          {/* Mobile menu */}
+          {/* Mobile menu - same as before */}
           {mobileMenuOpen && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -726,22 +564,7 @@ function Landing() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-
-              {/* 🔥 Mobile - Show user info if logged in */}
-              {user && (
-                <div className="flex items-center gap-3 py-2 border-b border-gray-100">
-                  <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-semibold">
-                    {getUserInitial()}
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-800">{getUserName()}</p>
-                    <p className="text-xs text-gray-500">{user.email}</p>
-                  </div>
-                </div>
-              )}
-
               <div className="flex flex-col space-y-2">
-                {/* Mobile courses dropdown */}
                 <div className="relative">
                   <button
                     onClick={() => setCoursesDropdownOpen(!coursesDropdownOpen)}
@@ -797,7 +620,6 @@ function Landing() {
                 <Link to="/certification" className="py-2 text-gray-700 hover:text-orange-600 transition-colors">Get Certified</Link>
                 <Link to="/subscription" className="py-2 text-gray-700 hover:text-orange-600 transition-colors">Subscribe</Link>
 
-                {/* Mobile dashboard dropdown */}
                 <div className="relative">
                   <button
                     onClick={() => setDashboardDropdownOpen(!dashboardDropdownOpen)}
@@ -813,11 +635,7 @@ function Landing() {
                     </div>
                   )}
                 </div>
-
-                {roleLabel && user && (
-                  <span className="py-1 text-xs text-orange-700 bg-orange-100 px-2 rounded-full inline-block w-fit">Role: {roleLabel}</span>
-                )}
-
+                {roleLabel && <span className="py-2 text-gray-700">Role: {roleLabel}</span>}
                 {user ? (
                   <>
                     <button onClick={() => navigate("/student/wishlist")} className="text-left py-2 text-gray-700 hover:text-orange-600">Wishlist</button>
@@ -826,7 +644,6 @@ function Landing() {
                     <button onClick={handleLogout} className="text-left py-2 text-red-600 hover:text-red-700">Logout</button>
                   </>
                 ) : (
-                  // 🔥 Show Login/Signup in mobile menu when NOT logged in
                   <div className="flex gap-4 pt-2">
                     <button onClick={() => navigate("/login")} className="flex-1 px-4 py-2 border border-orange-600 text-orange-600 rounded-lg hover:bg-orange-50 transition-colors">Log in</button>
                     <button onClick={() => navigate("/register")} className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">Sign up</button>
@@ -838,22 +655,31 @@ function Landing() {
         </div>
       </nav>
 
-      {/* Hero Banner, Stats, Filters, Courses Grid, Popup, Features, Testimonials, CTA, Footer - Same as original */}
-      {/* Hero Banner with 6 slides */}
+      {/* Hero Banner, Stats, Filters, Courses Grid, Popup, Features, Testimonials, CTA, Footer - Keep the same as your original */}
+      {/* ... rest of your component remains the same ... */}
+      
+      {/* Hero Banner */}
       <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden rounded-2xl shadow-xl mt-20">
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.div key={currentSlide} custom={direction} variants={sliderVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.5, ease: "easeInOut" }} className="absolute inset-0 w-full h-full">
-            <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${slides[currentSlide].bgImage})` }}>
-              <div className="absolute inset-0 bg-black/30"></div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+        {landingLoading ? (
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 animate-pulse" />
+        ) : currentSlideData ? (
+          <AnimatePresence initial={false} custom={direction}>
+            <motion.div key={currentSlide} custom={direction} variants={sliderVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.5, ease: "easeInOut" }} className="absolute inset-0 w-full h-full">
+              <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${currentSlideData.bgImage})` }}>
+                <div className="absolute inset-0 bg-black/30"></div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900" />
+        )}
         <div className="absolute inset-0 flex items-center justify-start px-6 md:px-12 lg:px-24">
           <div className="bg-white/95 backdrop-blur-md rounded-2xl p-6 md:p-8 max-w-md shadow-2xl border border-white/30">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">{slides[currentSlide].title}</h2>
-            <p className="text-gray-600 mb-6">{slides[currentSlide].description}</p>
-            <button onClick={() => (window.location.href = slides[currentSlide].link)} className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition shadow-md flex items-center gap-2">
-              {slides[currentSlide].cta} →
+            <img src={logoImage} alt="LearnMaster" className="h-20 w-auto mb-4" />
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">{currentSlideData?.title || "Learn • Skill • Grow"}</h2>
+            <p className="text-gray-600 mb-6">{currentSlideData?.description || "Dynamic learning paths, real outcomes, and premium mentorship."}</p>
+            <button onClick={() => (window.location.href = (currentSlideData?.link || "/courses"))} className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition shadow-md flex items-center gap-2">
+              {currentSlideData?.cta || "Explore Courses"} →
             </button>
           </div>
         </div>
@@ -869,6 +695,12 @@ function Landing() {
           ))}
         </div>
       </div>
+
+      {landingError && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+          <div className="rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm">{landingError}</div>
+        </div>
+      )}
 
       {/* Stats Section */}
       <section className="py-16 bg-white border-y border-gray-100">
@@ -1076,6 +908,7 @@ function Landing() {
             <h2 className="text-3xl font-bold text-gray-900 mb-4">What Our Students Say</h2>
             <p className="text-gray-600">Join thousands of satisfied learners</p>
           </div>
+          {testimonials.length > 0 ? (
           <div className="relative max-w-4xl mx-auto">
             <AnimatePresence mode="wait">
               <motion.div key={activeTestimonial} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} transition={{ duration: 0.5 }} className="bg-gray-50 rounded-2xl p-8 border border-gray-100 shadow-sm">
@@ -1087,10 +920,13 @@ function Landing() {
             </AnimatePresence>
             <div className="flex justify-center gap-2 mt-6">{testimonials.map((_, idx) => (<button key={idx} onClick={() => setActiveTestimonial(idx)} className={`w-2 h-2 rounded-full transition-all duration-300 ${activeTestimonial === idx ? 'w-6 bg-orange-600' : 'bg-gray-300'}`} />))}</div>
           </div>
+          ) : (
+            <div className="text-center text-gray-500">No testimonials available right now.</div>
+          )}
         </div>
       </section>
 
-      {/* 🔥 CTA Section - Show only when NOT logged in */}
+      {/* CTA Section (only for logged out) */}
       {!user && (
         <section className="py-20 bg-orange-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -1103,44 +939,11 @@ function Landing() {
         </section>
       )}
 
-      {/* 🔥 Welcome User Section - Show only when logged in */}
-      {user && (
-        <section className="py-12 bg-gradient-to-r from-orange-50 to-orange-100 border-y border-orange-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-                  {getUserInitial()}
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-800">Welcome back, {getUserName()}! 👋</h2>
-                  <p className="text-gray-600">Continue your learning journey with us.</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <button 
-                  onClick={() => navigate("/student/dashboard")} 
-                  className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition shadow-md"
-                >
-                  Go to Dashboard
-                </button>
-                <button 
-                  onClick={handleLogout} 
-                  className="px-6 py-2 border border-orange-600 text-orange-600 rounded-lg hover:bg-orange-50 transition"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Footer */}
       <footer className="bg-white border-t border-gray-100 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
-            <div><div className="flex items-center gap-2 mb-4"><span className="text-gray-800 font-bold text-xl">LearnMaster</span></div><p className="text-gray-500 text-sm">Empowering learners worldwide with quality education.</p></div>
+            <div><div className="flex items-center gap-3 mb-4"><img src={logoImage} alt="LearnMaster" className="h-16 w-auto" /><span className="text-gray-800 font-bold text-xl">LearnMaster</span></div><p className="text-gray-500 text-sm">Empowering learners worldwide with quality education.</p></div>
             <div><h4 className="text-gray-800 font-semibold mb-4">Quick Links</h4><ul className="space-y-2 text-gray-500 text-sm"><li><a href="#courses" className="hover:text-orange-600 transition">Courses</a></li><li><a href="#features" className="hover:text-orange-600 transition">Features</a></li><li><a href="#" className="hover:text-orange-600 transition">About Us</a></li><li><a href="#" className="hover:text-orange-600 transition">Contact</a></li></ul></div>
             <div><h4 className="text-gray-800 font-semibold mb-4">Support</h4><ul className="space-y-2 text-gray-500 text-sm"><li><a href="#" className="hover:text-orange-600 transition">Help Center</a></li><li><a href="#" className="hover:text-orange-600 transition">Terms of Service</a></li><li><a href="#" className="hover:text-orange-600 transition">Privacy Policy</a></li><li><a href="#" className="hover:text-orange-600 transition">Refund Policy</a></li></ul></div>
             <div><h4 className="text-gray-800 font-semibold mb-4">Contact Us</h4><ul className="space-y-2 text-gray-500 text-sm"><li className="flex items-center gap-2"><Mail size={14} /> support@learnmaster.com</li><li className="flex items-center gap-2"><Phone size={14} /> +1 234 567 890</li><li className="flex items-center gap-2"><MapPin size={14} /> 123 Learning St, Silicon Valley</li></ul></div>

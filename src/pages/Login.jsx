@@ -1,3 +1,4 @@
+// src/pages/Login.jsx
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail, Lock, LogIn, AlertCircle, KeyRound, RefreshCw } from "lucide-react";
@@ -88,10 +89,8 @@ const Login = () => {
         toast.error(result.error || "Login failed");
       }
     } catch (err) {
-      // Fixed: This catch block will now show the real error if it ever reaches here
-      const message = err.response?.data?.message || err.message || "An unexpected error occurred";
-      setError(message);
-      toast.error(message);
+      setError("An unexpected error occurred");
+      toast.error("An unexpected error occurred");
     } finally {
       setLoading(false);
     }

@@ -2,126 +2,59 @@ import axiosInstance from "./axiosInstance";
 
 export const instructorApi = {
   // Get instructor dashboard data
-  getDashboardData: async () => {
-    const response = await axiosInstance.get("/instructor/dashboard");
-    return response.data;
-  },
-
-  // Get instructor profile
-  getProfile: async () => {
-    const response = await axiosInstance.get("/instructor/profile");
-    return response.data;
-  },
-
-  // Update instructor profile
-  updateProfile: async (profileData) => {
-    const response = await axiosInstance.put("/instructor/profile", profileData);
+  getDashboardData: async (instructorId) => {
+    const response = await axiosInstance.get(`/api/v1/instructors/${instructorId}/dashboard`);
     return response.data;
   },
 
   // Create new course
-  createCourse: async (courseData) => {
-    const response = await axiosInstance.post("/instructor/courses", courseData);
+  createCourse: async (courseData, instructorId) => {
+    const response = await axiosInstance.post(`/api/v1/instructors/${instructorId}/courses`, courseData);
     return response.data;
   },
 
   // Update course
-  updateCourse: async (courseId, courseData) => {
-    const response = await axiosInstance.put(`/instructor/courses/${courseId}`, courseData);
+  updateCourse: async (courseId, courseData, instructorId) => {
+    const response = await axiosInstance.put(`/api/v1/instructors/${instructorId}/courses/${courseId}`, courseData);
     return response.data;
   },
 
   // Delete course
-  deleteCourse: async (courseId) => {
-    const response = await axiosInstance.delete(`/instructor/courses/${courseId}`);
+  deleteCourse: async (courseId, instructorId) => {
+    const response = await axiosInstance.delete(`/api/v1/instructors/${instructorId}/courses/${courseId}`);
     return response.data;
   },
 
   // Get instructor's courses
-  getCourses: async () => {
-    const response = await axiosInstance.get("/instructor/courses");
-    return response.data;
-  },
-
-  // Upload course thumbnail
-  uploadThumbnail: async (courseId, file) => {
-    const formData = new FormData();
-    formData.append("thumbnail", file);
-    const response = await axiosInstance.post(`/instructor/courses/${courseId}/thumbnail`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
-  },
-
-  // Upload lesson video
-  uploadVideo: async (courseId, lessonId, file) => {
-    const formData = new FormData();
-    formData.append("video", file);
-    const response = await axiosInstance.post(
-      `/instructor/courses/${courseId}/lessons/${lessonId}/video`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    return response.data;
-  },
-
-  // Add lesson to course
-  addLesson: async (courseId, lessonData) => {
-    const response = await axiosInstance.post(`/instructor/courses/${courseId}/lessons`, lessonData);
-    return response.data;
-  },
-
-  // Update lesson
-  updateLesson: async (courseId, lessonId, lessonData) => {
-    const response = await axiosInstance.put(
-      `/instructor/courses/${courseId}/lessons/${lessonId}`,
-      lessonData
-    );
-    return response.data;
-  },
-
-  // Delete lesson
-  deleteLesson: async (courseId, lessonId) => {
-    const response = await axiosInstance.delete(`/instructor/courses/${courseId}/lessons/${lessonId}`);
+  getCourses: async (instructorId) => {
+    const response = await axiosInstance.get(`/api/v1/instructors/${instructorId}/courses`);
     return response.data;
   },
 
   // Get course enrollments
-  getCourseEnrollments: async (courseId) => {
-    const response = await axiosInstance.get(`/instructor/courses/${courseId}/enrollments`);
+  getCourseEnrollments: async (courseId, instructorId) => {
+    const response = await axiosInstance.get(`/api/v1/instructors/${instructorId}/courses/${courseId}/students`);
     return response.data;
   },
 
   // Get earnings
-  getEarnings: async (params = {}) => {
-    const response = await axiosInstance.get("/instructor/earnings", { params });
+  getEarnings: async (params = {}, instructorId) => {
+    const response = await axiosInstance.get(`/api/v1/instructors/${instructorId}/earnings`, { params });
     return response.data;
   },
 
   // Get course analytics
-  getCourseAnalytics: async (courseId) => {
-    const response = await axiosInstance.get(`/instructor/courses/${courseId}/analytics`);
+  getCourseAnalytics: async (courseId, instructorId) => {
+    const response = await axiosInstance.get(`/api/v1/instructors/${instructorId}/courses/${courseId}/analytics`);
     return response.data;
   },
 
-  // Get course reviews
-  getCourseReviews: async (courseId) => {
-    const response = await axiosInstance.get(`/instructor/courses/${courseId}/reviews`);
+  applyForInstructorRole: async (formData) => {
+    const response = await axiosInstance.post('/api/v1/instructors/applications', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
-  },
-
-  // Respond to review
-  respondToReview: async (courseId, reviewId, response) => {
-    const res = await axiosInstance.post(
-      `/instructor/courses/${courseId}/reviews/${reviewId}/respond`,
-      { response }
-    );
-    return res.data;
   },
 };

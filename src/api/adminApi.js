@@ -1,147 +1,348 @@
 import axiosInstance from "./axiosInstance";
 
+const tryPaths = async (requestBuilder) => {
+  let lastError;
+  for (const build of requestBuilder) {
+    try {
+      const response = await build();
+      return response.data;
+    } catch (error) {
+      lastError = error;
+      if (error?.response && ![404, 405].includes(error.response.status)) {
+        throw error;
+      }
+    }
+  }
+  throw lastError;
+};
+
 export const adminApi = {
-  // Get admin dashboard data
-  getDashboardData: async () => {
-    const response = await axiosInstance.get("/admin/dashboard");
+  login: async (email, password) => {
+    const response = await axiosInstance.post("/api/v1/auth/login", { email, password });
     return response.data;
   },
 
-  // Get all users
-  getAllUsers: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/users", { params });
+  getSubAdminProfile: async () => {
+    const response = await axiosInstance.get("/api/v1/admin/me");
     return response.data;
   },
 
-  // Get user by ID
+  updateSubAdminProfile: async (profileData) => {
+    const response = await axiosInstance.put("/api/v1/admin/me", profileData);
+    return response.data;
+  },
+
+  registerSubAdmin: async (adminData) => {
+    const response = await axiosInstance.post("/api/v1/admin/register", adminData);
+    return response.data;
+  },
+
+  getDashboardStats: {
+    users: async () => adminApi.getUsersReport(),
+    courses: async () => adminApi.getCoursesReport(),
+    revenue: async () => adminApi.getRevenueReport(),
+    orders: async () => adminApi.getOrdersReport(),
+  },
+
+  getUsers: async (params = {}) => {
+    const response = await axiosInstance.get("/api/v1/admin/users", { params });
+    return response.data;
+  },
+
   getUserById: async (userId) => {
-    const response = await axiosInstance.get(`/admin/users/${userId}`);
+    const response = await axiosInstance.get(`/api/v1/admin/users/${userId}`);
     return response.data;
   },
 
-  // Update user
-  updateUser: async (userId, userData) => {
-    const response = await axiosInstance.put(`/admin/users/${userId}`, userData);
+  updateUserStatus: async (userId, status) => {
+    const response = await axiosInstance.put(`/api/v1/admin/users/${userId}/status`, { status });
     return response.data;
   },
 
-  // Delete user
-  deleteUser: async (userId) => {
-    const response = await axiosInstance.delete(`/admin/users/${userId}`);
+  updateUser: async (userId, payload) => {
+    const response = await axiosInstance.put(`/api/v1/admin/users/${userId}`, payload);
     return response.data;
   },
 
-  // Ban user
+  createUser: async (payload) => {
+    const response = await axiosInstance.post("/api/v1/admin/users", payload);
+    return response.data;
+  },
+
   banUser: async (userId) => {
-    const response = await axiosInstance.post(`/admin/users/${userId}/ban`);
+    const response = await axiosInstance.put(`/api/v1/admin/users/${userId}/status`, { status: "BLOCKED" });
     return response.data;
   },
 
-  // Unban user
   unbanUser: async (userId) => {
-    const response = await axiosInstance.post(`/admin/users/${userId}/unban`);
+    const response = await axiosInstance.put(`/api/v1/admin/users/${userId}/status`, { status: "ACTIVE" });
     return response.data;
   },
 
-  // Get all instructors
+  deleteUser: async (userId) => {
+    const response = await axiosInstance.delete(`/api/v1/admin/users/${userId}`);
+    return response.data;
+  },
+
   getInstructors: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/instructors", { params });
+    const response = await axiosInstance.get("/api/v1/admin/instructors", { params });
     return response.data;
   },
 
-  // Approve instructor request
-  approveInstructor: async (instructorId) => {
-    const response = await axiosInstance.post(`/admin/instructors/${instructorId}/approve`);
+  getInstructorApplications: async (params = {}) => {
+    const response = await axiosInstance.get("/api/v1/admin/instructors/applications", { params });
     return response.data;
   },
 
-  // Reject instructor request
-  rejectInstructor: async (instructorId) => {
-    const response = await axiosInstance.post(`/admin/instructors/${instructorId}/reject`);
+  approveInstructorApplication: async (userId) => {
+    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/approve`);
     return response.data;
   },
 
-  // Get all courses
-  getAllCourses: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/courses", { params });
+  rejectInstructorApplication: async (userId) => {
+    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/reject`);
     return response.data;
   },
 
-  // Update course status
-  updateCourseStatus: async (courseId, status) => {
-    const response = await axiosInstance.put(`/admin/courses/${courseId}/status`, { status });
+  deleteInstructor: async (instructorId) => {
+    const response = await axiosInstance.delete(`/api/v1/admin/instructors/${instructorId}`);
     return response.data;
   },
 
-  // Delete course
+  getInstructorCourses: async (instructorId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/instructors/${instructorId}/courses`);
+    return response.data;
+  },
+
+  getCourses: async (params = {}) => {
+    const response = await axiosInstance.get("/api/v1/admin/courses", { params });
+    return response.data;
+  },
+
+  getCourseById: async (courseId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/courses/${courseId}`);
+    return response.data;
+  },
+
+  getCourseContent: async (courseId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/content/${courseId}`);
+    return response.data;
+  },
+
+  approveCourse: async (courseId) => {
+    const response = await axiosInstance.put(`/api/v1/admin/courses/${courseId}/approve`);
+    return response.data;
+  },
+
+  rejectCourse: async (courseId) => {
+    const response = await axiosInstance.put(`/api/v1/admin/courses/${courseId}/reject`);
+    return response.data;
+  },
+
   deleteCourse: async (courseId) => {
-    const response = await axiosInstance.delete(`/admin/courses/${courseId}`);
+    const response = await axiosInstance.delete(`/api/v1/admin/courses/${courseId}`);
     return response.data;
   },
 
-  // Get categories
-  getCategories: async () => {
-    const response = await axiosInstance.get("/admin/categories");
+  createSection: async (courseId, sectionData) => {
+    const response = await axiosInstance.post(`/api/v1/admin/courses/${courseId}/sections`, sectionData);
     return response.data;
   },
 
-  // Create category
-  createCategory: async (categoryData) => {
-    const response = await axiosInstance.post("/admin/categories", categoryData);
+  deleteSection: async (sectionId) => {
+    const response = await axiosInstance.delete(`/api/v1/admin/sections/${sectionId}`);
     return response.data;
   },
 
-  // Update category
-  updateCategory: async (categoryId, categoryData) => {
-    const response = await axiosInstance.put(`/admin/categories/${categoryId}`, categoryData);
+  createLecture: async (sectionId, lectureData) => {
+    const response = await axiosInstance.post(`/api/v1/admin/sections/${sectionId}/lectures`, lectureData);
     return response.data;
   },
 
-  // Delete category
-  deleteCategory: async (categoryId) => {
-    const response = await axiosInstance.delete(`/admin/categories/${categoryId}`);
+  approveLecture: async (sectionId, lectureId) => {
+    const response = await axiosInstance.put(`/api/v1/admin/sections/${sectionId}/lectures/${lectureId}/approve`);
     return response.data;
   },
 
-  // Get platform analytics
-  getAnalytics: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/analytics", { params });
+  rejectLecture: async (sectionId, lectureId) => {
+    const response = await axiosInstance.put(`/api/v1/admin/sections/${sectionId}/lectures/${lectureId}/reject`);
     return response.data;
   },
 
-  // Get revenue data
-  getRevenue: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/revenue", { params });
+  deleteLecture: async (sectionId, lectureId) => {
+    const response = await axiosInstance.delete(`/api/v1/admin/sections/${sectionId}/lectures/${lectureId}`);
     return response.data;
   },
 
-  // Get reports
-  getReports: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/reports", { params });
+  getOrders: async (params = {}) => {
+    const response = await axiosInstance.get("/api/v1/admin/orders", { params });
     return response.data;
   },
 
-  // Resolve report
-  resolveReport: async (reportId) => {
-    const response = await axiosInstance.put(`/admin/reports/${reportId}/resolve`);
+  getOrderById: async (orderId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/orders/${orderId}`);
     return response.data;
   },
 
-  // Get system settings
-  getSettings: async () => {
-    const response = await axiosInstance.get("/admin/settings");
+  deleteOrder: async (orderId) => {
+    const response = await axiosInstance.delete(`/api/v1/admin/orders/${orderId}`);
     return response.data;
   },
 
-  // Update system settings
-  updateSettings: async (settingsData) => {
-    const response = await axiosInstance.put("/admin/settings", settingsData);
+  updateOrderStatus: async (orderId, status) => {
+    const response = await axiosInstance.put(`/api/v1/admin/orders/${orderId}/status`, { status });
     return response.data;
   },
 
-  // Get user activity logs
-  getActivityLogs: async (params = {}) => {
-    const response = await axiosInstance.get("/admin/activity-logs", { params });
+  processOrderRefund: async (orderId, refundData) => {
+    const response = await axiosInstance.post(`/api/v1/admin/orders/${orderId}/refund`, refundData);
+    return response.data;
+  },
+
+  getPayments: async (params = {}) => {
+    const response = await axiosInstance.get("/api/v1/admin/payments", { params });
+    return response.data;
+  },
+
+  getPaymentById: async (paymentId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/payments/${paymentId}`);
+    return response.data;
+  },
+
+  getReviews: async (params = {}) => {
+    const response = await axiosInstance.get("/api/v1/admin/reviews", { params });
+    return response.data;
+  },
+
+  deleteReview: async (reviewId) => {
+    const response = await axiosInstance.delete(`/api/v1/admin/reviews/${reviewId}`);
+    return response.data;
+  },
+
+  updatePlatformSettings: async (settingsData) => {
+    const response = await axiosInstance.put("/api/v1/admin/settings/platform", settingsData);
+    return response.data;
+  },
+
+  updatePaymentSettings: async (settingsData) => {
+    const response = await axiosInstance.put("/api/v1/admin/settings/payment", settingsData);
+    return response.data;
+  },
+
+  updateNotificationSettings: async (settingsData) => {
+    const response = await axiosInstance.put("/api/v1/admin/settings/notifications", settingsData);
+    return response.data;
+  },
+
+  broadcastNotification: async (notificationData) => {
+    const response = await axiosInstance.post("/api/v1/admin/broadcast", notificationData);
+    return response.data;
+  },
+
+  reprocessDLQ: async () => {
+    const response = await axiosInstance.post("/api/v1/admin/reprocess-dlq");
+    return response.data;
+  },
+
+  getSystemHealth: async () => {
+    const response = await axiosInstance.get("/api/v1/admin/system-health");
+    return response.data;
+  },
+
+  getAllUsers: async (params = {}) => adminApi.getUsers(params),
+  getAllCourses: async (params = {}) => adminApi.getCourses(params),
+  approveInstructor: async (instructorId) => adminApi.approveInstructorApplication(instructorId),
+  rejectInstructor: async (instructorId) => adminApi.rejectInstructorApplication(instructorId),
+  updateCourseStatus: async (courseId, status) => {
+    if (status === "approved") return adminApi.approveCourse(courseId);
+    if (status === "rejected") return adminApi.rejectCourse(courseId);
+    throw new Error("Invalid status. Use approve or reject.");
+  },
+
+  getUsersReport: async (params = {}) => {
+    const response = await axiosInstance.get("/api/v1/admin/reports/users", { params });
+    return response.data;
+  },
+
+  getOrdersReport: async (params = {}) => {
+    const response = await axiosInstance.get("/api/v1/admin/reports/orders", { params });
+    return response.data;
+  },
+
+  getRevenueReport: async (params = {}) => {
+    const response = await axiosInstance.get("/api/v1/admin/reports/revenue", { params });
+    return response.data;
+  },
+
+  getCoursesReport: async (params = {}) => {
+    const response = await axiosInstance.get("/api/v1/admin/reports/courses", { params });
+    return response.data;
+  },
+
+  getOrderAnalytics: async () => {
+    return tryPaths([
+      () => axiosInstance.get("/api/v1/admin/analytics/orders"),
+      () => axiosInstance.get("/api/v1/admin/reports/orders"),
+    ]);
+  },
+
+  getCourseReport: async () => adminApi.getCoursesReport(),
+  getOrderDetails: async (orderId) => adminApi.getOrderById(orderId),
+  getPlatformSettings: async () => tryPaths([() => axiosInstance.get("/api/v1/admin/settings/platform")]),
+  savePlatformSettings: async (settings) => tryPaths([() => axiosInstance.put("/api/v1/admin/settings/platform", settings)]),
+  getPaymentSettings: async () => tryPaths([() => axiosInstance.get("/api/v1/admin/settings/payment")]),
+  savePaymentSettings: async (settings) => tryPaths([() => axiosInstance.put("/api/v1/admin/settings/payment", settings)]),
+  getNotificationSettings: async () => tryPaths([() => axiosInstance.get("/api/v1/admin/settings/notifications")]),
+  saveNotificationSettings: async (settings) => tryPaths([() => axiosInstance.put("/api/v1/admin/settings/notifications", settings)]),
+
+  verifyAdminEmail: async ({ email, otp }) => {
+    return tryPaths([
+      () => axiosInstance.post("/api/v1/auth/verify-email", { email, otp }),
+      () => axiosInstance.post("/api/v1/admin/verify-email", { email, otp }),
+    ]);
+  },
+
+  getAdminProfile: async () => adminApi.getSubAdminProfile(),
+  updateAdminProfile: async (payload) => adminApi.updateSubAdminProfile(payload),
+
+  getAdmins: async () => {
+    return tryPaths([
+      () => axiosInstance.get("/api/v1/admin/admins"),
+      () => axiosInstance.get("/api/v1/admin/users", { params: { role: "admin" } }),
+    ]);
+  },
+
+  deleteSubAdmin: async (adminId) => {
+    return tryPaths([
+      () => axiosInstance.delete(`/api/v1/admin/admins/${adminId}`),
+      () => axiosInstance.delete(`/api/v1/admin/users/${adminId}`),
+    ]);
+  },
+
+  toggleAdminStatus: async (adminId) => {
+    return tryPaths([
+      () => axiosInstance.patch(`/api/v1/admin/admins/${adminId}/status`),
+      () => axiosInstance.put(`/api/v1/admin/users/${adminId}/status`),
+    ]);
+  },
+
+  getRoles: async () => {
+    const response = await axiosInstance.get("/api/v1/admin/roles");
+    return response.data;
+  },
+
+  createRole: async (payload) => {
+    const response = await axiosInstance.post("/api/v1/admin/roles", payload);
+    return response.data;
+  },
+
+  updateRole: async (roleId, payload) => {
+    const response = await axiosInstance.put(`/api/v1/admin/roles/${roleId}`, payload);
+    return response.data;
+  },
+
+  deleteRole: async (roleId) => {
+    const response = await axiosInstance.delete(`/api/v1/admin/roles/${roleId}`);
     return response.data;
   },
 };

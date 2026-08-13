@@ -1,35 +1,42 @@
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { isTokenExpired } from "../utils/auth";
+// src/components/ProtectedRoute.jsx
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { user, loading, logout } = useAuth();
+const ProtectedRoute = ({ children, allowedRoles = [] }) => {
+  const { user, isAuthenticated, loading } = useAuth();
+
+  const hasToken = !!localStorage.getItem('lms_token') || 
+                   !!localStorage.getItem('access_token') ||
+                   !!sessionStorage.getItem('lms_token');
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-purple-500"></div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
       </div>
     );
   }
-
-  const token = localStorage.getItem("lms_token") || localStorage.getItem("access_token");
-
-  if (!user || !token || isTokenExpired(token)) {
-    if (user || token) {
-      logout();
-    }
-    return <Navigate to="/login" replace />;
+  
+  const isAuth = isAuthenticated || hasToken;
+  const adminOnly = allowedRoles.some((role) => String(role).toLowerCase().includes('admin'));
+  const loginPath = adminOnly ? '/admin/login' : '/login';
+  
+  if (!isAuth) {
+    return <Navigate to={loginPath} replace />;
   }
-
-  // Normalize roles: map "user" to "student" in case backend uses "user"
-  const normalizedUserRole = user.role === "user" ? "student" : user.role;
-  const normalizedAllowedRoles = allowedRoles.map((role) =>
-    role === "user" ? "student" : role
-  );
-
-  if (allowedRoles && !normalizedAllowedRoles.includes(normalizedUserRole)) {
-    return <Navigate to="/" replace />;
+  
+  if (allowedRoles.length > 0) {
+    const userRole = String(user?.role || user?.role1 || user?.userRole || '').toLowerCase();
+    const hasAllowedRole = allowedRoles.some(role => 
+      userRole.includes(String(role).toLowerCase())
+    );
+    
+    if (!hasAllowedRole) {
+      return <Navigate to="/" replace />;
+    }
   }
 
   return children;

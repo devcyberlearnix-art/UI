@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AlertCircle, CheckCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, ArrowLeft, CheckCircle, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import AuthShell from "../components/ui/AuthShell";
-
-// Use your ngrok base URL (or fallback to localhost)
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev";
+import { authApi } from "../api/authApi";
 
 const getRedirectByRole = (roleValue) => {
   const role = String(roleValue || "").toLowerCase();
@@ -21,83 +19,32 @@ function OtpVerify() {
 
   const flow = location.state?.flow || "register";
   const email = location.state?.email || "";
-  const initialOtpSessionId = location.state?.otpSessionId || "";
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const [otpSessionId, setOtpSessionId] = useState(initialOtpSessionId);
-  const [cooldown, setCooldown] = useState(30); // start at 30 seconds
+  const [otpSessionId, setOtpSessionId] = useState(location.state?.otpSessionId || "");
+  const [cooldown, setCooldown] = useState(Number(location.state?.cooldownSeconds || 30));
 
-  // Redirect if email is missing
   useEffect(() => {
     if (!email) {
       navigate(flow === "login" ? "/otp-login" : "/register", { replace: true });
     }
   }, [email, flow, navigate]);
 
-  // Cooldown timer
   useEffect(() => {
     if (cooldown <= 0) return;
     const timer = setInterval(() => {
       setCooldown((prev) => Math.max(prev - 1, 0));
     }, 1000);
+
     return () => clearInterval(timer);
   }, [cooldown]);
 
   const canResend = useMemo(() => cooldown === 0, [cooldown]);
-
-  // ─── API calls ─────────────────────────────────────────────
-
-  // Verify registration OTP (includes session ID if provided)
-  const verifyRegistrationOtp = async (email, otp, sessionId) => {
-    const payload = { email, otp };
-    if (sessionId) payload.otpSessionId = sessionId;
-
-    const res = await fetch(`${API_BASE_URL}/api/v1/auth/verify-email`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Verification failed");
-    return data;
-  };
-
-  // Verify login OTP
-  const verifyLoginOtp = async (email, otpSessionId, otp) => {
-    const res = await fetch(`${API_BASE_URL}/api/v1/auth/verify-login-otp`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otpSessionId, otp }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "OTP verification failed");
-    return data;
-  };
-
-  // Resend OTP (works for both flows; adjust endpoint if needed)
-  const resendOtp = async (email, flowType) => {
-    // You may need separate endpoints; we'll try a generic one.
-    // If your backend has different routes, update accordingly.
-    const endpoint =
-      flowType === "register"
-        ? `${API_BASE_URL}/api/v1/auth/resend-registration-otp`
-        : `${API_BASE_URL}/api/v1/auth/request-login-otp`;
-
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Failed to resend OTP");
-    return data;
-  };
-
-  // ─── Handlers ──────────────────────────────────────────────
 
   const onVerify = async () => {
     setError("");
@@ -110,25 +57,26 @@ function OtpVerify() {
     setLoading(true);
     try {
       if (flow === "register") {
-        const res = await verifyRegistrationOtp(email, otp, otpSessionId);
+        const res = await authApi.verifyEmail({ email, otp, otpSessionId });
         setSuccess(true);
         toast.success(res.message || "Email verified successfully");
         setTimeout(() => navigate("/login", { replace: true }), 900);
         return;
       }
 
-      // ── login flow ──
       if (!otpSessionId) {
         throw new Error("OTP session expired. Please request a new OTP.");
       }
 
-      const res = await verifyLoginOtp(email, otpSessionId, otp);
+      const res = await authApi.verifyLoginOtp({ email, otpSessionId, otp });
       const tokenData =
         res.authentication?.accessToken || res.accessToken || res.token || res.access_token;
       const refreshToken =
         res.authentication?.refreshToken || res.refreshToken || res.refresh_token || null;
 
-      if (!tokenData) throw new Error("No access token received");
+      if (!tokenData) {
+        throw new Error("No access token received");
+      }
 
       const userInfo = res.user || {};
       const userData = {
@@ -144,7 +92,9 @@ function OtpVerify() {
 
       localStorage.setItem("lms_token", tokenData);
       localStorage.setItem("access_token", tokenData);
-      if (refreshToken) localStorage.setItem("refresh_token", refreshToken);
+      if (refreshToken) {
+        localStorage.setItem("refresh_token", refreshToken);
+      }
       sessionStorage.setItem("lms_token", tokenData);
       localStorage.setItem("lms_user", JSON.stringify(userData));
 
@@ -154,23 +104,20 @@ function OtpVerify() {
         window.location.href = getRedirectByRole(userData.role);
       }, 600);
     } catch (err) {
-      // Attempt to extract detailed error from response
-      let errorMessage = err.message || "OTP verification failed";
-      if (err.response?.data) {
-        const data = err.response.data;
-        const attempts = data.data?.remainingAttempts;
-        const expiry = data.data?.expiresInSeconds;
-        const details = [
-          attempts !== undefined ? `${attempts} attempts left` : "",
-          expiry ? `expires in ${expiry}s` : "",
-        ]
-          .filter(Boolean)
-          .join(" | ");
-        if (details) errorMessage = `${data.message || errorMessage} (${details})`;
-        else if (data.message) errorMessage = data.message;
-      }
-      setError(errorMessage);
-      toast.error(errorMessage);
+      const responseData = err.response?.data;
+      const attempts = responseData?.data?.remainingAttempts;
+      const expiry = responseData?.data?.expiresInSeconds;
+      const baseMessage = responseData?.message || err.message || "OTP verification failed";
+      const details = [
+        attempts !== undefined ? `${attempts} attempts left` : "",
+        expiry ? `expires in ${expiry}s` : "",
+      ]
+        .filter(Boolean)
+        .join(" | ");
+
+      const message = details ? `${baseMessage} (${details})` : baseMessage;
+      setError(message);
+      toast.error(baseMessage);
     } finally {
       setLoading(false);
     }
@@ -180,35 +127,69 @@ function OtpVerify() {
     setError("");
     if (!canResend) return;
 
-    setLoading(true);
+    if (!otpSessionId) {
+      setError("OTP session expired. Please register again.");
+      return;
+    }
+
+    setResending(true);
     try {
-      const res = await resendOtp(email, flow);
-      // Update session ID and cooldown from response
-      setOtpSessionId(res.otpSessionId || res.sessionId || "");
+      const response = await authApi.resendOtp({ flow, email, otpSessionId });
+      const res = response.data || response;
+      setOtpSessionId(res.otpSessionId || otpSessionId);
+      setOtp("");
       setCooldown(Number(res.cooldownSeconds || 30));
-      toast.success(res.message || "OTP resent successfully");
+      toast.success(response.message || res.message || "OTP resent");
     } catch (err) {
-      const message = err.message || "Failed to resend OTP";
+      const responseData = err.response?.data;
+      const retryAfter = Number(responseData?.data?.cooldownSeconds || 0);
+      if (retryAfter > 0) {
+        setCooldown(retryAfter);
+      }
+      const message = responseData?.message || "Failed to resend OTP";
       setError(message);
       toast.error(message);
     } finally {
-      setLoading(false);
+      setResending(false);
     }
   };
 
   return (
     <AuthShell
       title={flow === "register" ? "Verify Email" : "Verify Login OTP"}
-      subtitle="Enter the 6‑digit code sent to your email address."
+      subtitle="Enter the 6-digit code sent to your email address."
       eyebrow="LearnMaster Verification"
       highlights={[
-        { value: "6‑Digit", label: "OTP" },
+        { value: "6-Digit", label: "OTP" },
         { value: "Secure", label: "Flow" },
         { value: "5 Min", label: "Expiry" },
       ]}
     >
       <h1 className="mb-2 text-2xl font-bold text-slate-900">OTP Verification</h1>
-      <p className="mb-6 text-sm text-slate-500">Code sent to {email || "your email"}</p>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-slate-500">Code sent to {email || "your email"}</p>
+        {flow === "register" && (
+          <button
+            type="button"
+            onClick={() =>
+              navigate("/register", {
+                state: {
+                  registrationDraft: {
+                    ...location.state?.registrationDraft,
+                    email: "",
+                  },
+                  photoUrl: location.state?.photoUrl,
+                  emailCorrection: { email, otpSessionId },
+                },
+              })
+            }
+            disabled={loading || success}
+            className="inline-flex items-center gap-1 text-sm font-semibold text-orange-600 transition hover:text-orange-700 disabled:opacity-60"
+          >
+            <ArrowLeft size={15} /> Wrong email? Go back
+          </button>
+        )}
+      </div>
 
       {error && (
         <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-red-700">
@@ -220,13 +201,13 @@ function OtpVerify() {
       {success && (
         <div className="mb-4 flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-emerald-700">
           <CheckCircle size={18} className="mt-0.5" />
-          <span className="text-sm">Verified successfully. Redirecting…</span>
+          <span className="text-sm">Verified successfully. Redirecting...</span>
         </div>
       )}
 
       <div className="space-y-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">One‑Time Password</label>
+          <label className="mb-1 block text-sm font-medium text-slate-700">One-Time Password</label>
           <input
             type="text"
             inputMode="numeric"
@@ -240,18 +221,17 @@ function OtpVerify() {
         </div>
 
         <button onClick={onVerify} disabled={loading || success} className="lms-btn-primary">
-          {loading ? "Verifying…" : "Verify OTP"}
+          {loading ? "Verifying..." : "Verify OTP"}
         </button>
 
-        {/* Resend button – visible for both flows */}
         <button
           type="button"
           onClick={onResend}
-          disabled={loading || !canResend}
+          disabled={loading || resending || success || !canResend}
           className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-600 disabled:opacity-60"
         >
-          <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
-          {canResend ? "Resend OTP" : `Resend in ${cooldown}s`}
+          <RefreshCw size={16} className={resending ? "animate-spin" : ""} />
+          {resending ? "Sending..." : canResend ? "Resend OTP" : `Resend in ${cooldown}s`}
         </button>
       </div>
     </AuthShell>

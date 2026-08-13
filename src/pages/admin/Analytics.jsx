@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { adminApi } from "../../api/adminApi";
 
 const Analytics = () => {
   const [revenueData, setRevenueData] = useState([]);
@@ -12,39 +13,19 @@ const Analytics = () => {
   // Mock data for other stats (you can replace with real APIs later)
   const userStats = { total: 12345, active: 9876, new: 345 };
 
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("access_token");
-    return {
-      "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : "",
-    };
-  };
-
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
         // Fetch revenue reports
-        const revenueRes = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/admin/reports/revenue", {
-          headers: getAuthHeaders(),
-        });
-        if (!revenueRes.ok) throw new Error(await revenueRes.text());
-        const revenueData = await revenueRes.json();
+        const revenueData = await adminApi.getRevenueReport();
         setRevenueData(revenueData.revenue || revenueData);
 
         // Fetch order analytics
-        const orderRes = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/admin/analytics/orders", {
-          headers: getAuthHeaders(),
-        });
-        if (!orderRes.ok) throw new Error(await orderRes.text());
-        const orderData = await orderRes.json();
+        const orderData = await adminApi.getOrderAnalytics();
         setOrderAnalytics(orderData.orders || orderData);
 
         // ✅ NEW: Fetch course statistics
-        const courseRes = await fetch("https://iodine-pesticide-bulge.ngrok-free.dev/admin/reports/courses", {
-          headers: getAuthHeaders(),
-        });
-        if (!courseRes.ok) throw new Error(await courseRes.text());
-        const courseData = await courseRes.json();
+        const courseData = await adminApi.getCourseReport();
         setCourseStats({
           totalCourses: courseData.totalCourses || 0,
           activeCourses: courseData.activeCourses || 0,

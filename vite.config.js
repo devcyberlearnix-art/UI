@@ -6,31 +6,6 @@ export default defineConfig({
   server: {
     port: 3000,
     open: true,
-    proxy: {
-      '/login': {
-        target: 'https://iodine-pesticide-bulge.ngrok-free.dev',
-        changeOrigin: true,
-        secure: false,
-        headers: {
-          'ngrok-skip-browser-warning': 'true',
-        }
-      },
-      '/auth': {
-        target: 'https://iodine-pesticide-bulge.ngrok-free.dev',
-        changeOrigin: true,
-        secure: false,
-        headers: {
-          'ngrok-skip-browser-warning': 'true',
-        }
-      },
-      '/admin': {
-        target: 'https://iodine-pesticide-bulge.ngrok-free.dev',
-        changeOrigin: true,
-        secure: false,
-        headers: {
-          'ngrok-skip-browser-warning': 'true',
-        }
-      }
-    }
+   
   }
 })

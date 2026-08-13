@@ -9,10 +9,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { authApi } from "../api/authApi";
 import AuthShell from "../components/ui/AuthShell";
-
-// ✅ Your ngrok base URL (can be overridden via .env)
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -28,9 +26,9 @@ const ForgotPassword = () => {
   const [error, setError] = useState("");
 
   const validateEmail = (value) => /\S+@\S+\.\S+/.test(value);
+
   const canResend = cooldownSeconds === 0;
 
-  // Cooldown timer for OTP resend
   useEffect(() => {
     if (cooldownSeconds <= 0) return;
     const timer = setTimeout(() => {
@@ -39,7 +37,6 @@ const ForgotPassword = () => {
     return () => clearTimeout(timer);
   }, [cooldownSeconds]);
 
-  // ─── Step 1: Request OTP ──────────────────────────────────────────────
   const handleSendOtp = async () => {
     setError("");
     if (!validateEmail(email)) {
@@ -49,25 +46,13 @@ const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/password/forgot`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to send OTP");
-      }
-
-      const sessionId = data.otpSessionId || data.sessionId || data.data?.otpSessionId || "";
-      setOtpSessionId(sessionId);
-      setCooldownSeconds(Number(data.cooldownSeconds || data.cooldown || 30));
-
-      toast.success(data.message || "OTP sent to your email");
+      const result = await authApi.requestForgotPasswordOtp(email);
+      setOtpSessionId(result.otpSessionId || "");
+      setCooldownSeconds(Number(result.cooldownSeconds || 30));
+      toast.success(result.message || "OTP sent to your email");
       setStep(2);
     } catch (err) {
-      const message = err.message || "Failed to send OTP";
+      const message = err.response?.data?.message || "Failed to send OTP";
       setError(message);
       toast.error(message);
     } finally {
@@ -75,7 +60,6 @@ const ForgotPassword = () => {
     }
   };
 
-  // ─── Step 2: Verify OTP ──────────────────────────────────────────────
   const handleVerifyOtp = async () => {
     setError("");
     if (!otp || otp.length !== 6) {
@@ -83,32 +67,17 @@ const ForgotPassword = () => {
       return;
     }
 
-    if (!otpSessionId) {
-      setError("OTP session expired. Please request OTP again.");
-      return;
-    }
-
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/password/verify-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email.trim(),
-          otpSessionId,
-          otp: otp.trim(),
-        }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "OTP verification failed");
+      if (!otpSessionId) {
+        throw new Error("OTP session expired. Please request OTP again.");
       }
 
-      toast.success(data.message || "OTP verified");
+      await authApi.verifyPasswordOtp({ email, otpSessionId, otp });
+      toast.success("OTP verified");
       setStep(3);
     } catch (err) {
-      const message = err.message || "Invalid OTP";
+      const message = err.response?.data?.message || err.message || "Invalid OTP";
       setError(message);
       toast.error(message);
     } finally {
@@ -116,7 +85,6 @@ const ForgotPassword = () => {
     }
   };
 
-  // ─── Step 3: Reset Password ──────────────────────────────────────────
   const handleResetPassword = async () => {
     setError("");
     if (!newPassword || newPassword.length < 6) {
@@ -128,33 +96,17 @@ const ForgotPassword = () => {
       return;
     }
 
-    if (!otpSessionId) {
-      setError("OTP session expired. Please restart the process.");
-      return;
-    }
-
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/password/reset`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email.trim(),
-          otpSessionId,
-          newPassword: newPassword.trim(),
-          confirmPassword: confirmPassword.trim(),
-        }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Password reset failed");
+      if (!otpSessionId) {
+        throw new Error("OTP session expired. Please request OTP again.");
       }
 
-      toast.success(data.message || "Password reset successful");
+      await authApi.resetPassword({ email, otpSessionId, newPassword, confirmPassword });
+      toast.success("Password reset successful");
       navigate("/admin/login");
     } catch (err) {
-      const message = err.message || "Password reset failed";
+      const message = err.response?.data?.message || err.message || "Password reset failed";
       setError(message);
       toast.error(message);
     } finally {
@@ -176,7 +128,6 @@ const ForgotPassword = () => {
       <h1 className="mb-2 text-2xl font-bold text-slate-900">Reset Password</h1>
       <p className="mb-6 text-sm text-slate-500">Follow the secure flow to regain access</p>
 
-      {/* Step indicators */}
       <div className="mb-6 flex items-center gap-2">
         {[1, 2, 3].map((item) => (
           <div key={item} className="flex items-center gap-2">
@@ -211,7 +162,6 @@ const ForgotPassword = () => {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={loading}
               />
             </div>
           </div>
@@ -233,8 +183,7 @@ const ForgotPassword = () => {
                 placeholder="6-digit code"
                 value={otp}
                 maxLength={6}
-                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                disabled={loading}
+                onChange={(e) => setOtp(e.target.value)}
               />
             </div>
           </div>
@@ -263,8 +212,6 @@ const ForgotPassword = () => {
                 className="lms-input pl-10"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                disabled={loading}
-                placeholder="Minimum 6 characters"
               />
             </div>
           </div>
@@ -277,8 +224,6 @@ const ForgotPassword = () => {
                 className="lms-input pl-10"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={loading}
-                placeholder="Re-enter new password"
               />
             </div>
           </div>
