@@ -5,7 +5,16 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
-    open: true,
-   
+    open: true, // Automatically opens the CORRECT port in your browser
+    proxy: {
+      '/ngrok-api': {
+        target: 'https://matted-ascent-specimen.ngrok-free.dev',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ngrok-api/, ''),
+        headers: {
+          'ngrok-skip-browser-warning': 'true'
+        }
+      }
+    }
   }
 })

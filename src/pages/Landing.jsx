@@ -1,4 +1,3 @@
-// src/pages/Landing.jsx
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
@@ -9,26 +8,32 @@ import {
   ChevronDown
 } from "lucide-react";
 import ProfileDropdown from "../utils/profiledropdown";
-import { useAuth } from "../context/AuthContext"; // ✅ Import useAuth
+import { useAuth } from "../context/AuthContext";
 import logoImage from "../assets/learnmaster-logo.png";
 import { landingApi } from "../api/landingApi";
 
 function Landing() {
   const navigate = useNavigate();
-  const { user: authUser, isAuthenticated, loading: authLoading, logout } = useAuth(); // ✅ Use AuthContext
-  
-  // ✅ Redirect to dashboard if already authenticated
+  const { user: authUser, isAuthenticated, loading: authLoading, logout } = useAuth();
+
+  // Redirect authenticated users to their appropriate dashboard
   useEffect(() => {
-    if (!authLoading && isAuthenticated) {
-      console.log('[Landing] User already authenticated, redirecting to dashboard');
-      navigate('/admin/dashboard', { replace: true });
+    if (!authLoading && isAuthenticated && authUser) {
+      const role = (authUser.role || '').toLowerCase();
+      let dashboardPath = '/student/dashboard';
+      if (role.includes('admin') || role === 'super_admin' || role === 'sub_admin') {
+        dashboardPath = '/admin/dashboard';
+      } else if (role.includes('instructor')) {
+        dashboardPath = '/instructor/dashboard';
+      }
+      navigate(dashboardPath, { replace: true });
     }
-  }, [isAuthenticated, authLoading, navigate]);
+  }, [isAuthenticated, authLoading, authUser, navigate]);
 
   const [scrolled, setScrolled] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [counters, setCounters] = useState({ students: 0, courses: 0, instructors: 0, satisfaction: 0 });
-  const [user, setUser] = useState(authUser); // ✅ Use authUser from context
+  const [user, setUser] = useState(authUser);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
@@ -41,37 +46,75 @@ function Landing() {
   const [testimonials, setTestimonials] = useState([]);
   const [statsTarget, setStatsTarget] = useState({ students: 0, courses: 0, instructors: 0, satisfaction: 0 });
   
-  // Dashboard dropdown state
   const [dashboardDropdownOpen, setDashboardDropdownOpen] = useState(false);
   const dashboardRef = useRef(null);
-
-  // Courses dropdown state
   const [coursesDropdownOpen, setCoursesDropdownOpen] = useState(false);
   const coursesDropdownRef = useRef(null);
   
-  // Popup state
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [wishlist, setWishlist] = useState([]);
-  
-  // Cart state
   const [cartCount, setCartCount] = useState(0);
   
-  // Filter state
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [expandedCategory, setExpandedCategory] = useState(null);
   
+  const [activeTab, setActiveTab] = useState("Most Popular");
+
+  const [trendingCourses, setTrendingCourses] = useState([]);
+  const [loadingTrending, setLoadingTrending] = useState(false);
+  const [trendingError, setTrendingError] = useState(null);
+  const [hasMoreTrending, setHasMoreTrending] = useState(true);
+  const [trendingCurrentPage, setTrendingCurrentPage] = useState(0);
+  
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
-  // ✅ Update user when authUser changes
+  const fetchTrendingCourses = async (page = 0, append = false) => {
+    if (loadingTrending) return;
+    setLoadingTrending(true);
+    setTrendingError(null);
+    try {
+      const response = await landingApi.getTrendingCourses(page, 5);
+      const fetchedCourses = response?.data?.courses || [];
+      const pagination = response?.data?.pagination || {};
+
+      setTrendingCourses(prev => append ? [...prev, ...fetchedCourses] : fetchedCourses);
+      setHasMoreTrending(Number(pagination.totalPages || 1) > page + 1);
+      setTrendingCurrentPage(page);
+    } catch (error) {
+      console.error("Failed to fetch trending courses", error);
+      setTrendingError(error.message || "Network error");
+      if (!append) setTrendingCourses([]);
+    } finally {
+      setLoadingTrending(false);
+    }
+  };
+
+  // Reset trending when tab changes
+  useEffect(() => {
+    if (activeTab === "Trending") {
+      setTrendingCourses([]);
+      setTrendingCurrentPage(0);
+      setHasMoreTrending(true);
+      setTrendingError(null);
+      fetchTrendingCourses(0, false);
+    }
+  }, [activeTab]);
+
+  const loadMoreTrending = () => {
+    if (!loadingTrending && hasMoreTrending) {
+      fetchTrendingCourses(trendingCurrentPage + 1, true);
+    }
+  };
+
   useEffect(() => {
     setUser(authUser);
   }, [authUser]);
 
-  // Close dashboard dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dashboardRef.current && !dashboardRef.current.contains(event.target)) {
@@ -82,7 +125,6 @@ function Landing() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close courses dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (coursesDropdownRef.current && !coursesDropdownRef.current.contains(event.target)) {
@@ -168,7 +210,7 @@ function Landing() {
     loadLandingData();
   }, []);
 
-  // Filter logic
+  // Filter logic for non‑trending tabs
   const filteredCourses = courses.filter(course => {
     if (selectedCategory && course.category !== selectedCategory) return false;
     if (selectedSubcategory && course.subcategory !== selectedSubcategory) return false;
@@ -184,6 +226,22 @@ function Landing() {
     }
     return true;
   });
+
+  // Determine which courses to show based on active tab
+  let displayCourses = [];
+  if (activeTab === "Trending") {
+    displayCourses = trendingCourses;
+  } else {
+    // For "Most Popular" and "New" – we can sort accordingly
+    let sorted = [...filteredCourses];
+    if (activeTab === "Most Popular") {
+      sorted.sort((a, b) => (b.students || 0) - (a.students || 0));
+    } else if (activeTab === "New") {
+      // Assume newer courses have higher id (or add a date field)
+      sorted.sort((a, b) => (b.id || 0) - (a.id || 0));
+    }
+    displayCourses = sorted;
+  }
 
   const mainCategories = categoryData.map(c => c.name);
 
@@ -237,14 +295,13 @@ function Landing() {
     alert(`Added "${course.title}" to cart.`);
   };
 
-  // ✅ Updated handleLogout using AuthContext
   const handleLogout = async () => {
     await logout();
     setUser(null);
     navigate('/');
   };
 
-  // Auth, counters, slider, etc.
+  // Wishlist
   useEffect(() => {
     const savedWishlist = localStorage.getItem('lms_wishlist');
     if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
@@ -357,7 +414,7 @@ function Landing() {
   };
   const roleLabel = getRoleLabel();
 
-  // ✅ Show loading while auth is initializing
+  // If still loading auth, show spinner
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -369,9 +426,9 @@ function Landing() {
     );
   }
 
-  // ✅ If authenticated, redirect (this is a safety net)
+  // If authenticated, we already redirect (see useEffect above), but to avoid flash we return null
   if (!authLoading && isAuthenticated) {
-    return null; // Will redirect via useEffect
+    return null;
   }
 
   const currentSlideData = slides[currentSlide] || null;
@@ -380,11 +437,10 @@ function Landing() {
     <div className="min-h-screen bg-gray-50">
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-orange-500 origin-left z-50" style={{ scaleX }} />
 
-      {/* Navbar with Courses dropdown - Updated to use authUser */}
+      {/* Navbar – unchanged from your code, but ensure ProfileDropdown exists */}
       <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? "bg-white/95 backdrop-blur-md shadow-lg py-2" : "bg-white/80 backdrop-blur-sm py-4"} border-b border-gray-100`}>
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
               <div className="relative flex items-center gap-3">
                 <img src={logoImage} alt="LearnMaster" className="h-16 w-auto rounded-lg shadow-md group-hover:scale-105 transition-transform duration-300" />
@@ -392,9 +448,7 @@ function Landing() {
               </div>
             </Link>
 
-            {/* Desktop menu items */}
             <div className="hidden md:flex items-center space-x-8 text-gray-700 font-medium">
-              {/* Courses dropdown */}
               <div className="relative" ref={coursesDropdownRef}>
                 <button
                   onClick={() => setCoursesDropdownOpen(!coursesDropdownOpen)}
@@ -405,7 +459,6 @@ function Landing() {
                 </button>
                 {coursesDropdownOpen && (
                   <div className="absolute left-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 animate-fade-in">
-                    {/* Categories section */}
                     <div className="px-4 py-2">
                       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Categories</p>
                       <div className="grid grid-cols-2 gap-1">
@@ -428,7 +481,6 @@ function Landing() {
                       </div>
                     </div>
                     <div className="border-t border-gray-100 my-1"></div>
-                    {/* Popular courses section */}
                     <div className="px-4 py-2">
                       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Popular Courses</p>
                       <div className="space-y-1">
@@ -459,7 +511,6 @@ function Landing() {
                 )}
               </div>
 
-              {/* Other menu links */}
               <Link to="/certification" className="relative group text-gray-600 hover:text-orange-600 transition-colors duration-300">
                 Get Certified
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 group-hover:w-full transition-all duration-300 ease-out"></span>
@@ -470,7 +521,6 @@ function Landing() {
               </Link>
             </div>
 
-            {/* Search bar */}
             <div className="hidden md:flex flex-1 max-w-xl mx-6">
               <div className="relative w-full group">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors duration-300" size={18} />
@@ -484,9 +534,7 @@ function Landing() {
               </div>
             </div>
 
-            {/* Right side icons & auth */}
             <div className="hidden md:flex items-center gap-6">
-              {/* Dashboard dropdown */}
               <div className="relative" ref={dashboardRef}>
                 <button
                   onClick={() => setDashboardDropdownOpen(!dashboardDropdownOpen)}
@@ -504,7 +552,6 @@ function Landing() {
                 )}
               </div>
 
-              {/* Role label */}
               {roleLabel && (
                 <span className="text-xs font-medium bg-gray-100 text-gray-700 px-3 py-1 rounded-full border border-gray-200 shadow-sm">
                   {roleLabel}
@@ -539,13 +586,11 @@ function Landing() {
               )}
             </div>
 
-            {/* Mobile menu button */}
             <button className="md:hidden text-gray-700 hover:text-orange-600 transition-colors duration-300" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
 
-          {/* Mobile menu - same as before */}
           {mobileMenuOpen && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -655,9 +700,6 @@ function Landing() {
         </div>
       </nav>
 
-      {/* Hero Banner, Stats, Filters, Courses Grid, Popup, Features, Testimonials, CTA, Footer - Keep the same as your original */}
-      {/* ... rest of your component remains the same ... */}
-      
       {/* Hero Banner */}
       <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden rounded-2xl shadow-xl mt-20">
         {landingLoading ? (
@@ -787,15 +829,47 @@ function Landing() {
           <div className="flex justify-between items-center mb-12">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Courses to get you started</h2>
-              <p className="text-gray-600">Showing {filteredCourses.length} of {courses.length} courses</p>
+              <p className="text-gray-600">
+                {activeTab === "Trending" 
+                  ? `Showing ${displayCourses.length} trending courses`
+                  : `Showing ${displayCourses.length} of ${courses.length} courses`
+                }
+              </p>
             </div>
             <div className="flex gap-2">
-              <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm">Most Popular</span>
-              <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">New</span>
-              <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Trending</span>
+              <button 
+                onClick={() => setActiveTab("Most Popular")} 
+                className={`px-3 py-1 rounded-full text-sm transition ${activeTab === "Most Popular" ? "bg-orange-100 text-orange-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+              >
+                Most Popular
+              </button>
+              <button 
+                onClick={() => setActiveTab("New")} 
+                className={`px-3 py-1 rounded-full text-sm transition ${activeTab === "New" ? "bg-orange-100 text-orange-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+              >
+                New
+              </button>
+              <button 
+                onClick={() => { setActiveTab("Trending"); }} 
+                className={`px-3 py-1 rounded-full text-sm transition ${activeTab === "Trending" ? "bg-orange-100 text-orange-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+              >
+                Trending
+              </button>
             </div>
           </div>
-          {filteredCourses.length === 0 ? (
+
+          {(activeTab === "Trending" && loadingTrending && displayCourses.length === 0) ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+              <p className="text-gray-500 mt-2">Loading trending courses...</p>
+            </div>
+          ) : trendingError && activeTab === "Trending" ? (
+            <div className="text-center py-12">
+              <div className="text-red-500 font-semibold mb-2">Error loading courses</div>
+              <p className="text-gray-600">{trendingError}</p>
+              <button onClick={() => { setTrendingCourses([]); setTrendingCurrentPage(0); setHasMoreTrending(true); fetchTrendingCourses(0); }} className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg">Retry</button>
+            </div>
+          ) : displayCourses.length === 0 ? (
             <div className="text-center py-12">
               <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-700">No courses found</h3>
@@ -803,42 +877,74 @@ function Landing() {
               <button onClick={clearFilters} className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Clear all filters</button>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {filteredCourses.map((course) => (
-                <div key={course.id} className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm group hover:shadow-lg transition cursor-pointer" onClick={() => openCoursePopup(course)}>
-                  <div className="relative h-48 overflow-hidden">
-                    <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    <div className="absolute top-3 right-3 flex gap-2">
-                      <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs text-gray-800 font-medium">{course.category}</div>
-                      {course.tag && <div className="bg-orange-600 px-2 py-1 rounded-lg text-xs text-white">{course.tag}</div>}
+            <>
+              <div className="overflow-x-auto pb-3 hide-scrollbar">
+                <div className="flex gap-5 min-w-max">
+                  {displayCourses.map((course) => (
+                    <div key={course.id} className="w-[280px] sm:w-[300px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm group hover:shadow-lg transition cursor-pointer shrink-0" onClick={() => openCoursePopup(course)}>
+                      <div className="relative h-48 overflow-hidden">
+                        <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <div className="absolute top-3 right-3 flex gap-2">
+                          <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs text-gray-800 font-medium">{course.category}</div>
+                          {course.tag && <div className="bg-orange-600 px-2 py-1 rounded-lg text-xs text-white">{course.tag}</div>}
+                        </div>
+                      </div>
+                      <div className="p-5">
+                        <h3 className="text-gray-800 font-semibold text-lg mb-2 line-clamp-2">{course.title}</h3>
+                        <p className="text-sm text-gray-500 mb-2">{course.instructor}</p>
+                        <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                          <div className="flex items-center gap-1"><Users size={14} /><span>{course.students.toLocaleString()}</span></div>
+                          <div className="flex items-center gap-1"><Star size={14} className="text-yellow-400" /><span>{course.rating}</span></div>
+                        </div>
+                        <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
+                          <div className="flex items-center gap-1"><Clock size={12} /><span>{course.duration}</span></div>
+                          <div className="flex items-center gap-1"><User size={12} /><span>{course.level}</span></div>
+                        </div>
+                        <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
+                          <span className="text-2xl font-bold text-gray-800">₹{course.price}</span>
+                          <button onClick={(e) => { e.stopPropagation(); addToCart(course); }} className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg text-white font-semibold transition-colors">
+                            <ShoppingCart size={16} /> Add to Cart
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="text-gray-800 font-semibold text-lg mb-2 line-clamp-2">{course.title}</h3>
-                    <p className="text-sm text-gray-500 mb-2">{course.instructor}</p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                      <div className="flex items-center gap-1"><Users size={14} /><span>{course.students.toLocaleString()}</span></div>
-                      <div className="flex items-center gap-1"><Star size={14} className="text-yellow-400" /><span>{course.rating}</span></div>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
-                      <div className="flex items-center gap-1"><Clock size={12} /><span>{course.duration}</span></div>
-                      <div className="flex items-center gap-1"><User size={12} /><span>{course.level}</span></div>
-                    </div>
-                    <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
-                      <span className="text-2xl font-bold text-gray-800">₹{course.price}</span>
-                      <button onClick={(e) => { e.stopPropagation(); addToCart(course); }} className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg text-white font-semibold transition-colors">
-                        <ShoppingCart size={16} /> Add to Cart
-                      </button>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+
+              {/* Load More button – only for Trending tab */}
+              {activeTab === "Trending" && (
+                <div className="flex justify-center mt-10">
+                  {loadingTrending && displayCourses.length > 0 && (
+                    <div className="flex items-center gap-3 text-gray-500">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-500"></div>
+                      <span>Loading more...</span>
+                    </div>
+                  )}
+                  {!loadingTrending && hasMoreTrending && (
+                    <button
+                      onClick={loadMoreTrending}
+                      className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition shadow-md flex items-center gap-2"
+                    >
+                      Load More <ChevronDown size={18} />
+                    </button>
+                  )}
+                  {!hasMoreTrending && displayCourses.length > 0 && (
+                    <p className="text-gray-400 text-sm">You've seen all trending courses</p>
+                  )}
+                  {trendingError && (
+                    <button onClick={() => { setTrendingCourses([]); setTrendingCurrentPage(0); setHasMoreTrending(true); fetchTrendingCourses(0, false); }} className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                      Retry
+                    </button>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
 
-      {/* Course Details Popup */}
+      {/* Course Details Popup – same as before */}
       {showPopup && selectedCourse && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={closePopup}>
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>

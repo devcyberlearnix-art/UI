@@ -30,6 +30,25 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const syncSession = (nextUser, nextToken, refreshToken = null) => {
+    const normalizedUser = {
+      ...(nextUser || {}),
+      role: normalizeRole(nextUser?.role || nextUser?.effectiveRole || nextUser?.userRole || 'student'),
+    };
+
+    localStorage.setItem('lms_token', nextToken);
+    localStorage.setItem('access_token', nextToken);
+    if (refreshToken) {
+      localStorage.setItem('refresh_token', refreshToken);
+    }
+    sessionStorage.setItem('lms_token', nextToken);
+    localStorage.setItem('lms_user', JSON.stringify(normalizedUser));
+
+    setToken(nextToken);
+    setUser(normalizedUser);
+    return normalizedUser;
+  };
+
   useEffect(() => {
     const restoreSession = () => {
       try {
@@ -124,16 +143,7 @@ export const AuthProvider = ({ children }) => {
       console.log('[AuthProvider] User data:', userData);
       
       // ✅ Store in multiple locations
-      localStorage.setItem('lms_token', tokenData);
-      localStorage.setItem('access_token', tokenData);
-      if (refreshTokenData) {
-        localStorage.setItem('refresh_token', refreshTokenData);
-      }
-      sessionStorage.setItem('lms_token', tokenData);
-      localStorage.setItem('lms_user', JSON.stringify(userData || {}));
-      
-      setToken(tokenData);
-      setUser(userData);
+      syncSession(userData, tokenData, refreshTokenData);
       
       const userName = userData?.firstName || userData?.name || userData?.fullName || 'Admin';
       toast.success(`Welcome back, ${userName}!`);
@@ -203,6 +213,7 @@ export const AuthProvider = ({ children }) => {
     error,
     login,
     logout,
+    syncSession,
     isAuthenticated: !!token,
   };
 

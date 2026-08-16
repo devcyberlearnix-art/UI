@@ -6,6 +6,8 @@ import { useAuth } from "../../context/AuthContext";
 import RoleSwitcher from "../ui/RoleSwitcher";
 import { useMemo } from "react";
 import { getDashboardRole, tabsByRole } from "../../config/navigation";
+import { authApi } from "../../api/authApi";
+import { setActingRole } from "../../utils/roleSwitch";
 
 const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
   const { user } = useAuth();
@@ -42,10 +44,33 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
     [location.pathname, roleTabs]
   );
 
-  const handleRoleChange = (newRole) => {
-    if (newRole === 'admin') navigate('/admin/dashboard');
-    else if (newRole === 'instructor') navigate('/instructor/dashboard');
-    else navigate('/student/dashboard');
+  const handleRoleChange = async (newRole) => {
+    try {
+      const roleValue = String(newRole || '').trim().toLowerCase();
+      if (!roleValue) return;
+
+      const userRole = String(user?.role || '').trim().toLowerCase();
+      const permitted = userRole === 'admin'
+        ? ['admin', 'instructor', 'student'].includes(roleValue)
+        : userRole === 'instructor' && ['instructor', 'student'].includes(roleValue);
+
+      if (!permitted) {
+        return;
+      }
+
+      await authApi.switchRole(roleValue).catch(() => undefined);
+      setActingRole(roleValue);
+
+      if (roleValue === 'admin') navigate('/admin/dashboard');
+      else if (roleValue === 'instructor') navigate('/instructor/dashboard');
+      else navigate('/student/dashboard');
+      window.location.reload();
+    } catch (error) {
+      console.error('[TopNav] Role switch failed:', error);
+      if (newRole === 'admin') navigate('/admin/dashboard');
+      else if (newRole === 'instructor') navigate('/instructor/dashboard');
+      else navigate('/student/dashboard');
+    }
   };
 
   const showSwitcher = !!user && (String(rawRole).toLowerCase().includes("admin") || String(rawRole).toLowerCase().includes("instructor"));

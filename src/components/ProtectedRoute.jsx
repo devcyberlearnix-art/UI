@@ -1,13 +1,9 @@
-// src/components/ProtectedRoute.jsx
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getActingRole } from '../utils/roleSwitch';
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
-  const { user, isAuthenticated, loading } = useAuth();
-
-  const hasToken = !!localStorage.getItem('lms_token') || 
-                   !!localStorage.getItem('access_token') ||
-                   !!sessionStorage.getItem('lms_token');
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -19,21 +15,19 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
       </div>
     );
   }
-  
-  const isAuth = isAuthenticated || hasToken;
-  const adminOnly = allowedRoles.some((role) => String(role).toLowerCase().includes('admin'));
-  const loginPath = adminOnly ? '/admin/login' : '/login';
-  
-  if (!isAuth) {
-    return <Navigate to={loginPath} replace />;
-  }
-  
-  if (allowedRoles.length > 0) {
-    const userRole = String(user?.role || user?.role1 || user?.userRole || '').toLowerCase();
-    const hasAllowedRole = allowedRoles.some(role => 
-      userRole.includes(String(role).toLowerCase())
+
+  if (!user) {
+    const isAdminRoute = allowedRoles.some(role =>
+      String(role).toLowerCase().includes('admin')
     );
-    
+    return <Navigate to={isAdminRoute ? '/admin/login' : '/login'} replace />;
+  }
+
+  if (allowedRoles.length > 0) {
+    const effectiveRole = String(getActingRole() || user?.role || '').toLowerCase();
+    const hasAllowedRole = allowedRoles.some(role =>
+      effectiveRole.includes(String(role).toLowerCase())
+    );
     if (!hasAllowedRole) {
       return <Navigate to="/" replace />;
     }

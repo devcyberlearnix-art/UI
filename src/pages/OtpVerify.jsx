@@ -4,6 +4,7 @@ import { AlertCircle, ArrowLeft, CheckCircle, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import AuthShell from "../components/ui/AuthShell";
 import { authApi } from "../api/authApi";
+import { useAuth } from "../context/AuthContext";
 
 const getRedirectByRole = (roleValue) => {
   const role = String(roleValue || "").toLowerCase();
@@ -16,6 +17,7 @@ const getRedirectByRole = (roleValue) => {
 function OtpVerify() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { syncSession } = useAuth();
 
   const flow = location.state?.flow || "register";
   const email = location.state?.email || "";
@@ -90,13 +92,7 @@ function OtpVerify() {
         role: userInfo.role || userInfo.effectiveRole || "student",
       };
 
-      localStorage.setItem("lms_token", tokenData);
-      localStorage.setItem("access_token", tokenData);
-      if (refreshToken) {
-        localStorage.setItem("refresh_token", refreshToken);
-      }
-      sessionStorage.setItem("lms_token", tokenData);
-      localStorage.setItem("lms_user", JSON.stringify(userData));
+      syncSession(userData, tokenData, refreshToken);
 
       setSuccess(true);
       toast.success(res.message || "Login successful");

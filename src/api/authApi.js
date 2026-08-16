@@ -195,6 +195,24 @@ export const authApi = {
     }
   },
 
+  switchRole: async (role) => {
+    try {
+      const targetRole = String(role || '').trim();
+      const normalized = targetRole.toLowerCase();
+      const payload = {
+        role: normalized,
+        newRole: normalized,
+        targetRole: normalized,
+      };
+
+      const response = await axiosInstance.post('/api/v1/auth/switch-role', payload);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Switch role error:', error);
+      throw error;
+    }
+  },
+
   register: async (payload) => {
     try {
       const response = await axiosInstance.post('/api/v1/auth/register', payload);
@@ -249,5 +267,4 @@ export const authApi = {
   },
 };
 
-// ✅ Default export for flexibility
 export default authApi;

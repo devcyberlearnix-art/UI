@@ -367,12 +367,6 @@ const Login = () => {
           <Link to="/forgot-password" className="block text-sm text-slate-500 transition hover:text-orange-600">
             Forgot Password?
           </Link>
-          <Link to="/otp-login" className="block text-sm text-slate-500 transition hover:text-orange-600">
-            Open OTP Login Page
-          </Link>
-          <Link to="/admin/login" className="block text-sm text-slate-500 transition hover:text-cyan-700">
-            Admin Sign In
-          </Link>
         </div>
       </motion.div>
     </AuthShell>

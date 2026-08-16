@@ -1,14 +1,33 @@
-import { useState } from "react";
-import { LayoutDashboard, BookOpen, Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { LayoutDashboard, BookOpen, Star, Users, Clock, User, ShoppingCart } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import InstructorApplication from "./InstructorApplication";
+import { landingApi } from "../../api/landingApi";
 
 const StudentDashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [trendingCourses, setTrendingCourses] = useState([]);
+  const [loadingCourses, setLoadingCourses] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState(() => {
     return localStorage.getItem("instructor_application_status") || null;
   });
+
+  useEffect(() => {
+    const loadTrendingCourses = async () => {
+      try {
+        setLoadingCourses(true);
+        const result = await landingApi.getTrendingCourses(0, 5);
+        setTrendingCourses(result?.data?.courses || []);
+      } catch (error) {
+        console.error("[StudentDashboard] Unable to load trending courses", error);
+      } finally {
+        setLoadingCourses(false);
+      }
+    };
+
+    loadTrendingCourses();
+  }, []);
 
   const handleStatusChange = (status) => {
     setApplicationStatus(status);
@@ -85,8 +104,54 @@ const StudentDashboard = () => {
               ))}
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center shadow-sm">
-              <p className="text-gray-400 text-sm">No courses yet. Browse the catalog to get started!</p>
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">Trending courses</h2>
+                  <p className="text-sm text-gray-500">Top picks for your next learning milestone.</p>
+                </div>
+              </div>
+
+              {loadingCourses ? (
+                <div className="flex items-center gap-3 text-gray-500 py-6">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-500" />
+                  <span>Loading courses...</span>
+                </div>
+              ) : trendingCourses.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-400 text-sm">No courses available right now.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto pb-2 hide-scrollbar">
+                  <div className="flex gap-4 min-w-max">
+                    {trendingCourses.map((course) => (
+                      <div key={course.id} className="w-[280px] rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden shrink-0">
+                        <div className="h-40 overflow-hidden">
+                          <img src={course.image} alt={course.title} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] bg-orange-100 text-orange-700 font-semibold px-2 py-1 rounded-full">{course.category}</span>
+                            <span className="text-xs text-gray-500">{course.level}</span>
+                          </div>
+                          <h3 className="text-base font-bold text-gray-900 line-clamp-2">{course.title}</h3>
+                          <p className="text-xs text-gray-500 mt-1">{course.instructor}</p>
+                          <div className="flex items-center gap-3 text-[11px] text-gray-500 mt-3">
+                            <span className="flex items-center gap-1"><Users size={12} /> {course.students}</span>
+                            <span className="flex items-center gap-1"><Clock size={12} /> {course.duration}</span>
+                          </div>
+                          <div className="mt-4 flex items-center justify-between">
+                            <span className="text-lg font-bold text-gray-900">₹{course.price}</span>
+                            <button className="flex items-center gap-1 bg-orange-600 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-orange-700">
+                              <ShoppingCart size={12} /> Enroll
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Become Instructor CTA */}
