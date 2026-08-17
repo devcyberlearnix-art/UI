@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AlertCircle, CheckCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, ArrowLeft, CheckCircle, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import AuthShell from "../components/ui/AuthShell";
 import { authApi } from "../api/authApi";
+import { useAuth } from "../context/AuthContext";
 
 const getRedirectByRole = (roleValue) => {
   const role = String(roleValue || "").toLowerCase();
@@ -16,17 +17,28 @@ const getRedirectByRole = (roleValue) => {
 function OtpVerify() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { login } = useAuth();
 
   const flow = location.state?.flow || "register";
   const email = location.state?.email || "";
+  const photoUrl = location.state?.photoUrl || "";
+  const userDataFromState = location.state?.userData || null;
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
   const [otpSessionId, setOtpSessionId] = useState(location.state?.otpSessionId || "");
   const [cooldown, setCooldown] = useState(Number(location.state?.cooldownSeconds || 30));
+
+  // Save photoUrl to localStorage as backup
+  useEffect(() => {
+    if (photoUrl) {
+      localStorage.setItem('pending_photo_url', photoUrl);
+    }
+  }, [photoUrl]);
 
   useEffect(() => {
     if (!email) {
@@ -45,6 +57,34 @@ function OtpVerify() {
 
   const canResend = useMemo(() => cooldown === 0, [cooldown]);
 
+  const handleSuccessfulVerification = async (userData, token) => {
+    // Ensure photo URL is preserved
+    const savedPhotoUrl = photoUrl || localStorage.getItem('pending_photo_url');
+    
+    if (savedPhotoUrl && !userData.profilePhoto) {
+      userData.profilePhoto = savedPhotoUrl;
+      userData.photoUrl = savedPhotoUrl;
+    }
+
+    // Update localStorage with photo
+    localStorage.setItem('lms_user', JSON.stringify(userData));
+    
+    // Login user
+    await login(userData, token);
+    
+    // Clean up
+    localStorage.removeItem('pending_photo_url');
+    
+    setSuccess(true);
+    toast.success('Email verified successfully!');
+    
+    // Redirect
+    setTimeout(() => {
+      const redirectPath = getRedirectByRole(userData?.role || 'student');
+      navigate(redirectPath, { replace: true });
+    }, 900);
+  };
+
   const onVerify = async () => {
     setError("");
 
@@ -56,13 +96,45 @@ function OtpVerify() {
     setLoading(true);
     try {
       if (flow === "register") {
-        const res = await authApi.verifyEmail({ email, otp });
-        setSuccess(true);
-        toast.success(res.message || "Email verified successfully");
-        setTimeout(() => navigate("/login", { replace: true }), 900);
+        // Verify OTP
+        const res = await authApi.verifyEmail({ email, otp, otpSessionId });
+        
+        // Get stored user data
+        const storedToken = localStorage.getItem('lms_token');
+        let storedUser = localStorage.getItem('lms_user');
+        let userData = {};
+        
+        if (storedUser) {
+          userData = JSON.parse(storedUser);
+        } else if (userDataFromState) {
+          userData = userDataFromState;
+        } else {
+          // Fallback: create user data from registration info
+          userData = {
+            email: email,
+            firstName: location.state?.registrationDraft?.firstName || '',
+            lastName: location.state?.registrationDraft?.lastName || '',
+            role: 'student',
+          };
+        }
+
+        // Handle photo URL
+        const finalPhotoUrl = photoUrl || 
+                             userData.profilePhoto || 
+                             localStorage.getItem('pending_photo_url') ||
+                             '';
+
+        if (finalPhotoUrl) {
+          userData.profilePhoto = finalPhotoUrl;
+          userData.photoUrl = finalPhotoUrl;
+        }
+
+        // Complete verification
+        await handleSuccessfulVerification(userData, storedToken);
         return;
       }
 
+      // Login flow
       if (!otpSessionId) {
         throw new Error("OTP session expired. Please request a new OTP.");
       }
@@ -78,6 +150,8 @@ function OtpVerify() {
       }
 
       const userInfo = res.user || {};
+      const savedPhotoUrl = photoUrl || localStorage.getItem('pending_photo_url');
+      
       const userData = {
         id: userInfo.id || userInfo.userId,
         firstName: userInfo.firstName || "",
@@ -86,6 +160,8 @@ function OtpVerify() {
           ? `${userInfo.firstName} ${userInfo.lastName || ""}`.trim()
           : userInfo.name || "",
         email: userInfo.email || email,
+        profilePhoto: userInfo.profilePhoto || userInfo.photoUrl || savedPhotoUrl || "",
+        photoUrl: userInfo.photoUrl || userInfo.profilePhoto || savedPhotoUrl || "",
         role: userInfo.role || userInfo.effectiveRole || "student",
       };
 
@@ -96,12 +172,16 @@ function OtpVerify() {
       }
       sessionStorage.setItem("lms_token", tokenData);
       localStorage.setItem("lms_user", JSON.stringify(userData));
+      
+      // Clean up
+      localStorage.removeItem('pending_photo_url');
 
       setSuccess(true);
       toast.success(res.message || "Login successful");
       setTimeout(() => {
         window.location.href = getRedirectByRole(userData.role);
       }, 600);
+      
     } catch (err) {
       const responseData = err.response?.data;
       const attempts = responseData?.data?.remainingAttempts;
@@ -126,24 +206,30 @@ function OtpVerify() {
     setError("");
     if (!canResend) return;
 
-    setLoading(true);
-    try {
-      if (flow === "register") {
-        setError("Registration OTP resend is not enabled in current backend contract.");
-        setLoading(false);
-        return;
-      }
+    if (!otpSessionId) {
+      setError("OTP session expired. Please register again.");
+      return;
+    }
 
-      const res = await authApi.requestLoginOtp(email);
-      setOtpSessionId(res.otpSessionId || "");
+    setResending(true);
+    try {
+      const response = await authApi.resendOtp({ flow, email, otpSessionId });
+      const res = response.data || response;
+      setOtpSessionId(res.otpSessionId || otpSessionId);
+      setOtp("");
       setCooldown(Number(res.cooldownSeconds || 30));
-      toast.success(res.message || "OTP resent");
+      toast.success(response.message || res.message || "OTP resent");
     } catch (err) {
-      const message = err.response?.data?.message || "Failed to resend OTP";
+      const responseData = err.response?.data;
+      const retryAfter = Number(responseData?.data?.cooldownSeconds || 0);
+      if (retryAfter > 0) {
+        setCooldown(retryAfter);
+      }
+      const message = responseData?.message || "Failed to resend OTP";
       setError(message);
       toast.error(message);
     } finally {
-      setLoading(false);
+      setResending(false);
     }
   };
 
@@ -159,7 +245,30 @@ function OtpVerify() {
       ]}
     >
       <h1 className="mb-2 text-2xl font-bold text-slate-900">OTP Verification</h1>
-      <p className="mb-6 text-sm text-slate-500">Code sent to {email || "your email"}</p>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-slate-500">Code sent to {email || "your email"}</p>
+        {flow === "register" && (
+          <button
+            type="button"
+            onClick={() =>
+              navigate("/register", {
+                state: {
+                  registrationDraft: {
+                    ...location.state?.registrationDraft,
+                    email: "",
+                  },
+                  photoUrl: photoUrl || localStorage.getItem('pending_photo_url'),
+                  emailCorrection: { email, otpSessionId },
+                },
+              })
+            }
+            disabled={loading || success}
+            className="inline-flex items-center gap-1 text-sm font-semibold text-orange-600 transition hover:text-orange-700 disabled:opacity-60"
+          >
+            <ArrowLeft size={15} /> Wrong email? Go back
+          </button>
+        )}
+      </div>
 
       {error && (
         <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-red-700">
@@ -190,21 +299,23 @@ function OtpVerify() {
           />
         </div>
 
-        <button onClick={onVerify} disabled={loading || success} className="lms-btn-primary">
+        <button 
+          onClick={onVerify} 
+          disabled={loading || success} 
+          className="lms-btn-primary w-full"
+        >
           {loading ? "Verifying..." : "Verify OTP"}
         </button>
 
-        {flow === "login" && (
-          <button
-            type="button"
-            onClick={onResend}
-            disabled={loading || !canResend}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-600 disabled:opacity-60"
-          >
-            <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
-            {canResend ? "Resend OTP" : `Resend in ${cooldown}s`}
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onResend}
+          disabled={loading || resending || success || !canResend}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-600 disabled:opacity-60"
+        >
+          <RefreshCw size={16} className={resending ? "animate-spin" : ""} />
+          {resending ? "Sending..." : canResend ? "Resend OTP" : `Resend in ${cooldown}s`}
+        </button>
       </div>
     </AuthShell>
   );
