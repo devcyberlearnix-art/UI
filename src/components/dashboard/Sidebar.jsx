@@ -5,7 +5,9 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Crown
+  Crown,
+  User,
+  Settings
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getDashboardRole, sidebarByRole } from '../../config/navigation';
@@ -16,22 +18,26 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const currentPath = location.pathname;
 
   const userRole = user?.role || user?.role1 || user?.userRole || '';
   const roleKey = getDashboardRole(currentPath, userRole);
-  const isSuperAdmin = roleKey === 'super_admin';
+  const isSuperAdmin = roleKey === 'admin';
 
   const displayRole =
-    roleKey === 'super_admin'
-      ? 'Super Admin'
-      : roleKey === 'sub_admin'
+    roleKey === 'subadmin'
       ? 'Sub Admin'
       : roleKey === 'admin'
       ? 'Admin'
       : roleKey === 'instructor'
       ? 'Instructor'
       : 'Student';
+
+  // Get profile photo
+  const profilePhoto = user?.profilePhoto || user?.photoURL || user?.avatar || null;
+  const displayName = user?.firstName || user?.name || user?.displayName || 'Admin';
+  const userInitial = displayName.charAt(0).toUpperCase();
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -54,21 +60,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   };
 
   const filteredMenuItems = useMemo(() => {
-    const baseRole = roleKey === 'super_admin' || roleKey === 'sub_admin' ? 'admin' : roleKey;
+    const baseRole = ['admin', 'subadmin'].includes(roleKey) ? 'admin' : roleKey;
     const menuItems = sidebarByRole[baseRole] || sidebarByRole.student;
 
     return menuItems
       .map((section) => {
         if (baseRole !== 'admin') return section;
 
-        if (section.section === 'Management' && roleKey === 'sub_admin') {
+        if (section.section === 'Management' && roleKey === 'subadmin') {
           return {
             ...section,
             items: section.items.filter((item) => item.path !== '/admin/admins'),
           };
         }
 
-        if (section.section === 'System' && roleKey === 'sub_admin') {
+        if (section.section === 'System' && roleKey === 'subadmin') {
           return {
             ...section,
             items: section.items.filter(
@@ -158,7 +164,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     {sidebarOpen && isActive && (
                       <span className="ml-auto w-1.5 h-1.5 bg-white rounded-full"></span>
                     )}
-                    {/* ✅ Show crown icon for Admin Management */}
                     {sidebarOpen && item.path === '/admin/admins' && isSuperAdmin && (
                       <Crown size={14} className="text-yellow-400 ml-auto" />
                     )}
@@ -170,23 +175,41 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         ))}
       </nav>
 
-      {/* Bottom Section - User Info & Logout */}
+      {/* Bottom Section - User Info with Profile Photo */}
       <div className="border-t border-orange-100 p-3">
         {sidebarOpen ? (
           <div className="space-y-3">
-            <div className="flex items-center gap-3 px-2 py-2 rounded-xl bg-gray-50">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-orange-500/20">
-                {user?.firstName?.charAt(0)?.toUpperCase() || user?.name?.charAt(0)?.toUpperCase() || 'A'}
+            {/* Profile Button - opens profile page */}
+            <button
+              onClick={() => navigate('/profile')}
+              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl hover:bg-orange-50 transition-all duration-200 group"
+            >
+              <div className="relative w-8 h-8 flex-shrink-0">
+                {profilePhoto ? (
+                  <img
+                    src={profilePhoto}
+                    alt={displayName}
+                    className="w-8 h-8 rounded-full object-cover border-2 border-orange-300 group-hover:border-orange-500 transition-colors"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-orange-500/20 group-hover:shadow-orange-500/40 transition-shadow">
+                    {userInitial}
+                  </div>
+                )}
+                <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-800 truncate">
-                  {user?.firstName || user?.name || 'Admin'}
+              <div className="flex-1 min-w-0 text-left">
+                <p className="text-sm font-medium text-gray-800 truncate group-hover:text-orange-600 transition-colors">
+                  {displayName}
                 </p>
                 <p className="text-[10px] text-orange-500 font-medium truncate">
-                  {isSuperAdmin ? 'Crown ' : ''}{displayRole}
+                  {isSuperAdmin ? '👑 ' : ''}{displayRole}
                 </p>
               </div>
-            </div>
+              <User size={16} className="text-gray-400 group-hover:text-orange-500 transition-colors" />
+            </button>
+
+            {/* Logout Button */}
             <button
               onClick={handleLogout}
               disabled={isLoggingOut}
@@ -200,9 +223,25 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           </div>
         ) : (
           <div className="flex flex-col items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-orange-500/20">
-              {user?.firstName?.charAt(0)?.toUpperCase() || user?.name?.charAt(0)?.toUpperCase() || 'A'}
-            </div>
+            {/* Profile Photo - Collapsed Sidebar */}
+            <button
+              onClick={() => navigate('/profile')}
+              className="relative w-10 h-10 hover:scale-105 transition-transform"
+              title="Profile"
+            >
+              {profilePhoto ? (
+                <img
+                  src={profilePhoto}
+                  alt={displayName}
+                  className="w-10 h-10 rounded-full object-cover border-2 border-orange-300 hover:border-orange-500 transition-colors"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 transition-shadow">
+                  {userInitial}
+                </div>
+              )}
+              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>
+            </button>
             <button
               onClick={handleLogout}
               disabled={isLoggingOut}

@@ -9,45 +9,32 @@ import {
   ChevronDown
 } from "lucide-react";
 import ProfileDropdown from "../utils/profiledropdown";
-import { useAuth } from "../context/AuthContext"; // ✅ Import useAuth
+import { useAuth } from "../context/AuthContext";
 
 function Landing() {
   const navigate = useNavigate();
-  const { user: authUser, isAuthenticated, loading: authLoading, logout } = useAuth(); // ✅ Use AuthContext
+  const { user: authUser, isAuthenticated, loading: authLoading, logout } = useAuth();
   
-  // ✅ Redirect to dashboard if already authenticated
-  useEffect(() => {
-    if (!authLoading && isAuthenticated) {
-      console.log('[Landing] User already authenticated, redirecting to dashboard');
-      navigate('/admin/dashboard', { replace: true });
-    }
-  }, [isAuthenticated, authLoading, navigate]);
+  // Refs to prevent multiple redirects
+  const hasRedirected = useRef(false);
+  const isMounted = useRef(true);
 
+  // State declarations
   const [scrolled, setScrolled] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [counters, setCounters] = useState({ students: 0, courses: 0, instructors: 0, satisfaction: 0 });
-  const [user, setUser] = useState(authUser); // ✅ Use authUser from context
+  const [user, setUser] = useState(authUser);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
-  
-  // Dashboard dropdown state
   const [dashboardDropdownOpen, setDashboardDropdownOpen] = useState(false);
   const dashboardRef = useRef(null);
-
-  // Courses dropdown state
   const [coursesDropdownOpen, setCoursesDropdownOpen] = useState(false);
   const coursesDropdownRef = useRef(null);
-  
-  // Popup state
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [wishlist, setWishlist] = useState([]);
-  
-  // Cart state
   const [cartCount, setCartCount] = useState(0);
-  
-  // Filter state
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
@@ -56,7 +43,38 @@ function Landing() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
-  // ✅ Update user when authUser changes
+  // ✅ FIXED: Redirect to dashboard based on user role
+  useEffect(() => {
+    if (!isMounted.current) return;
+    
+    if (!authLoading && isAuthenticated && !hasRedirected.current) {
+      console.log('[Landing] User authenticated, redirecting to dashboard');
+      hasRedirected.current = true;
+      
+      // Determine redirect path based on role
+      let redirectPath = '/student/dashboard';
+      if (authUser?.role === 'admin' || authUser?.role === 'Admin' || authUser?.role === 'ADMIN') {
+        redirectPath = '/admin/dashboard';
+      } else if (authUser?.role === 'instructor' || authUser?.role === 'Instructor') {
+        redirectPath = '/instructor/dashboard';
+      }
+      
+      setTimeout(() => {
+        if (isMounted.current) {
+          navigate(redirectPath, { replace: true });
+        }
+      }, 100);
+    }
+  }, [isAuthenticated, authLoading, navigate, authUser]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  // Update user when authUser changes
   useEffect(() => {
     setUser(authUser);
   }, [authUser]);
@@ -110,7 +128,6 @@ function Landing() {
       description: "Learn to build full-stack web applications using React, Node.js, MongoDB, and Express. Master frontend and backend development with hands-on projects.",
       instructor: "Dr. Sarah Johnson",
     },
-    // ... rest of your courses array (keep the same)
     {
       id: 2,
       title: "Data Science & Machine Learning",
@@ -126,7 +143,66 @@ function Landing() {
       description: "Master data analysis, visualization, and machine learning algorithms using Python, Pandas, Scikit-learn, and TensorFlow.",
       instructor: "Prof. Michael Chen",
     },
-    // ... add all your other courses here
+    {
+      id: 3,
+      title: "UI/UX Design Masterclass",
+      category: "Design",
+      subcategory: "UI/UX",
+      students: 6700,
+      rating: 4.7,
+      image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500",
+      duration: "16 weeks",
+      level: "Beginner",
+      tag: "New",
+      price: 39,
+      description: "Learn UI/UX design principles, Figma, prototyping, and user research. Build a professional portfolio.",
+      instructor: "Emily Davis",
+    },
+    {
+      id: 4,
+      title: "Python Programming for Beginners",
+      category: "Development",
+      subcategory: "Programming Languages",
+      students: 15300,
+      rating: 4.6,
+      image: "https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?w=500",
+      duration: "12 weeks",
+      level: "Beginner",
+      tag: "Popular",
+      price: 29,
+      description: "Master Python programming from scratch. Learn variables, functions, OOP, and build real-world projects.",
+      instructor: "John Smith",
+    },
+    {
+      id: 5,
+      title: "AWS Cloud Practitioner",
+      category: "IT & Software",
+      subcategory: "Cloud Computing",
+      students: 4500,
+      rating: 4.8,
+      image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500",
+      duration: "20 weeks",
+      level: "Intermediate",
+      tag: "Certification",
+      price: 89,
+      description: "Prepare for AWS Cloud Practitioner certification. Learn cloud concepts, security, and AWS services.",
+      instructor: "David Wilson",
+    },
+    {
+      id: 6,
+      title: "Digital Marketing Strategy",
+      category: "Marketing",
+      subcategory: "Digital Marketing",
+      students: 5800,
+      rating: 4.5,
+      image: "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=500",
+      duration: "18 weeks",
+      level: "All Levels",
+      tag: "Trending",
+      price: 59,
+      description: "Master digital marketing including SEO, SEM, social media, email marketing, and analytics.",
+      instructor: "Lisa Anderson",
+    },
   ];
 
   // Categories with subcategories mapping
@@ -224,7 +300,7 @@ function Landing() {
     alert(`Added "${course.title}" to cart.`);
   };
 
-  // ✅ Updated handleLogout using AuthContext
+  // Updated handleLogout using AuthContext
   const handleLogout = async () => {
     await logout();
     setUser(null);
@@ -344,16 +420,22 @@ function Landing() {
     );
   }
 
-  // ✅ If authenticated, redirect (this is a safety net)
+  // ✅ FIXED: Show landing page for unauthenticated users only
+  // If authenticated, the useEffect will handle redirect
+  // No need to return null here - the useEffect will redirect
+  // But we still need to prevent rendering if authenticated
   if (!authLoading && isAuthenticated) {
-    return null; // Will redirect via useEffect
+    // Don't return null - let the useEffect handle redirect
+    // But we'll return null to prevent flash of content
+    return null;
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Rest of your JSX remains the same */}
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-orange-500 origin-left z-50" style={{ scaleX }} />
 
-      {/* Navbar with Courses dropdown - Updated to use authUser */}
+      {/* Navbar */}
       <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? "bg-white/95 backdrop-blur-md shadow-lg py-2" : "bg-white/80 backdrop-blur-sm py-4"} border-b border-gray-100`}>
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
@@ -378,7 +460,6 @@ function Landing() {
                 </button>
                 {coursesDropdownOpen && (
                   <div className="absolute left-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 animate-fade-in">
-                    {/* Categories section */}
                     <div className="px-4 py-2">
                       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Categories</p>
                       <div className="grid grid-cols-2 gap-1">
@@ -401,7 +482,6 @@ function Landing() {
                       </div>
                     </div>
                     <div className="border-t border-gray-100 my-1"></div>
-                    {/* Popular courses section */}
                     <div className="px-4 py-2">
                       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Popular Courses</p>
                       <div className="space-y-1">
@@ -518,7 +598,7 @@ function Landing() {
             </button>
           </div>
 
-          {/* Mobile menu - same as before */}
+          {/* Mobile menu */}
           {mobileMenuOpen && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -628,9 +708,6 @@ function Landing() {
         </div>
       </nav>
 
-      {/* Hero Banner, Stats, Filters, Courses Grid, Popup, Features, Testimonials, CTA, Footer - Keep the same as your original */}
-      {/* ... rest of your component remains the same ... */}
-      
       {/* Hero Banner */}
       <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden rounded-2xl shadow-xl mt-20">
         <AnimatePresence initial={false} custom={direction}>

@@ -1,7 +1,8 @@
 // src/api/axiosInstance.js
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+// ✅ FIXED: Remove the extra quotes and JavaScript code
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -17,15 +18,15 @@ axiosInstance.interceptors.request.use(
   (config) => {
     // Skip auth header for public endpoints (forgot password, verify email, etc.)
     const publicEndpoints = [
-      '/api/v1/auth/register',
-      '/api/v1/auth/verify-email',
-      '/api/v1/auth/login',
-      '/api/v1/auth/login/otp/request',
-      '/api/v1/auth/login/otp/verify',
-      '/api/v1/auth/password/forgot',
-      '/api/v1/auth/password/verify-otp',
-      '/api/v1/auth/password/reset',
-      '/api/v1/auth/refresh'
+      '/auth/register',
+      '/auth/verify-email',
+      '/auth/login',
+      '/auth/login/otp/request',
+      '/auth/login/otp/verify',
+      '/auth/password/forgot',
+      '/auth/password/verify-otp',
+      '/auth/password/reset',
+      '/auth/refresh'
     ];
     
     const isPublicEndpoint = publicEndpoints.some(endpoint => config.url.includes(endpoint));
@@ -61,7 +62,7 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       const { status, config } = error.response;
       
-      const isPublicAuthCall = config?.url?.includes('/api/v1/auth/');
+      const isPublicAuthCall = config?.url?.includes('/auth/');
 
       if (status === 401 && !isPublicAuthCall && !config?.url?.includes('/login')) {
         localStorage.removeItem('lms_token');

@@ -193,18 +193,23 @@ export const tabsByRole = {
 };
 
 export const normalizeRole = (roleValue = "") => {
-  const role = String(roleValue).toLowerCase();
-  if (role.includes("super")) return "super_admin";
-  if (role.includes("sub")) return "sub_admin";
-  if (role.includes("instructor")) return "instructor";
+  const role = String(roleValue || "").trim().toLowerCase();
+  if (!role) return "student";
+  if (role.includes("super") || role.includes("main") || role.includes("admin")) return "admin";
+  if (role.includes("subadmin") || role.includes("sub-admin") || role.includes("sub_admin") || role.includes("sub admin")) return "subadmin";
   if (role.includes("student")) return "student";
-  if (role.includes("admin")) return "admin";
-  return "student";
+  if (role.includes("instructor")) return "instructor";
+  return role;
 };
 
 export const getDashboardRole = (pathname, userRole) => {
-  if (pathname.startsWith("/admin")) return normalizeRole(userRole).includes("admin") ? normalizeRole(userRole) : "admin";
+  const normalizedRole = normalizeRole(userRole);
+
+  if (pathname.startsWith("/admin")) {
+    if (normalizedRole === "admin" || normalizedRole === "subadmin") return normalizedRole;
+    return "admin";
+  }
   if (pathname.startsWith("/instructor")) return "instructor";
   if (pathname.startsWith("/student") || pathname === "/cart" || pathname === "/checkout") return "student";
-  return normalizeRole(userRole);
+  return normalizedRole;
 };

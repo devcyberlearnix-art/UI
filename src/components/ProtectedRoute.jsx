@@ -1,13 +1,13 @@
 // src/components/ProtectedRoute.jsx
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, normalizeRole } from '../context/AuthContext';
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const { user, isAuthenticated, loading } = useAuth();
 
-  const hasToken = !!localStorage.getItem('lms_token') || 
-                   !!localStorage.getItem('access_token') ||
-                   !!sessionStorage.getItem('lms_token');
+  const hasToken = !!localStorage.getItem('lms_token') ||
+    !!localStorage.getItem('access_token') ||
+    !!sessionStorage.getItem('lms_token');
 
   if (loading) {
     return (
@@ -19,21 +19,19 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
       </div>
     );
   }
-  
+
   const isAuth = isAuthenticated || hasToken;
-  const adminOnly = allowedRoles.some((role) => String(role).toLowerCase().includes('admin'));
+  const adminOnly = allowedRoles.some((role) => String(role).toLowerCase().includes('admin') || String(role).toLowerCase().includes('subadmin'));
   const loginPath = adminOnly ? '/admin/login' : '/login';
-  
+
   if (!isAuth) {
     return <Navigate to={loginPath} replace />;
   }
-  
+
   if (allowedRoles.length > 0) {
-    const userRole = String(user?.role || user?.role1 || user?.userRole || '').toLowerCase();
-    const hasAllowedRole = allowedRoles.some(role => 
-      userRole.includes(String(role).toLowerCase())
-    );
-    
+    const normalizedUserRole = normalizeRole(user?.role || user?.role1 || user?.userRole || 'student');
+    const hasAllowedRole = allowedRoles.some((role) => normalizeRole(role) === normalizedUserRole);
+
     if (!hasAllowedRole) {
       return <Navigate to="/" replace />;
     }

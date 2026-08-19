@@ -46,7 +46,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState("");
-  const [selectedPhotoFile, setSelectedPhotoFile] = useState(null); // Store file for later upload
+  const [selectedPhotoFile, setSelectedPhotoFile] = useState(null);
   const [photoUrl, setPhotoUrl] = useState(location.state?.photoUrl || "");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -135,7 +135,6 @@ const Register = () => {
     return Object.keys(nextErrors).length === 0;
   };
 
-  // MODIFIED: Just store the photo file, don't upload yet
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -146,10 +145,9 @@ const Register = () => {
       return;
     }
 
-    // Store the file for later upload
     setSelectedPhotoFile(file);
     setPhotoPreview(URL.createObjectURL(file));
-    setPhotoUrl(""); // Clear any previous URL
+    setPhotoUrl("");
     
     setMessage("Photo selected. It will be uploaded during registration.");
     setMessageType("success");
@@ -170,7 +168,44 @@ const Register = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
-  // MODIFIED: Upload photo AFTER successful registration
+  // ✅ Function to upload photo with token
+  const uploadPhotoWithToken = async (file, token) => {
+    try {
+      console.log('[Register] Uploading photo with token:', !!token);
+      
+      const formData = new FormData();
+      formData.append('photo', file);
+      formData.append('file', file); // Try both field names
+      
+      // ✅ Try with token in header
+      const response = await authApi.uploadProfilePhoto(formData);
+      
+      console.log('[Register] Upload response:', response);
+      
+      const uploadedPhotoUrl = response?.photoUrl || 
+                               response?.url || 
+                               response?.data?.photoUrl || 
+                               response?.data?.url || 
+                               response?.data?.filePath ||
+                               response?.filePath ||
+                               "";
+      
+      if (uploadedPhotoUrl) {
+        setPhotoUrl(uploadedPhotoUrl);
+        localStorage.setItem('pending_photo_url', uploadedPhotoUrl);
+        setMessage("Photo uploaded successfully!");
+        setMessageType("success");
+        return uploadedPhotoUrl;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('[Register] Photo upload failed:', error);
+      // Don't throw - let registration continue
+      return null;
+    }
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -193,7 +228,7 @@ const Register = () => {
         mobileNumber: formData.mobile,
         mobile: formData.mobile,
         dob: formData.dob,
-        profilePhoto: "", // Will be updated after photo upload
+        profilePhoto: "",
         city: formData.city,
         state: formData.state,
         country: formData.country,
@@ -221,32 +256,77 @@ const Register = () => {
           })
         : await authApi.register(payload);
       
+      console.log('[Register] Registration response:', registration);
+      
       const registrationData = registration?.data || registration || {};
 
-      // Step 2: If photo was selected, upload it now (using the token from registration)
-      if (selectedPhotoFile && registrationData.token) {
+      // ✅ Extract OTP session ID
+      const otpSessionId = 
+        registrationData.otpSessionId || 
+        registrationData.data?.otpSessionId ||
+        registrationData.sessionId ||
+        registrationData.id ||
+        registrationData.otpSession?.id ||
+        null;
+
+      // ✅ Extract token
+      const token = 
+        registrationData.token ||
+        registrationData.accessToken ||
+        registrationData.access_token ||
+        registrationData.authentication?.accessToken ||
+        registrationData.data?.token ||
+        registrationData.data?.accessToken ||
+        null;
+
+      console.log('[Register] Extracted OTP Session ID:', otpSessionId);
+      console.log('[Register] Extracted Token:', token ? 'Token present' : 'No token');
+
+      if (!otpSessionId) {
+        console.error('[Register] No OTP session ID found:', registrationData);
+        throw new Error("OTP session ID not received from server. Please try again.");
+      }
+
+      // ✅ Store OTP session ID
+      sessionStorage.setItem('pending_otp_session_id', otpSessionId);
+      sessionStorage.setItem('pending_registration_email', formData.email);
+      
+      // ✅ Store token if available
+      if (token) {
+        localStorage.setItem('lms_token', token);
+        localStorage.setItem('access_token', token);
+        sessionStorage.setItem('lms_token', token);
+      }
+
+      // ✅ Handle photo upload
+      let uploadedPhotoUrl = photoUrl || "";
+      
+      if (selectedPhotoFile) {
         try {
-          // Store token for the upload
-          localStorage.setItem('token', registrationData.token);
+          setPhotoUploading(true);
           
-          // Upload the photo
-          const formData = new FormData();
-          formData.append('photo', selectedPhotoFile);
-          const uploadResponse = await authApi.uploadProfilePhoto(formData);
-          
-          // Update photo URL from upload response
-          const uploadedPhotoUrl = uploadResponse?.data?.photoUrl || 
-                                   uploadResponse?.data?.url || 
-                                   uploadResponse?.data?.filePath || "";
-          if (uploadedPhotoUrl) {
-            setPhotoUrl(uploadedPhotoUrl);
+          // ✅ Try to upload with token if available
+          if (token) {
+            uploadedPhotoUrl = await uploadPhotoWithToken(selectedPhotoFile, token) || "";
+          } else {
+            // ✅ Store for later upload
+            localStorage.setItem('pending_photo_file', 'true');
+            // Store file as base64 for later upload
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              sessionStorage.setItem('pending_photo_file_data', reader.result);
+            };
+            reader.readAsDataURL(selectedPhotoFile);
+            setMessage("Registration successful! Photo will be uploaded after verification.");
+            setMessageType("success");
           }
-          setMessage("Registration successful! Photo uploaded.");
-          setMessageType("success");
-        } catch (photoError) {
-          console.warn('Photo upload failed, but registration succeeded:', photoError);
+        } catch (error) {
+          console.warn('[Register] Photo upload failed:', error);
+          localStorage.setItem('pending_photo_file', 'true');
           setMessage("Registration successful, but photo upload failed. You can upload later.");
           setMessageType("warning");
+        } finally {
+          setPhotoUploading(false);
         }
       } else {
         setMessage(emailCorrection ? "Email updated. Sending a new OTP..." : "Registration successful. Opening verification...");
@@ -254,20 +334,27 @@ const Register = () => {
       }
 
       // Step 3: Navigate to verification
-      setTimeout(
-        () =>
-          navigate("/otp-verify", {
-            state: {
+      setTimeout(() => {
+        navigate("/otp-verify", {
+          state: {
+            email: formData.email,
+            flow: "register",
+            otpSessionId: otpSessionId,
+            cooldownSeconds: registrationData.cooldownSeconds || 30,
+            registrationDraft: formData,
+            photoUrl: uploadedPhotoUrl || photoUrl || (selectedPhotoFile ? "pending" : ""),
+            userData: {
+              firstName: formData.firstName,
+              lastName: formData.lastName,
               email: formData.email,
-              flow: "register",
-              otpSessionId: registrationData.otpSessionId,
-              cooldownSeconds: registrationData.cooldownSeconds || 30,
-              registrationDraft: formData,
-              photoUrl: photoUrl || (selectedPhotoFile ? "pending" : ""),
+              role: 'student',
+              profilePhoto: uploadedPhotoUrl || photoUrl || "",
             },
-          }),
-        900
-      );
+          },
+          replace: true
+        });
+      }, 900);
+      
     } catch (err) {
       const errorMessage =
         err.response?.data?.message ||
@@ -276,6 +363,7 @@ const Register = () => {
         "Registration failed. Please try again";
       setMessage(errorMessage);
       setMessageType("error");
+      console.error('[Register] Registration error details:', err);
     } finally {
       setLoading(false);
     }

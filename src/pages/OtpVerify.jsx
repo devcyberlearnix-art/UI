@@ -30,10 +30,26 @@ function OtpVerify() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const [otpSessionId, setOtpSessionId] = useState(location.state?.otpSessionId || "");
+  const [otpSessionId, setOtpSessionId] = useState(() => {
+    const fromState = location.state?.otpSessionId || "";
+    const fromStorage = sessionStorage.getItem('pending_otp_session_id') || "";
+    return fromState || fromStorage;
+  });
+
   const [cooldown, setCooldown] = useState(Number(location.state?.cooldownSeconds || 30));
 
-  // Save photoUrl to localStorage as backup
+  useEffect(() => {
+    if (otpSessionId) {
+      sessionStorage.setItem('pending_otp_session_id', otpSessionId);
+    }
+  }, [otpSessionId]);
+
+  useEffect(() => {
+    if (email) {
+      sessionStorage.setItem('pending_registration_email', email);
+    }
+  }, [email]);
+
   useEffect(() => {
     if (photoUrl) {
       localStorage.setItem('pending_photo_url', photoUrl);
@@ -51,14 +67,12 @@ function OtpVerify() {
     const timer = setInterval(() => {
       setCooldown((prev) => Math.max(prev - 1, 0));
     }, 1000);
-
     return () => clearInterval(timer);
   }, [cooldown]);
 
   const canResend = useMemo(() => cooldown === 0, [cooldown]);
 
   const handleSuccessfulVerification = async (userData, token) => {
-    // Ensure photo URL is preserved
     const savedPhotoUrl = photoUrl || localStorage.getItem('pending_photo_url');
     
     if (savedPhotoUrl && !userData.profilePhoto) {
@@ -66,19 +80,15 @@ function OtpVerify() {
       userData.photoUrl = savedPhotoUrl;
     }
 
-    // Update localStorage with photo
     localStorage.setItem('lms_user', JSON.stringify(userData));
-    
-    // Login user
     await login(userData, token);
-    
-    // Clean up
     localStorage.removeItem('pending_photo_url');
+    sessionStorage.removeItem('pending_otp_session_id');
+    sessionStorage.removeItem('pending_registration_email');
     
     setSuccess(true);
     toast.success('Email verified successfully!');
     
-    // Redirect
     setTimeout(() => {
       const redirectPath = getRedirectByRole(userData?.role || 'student');
       navigate(redirectPath, { replace: true });
@@ -96,10 +106,23 @@ function OtpVerify() {
     setLoading(true);
     try {
       if (flow === "register") {
-        // Verify OTP
-        const res = await authApi.verifyEmail({ email, otp, otpSessionId });
+        console.log('Verifying with:', { email, otp, otpSessionId });
+
+        if (!otpSessionId) {
+          setError("OTP session expired. Please request a new OTP.");
+          setLoading(false);
+          return;
+        }
+
+        // ✅ Send correct data: email, otp, otpSessionId
+        const res = await authApi.verifyEmail({ 
+          email, 
+          otp, 
+          otpSessionId 
+        });
         
-        // Get stored user data
+        console.log('Verification response:', res);
+        
         const storedToken = localStorage.getItem('lms_token');
         let storedUser = localStorage.getItem('lms_user');
         let userData = {};
@@ -109,7 +132,6 @@ function OtpVerify() {
         } else if (userDataFromState) {
           userData = userDataFromState;
         } else {
-          // Fallback: create user data from registration info
           userData = {
             email: email,
             firstName: location.state?.registrationDraft?.firstName || '',
@@ -118,7 +140,6 @@ function OtpVerify() {
           };
         }
 
-        // Handle photo URL
         const finalPhotoUrl = photoUrl || 
                              userData.profilePhoto || 
                              localStorage.getItem('pending_photo_url') ||
@@ -129,7 +150,6 @@ function OtpVerify() {
           userData.photoUrl = finalPhotoUrl;
         }
 
-        // Complete verification
         await handleSuccessfulVerification(userData, storedToken);
         return;
       }
@@ -173,7 +193,6 @@ function OtpVerify() {
       sessionStorage.setItem("lms_token", tokenData);
       localStorage.setItem("lms_user", JSON.stringify(userData));
       
-      // Clean up
       localStorage.removeItem('pending_photo_url');
 
       setSuccess(true);
@@ -197,6 +216,7 @@ function OtpVerify() {
       const message = details ? `${baseMessage} (${details})` : baseMessage;
       setError(message);
       toast.error(baseMessage);
+      console.error('Verification error details:', err.response?.data);
     } finally {
       setLoading(false);
     }
@@ -208,6 +228,12 @@ function OtpVerify() {
 
     if (!otpSessionId) {
       setError("OTP session expired. Please register again.");
+      setTimeout(() => {
+        navigate("/register", { 
+          state: { email, registrationDraft: location.state?.registrationDraft },
+          replace: true 
+        });
+      }, 2000);
       return;
     }
 
@@ -215,7 +241,11 @@ function OtpVerify() {
     try {
       const response = await authApi.resendOtp({ flow, email, otpSessionId });
       const res = response.data || response;
-      setOtpSessionId(res.otpSessionId || otpSessionId);
+      
+      const newSessionId = res.otpSessionId || otpSessionId;
+      setOtpSessionId(newSessionId);
+      sessionStorage.setItem('pending_otp_session_id', newSessionId);
+      
       setOtp("");
       setCooldown(Number(res.cooldownSeconds || 30));
       toast.success(response.message || res.message || "OTP resent");

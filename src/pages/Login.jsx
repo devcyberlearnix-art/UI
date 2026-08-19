@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail, Lock, LogIn, AlertCircle, KeyRound, RefreshCw } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth, normalizeRole } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import AuthShell from "../components/ui/AuthShell";
 import { authApi } from "../api/authApi";
@@ -24,9 +24,10 @@ const Login = () => {
   const canResend = cooldownSeconds === 0;
 
   const getRedirectByRole = (roleValue) => {
-    const role = String(roleValue || "").toLowerCase();
-    if (role.includes("admin") || role.includes("super") || role.includes("sub")) return "/admin/dashboard";
-    if (role.includes("instructor")) return "/instructor/dashboard";
+    const role = normalizeRole(roleValue);
+    if (role === "subadmin") return "/admin/sub-dashboard";
+    if (role === "admin") return "/admin/dashboard";
+    if (role === "instructor") return "/instructor/dashboard";
     return "/student/dashboard";
   };
 
@@ -163,7 +164,7 @@ const Login = () => {
           ? `${userInfo.firstName} ${userInfo.lastName || ""}`.trim()
           : userInfo.name || "",
         email: userInfo.email || email,
-        role: userInfo.role || userInfo.role1 || userInfo.userRole || userInfo.effectiveRole || "student",
+        role: normalizeRole(userInfo.role || userInfo.role1 || userInfo.userRole || userInfo.effectiveRole || "student"),
       };
 
       localStorage.setItem("lms_token", tokenData);
