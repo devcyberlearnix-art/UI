@@ -1,796 +1,942 @@
-import { useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+/// src/pages/Register.jsx
+import React, { useState, useMemo, useRef } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
+  User,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Phone,
+  Calendar,
+  MapPin,
+  Globe,
+  Languages,
+  BookOpen,
+  Award,
+  Upload,
+  CheckCircle,
   AlertCircle,
   ArrowLeft,
   ArrowRight,
-  Award,
-  BookOpen,
-  Calendar,
-  CheckCircle,
-  Eye,
-  EyeOff,
-  Globe,
-  Languages,
-  Lock,
-  Mail,
-  MapPin,
-  Phone,
-  Upload,
-  User,
-} from "lucide-react";
-import AuthShell from "../components/ui/AuthShell";
-import authApi from "../api/authApi";
+  Shield,
+  FileText,
+  ChevronRight,
+  Sparkles
+} from 'lucide-react';
+import authApi from '../api/authApi';
 
-const cities = ["Hyderabad", "Visakhapatnam", "Vijayawada", "Guntur", "Tirupati", "Nellore"];
-const states = ["Andhra Pradesh", "Telangana", "Karnataka", "Tamil Nadu", "Maharashtra"];
-const countries = ["India", "United States", "United Kingdom", "Canada", "Australia"];
 const languages = ["English", "Hindi", "Telugu", "Tamil", "Kannada", "Malayalam"];
 
 const steps = [
-  { id: 1, title: "Account" },
-  { id: 2, title: "Security" },
-  { id: 3, title: "Profile" },
+  { id: 1, title: "Account", icon: User },
+  { id: 2, title: "Security", icon: Shield },
+  { id: 3, title: "Profile", icon: User },
+  { id: 4, title: "Terms", icon: FileText },
 ];
 
 const Register = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const registrationDraft = location.state?.registrationDraft || {};
-  const emailCorrection = location.state?.emailCorrection || null;
-
+  const fileInputRef = useRef(null);
+  
   const [currentStep, setCurrentStep] = useState(1);
-  const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState("error");
   const [loading, setLoading] = useState(false);
-  const [photoUploading, setPhotoUploading] = useState(false);
-  const [photoPreview, setPhotoPreview] = useState("");
-  const [selectedPhotoFile, setSelectedPhotoFile] = useState(null);
-  const [photoUrl, setPhotoUrl] = useState(location.state?.photoUrl || "");
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState('');
+  const [photoFile, setPhotoFile] = useState(null);
 
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    countryCode: "+91",
-    mobile: "",
-    dob: "",
-    city: "",
-    state: "",
-    country: "",
-    preferredLanguage: "",
-    organization: "",
-    skills: "",
-    fieldOfStudy: "",
-    highestQualification: "",
-    agreeToTerms: false,
-    ...registrationDraft,
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    countryCode: '+91',
+    mobileNumber: '',
+    dob: '',
+    profilePhoto: '',
+    city: '',
+    state: '',
+    country: 'India',
+    preferredLanguage: 'English',
+    organization: '',
+    skills: '',
+    fieldOfStudy: '',
+    highestQualification: '',
+    agreeToTerms: false
   });
 
   const [errors, setErrors] = useState({});
 
+  // Password strength calculator
   const passwordStrength = useMemo(() => {
     const password = formData.password;
-    let strength = 0;
-    if (password.length >= 8) strength += 1;
-    if (/[a-z]/.test(password)) strength += 1;
-    if (/[A-Z]/.test(password)) strength += 1;
-    if (/\d/.test(password)) strength += 1;
-    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 1;
-    return strength;
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^a-zA-Z0-9]/.test(password)) score++;
+    return score;
   }, [formData.password]);
 
-  const strengthColor =
-    passwordStrength <= 2 ? "#ef4444" : passwordStrength <= 3 ? "#f59e0b" : "#16a34a";
-  const strengthText =
-    passwordStrength <= 2 ? "Weak" : passwordStrength <= 3 ? "Medium" : "Strong";
+  const strengthConfig = {
+    0: { text: 'Very Weak', color: '#ef4444', width: '0%' },
+    1: { text: 'Weak', color: '#ef4444', width: '20%' },
+    2: { text: 'Fair', color: '#f59e0b', width: '40%' },
+    3: { text: 'Good', color: '#f59e0b', width: '60%' },
+    4: { text: 'Strong', color: '#16a34a', width: '80%' },
+    5: { text: 'Very Strong', color: '#16a34a', width: '100%' },
+  };
+
+  const strength = strengthConfig[passwordStrength] || strengthConfig[0];
 
   const updateField = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
+      setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
-  const FieldError = ({ name }) =>
-    errors[name] ? <p className="mt-1 text-xs text-red-600">{errors[name]}</p> : null;
+  const FieldError = ({ name }) => 
+    errors[name] ? (
+      <motion.p 
+        initial={{ opacity: 0, y: -5 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mt-1 text-xs text-red-500 flex items-center gap-1"
+      >
+        <AlertCircle size={12} />
+        {errors[name]}
+      </motion.p>
+    ) : null;
 
   const validateStep = (step) => {
-    const nextErrors = {};
+    const newErrors = {};
 
     if (step === 1) {
-      if (!formData.firstName.trim()) nextErrors.firstName = "First name is required";
-      if (!formData.lastName.trim()) nextErrors.lastName = "Last name is required";
-      if (!/\S+@\S+\.\S+/.test(formData.email)) nextErrors.email = "Valid email is required";
+      if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
+      if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+      if (!formData.email.trim()) newErrors.email = 'Email is required';
+      if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Please enter a valid email';
     }
 
     if (step === 2) {
-      if (formData.password.length < 8) {
-        nextErrors.password = "Password must be at least 8 characters";
-      } else if (passwordStrength < 5) {
-        nextErrors.password = "Use uppercase, lowercase, number, and special character";
-      }
+      if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+      if (passwordStrength < 3) newErrors.password = 'Password is too weak';
       if (formData.password !== formData.confirmPassword) {
-        nextErrors.confirmPassword = "Passwords do not match";
+        newErrors.confirmPassword = 'Passwords do not match';
       }
     }
 
     if (step === 3) {
-      if (!/^[6-9]\d{9}$/.test(formData.mobile)) nextErrors.mobile = "Valid 10-digit mobile is required";
-      if (!formData.dob) nextErrors.dob = "Date of birth is required";
-      if (!formData.city) nextErrors.city = "City is required";
-      if (!formData.state) nextErrors.state = "State is required";
-      if (!formData.country) nextErrors.country = "Country is required";
-      if (!formData.preferredLanguage) nextErrors.preferredLanguage = "Preferred language is required";
-      if (!formData.skills.trim()) nextErrors.skills = "At least one skill is required";
-      if (!formData.agreeToTerms) nextErrors.agreeToTerms = "Please accept terms";
+      if (!formData.mobileNumber) newErrors.mobileNumber = 'Mobile number is required';
+      if (!/^[6-9]\d{9}$/.test(formData.mobileNumber)) {
+        newErrors.mobileNumber = 'Please enter a valid 10-digit mobile number';
+      }
+      if (!formData.dob) newErrors.dob = 'Date of birth is required';
+      if (!formData.city.trim()) newErrors.city = 'City is required';
+      if (!formData.state.trim()) newErrors.state = 'State is required';
+      if (!formData.country.trim()) newErrors.country = 'Country is required';
+      if (!formData.preferredLanguage) newErrors.preferredLanguage = 'Preferred language is required';
     }
 
-    setErrors((prev) => ({ ...prev, ...nextErrors }));
-    return Object.keys(nextErrors).length === 0;
+    if (step === 4) {
+      if (!formData.agreeToTerms) newErrors.agreeToTerms = 'Please accept the Terms and Conditions';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handlePhotoChange = (e) => {
+  const handlePhotoChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      setMessage("Photo size should be less than 5MB");
-      setMessageType("error");
+      setError('Photo size should be less than 5MB');
       return;
     }
 
-    setSelectedPhotoFile(file);
+    setPhotoFile(file);
     setPhotoPreview(URL.createObjectURL(file));
-    setPhotoUrl("");
-    
-    setMessage("Photo selected. It will be uploaded during registration.");
-    setMessageType("success");
+    setPhotoUploading(true);
+    setError('');
+
+    try {
+      // Convert to base64 for storage
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Data = e.target.result;
+        // Store in session and local storage for upload after login
+        sessionStorage.setItem('pendingProfilePhoto', base64Data);
+        localStorage.setItem('pendingProfilePhoto', base64Data);
+        setPhotoUploading(false);
+        setSuccess('Photo selected successfully');
+        setTimeout(() => setSuccess(''), 3000);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      setError('Failed to process photo');
+      setPhotoUploading(false);
+    }
   };
 
   const handleNext = () => {
     if (!validateStep(currentStep)) {
-      setMessage("Please fix the highlighted fields before continuing");
-      setMessageType("error");
+      setError('Please fix the highlighted fields before continuing');
       return;
     }
-    setMessage("");
-    setCurrentStep((prev) => Math.min(prev + 1, 3));
+    setError('');
+    setCurrentStep(prev => Math.min(prev + 1, 4));
   };
 
   const handleBack = () => {
-    setMessage("");
-    setCurrentStep((prev) => Math.max(prev - 1, 1));
+    setError('');
+    setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
-  // ✅ Function to upload photo with token
-  const uploadPhotoWithToken = async (file, token) => {
-    try {
-      console.log('[Register] Uploading photo with token:', !!token);
-      
-      const formData = new FormData();
-      formData.append('photo', file);
-      formData.append('file', file); // Try both field names
-      
-      // ✅ Try with token in header
-      const response = await authApi.uploadProfilePhoto(formData);
-      
-      console.log('[Register] Upload response:', response);
-      
-      const uploadedPhotoUrl = response?.photoUrl || 
-                               response?.url || 
-                               response?.data?.photoUrl || 
-                               response?.data?.url || 
-                               response?.data?.filePath ||
-                               response?.filePath ||
-                               "";
-      
-      if (uploadedPhotoUrl) {
-        setPhotoUrl(uploadedPhotoUrl);
-        localStorage.setItem('pending_photo_url', uploadedPhotoUrl);
-        setMessage("Photo uploaded successfully!");
-        setMessageType("success");
-        return uploadedPhotoUrl;
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('[Register] Photo upload failed:', error);
-      // Don't throw - let registration continue
-      return null;
-    }
-  };
-
-  const handleRegister = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
-
-    if (!validateStep(1) || !validateStep(2) || !validateStep(3)) {
-      setMessage("Please correct the highlighted fields");
-      setMessageType("error");
+    
+    // Validate all steps
+    if (!validateStep(1) || !validateStep(2) || !validateStep(3) || !validateStep(4)) {
+      setError('Please correct the highlighted fields');
       return;
     }
 
     setLoading(true);
+    setError('');
+
     try {
+      // Prepare payload
       const payload = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim(),
         password: formData.password,
         confirmPassword: formData.confirmPassword,
         countryCode: formData.countryCode,
-        mobileNumber: formData.mobile,
-        mobile: formData.mobile,
+        mobileNumber: formData.mobileNumber,
         dob: formData.dob,
-        profilePhoto: "",
-        city: formData.city,
-        state: formData.state,
-        country: formData.country,
+        city: formData.city.trim(),
+        state: formData.state.trim(),
+        country: formData.country.trim(),
         preferredLanguage: formData.preferredLanguage,
-        organization: formData.organization || "",
-        skills: formData.skills
-          ? formData.skills.split(",").map((item) => item.trim()).filter(Boolean)
-          : [],
-        fieldOfStudy: formData.fieldOfStudy || "",
-        highestQualification: formData.highestQualification || "",
+        organization: formData.organization.trim() || '',
+        skills: formData.skills ? formData.skills.split(',').map(s => s.trim()).filter(Boolean) : [],
+        fieldOfStudy: formData.fieldOfStudy.trim() || '',
+        highestQualification: formData.highestQualification.trim() || '',
+        profilePhoto: formData.profilePhoto || ''
       };
 
-      if (emailCorrection && formData.email === emailCorrection.email) {
-        setMessage("Enter the correct email address before continuing");
-        setMessageType("error");
-        setCurrentStep(1);
-        return;
-      }
-
-      // Step 1: Register the user
-      const registration = emailCorrection
-        ? await authApi.changeRegistrationEmail({
-            email: formData.email,
-            otpSessionId: emailCorrection.otpSessionId,
-          })
-        : await authApi.register(payload);
+      console.log('[Register] Submitting:', payload);
       
-      console.log('[Register] Registration response:', registration);
-      
-      const registrationData = registration?.data || registration || {};
+      const response = await authApi.register(payload);
+      console.log('[Register] Response:', response);
 
-      // ✅ Extract OTP session ID
-      const otpSessionId = 
-        registrationData.otpSessionId || 
-        registrationData.data?.otpSessionId ||
-        registrationData.sessionId ||
-        registrationData.id ||
-        registrationData.otpSession?.id ||
-        null;
-
-      // ✅ Extract token
-      const token = 
-        registrationData.token ||
-        registrationData.accessToken ||
-        registrationData.access_token ||
-        registrationData.authentication?.accessToken ||
-        registrationData.data?.token ||
-        registrationData.data?.accessToken ||
-        null;
-
-      console.log('[Register] Extracted OTP Session ID:', otpSessionId);
-      console.log('[Register] Extracted Token:', token ? 'Token present' : 'No token');
-
-      if (!otpSessionId) {
-        console.error('[Register] No OTP session ID found:', registrationData);
-        throw new Error("OTP session ID not received from server. Please try again.");
-      }
-
-      // ✅ Store OTP session ID
-      sessionStorage.setItem('pending_otp_session_id', otpSessionId);
-      sessionStorage.setItem('pending_registration_email', formData.email);
-      
-      // ✅ Store token if available
-      if (token) {
-        localStorage.setItem('lms_token', token);
-        localStorage.setItem('access_token', token);
-        sessionStorage.setItem('lms_token', token);
-      }
-
-      // ✅ Handle photo upload
-      let uploadedPhotoUrl = photoUrl || "";
-      
-      if (selectedPhotoFile) {
-        try {
-          setPhotoUploading(true);
+      if (response.success) {
+        const sessionId = response.data?.otpSessionId || response.otpSessionId;
+        
+        if (sessionId) {
+          sessionStorage.setItem('otpSessionId', sessionId);
+          sessionStorage.setItem('userEmail', formData.email);
+          localStorage.setItem('registrationEmail', formData.email);
           
-          // ✅ Try to upload with token if available
-          if (token) {
-            uploadedPhotoUrl = await uploadPhotoWithToken(selectedPhotoFile, token) || "";
-          } else {
-            // ✅ Store for later upload
-            localStorage.setItem('pending_photo_file', 'true');
-            // Store file as base64 for later upload
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              sessionStorage.setItem('pending_photo_file_data', reader.result);
-            };
-            reader.readAsDataURL(selectedPhotoFile);
-            setMessage("Registration successful! Photo will be uploaded after verification.");
-            setMessageType("success");
-          }
-        } catch (error) {
-          console.warn('[Register] Photo upload failed:', error);
-          localStorage.setItem('pending_photo_file', 'true');
-          setMessage("Registration successful, but photo upload failed. You can upload later.");
-          setMessageType("warning");
-        } finally {
-          setPhotoUploading(false);
+          setSuccess('Registration successful! Redirecting to verification...');
+          
+          setTimeout(() => {
+            navigate('/otp-verify', { 
+              state: { 
+                email: formData.email,
+                otpSessionId: sessionId,
+                registrationSuccess: true 
+              } 
+            });
+          }, 1000);
+        } else {
+          setError('No OTP session ID received. Please try again.');
         }
       } else {
-        setMessage(emailCorrection ? "Email updated. Sending a new OTP..." : "Registration successful. Opening verification...");
-        setMessageType("success");
+        setError(response.message || 'Registration failed. Please try again.');
       }
-
-      // Step 3: Navigate to verification
-      setTimeout(() => {
-        navigate("/otp-verify", {
-          state: {
-            email: formData.email,
-            flow: "register",
-            otpSessionId: otpSessionId,
-            cooldownSeconds: registrationData.cooldownSeconds || 30,
-            registrationDraft: formData,
-            photoUrl: uploadedPhotoUrl || photoUrl || (selectedPhotoFile ? "pending" : ""),
-            userData: {
-              firstName: formData.firstName,
-              lastName: formData.lastName,
-              email: formData.email,
-              role: 'student',
-              profilePhoto: uploadedPhotoUrl || photoUrl || "",
-            },
-          },
-          replace: true
-        });
-      }, 900);
-      
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        err.message ||
-        "Registration failed. Please try again";
-      setMessage(errorMessage);
-      setMessageType("error");
-      console.error('[Register] Registration error details:', err);
+      console.error('[Register] Error:', err);
+      
+      if (err.response?.status === 409) {
+        setError('User with this email already exists. Please login or use a different email.');
+      } else if (err.response?.status === 400) {
+        setError(err.response.data?.message || 'Invalid registration data. Please check your inputs.');
+      } else {
+        setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <AuthShell
-      title="Create Your Learning Identity"
-      subtitle="A guided onboarding flow designed for clarity, speed, and a polished user experience."
-      eyebrow="LearnMaster Enroll"
-      highlights={[
-        { value: "3-Step", label: "Signup" },
-        { value: "Smooth", label: "Flow" },
-        { value: "Secure", label: "Account" },
-      ]}
-    >
-      <h1 className="mb-1 text-2xl font-bold text-slate-900">Create Account</h1>
-      <p className="mb-5 text-sm text-slate-500">Simple steps, clean inputs, and strong security.</p>
-
-      <div className="mb-6 grid grid-cols-3 gap-2 rounded-xl border border-slate-200 bg-slate-50 p-2">
-        {steps.map((step) => {
-          const active = step.id === currentStep;
-          const done = step.id < currentStep;
+  // Step indicator
+  const StepIndicator = () => (
+    <div className="relative mb-8">
+      <div className="flex items-center justify-between">
+        {steps.map((step, index) => {
+          const isActive = step.id === currentStep;
+          const isCompleted = step.id < currentStep;
+          
           return (
-            <button
-              key={step.id}
-              type="button"
-              onClick={() => {
-                if (step.id <= currentStep) setCurrentStep(step.id);
-              }}
-              className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                active
-                  ? "bg-white text-orange-600 shadow"
-                  : done
-                  ? "bg-emerald-50 text-emerald-700"
-                  : "text-slate-500"
-              }`}
-            >
-              {done ? "Done" : `Step ${step.id}`} - {step.title}
-            </button>
+            <div key={step.id} className="flex flex-col items-center flex-1">
+              <button
+                type="button"
+                onClick={() => {
+                  if (step.id <= currentStep) setCurrentStep(step.id);
+                }}
+                className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 ${
+                  isActive
+                    ? 'bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-lg shadow-orange-200 scale-110'
+                    : isCompleted
+                    ? 'bg-emerald-500 text-white'
+                    : 'bg-slate-200 text-slate-500'
+                }`}
+              >
+                {isCompleted ? (
+                  <CheckCircle size={18} />
+                ) : (
+                  <step.icon size={18} />
+                )}
+              </button>
+              <div className="mt-2 text-center">
+                <div className={`text-xs font-medium ${
+                  isActive ? 'text-orange-600' : isCompleted ? 'text-emerald-600' : 'text-slate-400'
+                }`}>
+                  {step.title}
+                </div>
+              </div>
+              {index < steps.length - 1 && (
+                <div className="absolute left-0 right-0 top-5 flex items-center">
+                  <div className={`h-0.5 w-full transition-all duration-300 ${
+                    isCompleted ? 'bg-emerald-500' : 'bg-slate-200'
+                  }`} />
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
+    </div>
+  );
 
-      {message && (
-        <div
-          className={`mb-4 flex items-start gap-2 rounded-xl border p-3 text-sm ${
-            messageType === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-              : messageType === "warning"
-              ? "border-yellow-200 bg-yellow-50 text-yellow-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          }`}
-        >
-          {messageType === "success" ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
-          <span>{message}</span>
-        </div>
-      )}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-orange-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-3xl">
+        {/* Main Card */}
+        <div className="bg-white rounded-2xl shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100">
+          {/* Header */}
+          <div className="relative bg-gradient-to-r from-orange-500 to-amber-600 px-8 py-6">
+            <div className="absolute top-0 right-0 opacity-10">
+              <Sparkles size={120} />
+            </div>
+            <div className="relative">
+              <h1 className="text-2xl font-bold text-white">Create Account</h1>
+              <p className="text-orange-100 text-sm mt-1 flex items-center gap-1">
+                <span className="inline-block w-1.5 h-1.5 bg-orange-200 rounded-full animate-pulse" />
+                Complete your profile in {steps.length} simple steps
+              </p>
+            </div>
+          </div>
 
-      <form onSubmit={handleRegister} className="space-y-4">
-        <AnimatePresence mode="wait">
-          {currentStep === 1 && (
-            <motion.div
-              key="step-1"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.22 }}
-              className="space-y-4"
-            >
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">First Name</label>
-                  <div className="relative">
-                    <User size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input 
-                      className="lms-input pl-10" 
-                      value={formData.firstName} 
-                      onChange={(e) => updateField("firstName", e.target.value)} 
-                      placeholder="John"
-                    />
-                  </div>
-                  <FieldError name="firstName" />
-                </div>
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Last Name</label>
-                  <div className="relative">
-                    <User size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input 
-                      className="lms-input pl-10" 
-                      value={formData.lastName} 
-                      onChange={(e) => updateField("lastName", e.target.value)}
-                      placeholder="Doe"
-                    />
-                  </div>
-                  <FieldError name="lastName" />
-                </div>
-              </div>
+          {/* Content */}
+          <div className="p-8">
+            <StepIndicator />
 
-              <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Email Address</label>
-                <div className="relative">
-                  <Mail size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <input
-                    type="email"
-                    className="lms-input pl-10"
-                    value={formData.email}
-                    onChange={(e) => updateField("email", e.target.value)}
-                    placeholder="john.doe@example.com"
-                  />
-                </div>
-                <FieldError name="email" />
-              </div>
-            </motion.div>
-          )}
+            {/* Messages */}
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+              >
+                <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
+                <span>{error}</span>
+              </motion.div>
+            )}
 
-          {currentStep === 2 && (
-            <motion.div
-              key="step-2"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.22 }}
-              className="space-y-4"
-            >
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Password</label>
-                  <div className="relative">
-                    <Lock size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      className="lms-input pl-10 pr-10"
-                      value={formData.password}
-                      onChange={(e) => updateField("password", e.target.value)}
-                      placeholder="Min 8 characters"
-                    />
-                    <button 
-                      type="button" 
-                      onClick={() => setShowPassword((v) => !v)} 
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
-                    >
-                      {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
-                    </button>
-                  </div>
-                  <div className="mt-2 flex items-center gap-2">
-                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200">
-                      <div 
-                        className="h-full transition-all" 
-                        style={{ width: `${(passwordStrength / 5) * 100}%`, backgroundColor: strengthColor }} 
-                      />
+            {success && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700"
+              >
+                <CheckCircle size={18} className="flex-shrink-0 mt-0.5" />
+                <span>{success}</span>
+              </motion.div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={handleSubmit}>
+              <AnimatePresence mode="wait">
+                {/* Step 1: Account Info */}
+                {currentStep === 1 && (
+                  <motion.div
+                    key="step-1"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                    className="space-y-4"
+                  >
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                          First Name <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                          <input
+                            type="text"
+                            className={`w-full rounded-xl border-2 bg-slate-50 px-4 py-3 pl-10 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 ${
+                              errors.firstName ? 'border-red-300' : 'border-slate-200'
+                            }`}
+                            value={formData.firstName}
+                            onChange={(e) => updateField('firstName', e.target.value)}
+                            placeholder="Enter first name"
+                          />
+                        </div>
+                        <FieldError name="firstName" />
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                          Last Name <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                          <input
+                            type="text"
+                            className={`w-full rounded-xl border-2 bg-slate-50 px-4 py-3 pl-10 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 ${
+                              errors.lastName ? 'border-red-300' : 'border-slate-200'
+                            }`}
+                            value={formData.lastName}
+                            onChange={(e) => updateField('lastName', e.target.value)}
+                            placeholder="Enter last name"
+                          />
+                        </div>
+                        <FieldError name="lastName" />
+                      </div>
                     </div>
-                    <span className="text-xs font-semibold" style={{ color: strengthColor }}>
-                      {strengthText}
-                    </span>
-                  </div>
-                  <FieldError name="password" />
-                </div>
 
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Confirm Password</label>
-                  <div className="relative">
-                    <Lock size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      className="lms-input pl-10 pr-10"
-                      value={formData.confirmPassword}
-                      onChange={(e) => updateField("confirmPassword", e.target.value)}
-                      placeholder="Confirm your password"
-                    />
+                    <div>
+                      <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                        Email Address <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input
+                          type="email"
+                          className={`w-full rounded-xl border-2 bg-slate-50 px-4 py-3 pl-10 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 ${
+                            errors.email ? 'border-red-300' : 'border-slate-200'
+                          }`}
+                          value={formData.email}
+                          onChange={(e) => updateField('email', e.target.value)}
+                          placeholder="you@example.com"
+                        />
+                      </div>
+                      <FieldError name="email" />
+                    </div>
+
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword((v) => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+                      onClick={handleNext}
+                      className="mt-4 w-full rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-orange-200 flex items-center justify-center gap-2"
                     >
-                      {showConfirmPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                      Next Step <ArrowRight size={18} />
                     </button>
-                  </div>
-                  <FieldError name="confirmPassword" />
-                </div>
-              </div>
-            </motion.div>
-          )}
+                  </motion.div>
+                )}
 
-          {currentStep === 3 && (
-            <motion.div
-              key="step-3"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.22 }}
-              className="space-y-4"
-            >
-              <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <div className="h-16 w-16 overflow-hidden rounded-full border border-slate-200 bg-white">
-                  <img
-                    src={photoPreview || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
-                    alt="avatar"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-orange-300 hover:text-orange-600">
-                    <Upload size={16} /> {selectedPhotoFile ? "Change Photo" : "Select Photo"}
-                    <input 
-                      type="file" 
-                      className="hidden" 
-                      accept="image/*" 
-                      onChange={handlePhotoChange} 
-                    />
-                  </label>
-                  {selectedPhotoFile && (
-                    <span className="text-xs text-slate-500">
-                      {selectedPhotoFile.name} ({(selectedPhotoFile.size / 1024).toFixed(0)} KB)
-                    </span>
-                  )}
-                  <span className="text-xs text-slate-400">Photo will be uploaded during registration</span>
-                </div>
-              </div>
+                {/* Step 2: Security */}
+                {currentStep === 2 && (
+                  <motion.div
+                    key="step-2"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                    className="space-y-4"
+                  >
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                          Password <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            className={`w-full rounded-xl border-2 bg-slate-50 px-4 py-3 pl-10 pr-10 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 ${
+                              errors.password ? 'border-red-300' : 'border-slate-200'
+                            }`}
+                            value={formData.password}
+                            onChange={(e) => updateField('password', e.target.value)}
+                            placeholder="Create a strong password"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                          >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+                        
+                        {/* Password Strength Indicator */}
+                        {formData.password && (
+                          <div className="mt-2 space-y-1">
+                            <div className="flex h-1.5 overflow-hidden rounded-full bg-slate-200">
+                              <div 
+                                className="h-full transition-all duration-300"
+                                style={{ width: strength.width, backgroundColor: strength.color }}
+                              />
+                            </div>
+                            <div className="flex justify-between text-xs">
+                              <span style={{ color: strength.color }} className="font-medium">
+                                {strength.text}
+                              </span>
+                              <span className="text-slate-400">
+                                {formData.password.length}/8+ characters
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                        <FieldError name="password" />
+                      </div>
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Mobile Number</label>
-                  <div className="grid grid-cols-[90px_1fr] gap-2">
-                    <select 
-                      className="lms-input" 
-                      value={formData.countryCode} 
-                      onChange={(e) => updateField("countryCode", e.target.value)}
-                    >
-                      <option value="+91">+91</option>
-                      <option value="+1">+1</option>
-                      <option value="+44">+44</option>
-                    </select>
-                    <div className="relative">
-                      <Phone size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                      <input 
-                        className="lms-input pl-10" 
-                        value={formData.mobile} 
-                        onChange={(e) => updateField("mobile", e.target.value)}
-                        placeholder="9876543210"
-                      />
+                      <div>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                          Confirm Password <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                          <input
+                            type={showConfirmPassword ? 'text' : 'password'}
+                            className={`w-full rounded-xl border-2 bg-slate-50 px-4 py-3 pl-10 pr-10 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 ${
+                              errors.confirmPassword ? 'border-red-300' : 'border-slate-200'
+                            }`}
+                            value={formData.confirmPassword}
+                            onChange={(e) => updateField('confirmPassword', e.target.value)}
+                            placeholder="Confirm your password"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                          >
+                            {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+                        <FieldError name="confirmPassword" />
+                      </div>
                     </div>
-                  </div>
-                  <FieldError name="mobile" />
-                </div>
 
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Date of Birth</label>
-                  <div className="relative">
-                    <Calendar size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input 
-                      type="date" 
-                      className="lms-input pl-10" 
-                      value={formData.dob} 
-                      onChange={(e) => updateField("dob", e.target.value)} 
-                    />
-                  </div>
-                  <FieldError name="dob" />
-                </div>
-              </div>
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={handleBack}
+                        className="flex-1 rounded-xl border-2 border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 flex items-center justify-center gap-2"
+                      >
+                        <ArrowLeft size={18} /> Back
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleNext}
+                        className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-orange-200 flex items-center justify-center gap-2"
+                      >
+                        Next Step <ArrowRight size={18} />
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">City</label>
-                  <div className="relative">
-                    <MapPin size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <select 
-                      className="lms-input pl-10" 
-                      value={formData.city} 
-                      onChange={(e) => updateField("city", e.target.value)}
-                    >
-                      <option value="">Select City</option>
-                      {cities.map((city) => (
-                        <option key={city} value={city}>{city}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <FieldError name="city" />
-                </div>
+                {/* Step 3: Profile */}
+                {currentStep === 3 && (
+                  <motion.div
+                    key="step-3"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                    className="space-y-4"
+                  >
+                    {/* Profile Photo */}
+                    <div className="flex items-center gap-4 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-4">
+                      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border-2 border-slate-200 bg-white">
+                        {photoPreview ? (
+                          <img src={photoPreview} alt="Profile" className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-slate-100">
+                            <User size={32} className="text-slate-400" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-slate-700">Profile Photo</p>
+                        <p className="text-xs text-slate-500">Upload a photo to personalize your profile</p>
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="mt-2 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-orange-300 hover:text-orange-600"
+                          disabled={photoUploading}
+                        >
+                          <Upload size={14} />
+                          {photoUploading ? 'Uploading...' : 'Upload Photo'}
+                        </button>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handlePhotoChange}
+                        />
+                      </div>
+                    </div>
 
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">State</label>
-                  <div className="relative">
-                    <MapPin size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <select 
-                      className="lms-input pl-10" 
-                      value={formData.state} 
-                      onChange={(e) => updateField("state", e.target.value)}
-                    >
-                      <option value="">Select State</option>
-                      {states.map((state) => (
-                        <option key={state} value={state}>{state}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <FieldError name="state" />
-                </div>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                          Mobile Number <span className="text-red-500">*</span>
+                        </label>
+                        <div className="grid grid-cols-[80px_1fr] gap-2">
+                          <select
+                            className="rounded-xl border-2 border-slate-200 bg-slate-50 px-3 py-3 text-sm transition-all focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100"
+                            value={formData.countryCode}
+                            onChange={(e) => updateField('countryCode', e.target.value)}
+                          >
+                            <option value="+91">🇮🇳 +91</option>
+                            <option value="+1">🇺🇸 +1</option>
+                            <option value="+44">🇬🇧 +44</option>
+                            <option value="+61">🇦🇺 +61</option>
+                            <option value="+81">🇯🇵 +81</option>
+                          </select>
+                          <div className="relative">
+                            <Phone size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <input
+                              type="tel"
+                              className={`w-full rounded-xl border-2 bg-slate-50 px-4 py-3 pl-10 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 ${
+                                errors.mobileNumber ? 'border-red-300' : 'border-slate-200'
+                              }`}
+                              value={formData.mobileNumber}
+                              onChange={(e) => updateField('mobileNumber', e.target.value)}
+                              placeholder="Enter mobile number"
+                            />
+                          </div>
+                        </div>
+                        <FieldError name="mobileNumber" />
+                      </div>
 
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Country</label>
-                  <div className="relative">
-                    <Globe size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <select 
-                      className="lms-input pl-10" 
-                      value={formData.country} 
-                      onChange={(e) => updateField("country", e.target.value)}
-                    >
-                      <option value="">Select Country</option>
-                      {countries.map((country) => (
-                        <option key={country} value={country}>{country}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <FieldError name="country" />
-                </div>
-              </div>
+                      <div>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                          Date of Birth <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <Calendar size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                          <input
+                            type="date"
+                            className={`w-full rounded-xl border-2 bg-slate-50 px-4 py-3 pl-10 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 ${
+                              errors.dob ? 'border-red-300' : 'border-slate-200'
+                            }`}
+                            value={formData.dob}
+                            onChange={(e) => updateField('dob', e.target.value)}
+                          />
+                        </div>
+                        <FieldError name="dob" />
+                      </div>
+                    </div>
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Preferred Language</label>
-                  <div className="relative">
-                    <Languages size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <select
-                      className="lms-input pl-10"
-                      value={formData.preferredLanguage}
-                      onChange={(e) => updateField("preferredLanguage", e.target.value)}
-                    >
-                      <option value="">Select Language</option>
-                      {languages.map((language) => (
-                        <option key={language} value={language}>{language}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <FieldError name="preferredLanguage" />
-                </div>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                      <div>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                          City <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <MapPin size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                          <input
+                            type="text"
+                            className={`w-full rounded-xl border-2 bg-slate-50 px-4 py-3 pl-10 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 ${
+                              errors.city ? 'border-red-300' : 'border-slate-200'
+                            }`}
+                            value={formData.city}
+                            onChange={(e) => updateField('city', e.target.value)}
+                            placeholder="Enter city"
+                          />
+                        </div>
+                        <FieldError name="city" />
+                      </div>
 
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Field of Study</label>
-                  <div className="relative">
-                    <BookOpen size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input 
-                      className="lms-input pl-10" 
-                      value={formData.fieldOfStudy} 
-                      onChange={(e) => updateField("fieldOfStudy", e.target.value)}
-                      placeholder="Computer Science"
-                    />
-                  </div>
-                </div>
-              </div>
+                      <div>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                          State <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <MapPin size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                          <input
+                            type="text"
+                            className={`w-full rounded-xl border-2 bg-slate-50 px-4 py-3 pl-10 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 ${
+                              errors.state ? 'border-red-300' : 'border-slate-200'
+                            }`}
+                            value={formData.state}
+                            onChange={(e) => updateField('state', e.target.value)}
+                            placeholder="Enter state"
+                          />
+                        </div>
+                        <FieldError name="state" />
+                      </div>
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Skills</label>
-                  <input 
-                    className="lms-input" 
-                    value={formData.skills} 
-                    onChange={(e) => updateField("skills", e.target.value)}
-                    placeholder="JavaScript, React, Python"
-                  />
-                  <p className="mt-1 text-xs text-slate-400">Separate skills with commas</p>
-                  <FieldError name="skills" />
-                </div>
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Highest Qualification</label>
-                  <div className="relative">
-                    <Award size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input 
-                      className="lms-input pl-10" 
-                      value={formData.highestQualification} 
-                      onChange={(e) => updateField("highestQualification", e.target.value)}
-                      placeholder="Bachelor's Degree"
-                    />
-                  </div>
-                </div>
-              </div>
+                      <div>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                          Country <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <Globe size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                          <input
+                            type="text"
+                            className={`w-full rounded-xl border-2 bg-slate-50 px-4 py-3 pl-10 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100 ${
+                              errors.country ? 'border-red-300' : 'border-slate-200'
+                            }`}
+                            value={formData.country}
+                            onChange={(e) => updateField('country', e.target.value)}
+                            placeholder="Enter country"
+                          />
+                        </div>
+                        <FieldError name="country" />
+                      </div>
+                    </div>
 
-              <div>
-                <label className="inline-flex items-center gap-2 text-sm text-slate-600">
-                  <input
-                    type="checkbox"
-                    checked={formData.agreeToTerms}
-                    onChange={(e) => updateField("agreeToTerms", e.target.checked)}
-                    className="h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
-                  />
-                  I agree to the Terms and Privacy Policy
-                </label>
-                <FieldError name="agreeToTerms" />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                          Preferred Language <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <Languages size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                          <select
+                            className={`w-full rounded-xl border-2 bg-slate-50 px-4 py-3 pl-10 text-sm transition-all focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 ${
+                              errors.preferredLanguage ? 'border-red-300' : 'border-slate-200'
+                            }`}
+                            value={formData.preferredLanguage}
+                            onChange={(e) => updateField('preferredLanguage', e.target.value)}
+                          >
+                            <option value="">Select language</option>
+                            {languages.map(lang => (
+                              <option key={lang} value={lang}>{lang}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <FieldError name="preferredLanguage" />
+                      </div>
 
-        <div className="mt-2 flex items-center justify-between gap-3">
-          {currentStep > 1 ? (
-            <button
-              type="button"
-              onClick={handleBack}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-600"
-            >
-              <ArrowLeft size={16} /> Back
-            </button>
-          ) : (
-            <span />
-          )}
+                      <div>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                          Organization
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full rounded-xl border-2 border-slate-200 bg-slate-50 px-4 py-3 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100"
+                          value={formData.organization}
+                          onChange={(e) => updateField('organization', e.target.value)}
+                          placeholder="Enter organization name"
+                        />
+                      </div>
+                    </div>
 
-          {currentStep < 3 ? (
-            <button type="button" onClick={handleNext} className="lms-btn-primary w-auto px-5">
-              Next <ArrowRight size={16} />
-            </button>
-          ) : (
-            <button 
-              type="submit" 
-              disabled={loading} 
-              className="lms-btn-primary w-auto px-5"
-            >
-              {loading ? "Creating Account..." : "Create Account"}
-              {!loading && <CheckCircle size={16} />}
-            </button>
-          )}
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                          Skills
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full rounded-xl border-2 border-slate-200 bg-slate-50 px-4 py-3 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100"
+                          value={formData.skills}
+                          onChange={(e) => updateField('skills', e.target.value)}
+                          placeholder="Java, Python, JavaScript"
+                        />
+                        <p className="mt-1 text-xs text-slate-400">Separate skills with commas</p>
+                      </div>
+
+                      <div>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                          Field of Study
+                        </label>
+                        <div className="relative">
+                          <BookOpen size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                          <input
+                            type="text"
+                            className="w-full rounded-xl border-2 border-slate-200 bg-slate-50 px-4 py-3 pl-10 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100"
+                            value={formData.fieldOfStudy}
+                            onChange={(e) => updateField('fieldOfStudy', e.target.value)}
+                            placeholder="Computer Science"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                        Highest Qualification
+                      </label>
+                      <div className="relative">
+                        <Award size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input
+                          type="text"
+                          className="w-full rounded-xl border-2 border-slate-200 bg-slate-50 px-4 py-3 pl-10 text-sm transition-all focus:border-orange-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-100"
+                          value={formData.highestQualification}
+                          onChange={(e) => updateField('highestQualification', e.target.value)}
+                          placeholder="B.Tech, M.Sc, etc."
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={handleBack}
+                        className="flex-1 rounded-xl border-2 border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 flex items-center justify-center gap-2"
+                      >
+                        <ArrowLeft size={18} /> Back
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleNext}
+                        className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-orange-200 flex items-center justify-center gap-2"
+                      >
+                        Next Step <ArrowRight size={18} />
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Step 4: Terms */}
+                {currentStep === 4 && (
+                  <motion.div
+                    key="step-4"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                    className="space-y-4"
+                  >
+                    <div className="rounded-xl border-2 border-slate-200 bg-slate-50 p-6">
+                      <h3 className="mb-3 text-lg font-semibold text-slate-800 flex items-center gap-2">
+                        <FileText size={20} className="text-orange-500" />
+                        Terms & Conditions
+                      </h3>
+                      
+                      <div className="mb-4 max-h-48 overflow-y-auto rounded-lg bg-white p-4 text-sm text-slate-600 border border-slate-100">
+                        <div className="space-y-3">
+                          <div>
+                            <strong className="text-slate-800">1. Acceptance of Terms</strong>
+                            <p className="mt-1">By creating an account on LearnMaster, you agree to abide by these Terms & Conditions and our Privacy Policy.</p>
+                          </div>
+                          <div>
+                            <strong className="text-slate-800">2. User Responsibilities</strong>
+                            <p className="mt-1">You are solely responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account.</p>
+                          </div>
+                          <div>
+                            <strong className="text-slate-800">3. Account Accuracy</strong>
+                            <p className="mt-1">You agree to provide accurate, current, and complete information during the registration process.</p>
+                          </div>
+                          <div>
+                            <strong className="text-slate-800">4. Privacy Policy</strong>
+                            <p className="mt-1">We respect your privacy. Your personal data is protected and will not be shared with third parties.</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <label className="flex cursor-pointer items-start gap-3">
+                        <input
+                          type="checkbox"
+                          checked={formData.agreeToTerms}
+                          onChange={(e) => updateField('agreeToTerms', e.target.checked)}
+                          className={`mt-0.5 h-5 w-5 rounded border-2 transition-all ${
+                            errors.agreeToTerms 
+                              ? 'border-red-400' 
+                              : 'border-slate-300'
+                          } text-orange-600 focus:ring-orange-500 focus:ring-offset-0`}
+                        />
+                        <span className="text-sm text-slate-700 leading-relaxed">
+                          I have read and agree to the{' '}
+                          <button type="button" className="text-orange-600 hover:underline font-medium">
+                            Terms of Service
+                          </button>
+                          {' '}and{' '}
+                          <button type="button" className="text-orange-600 hover:underline font-medium">
+                            Privacy Policy
+                          </button>
+                          .
+                        </span>
+                      </label>
+                      <FieldError name="agreeToTerms" />
+                    </div>
+
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={handleBack}
+                        className="flex-1 rounded-xl border-2 border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 flex items-center justify-center gap-2"
+                      >
+                        <ArrowLeft size={18} /> Back
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-orange-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      >
+                        {loading ? (
+                          <>
+                            <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                            Creating Account...
+                          </>
+                        ) : (
+                          <>
+                            Create Account <ChevronRight size={18} />
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </form>
+
+            {/* Footer */}
+            <div className="mt-6 text-center border-t border-slate-100 pt-6">
+              <p className="text-sm text-slate-500">
+                Already have an account?{' '}
+                <Link to="/login" className="text-orange-600 hover:underline font-medium">
+                  Sign In
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
-      </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
-        Already have an account?{" "}
-        <button onClick={() => navigate("/login")} className="lms-link">Sign In</button>
-      </p>
-    </AuthShell>
+        {/* Features Footer */}
+        <div className="mt-6 flex justify-center gap-8 text-xs text-slate-400">
+          <span className="flex items-center gap-1">
+            <CheckCircle size={14} className="text-emerald-500" /> Secure
+          </span>
+          <span className="flex items-center gap-1">
+            <CheckCircle size={14} className="text-emerald-500" /> Fast
+          </span>
+          <span className="flex items-center gap-1">
+            <CheckCircle size={14} className="text-emerald-500" /> Free
+          </span>
+        </div>
+      </div>
+    </div>
   );
 };
 

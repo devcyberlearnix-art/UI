@@ -20,6 +20,15 @@ const normalizeRole = (role) => {
   return 'student';
 };
 
+// Helper: Get dashboard path for given role
+export const getDashboardPath = (role) => {
+  const normalized = normalizeRole(role);
+  if (normalized === 'admin') return '/admin/dashboard';
+  if (normalized === 'subadmin') return '/admin/sub-dashboard';
+  if (normalized === 'instructor') return '/instructor/dashboard';
+  return '/student/dashboard';
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,24 +42,79 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  // ✅ Clear all tokens and reset state
+  const clearAuthData = () => {
+    localStorage.removeItem('lms_token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('lms_user');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userData');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('registrationEmail');
+    
+    sessionStorage.removeItem('lms_token');
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('otpSessionId');
+    sessionStorage.removeItem('pendingProfilePhoto');
+    sessionStorage.removeItem('userEmail');
+    sessionStorage.removeItem('uploadPendingPhoto');
+    sessionStorage.removeItem('verificationSuccess');
+    
+    setUser(null);
+    setIsAuthenticated(false);
+  };
+
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const token = localStorage.getItem('lms_token') || 
-                      localStorage.getItem('access_token');
-        const storedUser = localStorage.getItem('lms_user');
+        const token = authApi.getToken();
         
-        if (token && storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          if (parsedUser.role) {
-            parsedUser.normalizedRole = normalizeRole(parsedUser.role);
+        console.log('[AuthProvider] Checking session, token exists:', !!token);
+        
+        if (token) {
+          // ✅ Validate token before restoring session
+          const isValid = authApi.isAuthenticated();
+          
+          if (isValid) {
+            // Try to get user from storage
+            let userData = authApi.getCurrentUser();
+            
+            if (!userData) {
+              // Try to fetch from API
+              try {
+                const response = await authApi.fetchCurrentUser();
+                if (response) {
+                  userData = response;
+                }
+              } catch (fetchError) {
+                console.warn('[AuthProvider] Could not fetch user:', fetchError);
+              }
+            }
+            
+            if (userData && (userData.role || userData.role1 || userData.userRole)) {
+              userData.normalizedRole = normalizeRole(userData.role || userData.role1 || userData.userRole);
+              localStorage.setItem('lms_user', JSON.stringify(userData));
+              setUser(userData);
+              setIsAuthenticated(true);
+              console.log('[AuthProvider] Session restored successfully for:', userData.email);
+            } else {
+              console.warn('[AuthProvider] No user data found, clearing tokens');
+              clearAuthData();
+            }
+          } else {
+            console.log('[AuthProvider] Invalid token found, clearing...');
+            clearAuthData();
           }
-          setUser(parsedUser);
-          setIsAuthenticated(true);
-          console.log('[AuthProvider] Session restored successfully');
+        } else {
+          console.log('[AuthProvider] No token found - user is not authenticated');
+          // ✅ Make sure isAuthenticated is false
+          setIsAuthenticated(false);
+          setUser(null);
         }
       } catch (error) {
         console.error('[AuthProvider] Session restore error:', error);
+        clearAuthData();
       } finally {
         setLoading(false);
       }
@@ -61,25 +125,46 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await authApi.login(email, password);
-      const userData = response?.data || response;
+      // ✅ Clear any existing tokens before login
+      clearAuthData();
       
-      if (userData?.token || userData?.accessToken) {
-        const token = userData.token || userData.accessToken;
-        if (userData.role) {
-          userData.normalizedRole = normalizeRole(userData.role);
-        }
+      const response = await authApi.login(email, password);
+      console.log('[AuthProvider] Login response:', response);
+      
+      // ✅ Check for token in the correct location
+      if (response.success && response.authentication?.accessToken) {
+        const token = response.authentication.accessToken;
+        const userData = response.user || response.data || {};
+        
+        userData.normalizedRole = normalizeRole(userData.role || userData.role1 || userData.userRole);
+        
+        // Store tokens
         localStorage.setItem('lms_token', token);
         localStorage.setItem('access_token', token);
+        localStorage.setItem('authToken', token);
         localStorage.setItem('lms_user', JSON.stringify(userData));
+        localStorage.setItem('userData', JSON.stringify(userData));
+        
+        sessionStorage.setItem('lms_token', token);
+        sessionStorage.setItem('authToken', token);
+        
+        if (response.authentication.refreshToken) {
+          localStorage.setItem('refreshToken', response.authentication.refreshToken);
+        }
+        
         setUser(userData);
         setIsAuthenticated(true);
-        return { success: true, data: userData };
+        return { success: true, data: userData, user: userData };
       }
-      return { success: false, error: 'No token received' };
+      
+      return { success: false, error: response.message || 'No token received' };
     } catch (error) {
       console.error('[Auth] Login error:', error);
-      return { success: false, error: error.response?.data?.message || 'Login failed' };
+      clearAuthData();
+      return { 
+        success: false, 
+        error: error.response?.data?.message || error.message || 'Login failed' 
+      };
     }
   };
 
@@ -89,12 +174,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('[Auth] Logout error:', error);
     } finally {
-      localStorage.removeItem('lms_token');
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('lms_user');
-      setUser(null);
-      setIsAuthenticated(false);
+      clearAuthData();
     }
   };
 
@@ -107,6 +187,8 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     normalizeRole,
+    getDashboardPath,
+    clearAuthData,
   };
 
   return (
@@ -124,13 +206,19 @@ export const useAuth = () => {
   return context;
 };
 
-// ✅ Safe version - returns empty object if context is not available
 export const useSafeAuth = () => {
   try {
     return useAuth();
   } catch (error) {
     console.warn('useSafeAuth: AuthContext not available, returning empty object');
-    return { user: null, isAuthenticated: false, loading: false, login: async () => {}, logout: async () => {} };
+    return { 
+      user: null, 
+      isAuthenticated: false, 
+      loading: false, 
+      login: async () => ({ success: false, error: 'Auth not available' }), 
+      logout: async () => {},
+      clearAuthData: () => {}
+    };
   }
 };
 

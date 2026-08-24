@@ -1,8 +1,10 @@
+// src/App.jsx
 import React from 'react';
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth, getDashboardPath } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 import { OrderProvider } from "./context/OrderContext";
 import ScrollToTop from "./components/ScrollToTop";
@@ -15,6 +17,23 @@ import ResetOtp from "./pages/ResetOtp";
 import OtpLogin from "./pages/OtpLogin";
 import OtpVerify from "./pages/OtpVerify";
 import Landing from "./pages/Landing";
+
+// Dashboard Redirect Component
+const DashboardRedirect = () => {
+  const { user, isAuthenticated, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+      </div>
+    );
+  }
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  const role = user?.role || user?.role1 || user?.userRole || user?.normalizedRole;
+  return <Navigate to={getDashboardPath(role)} replace />;
+};
 
 // Student Pages
 import StudentDashboard from "./pages/student/StudentDashboard";
@@ -60,17 +79,18 @@ import SubDashboard from "./pages/admin/SubDashboard";
 
 // Profile Pages
 import ProfilePage from "./pages/Profile";
-// import UserSettings from "./pages/Settings"; // Uncomment if you have this
+import { Toaster } from "react-hot-toast";
 
-console.log('App.jsx is loading!'); // Debug log
+console.log('App.jsx is loading!');
 
 function App() {
   const location = useLocation();
-  console.log('App rendering at path:', location.pathname); // Debug log
+  console.log('App rendering at path:', location.pathname);
 
   return (
     <AuthProvider>
       <OrderProvider>
+        <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
         <ScrollToTop />
         <AnimatePresence mode="wait">
           <motion.div
@@ -80,22 +100,20 @@ function App() {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            {/* DEBUG: Test if this renders */}
-            <div style={{ background: 'yellow', padding: '5px', color: 'black' }}>
-              DEBUG: Motion div is rendering!
-            </div>
-            
             <Routes location={location}>
               {/* Landing page - public */}
               <Route path="/" element={<Landing />} />
               
-              {/* Auth routes - public */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-otp" element={<ResetOtp />} />
-              <Route path="/otp-login" element={<OtpLogin />} />
-              <Route path="/otp-verify" element={<OtpVerify />} />
+              {/* Universal dashboard redirect */}
+              <Route path="/dashboard" element={<DashboardRedirect />} />
+              
+              {/* ✅ Auth routes - wrapped with PublicRoute */}
+              <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+              <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+              <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+              <Route path="/reset-otp" element={<PublicRoute><ResetOtp /></PublicRoute>} />
+              <Route path="/otp-login" element={<PublicRoute><OtpLogin /></PublicRoute>} />
+              <Route path="/otp-verify" element={<PublicRoute><OtpVerify /></PublicRoute>} />
 
               {/* Admin auth routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
@@ -109,6 +127,7 @@ function App() {
                 <Route path="/student/my-learning" element={<MyLearning />} />
                 <Route path="/student/wishlist" element={<Wishlist />} />
                 <Route path="/student/orders" element={<Orders />} />
+                <Route path="/student/profile" element={<ProfilePage />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/cart" element={<Cart />} />
               </Route>
@@ -119,6 +138,7 @@ function App() {
                 <Route path="/instructor/create-course" element={<CreateCourse />} />
                 <Route path="/instructor/my-courses" element={<InstructorCourses />} />
                 <Route path="/instructor/analytics" element={<InstructorAnalytics />} />
+                <Route path="/instructor/profile" element={<ProfilePage />} />
               </Route>
 
               {/* Admin routes - protected */}
@@ -152,7 +172,6 @@ function App() {
               {/* Shared protected routes (for all authenticated users) */}
               <Route element={<ProtectedRoute allowedRoles={["admin", "subadmin", "sub_admin", "student", "instructor"]}><DashboardLayout /></ProtectedRoute>}>
                 <Route path="/profile" element={<ProfilePage />} />
-                {/* <Route path="/settings" element={<UserSettings />} /> */}
               </Route>
 
               {/* Fallback - redirect to landing */}

@@ -43,37 +43,6 @@ function Landing() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
-  // ✅ FIXED: Redirect to dashboard based on user role
-  useEffect(() => {
-    if (!isMounted.current) return;
-    
-    if (!authLoading && isAuthenticated && !hasRedirected.current) {
-      console.log('[Landing] User authenticated, redirecting to dashboard');
-      hasRedirected.current = true;
-      
-      // Determine redirect path based on role
-      let redirectPath = '/student/dashboard';
-      if (authUser?.role === 'admin' || authUser?.role === 'Admin' || authUser?.role === 'ADMIN') {
-        redirectPath = '/admin/dashboard';
-      } else if (authUser?.role === 'instructor' || authUser?.role === 'Instructor') {
-        redirectPath = '/instructor/dashboard';
-      }
-      
-      setTimeout(() => {
-        if (isMounted.current) {
-          navigate(redirectPath, { replace: true });
-        }
-      }, 100);
-    }
-  }, [isAuthenticated, authLoading, navigate, authUser]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
   // Update user when authUser changes
   useEffect(() => {
     setUser(authUser);
@@ -402,13 +371,14 @@ function Landing() {
 
   const getRoleLabel = () => {
     if (!user) return null;
-    if (user.role === 'admin' || user.role === 'Admin' || user.role === 'ADMIN') return 'Admin';
-    if (user.role === 'instructor' || user.role === 'Instructor') return 'Instructor';
+    const r = (user.role || user.role1 || user.userRole || user.normalizedRole || '').toLowerCase();
+    if (r === 'admin' || r === 'subadmin' || r === 'super_admin') return 'Admin';
+    if (r === 'instructor') return 'Instructor';
     return null;
   };
   const roleLabel = getRoleLabel();
 
-  // ✅ Show loading while auth is initializing
+  // Show loading while auth is initializing
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -418,16 +388,6 @@ function Landing() {
         </div>
       </div>
     );
-  }
-
-  // ✅ FIXED: Show landing page for unauthenticated users only
-  // If authenticated, the useEffect will handle redirect
-  // No need to return null here - the useEffect will redirect
-  // But we still need to prevent rendering if authenticated
-  if (!authLoading && isAuthenticated) {
-    // Don't return null - let the useEffect handle redirect
-    // But we'll return null to prevent flash of content
-    return null;
   }
 
   return (

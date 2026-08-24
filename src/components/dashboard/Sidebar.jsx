@@ -175,82 +175,28 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         ))}
       </nav>
 
-      {/* Bottom Section - User Info with Profile Photo */}
+      {/* Bottom Section - Logout Only */}
       <div className="border-t border-orange-100 p-3">
         {sidebarOpen ? (
-          <div className="space-y-3">
-            {/* Profile Button - opens profile page */}
-            <button
-              onClick={() => navigate('/profile')}
-              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl hover:bg-orange-50 transition-all duration-200 group"
-            >
-              <div className="relative w-8 h-8 flex-shrink-0">
-                {profilePhoto ? (
-                  <img
-                    src={profilePhoto}
-                    alt={displayName}
-                    className="w-8 h-8 rounded-full object-cover border-2 border-orange-300 group-hover:border-orange-500 transition-colors"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-orange-500/20 group-hover:shadow-orange-500/40 transition-shadow">
-                    {userInitial}
-                  </div>
-                )}
-                <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>
-              </div>
-              <div className="flex-1 min-w-0 text-left">
-                <p className="text-sm font-medium text-gray-800 truncate group-hover:text-orange-600 transition-colors">
-                  {displayName}
-                </p>
-                <p className="text-[10px] text-orange-500 font-medium truncate">
-                  {isSuperAdmin ? '👑 ' : ''}{displayRole}
-                </p>
-              </div>
-              <User size={16} className="text-gray-400 group-hover:text-orange-500 transition-colors" />
-            </button>
-
-            {/* Logout Button */}
-            <button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 transition-all duration-200 disabled:opacity-50"
-            >
-              <LogOut size={20} />
-              <span className="text-sm font-medium">
-                {isLoggingOut ? 'Logging out...' : 'Logout'}
-              </span>
-            </button>
-          </div>
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 transition-all duration-200 disabled:opacity-50 font-medium"
+          >
+            <LogOut size={20} />
+            <span className="text-sm">
+              {isLoggingOut ? 'Logging out...' : 'Logout'}
+            </span>
+          </button>
         ) : (
-          <div className="flex flex-col items-center gap-3">
-            {/* Profile Photo - Collapsed Sidebar */}
-            <button
-              onClick={() => navigate('/profile')}
-              className="relative w-10 h-10 hover:scale-105 transition-transform"
-              title="Profile"
-            >
-              {profilePhoto ? (
-                <img
-                  src={profilePhoto}
-                  alt={displayName}
-                  className="w-10 h-10 rounded-full object-cover border-2 border-orange-300 hover:border-orange-500 transition-colors"
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 transition-shadow">
-                  {userInitial}
-                </div>
-              )}
-              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>
-            </button>
-            <button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="flex items-center justify-center w-full px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 transition-all duration-200 disabled:opacity-50"
-              title="Logout"
-            >
-              <LogOut size={20} />
-            </button>
-          </div>
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex items-center justify-center w-full px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 transition-all duration-200 disabled:opacity-50"
+            title="Logout"
+          >
+            <LogOut size={20} />
+          </button>
         )}
       </div>
     </aside>

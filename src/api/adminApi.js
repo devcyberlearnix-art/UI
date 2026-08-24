@@ -10,7 +10,33 @@ export const adminApi = {
     return response.data;
   },
 
-  // ======================== SUB-ADMIN MANAGEMENT ========================
+  // ======================== SUB-ADMIN / ADMIN PROFILE ========================
+  getAdminProfile: async () => {
+    try {
+      const response = await axiosInstance.get('/api/v1/users/me');
+      return response.data;
+    } catch (err) {
+      if (err.response?.status === 404) {
+        const response = await axiosInstance.get('/api/v1/admins/me');
+        return response.data;
+      }
+      throw err;
+    }
+  },
+
+  updateAdminProfile: async (profileData) => {
+    try {
+      const response = await axiosInstance.put('/api/v1/users/me', profileData);
+      return response.data;
+    } catch (err) {
+      if (err.response?.status === 404) {
+        const response = await axiosInstance.put('/api/v1/admins/me', profileData);
+        return response.data;
+      }
+      throw err;
+    }
+  },
+
   getSubAdminProfile: async () => {
     const response = await axiosInstance.get('/api/v1/admins/me');
     return response.data;

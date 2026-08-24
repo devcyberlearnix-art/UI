@@ -1,7 +1,6 @@
 // src/api/axiosInstance.js
 import axios from "axios";
 
-// ✅ FIXED: Remove the extra quotes and JavaScript code
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev";
 
 const axiosInstance = axios.create({
@@ -9,14 +8,16 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
     "Accept": "application/json",
+    "ngrok-skip-browser-warning": "true",
+    "bypass-tunnel-reminder": "true",
   },
   timeout: 30000,
 });
 
-// ✅ Request interceptor - Log and add token
+// Request interceptor - Log and add token
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Skip auth header for public endpoints (forgot password, verify email, etc.)
+    // Skip auth header for public endpoints
     const publicEndpoints = [
       '/auth/register',
       '/auth/verify-email',
@@ -26,18 +27,25 @@ axiosInstance.interceptors.request.use(
       '/auth/password/forgot',
       '/auth/password/verify-otp',
       '/auth/password/reset',
-      '/auth/refresh'
+      '/auth/refresh',
+      '/auth/upload/profile-photo' // Add this if it's public during registration
     ];
     
     const isPublicEndpoint = publicEndpoints.some(endpoint => config.url.includes(endpoint));
     
     if (!isPublicEndpoint) {
-      const token = localStorage.getItem('lms_token') || 
+      // Try multiple token storage keys
+      const token = localStorage.getItem('authToken') || 
+                    localStorage.getItem('lms_token') || 
                     localStorage.getItem('access_token') || 
+                    sessionStorage.getItem('authToken') ||
                     sessionStorage.getItem('lms_token');
       
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+        console.log(`[API] Added Authorization header for ${config.url}`);
+      } else {
+        console.log(`[API] No token found for ${config.url}`);
       }
     }
     
@@ -50,7 +58,7 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// ✅ Response interceptor
+// Response interceptor
 axiosInstance.interceptors.response.use(
   (response) => {
     console.log(`[API] ${response.config.url} - ${response.status}`);
@@ -60,21 +68,41 @@ axiosInstance.interceptors.response.use(
     console.error('[API Response Error]', error);
     
     if (error.response) {
-      const { status, config } = error.response;
+      const { status, config, data } = error.response;
       
-      const isPublicAuthCall = config?.url?.includes('/auth/');
-
-      if (status === 401 && !isPublicAuthCall && !config?.url?.includes('/login')) {
+      // Don't redirect for public auth calls
+      const isPublicAuthCall = config?.url?.includes('/auth/') || 
+                              config?.url?.includes('/verify-email') ||
+                              config?.url?.includes('/register');
+      
+      // Handle 401 Unauthorized
+      if (status === 401 && !isPublicAuthCall) {
+        console.warn('[API] 401 Unauthorized - Clearing tokens');
+        
+        // Clear all tokens
+        localStorage.removeItem('authToken');
         localStorage.removeItem('lms_token');
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
+        localStorage.removeItem('userData');
         localStorage.removeItem('lms_user');
+        sessionStorage.removeItem('authToken');
         sessionStorage.removeItem('lms_token');
         
-        if (!window.location.pathname.includes('/admin/login')) {
-          window.location.href = '/admin/login';
+        // Redirect to login if not already there
+        if (!window.location.pathname.includes('/login') && 
+            !window.location.pathname.includes('/register') &&
+            !window.location.pathname.includes('/otp-verify')) {
+          window.location.href = '/login';
         }
       }
+      
+      // Log specific error details
+      console.error('[API] Error details:', {
+        status,
+        message: data?.message || data?.error || 'Unknown error',
+        path: config?.url
+      });
     }
     
     return Promise.reject(error);
