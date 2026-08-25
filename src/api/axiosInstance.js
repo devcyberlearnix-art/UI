@@ -1,6 +1,7 @@
 // src/api/axiosInstance.js
 import axios from "axios";
 
+// Use environment variable or default to localhost
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev";
 
 const axiosInstance = axios.create({
@@ -8,10 +9,10 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    "ngrok-skip-browser-warning": "true",
-    "bypass-tunnel-reminder": "true",
+    // Removed ngrok headers to fix CORS
   },
   timeout: 30000,
+  withCredentials: true, // Important for cookies
 });
 
 // Request interceptor - Log and add token
@@ -28,19 +29,18 @@ axiosInstance.interceptors.request.use(
       '/auth/password/verify-otp',
       '/auth/password/reset',
       '/auth/refresh',
-      '/auth/upload/profile-photo' // Add this if it's public during registration
+      '/auth/upload/profile-photo'
     ];
-    
+
     const isPublicEndpoint = publicEndpoints.some(endpoint => config.url.includes(endpoint));
-    
+
     if (!isPublicEndpoint) {
-      // Try multiple token storage keys
-      const token = localStorage.getItem('authToken') || 
-                    localStorage.getItem('lms_token') || 
-                    localStorage.getItem('access_token') || 
-                    sessionStorage.getItem('authToken') ||
-                    sessionStorage.getItem('lms_token');
-      
+      const token = localStorage.getItem('authToken') ||
+        localStorage.getItem('lms_token') ||
+        localStorage.getItem('access_token') ||
+        sessionStorage.getItem('authToken') ||
+        sessionStorage.getItem('lms_token');
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
         console.log(`[API] Added Authorization header for ${config.url}`);
@@ -48,7 +48,7 @@ axiosInstance.interceptors.request.use(
         console.log(`[API] No token found for ${config.url}`);
       }
     }
-    
+
     console.log(`[API] ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
@@ -58,7 +58,7 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response interceptor
+// Response interceptor (unchanged)
 axiosInstance.interceptors.response.use(
   (response) => {
     console.log(`[API] ${response.config.url} - ${response.status}`);
@@ -66,20 +66,17 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     console.error('[API Response Error]', error);
-    
+
     if (error.response) {
       const { status, config, data } = error.response;
-      
-      // Don't redirect for public auth calls
-      const isPublicAuthCall = config?.url?.includes('/auth/') || 
-                              config?.url?.includes('/verify-email') ||
-                              config?.url?.includes('/register');
-      
-      // Handle 401 Unauthorized
+
+      const isPublicAuthCall = config?.url?.includes('/auth/') ||
+        config?.url?.includes('/verify-email') ||
+        config?.url?.includes('/register');
+
       if (status === 401 && !isPublicAuthCall) {
         console.warn('[API] 401 Unauthorized - Clearing tokens');
-        
-        // Clear all tokens
+
         localStorage.removeItem('authToken');
         localStorage.removeItem('lms_token');
         localStorage.removeItem('access_token');
@@ -88,23 +85,21 @@ axiosInstance.interceptors.response.use(
         localStorage.removeItem('lms_user');
         sessionStorage.removeItem('authToken');
         sessionStorage.removeItem('lms_token');
-        
-        // Redirect to login if not already there
-        if (!window.location.pathname.includes('/login') && 
-            !window.location.pathname.includes('/register') &&
-            !window.location.pathname.includes('/otp-verify')) {
+
+        if (!window.location.pathname.includes('/login') &&
+          !window.location.pathname.includes('/register') &&
+          !window.location.pathname.includes('/otp-verify')) {
           window.location.href = '/login';
         }
       }
-      
-      // Log specific error details
+
       console.error('[API] Error details:', {
         status,
         message: data?.message || data?.error || 'Unknown error',
         path: config?.url
       });
     }
-    
+
     return Promise.reject(error);
   }
 );

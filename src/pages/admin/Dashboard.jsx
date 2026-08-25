@@ -25,7 +25,7 @@ const Dashboard = () => {
   }, [authLoading, isAuthenticated, navigate]);
 
   const userRole = user?.role || 'admin';
-  const isSuperAdmin = userRole === 'super_admin' || userRole === 'admin';
+  const isSuperAdmin = userRole === 'super_admin' || userRole === 'admin' || userRole === 'MAIN_ADMIN' || userRole === 'superadmin';
   
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState([

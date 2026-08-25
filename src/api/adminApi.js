@@ -12,38 +12,22 @@ export const adminApi = {
 
   // ======================== SUB-ADMIN / ADMIN PROFILE ========================
   getAdminProfile: async () => {
-    try {
-      const response = await axiosInstance.get('/api/v1/users/me');
-      return response.data;
-    } catch (err) {
-      if (err.response?.status === 404) {
-        const response = await axiosInstance.get('/api/v1/admins/me');
-        return response.data;
-      }
-      throw err;
-    }
+    const response = await axiosInstance.get('/api/v1/admin/me');
+    return response.data;
   },
 
   updateAdminProfile: async (profileData) => {
-    try {
-      const response = await axiosInstance.put('/api/v1/users/me', profileData);
-      return response.data;
-    } catch (err) {
-      if (err.response?.status === 404) {
-        const response = await axiosInstance.put('/api/v1/admins/me', profileData);
-        return response.data;
-      }
-      throw err;
-    }
+    const response = await axiosInstance.put('/api/v1/admin/me', profileData);
+    return response.data;
   },
 
   getSubAdminProfile: async () => {
-    const response = await axiosInstance.get('/api/v1/admins/me');
+    const response = await axiosInstance.get('/api/v1/admin/me');
     return response.data;
   },
 
   updateSubAdminProfile: async (profileData) => {
-    const response = await axiosInstance.put('/api/v1/admins/me', profileData);
+    const response = await axiosInstance.put('/api/v1/admin/me', profileData);
     return response.data;
   },
 

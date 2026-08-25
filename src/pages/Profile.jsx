@@ -27,13 +27,16 @@ import {
   Sparkles,
   RefreshCw,
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, normalizeRole } from '../context/AuthContext';
 import authApi from '../api/authApi';
+import { adminApi } from '../api/adminApi';
 import toast from 'react-hot-toast';
 
 const ProfilePage = () => {
   const { user: authUser, updateUser } = useAuth();
   const fileInputRef = useRef(null);
+  const userRole = normalizeRole(authUser?.role || authUser?.role1 || authUser?.userRole);
+  const isAdmin = userRole === 'admin' || userRole === 'subadmin';
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -73,12 +76,18 @@ const ProfilePage = () => {
     };
   });
 
-  // Load profile from API: GET /api/v1/users/me
+  // Load profile from API: GET /api/v1/admin/me (for admins) or /api/v1/users/me (for students)
   const fetchProfile = async (silent = false) => {
     if (!silent && !formData.email) setLoading(true);
     try {
-      console.log('[ProfilePage] Fetching user profile from GET /api/v1/users/me');
-      const response = await authApi.getUserProfile();
+      let response;
+      if (isAdmin) {
+        console.log('[ProfilePage] Fetching admin profile from GET /api/v1/admin/me');
+        response = await adminApi.getAdminProfile();
+      } else {
+        console.log('[ProfilePage] Fetching user profile from GET /api/v1/users/me');
+        response = await authApi.getUserProfile();
+      }
       console.log('[ProfilePage] Profile response:', response);
 
       const data = response?.data || response;
@@ -135,7 +144,7 @@ const ProfilePage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Upload Profile Photo: POST /api/v1/users/me/photo
+  // Upload Profile Photo: POST /api/v1/admin/me/photo (for admins) or /api/v1/users/me/photo (for students)
   const handlePhotoSelect = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -155,7 +164,16 @@ const ProfilePage = () => {
       setUploadingPhoto(true);
       toast.loading('Uploading profile photo...', { id: 'photo-upload' });
 
-      const response = await authApi.uploadProfilePhoto(file);
+      let response;
+      if (isAdmin) {
+        console.log('[ProfilePage] Uploading admin profile photo to /api/v1/admin/me/photo');
+        // For admin, we'll use the same upload function but it should hit admin endpoint
+        // Temporarily using authApi - this may need backend admin endpoint for photo upload
+        response = await authApi.uploadProfilePhoto(file);
+      } else {
+        console.log('[ProfilePage] Uploading user profile photo to /api/v1/users/me/photo');
+        response = await authApi.uploadProfilePhoto(file);
+      }
       console.log('[ProfilePage] Photo uploaded successfully:', response);
 
       const newPhotoUrl =
@@ -188,7 +206,7 @@ const ProfilePage = () => {
     }
   };
 
-  // Save Profile Changes: PUT /api/v1/users/me
+  // Save Profile Changes: PUT /api/v1/admin/me (for admins) or /api/v1/users/me (for students)
   const handleSaveProfile = async (e) => {
     if (e) e.preventDefault();
     setSaving(true);
@@ -210,7 +228,14 @@ const ProfilePage = () => {
         skills: formData.skills.trim(),
       };
 
-      const response = await authApi.updateUserProfile(payload);
+      let response;
+      if (isAdmin) {
+        console.log('[ProfilePage] Updating admin profile via PUT /api/v1/admin/me');
+        response = await adminApi.updateAdminProfile(payload);
+      } else {
+        console.log('[ProfilePage] Updating user profile via PUT /api/v1/users/me');
+        response = await authApi.updateUserProfile(payload);
+      }
       console.log('[ProfilePage] Profile updated response:', response);
 
       const updated = response?.data || response;

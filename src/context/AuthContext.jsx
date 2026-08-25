@@ -8,7 +8,7 @@ const AuthContext = createContext(null);
 const normalizeRole = (role) => {
   if (!role) return 'student';
   const roleLower = String(role).toLowerCase().trim();
-  if (roleLower === 'admin' || roleLower === 'super_admin' || roleLower === 'superadmin') {
+  if (roleLower === 'admin' || roleLower === 'super_admin' || roleLower === 'superadmin' || roleLower === 'main_admin') {
     return 'admin';
   }
   if (roleLower === 'subadmin' || roleLower === 'sub_admin' || roleLower === 'sub-admin') {
@@ -130,13 +130,24 @@ export const AuthProvider = ({ children }) => {
       
       const response = await authApi.login(email, password);
       console.log('[AuthProvider] Login response:', response);
+      console.log('[AuthProvider] Response structure:', JSON.stringify(response, null, 2));
       
       // ✅ Check for token in the correct location
       if (response.success && response.authentication?.accessToken) {
         const token = response.authentication.accessToken;
         const userData = response.user || response.data || {};
         
+        console.log('[AuthProvider] User data before normalization:', userData);
+        console.log('[AuthProvider] Role fields:', {
+          role: userData.role,
+          role1: userData.role1,
+          userRole: userData.userRole,
+          userType: userData.userType
+        });
+        
         userData.normalizedRole = normalizeRole(userData.role || userData.role1 || userData.userRole);
+        
+        console.log('[AuthProvider] Normalized role:', userData.normalizedRole);
         
         // Store tokens
         localStorage.setItem('lms_token', token);
