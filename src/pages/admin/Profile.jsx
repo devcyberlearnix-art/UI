@@ -35,6 +35,7 @@ const AdminProfile = () => {
       // ✅ Extract name - only from API
       const name = data.name || 
                    data.fullName || 
+                   `${data.firstName || ''} ${data.lastName || ''}`.trim() ||
                    data.username || 
                    data.displayName || 
                    null;
@@ -45,12 +46,14 @@ const AdminProfile = () => {
       // ✅ Extract phone - only from API
       const phone = data.phone || 
                     data.mobile || 
+                    data.mobileNumber || 
                     data.mobile1 || 
                     data.phoneNumber || 
                     null;
       
       // ✅ Extract role - only from API
       const role = data.role || 
+                   data.adminType ||
                    data.role1 || 
                    data.userRole || 
                    null;

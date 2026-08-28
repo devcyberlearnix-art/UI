@@ -67,6 +67,15 @@ axiosInstance.interceptors.response.use(
   (error) => {
     console.error('[API Response Error]', error);
 
+    // CORS-specific error handling
+    if (!error.response && error.message === 'Network Error') {
+      console.error('[CORS Error] Network Error detected - likely CORS issue');
+      console.error('[CORS Error] Origin:', window.location.origin);
+      console.error('[CORS Error] API URL:', BASE_URL);
+      console.error('[CORS Error] Request URL:', error.config?.url);
+      console.error('[CORS Error] Troubleshooting: Clear browser cache or test in incognito mode');
+    }
+
     if (error.response) {
       const { status, config, data } = error.response;
 
