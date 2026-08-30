@@ -47,12 +47,12 @@ const hasPermission = (permission) => {
 };
 
 // ✅ Fetch users from real API using new endpoint
-const fetchUsers = async () => {
+const fetchUsers = async (page = 0, size = 10) => {
   setLoading(true);
   setError("");
   try {
-    console.log('[Users] Fetching users from new API endpoint...');
-    const response = await adminApi.getUsers();
+    console.log('[Users] Fetching users from API endpoint with pagination:', { page, size });
+    const response = await adminApi.getUsers(page, size);
     console.log('[Users] API Response:', response);
     
     // Handle different response structures
@@ -67,7 +67,7 @@ const fetchUsers = async () => {
     // Transform API data to match component structure
     const transformedUsers = userData.map(user => ({
       _id: user.id || user._id || user.userId,
-      name: user.name || user.firstName || user.displayName || `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+      name: user.name || user.firstName || user.displayName || user.email?.split('@')[0] || 'Unknown',
       email: user.email || '',
       role: user.role || user.role1 || user.userRole || 'User',
       courses: user.courses || user.enrolledCourses || 0,
@@ -387,7 +387,7 @@ Add User
 
 {
 users.filter(
-u=>u.role==="Student"
+u=>u.role?.toUpperCase()==="STUDENT"
 ).length
 }
 
@@ -404,7 +404,7 @@ u=>u.role==="Student"
 
 {
 users.filter(
-u=>u.role==="Instructor"
+u=>u.role?.toUpperCase()==="INSTRUCTOR"
 ).length
 }
 
@@ -415,13 +415,13 @@ u=>u.role==="Instructor"
 
 <div className="bg-white p-5 rounded-xl">
 
-<h2>Blocked</h2>
+<h2>Admins</h2>
 
-<p className="text-3xl text-red-500">
+<p className="text-3xl text-orange-500">
 
 {
 users.filter(
-u=>u.status==="Blocked"
+u=>u.role?.toUpperCase().includes("ADMIN")
 ).length
 }
 

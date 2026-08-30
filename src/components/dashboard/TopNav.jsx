@@ -1,11 +1,13 @@
 // src/components/dashboard/TopNav.jsx
-import { Bell, Menu, User, Settings, LogOut } from "lucide-react";
+import { Bell, Menu, User, Settings, LogOut, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import RoleSwitcher from "../ui/RoleSwitcher";
 import { useMemo, useState, useRef, useEffect } from "react";
 import { getDashboardRole, tabsByRole } from "../../config/navigation";
+import { adminApi } from "../../api/adminApi";
+import authApi from "../../api/authApi";
 
 const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
   const { user, logout } = useAuth();
@@ -13,32 +15,82 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(false);
   
   const rawRole = user?.role || user?.role1 || user?.userRole || "";
   const roleKey = getDashboardRole(location.pathname, rawRole);
   const tabRole = roleKey === "admin" || roleKey === "subadmin" ? "admin" : roleKey;
 
   const displayName =
-    user?.displayName ||
-    user?.firstName ||
-    user?.name ||
-    user?.fullName ||
-    user?.username ||
-    (user?.email ? user.email.split("@")[0] : "Admin");
+    profileData?.firstName && profileData?.lastName
+      ? `${profileData.firstName} ${profileData.lastName}`
+      : profileData?.name ||
+        user?.displayName ||
+        user?.firstName ||
+        user?.name ||
+        user?.fullName ||
+        user?.username ||
+        (user?.email ? user.email.split("@")[0] : "Admin");
 
-  const displayEmail = user?.email || "admin@lms.com";
+  const displayEmail = profileData?.email || user?.email || "admin@lms.com";
   const displayRole =
-    roleKey === "subadmin"
+    profileData?.role ||
+    profileData?.adminType ||
+    (roleKey === "subadmin"
       ? "Sub Admin"
       : roleKey === "instructor"
       ? "Instructor"
       : roleKey === "student"
       ? "Student"
-      : "Admin";
+      : "Admin");
 
   // Get profile photo
-  const profilePhoto = user?.profilePhoto || user?.photoURL || user?.avatar || null;
+  const profilePhoto = profileData?.profilePhoto || user?.profilePhoto || user?.photoURL || user?.avatar || null;
   const userInitial = displayName.charAt(0).toUpperCase();
+
+  // Fetch profile data from API
+  const fetchProfileData = async () => {
+    if (!user?.email) return;
+    
+    setLoading(true);
+    try {
+      let response;
+      if (roleKey === 'admin' || roleKey === 'subadmin') {
+        response = await adminApi.getAdminProfile();
+      } else {
+        response = await authApi.getUserProfile();
+      }
+      
+      const data = response.data?.admin || response.data?.user || response.data?.data || response.data;
+      
+      if (data) {
+        setProfileData(data);
+      }
+    } catch (error) {
+      console.error('[TopNav] Failed to fetch profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch profile on mount and when user changes
+  useEffect(() => {
+    if (user?.email) {
+      fetchProfileData();
+    }
+  }, [user]);
+
+  // Listen for profile updates
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      fetchProfileData();
+    };
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    return () => {
+      window.removeEventListener('profileUpdated', handleProfileUpdate);
+    };
+  }, [user]);
 
   const roleTabs = tabsByRole[tabRole] || [];
 
@@ -157,17 +209,6 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
                   </div>
 
                   {/* Menu Items */}
-                  <button
-                    onClick={() => {
-                      navigate('/profile');
-                      setShowDropdown(false);
-                    }}
-                    className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
-                  >
-                    <User size={18} />
-                    My Profile
-                  </button>
-                  
                   <button
                     onClick={() => {
                       navigate('/settings');

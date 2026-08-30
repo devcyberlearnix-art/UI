@@ -31,6 +31,12 @@ export const adminApi = {
     return response.data;
   },
 
+  // ======================== USERS MANAGEMENT ========================
+  getUsers: async (page = 0, size = 10) => {
+    const response = await axiosInstance.get(`/api/v1/admin/users?page=${page}&size=${size}`);
+    return response.data;
+  },
+
   registerSubAdmin: async (adminData) => {
     // Backend expects singular 'admin' in the register path
     const response = await axiosInstance.post('/api/v1/admin/register', adminData);

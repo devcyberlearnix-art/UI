@@ -34,11 +34,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       ? 'Instructor'
       : 'Student';
 
-  // Get profile photo
-  const profilePhoto = user?.profilePhoto || user?.photoURL || user?.avatar || null;
-  const displayName = user?.firstName || user?.name || user?.displayName || 'Admin';
-  const userInitial = displayName.charAt(0).toUpperCase();
-
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
