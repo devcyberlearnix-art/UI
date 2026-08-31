@@ -8,7 +8,11 @@ Trash2,
 Plus,
 Loader2,
 AlertCircle,
-Eye
+Eye,
+Users as UsersIcon,
+GraduationCap,
+BookOpen,
+Shield
 } from "lucide-react";
 import { adminApi } from "../../api/adminApi";
 import toast from "react-hot-toast";
@@ -56,7 +60,7 @@ const fetchUsers = async (page = 0, size = 10) => {
     console.log('[Users] API Response:', response);
     
     // Handle different response structures
-    let userData = response.data || response;
+    let userData = response.data?.users || response.users || response.data || response;
     if (!Array.isArray(userData)) {
       if (userData.users) userData = userData.users;
       else if (userData.items) userData = userData.items;
@@ -112,6 +116,11 @@ user.name.toLowerCase()
 user.email.toLowerCase()
 .includes(search.toLowerCase())
 
+||
+
+user._id.toLowerCase()
+.includes(search.toLowerCase())
+
 );
 
 }
@@ -119,7 +128,7 @@ user.email.toLowerCase()
 if(selectedRole!=="All"){
 
 data=data.filter(
-user=>user.role===selectedRole
+user=>user.role?.toUpperCase()===selectedRole.toUpperCase()
 );
 
 }
@@ -272,22 +281,21 @@ try {
 const toggleStatus=async (id)=>{
 try {
   const user = users.find(u => u._id === id);
-  const newStatus = user.status === "Active" ? "Blocked" : "Active";
+  // Toggle between ACTIVE and SUSPENDED based on current status
+  const currentStatus = user.status?.toUpperCase();
+  const newStatus = currentStatus === "ACTIVE" ? "SUSPENDED" : "ACTIVE";
   
-  if (newStatus === "Blocked") {
-    await adminApi.banUser(id);
-  } else {
-    await adminApi.unbanUser(id);
-  }
+  console.log('[Users] Updating user status:', { id, currentStatus, newStatus });
+  await adminApi.updateUserStatus(id, newStatus);
   
   const updated = users.map(u =>
     u._id === id ? { ...u, status: newStatus } : u
   );
   setUsers(updated);
-  toast.success(`User ${newStatus.toLowerCase()} successfully`);
+  toast.success(`User status updated to ${newStatus}`);
 } catch (err) {
   console.error('[Users] Error toggling status:', err);
-  toast.error('Failed to update user status');
+  toast.error(err.response?.data?.message || 'Failed to update user status');
 }
 };
 
@@ -323,67 +331,90 @@ if (error) {
 }
 
 return(
+<div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen p-8">
 
-<div className="bg-gray-50 min-h-screen p-6">
-
-<div className="flex justify-between mb-8">
+<div className="flex justify-between items-center mb-8">
 
 <div>
 
-<h1 className="text-3xl font-bold">
+<h1 className="text-4xl font-bold text-gray-900 mb-2">
 
-All Users
+User Management
 
 </h1>
 
-<p className="text-gray-500">
+<p className="text-gray-600 text-lg">
 
-Manage users
+Manage and monitor all platform users
 
 </p>
 
 </div>
 
 {hasPermission('users:edit') && (
+
 <button
 
 onClick={openAddModal}
 
-className="bg-orange-500 text-white px-5 py-3 rounded-xl flex gap-2"
+className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 hover:from-orange-600 hover:to-orange-700 transition-all shadow-lg hover:shadow-xl"
 
 >
 
 <Plus size={18}/>
 
-Add User
+<span className="font-medium">Add User</span>
 
 </button>
+
 )}
 
 </div>
 
 
 
-<div className="grid grid-cols-4 gap-5 mb-8">
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
-<div className="bg-white p-5 rounded-xl">
+<div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
 
-<h2>Total Users</h2>
+<div className="flex items-center justify-between mb-4">
 
-<p className="text-3xl font-bold">
+<div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+
+<UsersIcon className="w-6 h-6 text-blue-600"/>
+
+</div>
+
+<span className="text-sm text-gray-500 font-medium">Total Users</span>
+
+</div>
+
+<p className="text-3xl font-bold text-gray-900">
 
 {users.length}
 
 </p>
 
+<p className="text-sm text-gray-500 mt-1">All registered users</p>
+
 </div>
 
 
-<div className="bg-white p-5 rounded-xl">
+<div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
 
-<h2>Students</h2>
+<div className="flex items-center justify-between mb-4">
 
-<p className="text-3xl text-blue-500">
+<div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+
+<GraduationCap className="w-6 h-6 text-blue-600"/>
+
+</div>
+
+<span className="text-sm text-gray-500 font-medium">Students</span>
+
+</div>
+
+<p className="text-3xl font-bold text-blue-600">
 
 {
 users.filter(
@@ -393,14 +424,26 @@ u=>u.role?.toUpperCase()==="STUDENT"
 
 </p>
 
+<p className="text-sm text-gray-500 mt-1">Active learners</p>
+
 </div>
 
 
-<div className="bg-white p-5 rounded-xl">
+<div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
 
-<h2>Instructors</h2>
+<div className="flex items-center justify-between mb-4">
 
-<p className="text-3xl text-purple-500">
+<div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+
+<BookOpen className="w-6 h-6 text-purple-600"/>
+
+</div>
+
+<span className="text-sm text-gray-500 font-medium">Instructors</span>
+
+</div>
+
+<p className="text-3xl font-bold text-purple-600">
 
 {
 users.filter(
@@ -410,14 +453,26 @@ u=>u.role?.toUpperCase()==="INSTRUCTOR"
 
 </p>
 
+<p className="text-sm text-gray-500 mt-1">Course creators</p>
+
 </div>
 
 
-<div className="bg-white p-5 rounded-xl">
+<div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
 
-<h2>Admins</h2>
+<div className="flex items-center justify-between mb-4">
 
-<p className="text-3xl text-orange-500">
+<div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+
+<Shield className="w-6 h-6 text-orange-600"/>
+
+</div>
+
+<span className="text-sm text-gray-500 font-medium">Admins</span>
+
+</div>
+
+<p className="text-3xl font-bold text-orange-600">
 
 {
 users.filter(
@@ -427,15 +482,24 @@ u=>u.role?.toUpperCase().includes("ADMIN")
 
 </p>
 
-</div>
+<p className="text-sm text-gray-500 mt-1">Platform administrators</p>
 
 </div>
 
+</div>
 
 
-<div className="bg-white p-6 rounded-xl">
+<div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
 
-<div className="flex gap-4 mb-6">
+<div className="p-6 border-b border-gray-200">
+
+<div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+
+<div className="flex-1 w-full md:w-auto">
+
+<div className="relative">
+
+<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"/>
 
 <input
 
@@ -445,12 +509,18 @@ onChange={(e)=>
 setSearch(e.target.value)
 }
 
-placeholder="Search users"
+placeholder="Search by name, email, or ID..."
 
-className="border px-4 py-2 rounded-xl"
+className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
 
 />
 
+</div>
+
+</div>
+
+
+<div className="flex gap-3 items-center">
 
 <select
 
@@ -464,15 +534,19 @@ e.target.value
 
 }
 
-className="border px-4 py-2 rounded-xl"
+className="px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
 
 >
 
-<option>All</option>
+<option value="All">All Roles</option>
 
-<option>Student</option>
+<option value="Student">Students</option>
 
-<option>Instructor</option>
+<option value="Instructor">Instructors</option>
+
+<option value="MAIN_ADMIN">Main Admins</option>
+
+<option value="SUB_ADMIN">Sub Admins</option>
 
 </select>
 
@@ -481,109 +555,163 @@ className="border px-4 py-2 rounded-xl"
 
 onClick={handleExport}
 
-className="border px-4 py-2 rounded-xl"
+className="px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2"
 
 >
 
-<Download/>
+<Download size={18}/>
+
+<span className="text-sm font-medium">Export</span>
 
 </button>
 
 </div>
 
+</div>
 
+</div>
+
+
+<div className="overflow-x-auto">
 
 <table className="w-full">
 
 <thead>
 
-<tr>
+<tr className="bg-gray-50">
 
-<th>User</th>
-<th>Email</th>
-<th>Role</th>
-<th>Courses</th>
-<th>Status</th>
-<th>Actions</th>
+<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
+
+<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+
+<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role</th>
+
+<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Courses</th>
+
+<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+
+<th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
 
 </tr>
 
 </thead>
 
-<tbody>
+<tbody className="divide-y divide-gray-200">
 
 {
 
 filteredUsers.map(user=>(
 
-<tr key={user._id}>
+<tr key={user._id} className="hover:bg-gray-50 transition-colors">
 
-<td>{user.name}</td>
+<td className="px-6 py-4">
 
-<td>{user.email}</td>
+<div className="flex items-center gap-3">
 
-<td>{user.role}</td>
+<div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-semibold text-sm">
 
-<td>{user.courses}</td>
+{user.name.charAt(0).toUpperCase()}
 
-<td>
+</div>
 
-<button
+<div>
 
-onClick={()=>
-toggleStatus(user._id)
-}
+<p className="font-medium text-gray-900">{user.name}</p>
 
-className="px-3 py-1 rounded-full bg-gray-100"
+<p className="text-xs text-gray-500">ID: {user._id.slice(0, 8)}...</p>
 
->
+</div>
 
-{user.status}
-
-</button>
+</div>
 
 </td>
 
-<td>
+<td className="px-6 py-4">
 
-<div className="flex gap-3">
+<p className="text-gray-600">{user.email}</p>
+
+</td>
+
+<td className="px-6 py-4">
+
+<span className={`px-3 py-1 text-xs font-medium rounded-full ${
+user.role?.toUpperCase().includes('ADMIN') ? 'bg-orange-100 text-orange-700' :
+user.role?.toUpperCase() === 'INSTRUCTOR' ? 'bg-purple-100 text-purple-700' :
+user.role?.toUpperCase() === 'STUDENT' ? 'bg-blue-100 text-blue-700' :
+'bg-gray-100 text-gray-700'
+}`}>
+
+{user.role}
+
+</span>
+
+</td>
+
+<td className="px-6 py-4">
+
+<p className="text-gray-600 font-medium">{user.courses}</p>
+
+</td>
+
+<td className="px-6 py-4">
+
+<span className={`px-3 py-1 text-xs font-medium rounded-full cursor-pointer hover:opacity-80 transition-opacity ${
+user.status?.toUpperCase() === 'ACTIVE' ? 'bg-green-100 text-green-700' :
+user.status?.toUpperCase() === 'SUSPENDED' ? 'bg-red-100 text-red-700' :
+user.status?.toUpperCase() === 'PENDING_VERIFICATION' ? 'bg-yellow-100 text-yellow-700' :
+user.status?.toUpperCase() === 'LOCKED' ? 'bg-gray-100 text-gray-700' :
+'bg-gray-100 text-gray-700'
+}`} onClick={()=>toggleStatus(user._id)} title="Click to toggle status">
+
+{user.status}
+
+</span>
+
+</td>
+
+<td className="px-6 py-4">
+
+<div className="flex gap-2 justify-end">
 
 <button
+
 onClick={()=>
 handleViewDetails(user)
 }
-className="text-blue-500 hover:text-blue-700"
+className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
 title="View Details"
 >
 
-<Eye/>
+<Eye size={18}/>
 
 </button>
 
 {hasPermission('users:edit') && (
 <button
+
 onClick={()=>
 openEditModal(user)
 }
-className="text-green-500 hover:text-green-700"
+className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
 title="Edit User"
 >
 
-<Edit/>
+<Edit size={18}/>
 
 </button>
 )}
 
 {hasPermission('users:edit') && (
 <button
+
 onClick={()=>
 handleDelete(user._id)
 }
-className="text-red-500 hover:text-red-700"
+className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
 title="Delete User"
 >
 
-<Trash2/>
+<Trash2 size={18}/>
 
 </button>
 )}
@@ -604,53 +732,125 @@ title="Delete User"
 
 </div>
 
+</div>
 
 
 {showModal && (
 
-<div className="fixed inset-0 bg-black/40 flex justify-center items-center">
+<div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
 
-<div className="bg-white p-6 rounded-xl w-[400px]">
+<div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
 
-<h2 className="font-bold text-xl mb-5">
+<div className="p-6 border-b border-gray-200">
 
-{editingUser ? "Edit User":"Add User"}
+<h2 className="font-bold text-xl text-gray-900">
+
+{editingUser ? "Edit User" : "Add New User"}
 
 </h2>
 
+</div>
+
+<div className="p-6 space-y-4">
+
+<div>
+
+<label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+
 <input
-placeholder="Name"
+
+placeholder="Enter user name"
+
 value={formData.name}
+
 onChange={(e)=>
 setFormData({
 ...formData,
 name:e.target.value
 })
 }
-className="border p-2 w-full mb-3"
+className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+
 />
 
+</div>
+
+<div>
+
+<label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+
 <input
-placeholder="Email"
+
+placeholder="Enter email address"
+
 value={formData.email}
+
 onChange={(e)=>
 setFormData({
 ...formData,
 email:e.target.value
 })
 }
-className="border p-2 w-full mb-3"
+className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+
 />
+
+</div>
+
+<div>
+
+<label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+
+<select
+
+value={formData.role}
+
+onChange={(e)=>
+setFormData({
+...formData,
+role:e.target.value
+})
+}
+className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+>
+
+<option value="Student">Student</option>
+
+<option value="Instructor">Instructor</option>
+
+<option value="MAIN_ADMIN">Main Admin</option>
+
+<option value="SUB_ADMIN">Sub Admin</option>
+
+</select>
+
+</div>
+
+</div>
+
+<div className="p-6 border-t border-gray-200 flex gap-3 justify-end">
+
+<button
+
+onClick={()=>setShowModal(false)}
+
+className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+
+>
+
+Cancel
+
+</button>
 
 <button
 
 onClick={handleSave}
 
-className="bg-orange-500 text-white w-full py-2 rounded"
+className="px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all"
 
 >
 
-Save
+{editingUser ? "Update User" : "Create User"}
 
 </button>
 
@@ -658,7 +858,10 @@ Save
 
 </div>
 
+</div>
+
 )}
+
 
 {/* View Details Modal */}
 {showViewModal && selectedUser && (
