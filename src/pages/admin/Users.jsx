@@ -35,6 +35,14 @@ const [showModal,setShowModal]=useState(false);
 const [selectedUser, setSelectedUser] = useState(null);
 const [showViewModal, setShowViewModal] = useState(false);
 
+// Pagination state
+const [currentPage, setCurrentPage] = useState(1);
+const [usersPerPage] = useState(10);
+const [totalUsers, setTotalUsers] = useState(0);
+
+// Activity log state
+const [activityLog, setActivityLog] = useState([]);
+
 const [editingUser,setEditingUser]=useState(null);
 
 const [formData,setFormData]=useState({
@@ -61,6 +69,8 @@ const fetchUsers = async (page = 0, size = 10) => {
     
     // Handle different response structures
     let userData = response.data?.users || response.users || response.data || response;
+    let totalCount = response.data?.totalUsers || response.totalUsers || response.total || 0;
+    
     if (!Array.isArray(userData)) {
       if (userData.users) userData = userData.users;
       else if (userData.items) userData = userData.items;
@@ -70,18 +80,20 @@ const fetchUsers = async (page = 0, size = 10) => {
     
     // Transform API data to match component structure
     const transformedUsers = userData.map(user => ({
+      id: user.id || user._id || user.userId,
       _id: user.id || user._id || user.userId,
       name: user.name || user.firstName || user.displayName || user.email?.split('@')[0] || 'Unknown',
       email: user.email || '',
       role: user.role || user.role1 || user.userRole || 'User',
-      courses: user.courses || user.enrolledCourses || 0,
+      courses: user.enrollmentCount || user.courses || user.enrolledCourses || 0,
       status: user.status || user.accountStatus || 'Active',
-      createdAt: user.createdAt || user.joinedDate || new Date().toLocaleDateString()
+      createdAt: user.createdAt ? new Date(user.createdAt).toLocaleDateString() : new Date().toLocaleDateString()
     }));
     
     setUsers(transformedUsers);
     setFilteredUsers(transformedUsers);
-    console.log('[Users] Users loaded successfully:', transformedUsers.length);
+    setTotalUsers(totalCount || transformedUsers.length);
+    console.log('[Users] Users loaded successfully:', transformedUsers.length, 'Total:', totalCount);
   } catch (err) {
     console.error('[Users] Error fetching users:', err);
     setError('Failed to load users. Please try again.');
@@ -134,17 +146,13 @@ user=>user.role?.toUpperCase()===selectedRole.toUpperCase()
 }
 
 setFilteredUsers(data);
+setCurrentPage(1); // Reset to page 1 when filtering
 
 },[search,selectedRole,users]);
 
 
 
 const handleDelete=async (id)=>{
-if (!hasPermission('users:edit')) {
-  toast.error('You do not have permission to delete users');
-  return;
-}
-
 if (!window.confirm('Are you sure you want to delete this user?')) return;
 
 try {
@@ -236,9 +244,29 @@ setShowModal(true);
 
 };
 
-const handleViewDetails = (user) => {
+const handleViewDetails = async (user) => {
   setSelectedUser(user);
   setShowViewModal(true);
+  // Fetch detailed user info from API
+  try {
+    const userId = user.id || user._id || user.userId;
+    console.log('[Users] Fetching detailed user info for:', userId);
+    const response = await adminApi.getUserById(userId);
+    console.log('[Users] Detailed user info response:', response);
+    const userData = response.data || response;
+    setSelectedUser(userData);
+    
+    // Check if API provides activity log
+    if (userData.activityLog || userData.activity_history) {
+      setActivityLog(userData.activityLog || userData.activity_history);
+    } else {
+      setActivityLog([]);
+    }
+  } catch (err) {
+    console.error('[Users] Error fetching user details:', err);
+    // Keep the original user data if API call fails
+    setActivityLog([]);
+  }
 };
 
 
@@ -578,19 +606,19 @@ className="px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transi
 
 <thead>
 
-<tr className="bg-gray-50">
+<tr className="bg-gray-50 border-b border-gray-200">
 
-<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
+<th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">#</th>
 
-<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+<th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
 
-<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role</th>
+<th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role</th>
 
-<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Courses</th>
+<th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
 
-<th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+<th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created</th>
 
-<th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+<th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
 
 </tr>
 
@@ -600,85 +628,55 @@ className="px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transi
 
 {
 
-filteredUsers.map(user=>(
+filteredUsers
+.slice((currentPage - 1) * usersPerPage, currentPage * usersPerPage)
+.map((user, index) => (
 
 <tr key={user._id} className="hover:bg-gray-50 transition-colors">
 
-<td className="px-6 py-4">
+<td className="px-4 py-3 text-sm text-gray-600 font-medium">
+{(currentPage - 1) * usersPerPage + index + 1}
+</td>
 
-<div className="flex items-center gap-3">
-
-<div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-semibold text-sm">
-
-{user.name.charAt(0).toUpperCase()}
-
-</div>
-
+<td className="px-4 py-3">
 <div>
-
-<p className="font-medium text-gray-900">{user.name}</p>
-
-<p className="text-xs text-gray-500">ID: {user._id.slice(0, 8)}...</p>
-
+<p className="font-medium text-gray-900 text-sm">{user.name}</p>
+<p className="text-xs text-gray-500">{user.email.slice(0, 15)}...</p>
 </div>
-
-</div>
-
 </td>
 
-<td className="px-6 py-4">
-
-<p className="text-gray-600">{user.email}</p>
-
-</td>
-
-<td className="px-6 py-4">
-
-<span className={`px-3 py-1 text-xs font-medium rounded-full ${
+<td className="px-4 py-3">
+<span className={`px-2 py-1 text-xs font-medium rounded-full ${
 user.role?.toUpperCase().includes('ADMIN') ? 'bg-orange-100 text-orange-700' :
 user.role?.toUpperCase() === 'INSTRUCTOR' ? 'bg-purple-100 text-purple-700' :
 user.role?.toUpperCase() === 'STUDENT' ? 'bg-blue-100 text-blue-700' :
 'bg-gray-100 text-gray-700'
 }`}>
-
 {user.role}
-
 </span>
-
 </td>
 
-<td className="px-6 py-4">
-
-<p className="text-gray-600 font-medium">{user.courses}</p>
-
-</td>
-
-<td className="px-6 py-4">
-
-<span className={`px-3 py-1 text-xs font-medium rounded-full cursor-pointer hover:opacity-80 transition-opacity ${
+<td className="px-4 py-3">
+<span className={`px-2 py-1 text-xs font-medium rounded-full cursor-pointer hover:opacity-80 transition-opacity ${
 user.status?.toUpperCase() === 'ACTIVE' ? 'bg-green-100 text-green-700' :
 user.status?.toUpperCase() === 'SUSPENDED' ? 'bg-red-100 text-red-700' :
 user.status?.toUpperCase() === 'PENDING_VERIFICATION' ? 'bg-yellow-100 text-yellow-700' :
 user.status?.toUpperCase() === 'LOCKED' ? 'bg-gray-100 text-gray-700' :
 'bg-gray-100 text-gray-700'
 }`} onClick={()=>toggleStatus(user._id)} title="Click to toggle status">
-
 {user.status}
-
 </span>
-
 </td>
 
-<td className="px-6 py-4">
+<td className="px-4 py-3 text-sm text-gray-600">
+{user.createdAt}
+</td>
 
+<td className="px-4 py-3">
 <div className="flex gap-2 justify-end">
-
 <button
-
-onClick={()=>
-handleViewDetails(user)
-}
-className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+onClick={()=>handleViewDetails(user)}
+className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
 title="View Details"
 >
 
@@ -701,20 +699,15 @@ title="Edit User"
 </button>
 )}
 
-{hasPermission('users:edit') && (
 <button
-
 onClick={()=>
 handleDelete(user._id)
 }
 className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
 title="Delete User"
 >
-
 <Trash2 size={18}/>
-
 </button>
-)}
 
 </div>
 
@@ -731,6 +724,34 @@ title="Delete User"
 </table>
 
 </div>
+
+{/* Pagination */}
+{filteredUsers.length > 0 && (
+<div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200">
+<p className="text-sm text-gray-600">
+Showing {(currentPage - 1) * usersPerPage + 1} to {Math.min(currentPage * usersPerPage, filteredUsers.length)} of {filteredUsers.length} users
+</p>
+<div className="flex items-center gap-2">
+<button
+onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+disabled={currentPage === 1}
+className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+>
+&lt; Prev
+</button>
+<span className="text-sm text-gray-600">
+Page {currentPage} of {Math.ceil(filteredUsers.length / usersPerPage)}
+</span>
+<button
+onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredUsers.length / usersPerPage)))}
+disabled={currentPage === Math.ceil(filteredUsers.length / usersPerPage)}
+className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+>
+Next &gt;
+</button>
+</div>
+</div>
+)}
 
 </div>
 
@@ -865,49 +886,130 @@ className="px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white r
 
 {/* View Details Modal */}
 {showViewModal && selectedUser && (
-<div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-<div className="bg-white rounded-xl p-6 w-[500px] max-h-[80vh] overflow-y-auto">
-<div className="flex justify-between items-center mb-4">
-<h2 className="text-xl font-bold">User Details</h2>
-<button 
+<div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
+<div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+<div className="p-6 border-b border-gray-200 flex items-center justify-between">
+<button
 onClick={() => setShowViewModal(false)}
-className="text-gray-400 hover:text-gray-600"
+className="text-gray-500 hover:text-gray-700 flex items-center gap-2 text-sm font-medium"
 >
-✕
+← Back to Users
 </button>
+<h2 className="font-bold text-xl text-gray-900">User Details</h2>
+<div className="w-24"></div>
 </div>
-<div className="space-y-4">
-<div className="flex items-center gap-4">
-<div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 font-bold text-xl">
-{selectedUser.name.charAt(0)}
+<div className="p-6 space-y-6">
+{/* Profile Section */}
+<div className="flex items-start gap-6">
+{selectedUser.profilePhoto ? (
+<img 
+src={selectedUser.profilePhoto} 
+alt="Profile" 
+className="w-20 h-20 rounded-full object-cover border-4 border-orange-100"
+/>
+) : (
+<div className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-2xl border-4 border-orange-100">
+{(selectedUser.firstName || selectedUser.name || selectedUser.email?.[0] || 'U').charAt(0).toUpperCase()}
 </div>
-<div>
-<p className="font-semibold text-lg">{selectedUser.name}</p>
-<p className="text-sm text-gray-500">{selectedUser.email}</p>
+)}
+<div className="flex-1">
+<p className="font-bold text-xl text-gray-900">
+{selectedUser.firstName && selectedUser.lastName 
+  ? `${selectedUser.firstName} ${selectedUser.lastName}` 
+  : selectedUser.name || selectedUser.email?.split('@')[0] || 'Unknown'}
+</p>
+<p className="text-sm text-gray-600 mt-1">{selectedUser.email}</p>
+{selectedUser.mobile && (
+<p className="text-sm text-gray-500 mt-1">📱 {selectedUser.mobile}</p>
+)}
 </div>
 </div>
-<div className="grid grid-cols-2 gap-4">
-<div>
+
+{/* User Information Section */}
+<div className="border border-gray-200 rounded-xl overflow-hidden">
+<div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
+<p className="font-semibold text-sm text-gray-700">📊 User Information</p>
+</div>
+<div className="divide-y divide-gray-200">
+<div className="px-4 py-3 flex justify-between items-center">
+<p className="text-sm text-gray-500">User ID</p>
+<p className="text-sm font-mono text-gray-900">{selectedUser.userId || selectedUser.id || selectedUser._id || 'N/A'}</p>
+</div>
+<div className="px-4 py-3 flex justify-between items-center">
 <p className="text-sm text-gray-500">Role</p>
-<p className="font-semibold">{selectedUser.role}</p>
-</div>
-<div>
-<p className="text-sm text-gray-500">Courses</p>
-<p className="font-semibold">{selectedUser.courses}</p>
-</div>
-<div>
-<p className="text-sm text-gray-500">Status</p>
-<span className={`px-2 py-1 text-xs rounded-full ${
-selectedUser.status === "Active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+<span className={`px-2 py-1 text-xs font-medium rounded-full ${
+selectedUser.role?.toUpperCase().includes('ADMIN') ? 'bg-orange-100 text-orange-700' :
+selectedUser.role?.toUpperCase() === 'INSTRUCTOR' ? 'bg-purple-100 text-purple-700' :
+selectedUser.role?.toUpperCase() === 'STUDENT' ? 'bg-blue-100 text-blue-700' :
+'bg-gray-100 text-gray-700'
 }`}>
-{selectedUser.status}
+{selectedUser.role || 'N/A'}
 </span>
 </div>
-<div>
-<p className="text-sm text-gray-500">Joined Date</p>
-<p className="font-semibold">{selectedUser.createdAt}</p>
+<div className="px-4 py-3 flex justify-between items-center">
+<p className="text-sm text-gray-500">Status</p>
+<span className={`px-2 py-1 text-xs font-medium rounded-full ${
+selectedUser.status?.toUpperCase() === 'ACTIVE' ? 'bg-green-100 text-green-700' :
+selectedUser.status?.toUpperCase() === 'SUSPENDED' ? 'bg-red-100 text-red-700' :
+selectedUser.status?.toUpperCase() === 'PENDING_VERIFICATION' ? 'bg-yellow-100 text-yellow-700' :
+selectedUser.status?.toUpperCase() === 'LOCKED' ? 'bg-gray-100 text-gray-700' :
+'bg-gray-100 text-gray-700'
+}`}>
+{selectedUser.status || 'Unknown'}
+</span>
+</div>
+<div className="px-4 py-3 flex justify-between items-center">
+<p className="text-sm text-gray-500">Created</p>
+<p className="text-sm text-gray-900">{selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</p>
+</div>
+<div className="px-4 py-3 flex justify-between items-center">
+<p className="text-sm text-gray-500">Enrollments</p>
+<p className="text-sm text-gray-900">{selectedUser.enrollmentCount || selectedUser.courses || 0} courses</p>
 </div>
 </div>
+</div>
+
+{/* Enrollments Section */}
+<div className="border border-gray-200 rounded-xl overflow-hidden">
+<div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
+<p className="font-semibold text-sm text-gray-700">📚 Enrollments ({selectedUser.enrollmentCount || selectedUser.courses || 0})</p>
+</div>
+<div className="p-4">
+{selectedUser.enrollments && selectedUser.enrollments.length > 0 ? (
+<div className="space-y-2 max-h-40 overflow-y-auto">
+{selectedUser.enrollments.map((enrollment, idx) => (
+<div key={idx} className="bg-gray-50 p-3 rounded-lg">
+<p className="font-medium text-sm text-gray-900">{enrollment.courseName || 'Course ' + (idx + 1)}</p>
+</div>
+))}
+</div>
+) : (
+<p className="text-sm text-gray-500 text-center py-4">No enrollments found</p>
+)}
+</div>
+</div>
+
+{/* Activity Log Section - Only show if API provides data */}
+{activityLog && activityLog.length > 0 && (
+<div className="border border-gray-200 rounded-xl overflow-hidden">
+<div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
+<p className="font-semibold text-sm text-gray-700">📝 Activity Log</p>
+</div>
+<div className="p-4">
+<div className="space-y-3">
+{activityLog.map((log, idx) => (
+<div key={idx} className="flex items-start gap-3 text-sm">
+<span className="text-lg">{log.icon || '📌'}</span>
+<div className="flex-1">
+<p className="text-gray-900">{log.action || log.activity}</p>
+<p className="text-xs text-gray-500">{new Date(log.date || log.timestamp).toLocaleString()}</p>
+</div>
+</div>
+))}
+</div>
+</div>
+</div>
+)}
 </div>
 </div>
 </div>

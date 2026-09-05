@@ -100,13 +100,13 @@ export const adminApi = {
     return response.data;
   },
 
-  approveInstructorApplication: async (userId) => {
-    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/approve`);
+  approveInstructorApplication: async (userId, reason = "") => {
+    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/approve`, { reason });
     return response.data;
   },
 
-  rejectInstructorApplication: async (userId) => {
-    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/reject`);
+  rejectInstructorApplication: async (userId, reason) => {
+    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/reject`, { reason });
     return response.data;
   },
 

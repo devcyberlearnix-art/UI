@@ -20,6 +20,12 @@ const Instructors = () => {
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
+  const [sortBy, setSortBy] = useState("newest");
+  const [viewMode, setViewMode] = useState("grid");
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [instructorsPerPage] = useState(8);
 
   // Check if user has specific permission
   const hasPermission = (permission) => {
@@ -47,14 +53,15 @@ const Instructors = () => {
       // Transform API data to match component structure
       const transformedInstructors = instructorData.map(instructor => ({
         id: instructor.id || instructor._id || instructor.instructorId,
-        name: instructor.name || instructor.firstName ? `${instructor.firstName} ${instructor.lastName || ''}`.trim() : instructor.email?.split('@')[0] || 'Unknown',
-        email: instructor.email || instructor.emailAddress || '',
-        status: instructor.status || instructor.verificationStatus || 'pending',
-        courses: instructor.courses || instructor.courseCount || 0,
-        students: instructor.students || instructor.studentCount || 0,
-        qualification: instructor.qualification || instructor.specialization || 'Not specified',
-        experience: instructor.experience || instructor.yearsOfExperience || 0,
-        createdAt: instructor.createdAt || instructor.joinedDate || new Date().toLocaleDateString()
+        _id: instructor.id || instructor._id || instructor.instructorId,
+        name: instructor.email?.split('@')[0] || 'Unknown', // API only provides email, use email prefix as name
+        email: instructor.email || '',
+        status: instructor.status || 'ACTIVE',
+        courses: 0, // API doesn't provide this
+        students: 0, // API doesn't provide this
+        qualification: 'Not specified', // API doesn't provide this
+        experience: 0, // API doesn't provide this
+        createdAt: instructor.createdAt ? new Date(instructor.createdAt).toLocaleDateString() : new Date().toLocaleDateString()
       }));
       
       setInstructors(transformedInstructors);
@@ -88,6 +95,7 @@ const Instructors = () => {
     }
 
     setFilteredInstructors(data);
+    setCurrentPage(1); // Reset to page 1 when filtering
   }, [search, selectedStatus, instructors]);
 
   // ✅ Approve instructor using new endpoint
@@ -193,46 +201,29 @@ const Instructors = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-              <UsersIcon className="w-6 h-6 text-purple-600"/>
-            </div>
-            <span className="text-sm text-gray-500 font-medium">Total Instructors</span>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+        <p className="text-sm font-semibold text-gray-700 mb-4">📊 Overview</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-gray-50 rounded-lg p-4 text-center">
+            <p className="text-2xl font-bold text-gray-900">👥</p>
+            <p className="text-xl font-bold text-gray-900 mt-1">{instructors.length}</p>
+            <p className="text-xs text-gray-500 mt-1">All</p>
           </div>
-          <p className="text-3xl font-bold text-gray-900">{instructors.length}</p>
-          <p className="text-sm text-gray-500 mt-1">All instructors</p>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-green-600"/>
-            </div>
-            <span className="text-sm text-gray-500 font-medium">Active</span>
+          <div className="bg-green-50 rounded-lg p-4 text-center">
+            <p className="text-2xl font-bold text-green-600">✅</p>
+            <p className="text-xl font-bold text-green-600 mt-1">{instructors.filter(i => i.status?.toUpperCase() === 'ACTIVE').length}</p>
+            <p className="text-xs text-gray-500 mt-1">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'ACTIVE').length / instructors.length) * 100).toFixed(1) : 0}%</p>
           </div>
-          <p className="text-3xl font-bold text-green-600">{instructors.filter(i => i.status?.toUpperCase() === 'ACTIVE').length}</p>
-          <p className="text-sm text-gray-500 mt-1">Active instructors</p>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-              <AlertCircle className="w-6 h-6 text-yellow-600"/>
-            </div>
-            <span className="text-sm text-gray-500 font-medium">Pending</span>
+          <div className="bg-yellow-50 rounded-lg p-4 text-center">
+            <p className="text-2xl font-bold text-yellow-600">⚠️</p>
+            <p className="text-xl font-bold text-yellow-600 mt-1">{instructors.filter(i => i.status?.toUpperCase() === 'SUSPENDED').length}</p>
+            <p className="text-xs text-gray-500 mt-1">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'SUSPENDED').length / instructors.length) * 100).toFixed(1) : 0}%</p>
           </div>
-          <p className="text-3xl font-bold text-yellow-600">{instructors.filter(i => i.status?.toUpperCase() === 'PENDING_VERIFICATION').length}</p>
-          <p className="text-sm text-gray-500 mt-1">Awaiting approval</p>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-              <XCircle className="w-6 h-6 text-red-600"/>
-            </div>
-            <span className="text-sm text-gray-500 font-medium">Suspended</span>
+          <div className="bg-red-50 rounded-lg p-4 text-center">
+            <p className="text-2xl font-bold text-red-600">⏳</p>
+            <p className="text-xl font-bold text-red-600 mt-1">{instructors.filter(i => i.status?.toUpperCase() === 'PENDING_VERIFICATION').length}</p>
+            <p className="text-xs text-gray-500 mt-1">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'PENDING_VERIFICATION').length / instructors.length) * 100).toFixed(1) : 0}%</p>
           </div>
-          <p className="text-3xl font-bold text-red-600">{instructors.filter(i => i.status?.toUpperCase() === 'SUSPENDED').length}</p>
-          <p className="text-sm text-gray-500 mt-1">Suspended accounts</p>
         </div>
       </div>
 
@@ -245,7 +236,7 @@ const Instructors = () => {
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search by name, email, or ID..."
+                  placeholder="Search..."
                   className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
@@ -256,166 +247,188 @@ const Instructors = () => {
                 onChange={(e) => setSelectedStatus(e.target.value)}
                 className="px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
               >
-                <option value="All">All Status</option>
+                <option value="All">All Status ▼</option>
                 <option value="ACTIVE">Active</option>
                 <option value="PENDING_VERIFICATION">Pending</option>
                 <option value="SUSPENDED">Suspended</option>
               </select>
+              <button className="px-4 py-2.5 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors font-medium">
+                + Add Instructor
+              </button>
             </div>
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Instructor</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Courses</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Students</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredInstructors.map((instructor) => (
-                <tr key={instructor.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
-                        {instructor.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">{instructor.name}</p>
-                        <p className="text-xs text-gray-500">ID: {instructor.id.slice(0, 8)}...</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <p className="text-gray-600">{instructor.email}</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <p className="text-gray-600 font-medium">{instructor.courses}</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <p className="text-gray-600 font-medium">{instructor.students}</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-                      instructor.status?.toUpperCase() === 'ACTIVE' ? 'bg-green-100 text-green-700' :
-                      instructor.status?.toUpperCase() === 'SUSPENDED' ? 'bg-red-100 text-red-700' :
-                      instructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-gray-100 text-gray-700'
-                    }`}>
-                      {instructor.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex gap-2 justify-end">
-                      <button
-                        onClick={() => handleViewDetails(instructor)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="View Details"
-                      >
-                        <User size={18} />
-                      </button>
-                      {hasPermission('instructors:approve') && instructor.status?.toUpperCase() !== 'ACTIVE' && (
-                        <button
-                          onClick={() => handleApprove(instructor.id)}
-                          className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                          title="Approve"
-                        >
-                          <CheckCircle size={18} />
-                        </button>
-                      )}
-                      {hasPermission('instructors:approve') && instructor.status?.toUpperCase() !== 'SUSPENDED' && (
-                        <button
-                          onClick={() => handleReject(instructor.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Reject"
-                        >
-                          <XCircle size={18} />
-                        </button>
-                      )}
-                      {hasPermission('instructors:edit') && (
-                        <button
-                          onClick={() => handleDelete(instructor.id)}
-                          className="p-2 text-gray-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Delete"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="p-6">
+          <p className="text-sm font-medium text-gray-700 mb-4">Instructor Cards ({filteredInstructors.length})</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {filteredInstructors
+              .slice((currentPage - 1) * instructorsPerPage, currentPage * instructorsPerPage)
+              .map((instructor) => (
+              <div key={instructor.id} className="bg-gray-50 rounded-xl p-4 hover:shadow-md transition-shadow border border-gray-200">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold">
+                    👤
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm truncate">{instructor.name}</p>
+                    <p className="text-xs text-gray-400">────────</p>
+                  </div>
+                </div>
+                <div className="mb-2">
+                  <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                    instructor.status?.toUpperCase() === 'ACTIVE' ? 'bg-green-100 text-green-700' :
+                    instructor.status?.toUpperCase() === 'SUSPENDED' ? 'bg-yellow-100 text-yellow-700' :
+                    instructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? 'bg-red-100 text-red-700' :
+                    'bg-gray-100 text-gray-700'
+                  }`}>
+                    {instructor.status?.toUpperCase() === 'ACTIVE' ? '🟢 ACTIVE' :
+                     instructor.status?.toUpperCase() === 'SUSPENDED' ? '🟡 SUSPENDED' :
+                     instructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? '🔴 PENDING' : instructor.status}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 mb-2">📧 {instructor.email.slice(0, 8)}...</p>
+                <p className="text-xs text-gray-500 mb-3">📅 {instructor.createdAt}</p>
+                <p className="text-xs text-gray-400 mb-3">────────</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleViewDetails(instructor)}
+                    className="px-3 py-1 text-xs text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium"
+                  >
+                    View
+                  </button>
+                  <button
+                    onClick={() => handleApprove(instructor.id)}
+                    className="px-3 py-1 text-xs text-green-600 hover:bg-green-50 rounded-lg transition-colors font-medium"
+                  >
+                    Edit
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Pagination */}
+        <div className="flex items-center justify-center gap-4 px-4 py-3 bg-white border-t border-gray-200">
+          <p className="text-sm text-gray-600">
+            Showing {(currentPage - 1) * instructorsPerPage + 1}-{Math.min(currentPage * instructorsPerPage, filteredInstructors.length)} of {filteredInstructors.length} instructors
+          </p>
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            &lt; Prev
+          </button>
+          <span className="text-sm text-gray-600">
+            Page {currentPage} of {Math.ceil(filteredInstructors.length / instructorsPerPage)}
+          </span>
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredInstructors.length / instructorsPerPage)))}
+            disabled={currentPage === Math.ceil(filteredInstructors.length / instructorsPerPage)}
+            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next &gt;
+          </button>
         </div>
       </div>
 
       {/* Instructor Details Modal */}
       {showModal && selectedInstructor && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="font-bold text-xl text-gray-900">Instructor Details</h2>
-            </div>
-            <div className="p-6 space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
-                  {selectedInstructor.name.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <p className="font-semibold text-lg text-gray-900">{selectedInstructor.name}</p>
-                  <p className="text-sm text-gray-500">{selectedInstructor.email}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">ID</p>
-                  <p className="font-semibold text-xs">{selectedInstructor.id.slice(0, 12)}...</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Qualification</p>
-                  <p className="font-semibold">{selectedInstructor.qualification}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Experience</p>
-                  <p className="font-semibold">{selectedInstructor.experience} years</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Courses</p>
-                  <p className="font-semibold">{selectedInstructor.courses}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Students</p>
-                  <p className="font-semibold">{selectedInstructor.students}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Status</p>
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    selectedInstructor.status?.toUpperCase() === 'ACTIVE' ? 'bg-green-100 text-green-700' :
-                    selectedInstructor.status?.toUpperCase() === 'SUSPENDED' ? 'bg-red-100 text-red-700' :
-                    selectedInstructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-gray-100 text-gray-700'
-                  }`}>
-                    {selectedInstructor.status}
-                  </span>
-                </div>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Joined Date</p>
-                <p className="font-semibold">{selectedInstructor.createdAt}</p>
-              </div>
-            </div>
-            <div className="p-6 border-t border-gray-200">
+          <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
               <button
                 onClick={() => setShowModal(false)}
-                className="w-full px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all"
+                className="text-gray-500 hover:text-gray-700 flex items-center gap-2 text-sm font-medium"
               >
-                Close
+                ← Back to Instructors
               </button>
+              <h2 className="font-bold text-xl text-gray-900">Instructor Details</h2>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleApprove(selectedInstructor.id)}
+                  className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors font-medium"
+                >
+                  Edit
+                </button>
+                <button className="px-3 py-1.5 text-sm bg-gray-50 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors font-medium">
+                  Actions ▼
+                </button>
+              </div>
+            </div>
+            <div className="p-6 space-y-6">
+              {/* Profile Section */}
+              <div className="border border-gray-200 rounded-xl overflow-hidden">
+                <div className="p-6 flex items-start gap-6">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white font-bold text-2xl border-4 border-purple-100">
+                    {selectedInstructor.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-xl text-gray-900">{selectedInstructor.name}</p>
+                    <p className="text-sm text-gray-600 mt-1">📧 {selectedInstructor.email}</p>
+                    <p className="text-sm text-gray-600 mt-1">🎓 INSTRUCTOR</p>
+                    <span className={`inline-block mt-2 px-2 py-1 text-xs font-medium rounded-full ${
+                      selectedInstructor.status?.toUpperCase() === 'ACTIVE' ? 'bg-green-100 text-green-700' :
+                      selectedInstructor.status?.toUpperCase() === 'SUSPENDED' ? 'bg-yellow-100 text-yellow-700' :
+                      selectedInstructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? 'bg-red-100 text-red-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {selectedInstructor.status}
+                    </span>
+                    <p className="text-sm text-gray-500 mt-2">📅 Joined: {selectedInstructor.createdAt}</p>
+                    <p className="text-sm text-gray-500">🆔 ID: {selectedInstructor.id}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Stats Cards */}
+              <div className="grid grid-cols-4 gap-4">
+                <div className="bg-gray-50 p-4 rounded-xl text-center">
+                  <p className="text-2xl font-bold text-gray-900">{selectedInstructor.courses}</p>
+                  <p className="text-xs text-gray-500 mt-1">Courses</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-xl text-center">
+                  <p className="text-2xl font-bold text-gray-900">{selectedInstructor.students}</p>
+                  <p className="text-xs text-gray-500 mt-1">Students</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-xl text-center">
+                  <p className="text-2xl font-bold text-gray-900">4.8</p>
+                  <p className="text-xs text-gray-500 mt-1">Rating</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-xl text-center">
+                  <p className="text-2xl font-bold text-gray-900">3</p>
+                  <p className="text-xs text-gray-500 mt-1">Reviews</p>
+                </div>
+              </div>
+
+              {/* Account Information */}
+              <div className="border border-gray-200 rounded-xl overflow-hidden">
+                <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
+                  <p className="font-semibold text-sm text-gray-700">📋 Account Information</p>
+                </div>
+                <div className="divide-y divide-gray-200">
+                  <div className="px-4 py-3 flex justify-between items-center">
+                    <p className="text-sm text-gray-500">Account Status</p>
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                      selectedInstructor.status?.toUpperCase() === 'ACTIVE' ? 'bg-green-100 text-green-700' :
+                      selectedInstructor.status?.toUpperCase() === 'SUSPENDED' ? 'bg-yellow-100 text-yellow-700' :
+                      selectedInstructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? 'bg-red-100 text-red-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {selectedInstructor.status}
+                    </span>
+                  </div>
+                  <div className="px-4 py-3 flex justify-between items-center">
+                    <p className="text-sm text-gray-500">Role</p>
+                    <p className="text-sm text-gray-900">INSTRUCTOR</p>
+                  </div>
+                  <div className="px-4 py-3 flex justify-between items-center">
+                    <p className="text-sm text-gray-500">Created</p>
+                    <p className="text-sm text-gray-900">{selectedInstructor.createdAt}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
