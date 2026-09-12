@@ -1,13 +1,15 @@
 // src/api/axiosInstance.js
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
     "Accept": "application/json",
+    // Required to bypass ngrok's browser interstitial warning page
+    "ngrok-skip-browser-warning": "true",
   },
   timeout: 30000,
 });
@@ -15,6 +17,11 @@ const axiosInstance = axios.create({
 // ✅ Request interceptor - Log and add token
 axiosInstance.interceptors.request.use(
   (config) => {
+    // If sending FormData, delete Content-Type so Axios/browser sets boundary automatically
+    if (config.data instanceof FormData) {
+      delete config.headers["Content-Type"];
+    }
+
     // Skip auth header for public endpoints (forgot password, verify email, etc.)
     const publicEndpoints = [
       '/api/v1/auth/register',
@@ -70,8 +77,15 @@ axiosInstance.interceptors.response.use(
         localStorage.removeItem('lms_user');
         sessionStorage.removeItem('lms_token');
         
-        if (!window.location.pathname.includes('/admin/login')) {
-          window.location.href = '/admin/login';
+        const currentPath = window.location.pathname;
+        if (currentPath.startsWith('/admin')) {
+          if (!currentPath.includes('/admin/login')) {
+            window.location.href = '/admin/login';
+          }
+        } else {
+          if (currentPath !== '/login' && currentPath !== '/') {
+            window.location.href = '/login';
+          }
         }
       }
     }

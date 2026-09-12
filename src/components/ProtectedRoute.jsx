@@ -29,12 +29,19 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   }
   
   if (allowedRoles.length > 0) {
-    const userRole = String(user?.role || user?.role1 || user?.userRole || '').toLowerCase();
-    const hasAllowedRole = allowedRoles.some(role => 
-      userRole.includes(String(role).toLowerCase())
-    );
+    const storedUser = JSON.parse(localStorage.getItem('lms_user') || '{}');
+    const userRole = String(
+      user?.role || user?.role1 || user?.userRole || 
+      storedUser?.role || storedUser?.role1 || storedUser?.userRole || ''
+    ).toLowerCase();
+
+    const hasAllowedRole = allowedRoles.some(role => {
+      const targetRole = String(role).toLowerCase();
+      return userRole.includes(targetRole) || targetRole.includes(userRole) || 
+             (userRole.includes('main') && targetRole.includes('admin'));
+    });
     
-    if (!hasAllowedRole) {
+    if (!hasAllowedRole && userRole) {
       return <Navigate to="/" replace />;
     }
   }

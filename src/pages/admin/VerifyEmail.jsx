@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, KeyRound, CheckCircle, AlertCircle, ArrowLeft } from "lucide-react";
+import axiosInstance from "../../api/axiosInstance";
 
 const VerifyEmail = () => {
   const navigate = useNavigate();
@@ -55,15 +56,14 @@ const VerifyEmail = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/auth/admin/verify-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp: otpValue }),
+      // ✅ Use axiosInstance so ngrok-skip-browser-warning header is included
+      const { data } = await axiosInstance.post("/api/v1/auth/verify-email", {
+        email,
+        otp: otpValue,
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Invalid OTP. Please try again.");
+      if (data && !data.success && data.message) {
+        throw new Error(data.message);
       }
 
       setSuccess(true);
@@ -71,7 +71,7 @@ const VerifyEmail = () => {
         navigate("/admin/login");
       }, 2000);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message || "Invalid OTP. Please try again.");
     } finally {
       setLoading(false);
     }

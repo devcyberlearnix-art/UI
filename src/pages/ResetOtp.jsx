@@ -5,8 +5,7 @@ import {
   CheckCircle, AlertCircle, ArrowLeft, Timer,
   AlertTriangle, Mail, KeyRound
 } from "lucide-react";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+import axiosInstance from "../api/axiosInstance";
 
 function ResetOtp() {
   const navigate = useNavigate();
@@ -165,22 +164,15 @@ function ResetOtp() {
     setError("");
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/password/verify-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          otp: otp.join(""),    // send the OTP entered
-          newPassword: password,
-        }),
+      // ✅ Use axiosInstance so ngrok-skip-browser-warning header is included
+      const { data } = await axiosInstance.post("/api/v1/auth/password/verify-otp", {
+        email: email,
+        otp: otp.join(""),
+        newPassword: password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Password reset failed. Please try again.");
+      if (data && !data.success && data.message) {
+        throw new Error(data.message);
       }
 
       // Success
@@ -189,7 +181,7 @@ function ResetOtp() {
         navigate("/login");
       }, 2000);
     } catch (err) {
-      setError(err.message || "Something went wrong. Please try again.");
+      setError(err.response?.data?.message || err.message || "Something went wrong. Please try again.");
       setSuccess(false);
     } finally {
       setLoading(false);

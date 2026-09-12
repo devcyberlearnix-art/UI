@@ -28,6 +28,7 @@ import InstructorDashboard from "./pages/instructor/InstructorDashboard";
 import CreateCourse from "./pages/instructor/CreateCourse";
 import InstructorCourses from "./pages/instructor/MyCourses";
 import InstructorAnalytics from "./pages/instructor/Analytics";
+import CourseStudents from "./pages/instructor/CourseStudents";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -104,11 +105,12 @@ function App() {
           <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
           <Route path="/instructor/create-course" element={<CreateCourse />} />
           <Route path="/instructor/my-courses" element={<InstructorCourses />} />
+          <Route path="/instructor/courses/:courseId/students" element={<CourseStudents />} />
           <Route path="/instructor/analytics" element={<InstructorAnalytics />} />
         </Route>
 
         {/* ✅ Admin routes - protected */}
-        <Route element={<ProtectedRoute allowedRoles={["admin", "super_admin", "sub_admin"]}><DashboardLayout /></ProtectedRoute>}>
+        <Route element={<ProtectedRoute allowedRoles={["admin", "super_admin", "sub_admin", "main_admin", "main"]}><DashboardLayout /></ProtectedRoute>}>
           {/* Dashboard */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           

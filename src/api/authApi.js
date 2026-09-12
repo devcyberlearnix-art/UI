@@ -41,6 +41,18 @@ export const authApi = {
     }
   },
 
+  register: async (userData) => {
+    try {
+      console.log('[Auth] Registration payload:', JSON.stringify(userData, null, 2));
+      const response = await axiosInstance.post('/api/v1/auth/register', userData);
+      console.log('[Auth] Registration response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Register error:', error);
+      throw error;
+    }
+  },
+
   logout: async () => {
     try {
       const refreshToken = localStorage.getItem("refresh_token") || null;
@@ -117,9 +129,11 @@ export const authApi = {
     }
   },
 
-  verifyEmail: async ({ email, otp }) => {
+  verifyEmail: async ({ email, otpSessionId, otp }) => {
     try {
-      const response = await axiosInstance.post('/api/v1/auth/verify-email', { email, otp });
+      const payload = { email, otp };
+      if (otpSessionId) payload.otpSessionId = otpSessionId;
+      const response = await axiosInstance.post('/api/v1/auth/verify-email', payload);
       return response.data;
     } catch (error) {
       console.error('[Auth] Verify email error:', error);

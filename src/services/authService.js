@@ -140,6 +140,17 @@ export const authService = {
     return { user: userData, token };
   },
 
+  // Register
+  register: async (userData) => {
+    try {
+      const response = await axiosInstance.post("/api/v1/auth/register", userData);
+      return response.data;
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message || "Registration failed";
+      throw new Error(errorMsg);
+    }
+  },
+
   // Logout
   logout: async () => {
     try {

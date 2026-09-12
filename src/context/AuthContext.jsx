@@ -147,7 +147,7 @@ export const AuthProvider = ({ children }) => {
           errorMessage = data.message;
         }
       } else if (error.request) {
-        errorMessage = 'Cannot connect to the server. Please check your internet connection.';
+        errorMessage = 'Cannot connect to the backend server. Please verify that the backend API server / ngrok tunnel is active.';
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -195,5 +195,4 @@ export const AuthProvider = ({ children }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export { AuthContext };
 export default AuthProvider;

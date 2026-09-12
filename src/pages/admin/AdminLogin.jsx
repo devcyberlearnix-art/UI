@@ -28,7 +28,7 @@ const AdminLogin = () => {
   const getRedirectByRole = (roleValue) => {
     const role = String(roleValue || "").toLowerCase();
     if (role.includes("sub")) return "/admin/sub-dashboard";
-    if (role.includes("admin") || role.includes("super")) return "/admin/dashboard";
+    if (role.includes("admin") || role.includes("super") || role.includes("main")) return "/admin/dashboard";
     if (role.includes("instructor")) return "/instructor/dashboard";
     return "/student/dashboard";
   };

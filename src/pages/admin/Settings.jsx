@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axiosInstance from "../../api/axiosInstance";
 import { motion } from "framer-motion";
 
 const Settings = () => {
@@ -37,27 +38,12 @@ const Settings = () => {
   const [notifError, setNotifError] = useState("");
   const [notifSuccess, setNotifSuccess] = useState("");
 
-  // Helper to get auth token
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("access_token");
-    return {
-      "Content-Type": "application/json",
-      Authorization: token ? `Bearer ${token}` : "",
-    };
-  };
-
   // Load platform settings
   useEffect(() => {
     const loadPlatformSettings = async () => {
       setPlatformLoading(true);
       try {
-        const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/admin/settings/platform", {
-          headers: getAuthHeaders(),
-        });
-        if (!response.ok) {
-          throw new Error(await response.text());
-        }
-        const data = await response.json();
+        const { data } = await axiosInstance.get("/api/v1/admin/settings/platform");
         setPlatformSettings({
           siteName: data.siteName || "",
           maintenanceMode: data.maintenanceMode ?? false,
@@ -78,39 +64,26 @@ const Settings = () => {
     setPlatformError("");
     setPlatformSuccess("");
     try {
-      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/admin/settings/platform", {
-        method: "POST", // or PUT – adjust to your backend
-        headers: getAuthHeaders(),
-        body: JSON.stringify({
-          siteName: platformSettings.siteName,
-          maintenanceMode: platformSettings.maintenanceMode,
-          maxUsers: platformSettings.maxUsers,
-        }),
+      await axiosInstance.put("/api/v1/admin/settings/platform", {
+        siteName: platformSettings.siteName,
+        maintenanceMode: platformSettings.maintenanceMode,
+        maxUsers: platformSettings.maxUsers,
       });
-      if (!response.ok) {
-        throw new Error(await response.text());
-      }
       setPlatformSuccess("Platform settings saved successfully!");
       setTimeout(() => setPlatformSuccess(""), 3000);
     } catch (err) {
-      setPlatformError(err.message || "Failed to save settings");
+      setPlatformError(err.response?.data?.message || err.message || "Failed to save settings");
     } finally {
       setPlatformSaving(false);
     }
   };
 
-  // Load payment settings (unchanged)
+  // Load payment settings
   useEffect(() => {
     const loadPaymentSettings = async () => {
       setPaymentLoading(true);
       try {
-        const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/admin/settings/payment", {
-          headers: getAuthHeaders(),
-        });
-        if (!response.ok) {
-          throw new Error(await response.text());
-        }
-        const data = await response.json();
+        const { data } = await axiosInstance.get("/api/v1/admin/settings/payment");
         setPaymentSettings({
           paymentGateway: data.paymentGateway || "Stripe",
           currency: data.currency || "INR",
@@ -131,39 +104,26 @@ const Settings = () => {
     setPaymentError("");
     setPaymentSuccess("");
     try {
-      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/admin/settings/payment", {
-        method: "POST",
-        headers: getAuthHeaders(),
-        body: JSON.stringify({
-          paymentGateway: paymentSettings.paymentGateway,
-          currency: paymentSettings.currency,
-          taxPercentage: paymentSettings.taxPercentage,
-        }),
+      await axiosInstance.put("/api/v1/admin/settings/payment", {
+        paymentGateway: paymentSettings.paymentGateway,
+        currency: paymentSettings.currency,
+        taxPercentage: paymentSettings.taxPercentage,
       });
-      if (!response.ok) {
-        throw new Error(await response.text());
-      }
       setPaymentSuccess("Payment settings saved successfully!");
       setTimeout(() => setPaymentSuccess(""), 3000);
     } catch (err) {
-      setPaymentError(err.message || "Failed to save settings");
+      setPaymentError(err.response?.data?.message || err.message || "Failed to save settings");
     } finally {
       setPaymentSaving(false);
     }
   };
 
-  // Load notification settings (unchanged)
+  // Load notification settings
   useEffect(() => {
     const loadNotifSettings = async () => {
       setNotifLoading(true);
       try {
-        const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/auth/admin/settings/notifications", {
-          headers: getAuthHeaders(),
-        });
-        if (!response.ok) {
-          throw new Error(await response.text());
-        }
-        const data = await response.json();
+        const { data } = await axiosInstance.get("/api/v1/admin/settings/notifications");
         setNotifications({
           emailEnabled: data.emailEnabled ?? true,
           smsEnabled: data.smsEnabled ?? false,
@@ -184,22 +144,15 @@ const Settings = () => {
     setNotifError("");
     setNotifSuccess("");
     try {
-      const response = await fetch("https://matted-ascent-specimen.ngrok-free.dev/auth/admin/settings/notifications", {
-        method: "PUT",
-        headers: getAuthHeaders(),
-        body: JSON.stringify({
-          emailEnabled: notifications.emailEnabled,
-          smsEnabled: notifications.smsEnabled,
-          pushNotifications: notifications.pushNotifications,
-        }),
+      await axiosInstance.put("/api/v1/admin/settings/notifications", {
+        emailEnabled: notifications.emailEnabled,
+        smsEnabled: notifications.smsEnabled,
+        pushNotifications: notifications.pushNotifications,
       });
-      if (!response.ok) {
-        throw new Error(await response.text());
-      }
       setNotifSuccess("Notification settings saved successfully!");
       setTimeout(() => setNotifSuccess(""), 3000);
     } catch (err) {
-      setNotifError(err.message || "Failed to save settings");
+      setNotifError(err.response?.data?.message || err.message || "Failed to save settings");
     } finally {
       setNotifSaving(false);
     }

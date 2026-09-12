@@ -31,27 +31,37 @@ const Instructors = () => {
       console.log('[Instructors] Fetching instructors from new API endpoint...');
       const response = await adminApi.getInstructors();
       console.log('[Instructors] API Response:', response);
-      
-      // Handle different response structures
-      let instructorData = response.data || response;
-      if (!Array.isArray(instructorData)) {
-        if (instructorData.instructors) instructorData = instructorData.instructors;
-        else if (instructorData.items) instructorData = instructorData.items;
-        else if (instructorData.content) instructorData = instructorData.content;
-        else instructorData = [instructorData];
+
+      // API returns: { success, data: { totalUsers, users: [...] } }
+      let instructorData = [];
+      if (response?.data?.users && Array.isArray(response.data.users)) {
+        instructorData = response.data.users;
+      } else if (response?.data && Array.isArray(response.data)) {
+        instructorData = response.data;
+      } else if (Array.isArray(response)) {
+        instructorData = response;
+      } else if (response?.users && Array.isArray(response.users)) {
+        instructorData = response.users;
+      } else if (response?.instructors && Array.isArray(response.instructors)) {
+        instructorData = response.instructors;
       }
-      
+
       // Transform API data to match component structure
+      // API fields: id, email, role, status, createdAt
       const transformedInstructors = instructorData.map(instructor => ({
-        id: instructor.id || instructor._id || instructor.instructorId,
-        name: instructor.name || instructor.firstName ? `${instructor.firstName} ${instructor.lastName || ''}`.trim() : instructor.displayName || 'Unknown',
+        id: instructor.id || instructor.userId || instructor._id || instructor.instructorId,
+        name: instructor.firstName
+          ? `${instructor.firstName} ${instructor.lastName || ''}`.trim()
+          : instructor.name || instructor.displayName || instructor.email?.split('@')[0] || 'Unknown',
         email: instructor.email || instructor.emailAddress || '',
-        status: instructor.status || instructor.verificationStatus || 'pending',
+        mobile: instructor.mobile || instructor.mobileNumber || '',
+        avatar: instructor.profilePhoto || '',
+        status: String(instructor.status || instructor.verificationStatus || 'ACTIVE').toLowerCase(),
         courses: instructor.courses || instructor.courseCount || 0,
         students: instructor.students || instructor.studentCount || 0,
         qualification: instructor.qualification || instructor.specialization || 'Not specified',
         experience: instructor.experience || instructor.yearsOfExperience || 0,
-        createdAt: instructor.createdAt || instructor.joinedDate || new Date().toLocaleDateString()
+        createdAt: instructor.createdAt ? new Date(instructor.createdAt).toLocaleDateString() : new Date().toLocaleDateString()
       }));
       
       setInstructors(transformedInstructors);
@@ -188,16 +198,16 @@ const Instructors = () => {
           <p className="text-2xl font-bold">{instructors.length}</p>
         </div>
         <div className="bg-white p-4 rounded-xl border">
-          <p className="text-sm text-gray-500">Verified</p>
-          <p className="text-2xl font-bold text-green-600">{instructors.filter(i => i.status === 'approved').length}</p>
+          <p className="text-sm text-gray-500">Active</p>
+          <p className="text-2xl font-bold text-green-600">{instructors.filter(i => i.status === 'active').length}</p>
         </div>
         <div className="bg-white p-4 rounded-xl border">
           <p className="text-sm text-gray-500">Pending</p>
-          <p className="text-2xl font-bold text-yellow-600">{instructors.filter(i => i.status === 'pending').length}</p>
+          <p className="text-2xl font-bold text-yellow-600">{instructors.filter(i => i.status === 'pending_verification').length}</p>
         </div>
         <div className="bg-white p-4 rounded-xl border">
-          <p className="text-sm text-gray-500">Rejected</p>
-          <p className="text-2xl font-bold text-red-600">{instructors.filter(i => i.status === 'rejected').length}</p>
+          <p className="text-sm text-gray-500">Suspended / Locked</p>
+          <p className="text-2xl font-bold text-red-600">{instructors.filter(i => i.status === 'suspended' || i.status === 'locked').length}</p>
         </div>
       </div>
 
@@ -222,12 +232,14 @@ const Instructors = () => {
                   <td className="px-6 py-4 text-sm">{instructor.courses}</td>
                   <td className="px-6 py-4 text-sm">{instructor.students}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      instructor.status === "approved" ? "bg-green-100 text-green-700" :
-                      instructor.status === "rejected" ? "bg-red-100 text-red-700" :
-                      "bg-yellow-100 text-yellow-700"
+                    <span className={`px-2 py-1 text-xs rounded-full font-medium capitalize ${
+                      instructor.status === 'active' ? 'bg-green-100 text-green-700' :
+                      instructor.status === 'suspended' ? 'bg-red-100 text-red-700' :
+                      instructor.status === 'locked' ? 'bg-gray-200 text-gray-700' :
+                      instructor.status === 'pending_verification' ? 'bg-yellow-100 text-yellow-700' :
+                      'bg-blue-100 text-blue-700'
                     }`}>
-                      {instructor.status}
+                      {instructor.status.replace(/_/g, ' ')}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right space-x-2">
@@ -316,12 +328,14 @@ const Instructors = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Status</p>
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  selectedInstructor.status === "approved" ? "bg-green-100 text-green-700" :
-                  selectedInstructor.status === "rejected" ? "bg-red-100 text-red-700" :
-                  "bg-yellow-100 text-yellow-700"
+                <span className={`px-2 py-1 text-xs rounded-full font-medium capitalize ${
+                  selectedInstructor.status === 'active' ? 'bg-green-100 text-green-700' :
+                  selectedInstructor.status === 'suspended' ? 'bg-red-100 text-red-700' :
+                  selectedInstructor.status === 'locked' ? 'bg-gray-200 text-gray-700' :
+                  selectedInstructor.status === 'pending_verification' ? 'bg-yellow-100 text-yellow-700' :
+                  'bg-blue-100 text-blue-700'
                 }`}>
-                  {selectedInstructor.status}
+                  {selectedInstructor.status.replace(/_/g, ' ')}
                 </span>
               </div>
               <div>

@@ -25,7 +25,9 @@ function OtpVerify() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const [otpSessionId, setOtpSessionId] = useState(location.state?.otpSessionId || "");
+  const [otpSessionId, setOtpSessionId] = useState(
+    location.state?.otpSessionId || sessionStorage.getItem("pending_otp_session_id") || ""
+  );
   const [cooldown, setCooldown] = useState(Number(location.state?.cooldownSeconds || 30));
 
   useEffect(() => {
@@ -56,9 +58,13 @@ function OtpVerify() {
     setLoading(true);
     try {
       if (flow === "register") {
-        const res = await authApi.verifyEmail({ email, otp });
+        if (!otpSessionId) {
+          throw new Error("OTP session ID is missing. Please click 'Resend OTP' to receive a new code.");
+        }
+        const res = await authApi.verifyEmail({ email, otpSessionId, otp });
         setSuccess(true);
         toast.success(res.message || "Email verified successfully");
+        sessionStorage.removeItem("pending_otp_session_id");
         setTimeout(() => navigate("/login", { replace: true }), 900);
         return;
       }
@@ -128,18 +134,16 @@ function OtpVerify() {
 
     setLoading(true);
     try {
-      if (flow === "register") {
-        setError("Registration OTP resend is not enabled in current backend contract.");
-        setLoading(false);
-        return;
-      }
-
       const res = await authApi.requestLoginOtp(email);
-      setOtpSessionId(res.otpSessionId || "");
+      const newSessionId = res.otpSessionId || res.sessionId || res.data?.otpSessionId || "";
+      if (newSessionId) {
+        setOtpSessionId(newSessionId);
+        sessionStorage.setItem("pending_otp_session_id", newSessionId);
+      }
       setCooldown(Number(res.cooldownSeconds || 30));
-      toast.success(res.message || "OTP resent");
+      toast.success(res.message || "New OTP sent to your email");
     } catch (err) {
-      const message = err.response?.data?.message || "Failed to resend OTP";
+      const message = err.response?.data?.message || err.message || "Failed to resend OTP";
       setError(message);
       toast.error(message);
     } finally {
@@ -194,17 +198,15 @@ function OtpVerify() {
           {loading ? "Verifying..." : "Verify OTP"}
         </button>
 
-        {flow === "login" && (
-          <button
-            type="button"
-            onClick={onResend}
-            disabled={loading || !canResend}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-600 disabled:opacity-60"
-          >
-            <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
-            {canResend ? "Resend OTP" : `Resend in ${cooldown}s`}
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onResend}
+          disabled={loading || !canResend}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-600 disabled:opacity-60"
+        >
+          <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+          {canResend ? "Resend OTP" : `Resend in ${cooldown}s`}
+        </button>
       </div>
     </AuthShell>
   );

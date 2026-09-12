@@ -21,19 +21,19 @@ import {
   User,
 } from "lucide-react";
 import AuthShell from "../components/ui/AuthShell";
+import axiosInstance from "../api/axiosInstance";
+import { authApi } from "../api/authApi";
 
-const cities = ["Hyderabad", "Visakhapatnam", "Vijayawada", "Guntur", "Tirupati", "Nellore"];
-const states = ["Andhra Pradesh", "Telangana", "Karnataka", "Tamil Nadu", "Maharashtra"];
-const countries = ["India", "United States", "United Kingdom", "Canada", "Australia"];
 const languages = ["English", "Hindi", "Telugu", "Tamil", "Kannada", "Malayalam"];
 
 const steps = [
   { id: 1, title: "Account" },
   { id: 2, title: "Security" },
   { id: 3, title: "Profile" },
+  { id: 4, title: "Terms" }, // ✅ Added Step 4
 ];
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+// Base URL is handled by axiosInstance — no need to declare it here
 
 const Register = () => {
   const navigate = useNavigate();
@@ -47,6 +47,7 @@ const Register = () => {
   const [photoUrl, setPhotoUrl] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [otpSessionId, setOtpSessionId] = useState("");
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -116,11 +117,14 @@ const Register = () => {
     if (step === 3) {
       if (!/^[6-9]\d{9}$/.test(formData.mobile)) nextErrors.mobile = "Valid 10-digit mobile is required";
       if (!formData.dob) nextErrors.dob = "Date of birth is required";
-      if (!formData.city) nextErrors.city = "City is required";
-      if (!formData.state) nextErrors.state = "State is required";
-      if (!formData.country) nextErrors.country = "Country is required";
+      if (!formData.city.trim()) nextErrors.city = "City is required"; // ✅ Updated for Text Input
+      if (!formData.state.trim()) nextErrors.state = "State is required"; // ✅ Updated for Text Input
+      if (!formData.country.trim()) nextErrors.country = "Country is required"; // ✅ Updated for Text Input
       if (!formData.preferredLanguage) nextErrors.preferredLanguage = "Preferred language is required";
-      if (!formData.agreeToTerms) nextErrors.agreeToTerms = "Please accept terms";
+    }
+
+    if (step === 4) {
+      if (!formData.agreeToTerms) nextErrors.agreeToTerms = "Please accept the Terms and Privacy Policy";
     }
 
     setErrors((prev) => ({ ...prev, ...nextErrors }));
@@ -144,15 +148,9 @@ const Register = () => {
     payload.append("profilePhoto", file);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/upload/profile-photo`, {
-        method: "POST",
-        body: payload,
-      });
-
-      if (!response.ok) throw new Error("Upload failed");
-
-      const data = await response.json();
-      setPhotoUrl(data.photoUrl || data.url || data.filePath || "");
+      // ✅ Use axiosInstance so ngrok-skip-browser-warning header is included
+      const response = await axiosInstance.post("/api/v1/auth/upload/profile-photo", payload);
+      setPhotoUrl(response.data?.photoUrl || response.data?.url || response.data?.filePath || "");
       setMessage("Photo uploaded successfully");
       setMessageType("success");
     } catch {
@@ -172,7 +170,7 @@ const Register = () => {
       return;
     }
     setMessage("");
-    setCurrentStep((prev) => Math.min(prev + 1, 3));
+    setCurrentStep((prev) => Math.min(prev + 1, 4)); // ✅ Updated to 4
   };
 
   const handleBack = () => {
@@ -184,7 +182,8 @@ const Register = () => {
     e.preventDefault();
     setMessage("");
 
-    if (!validateStep(1) || !validateStep(2) || !validateStep(3)) {
+    // ✅ Validate all 4 steps before submitting
+    if (!validateStep(1) || !validateStep(2) || !validateStep(3) || !validateStep(4)) {
       setMessage("Please correct the highlighted fields");
       setMessageType("error");
       return;
@@ -200,7 +199,6 @@ const Register = () => {
         confirmPassword: formData.confirmPassword,
         countryCode: formData.countryCode,
         mobileNumber: formData.mobile,
-        mobile: formData.mobile,
         dob: formData.dob,
         profilePhoto: photoUrl || "",
         city: formData.city,
@@ -215,18 +213,20 @@ const Register = () => {
         highestQualification: formData.highestQualification || "",
       };
 
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      // ✅ Use authApi.register — includes ngrok-skip-browser-warning via axiosInstance
+      const data = await authApi.register(payload);
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
+      if (!data.success && data.message) {
+        throw new Error(data.message);
       }
 
-      setMessage("Registration successful. Redirecting to sign in...");
+      const sessionId = data.otpSessionId || data.sessionId || data.data?.otpSessionId || "";
+      setOtpSessionId(sessionId);
+      if (sessionId) {
+        sessionStorage.setItem("pending_otp_session_id", sessionId);
+      }
+
+      setMessage("Registration successful. Redirecting to verify...");
       setMessageType("success");
       setTimeout(
         () =>
@@ -234,12 +234,14 @@ const Register = () => {
             state: {
               email: formData.email,
               flow: "register",
+              otpSessionId: sessionId,
             },
           }),
         900
       );
     } catch (err) {
-      setMessage(err.message || "Registration failed. Please try again");
+      const errorMsg = err.response?.data?.message || err.message || "Registration failed. Please try again";
+      setMessage(errorMsg);
       setMessageType("error");
     } finally {
       setLoading(false);
@@ -252,7 +254,7 @@ const Register = () => {
       subtitle="A guided onboarding flow designed for clarity, speed, and a polished user experience."
       eyebrow="LearnMaster Enroll"
       highlights={[
-        { value: "3-Step", label: "Signup" },
+        { value: "4-Step", label: "Signup" }, // ✅ Updated to 4-Step
         { value: "Smooth", label: "Flow" },
         { value: "Secure", label: "Account" },
       ]}
@@ -260,7 +262,8 @@ const Register = () => {
       <h1 className="mb-1 text-2xl font-bold text-slate-900">Create Account</h1>
       <p className="mb-5 text-sm text-slate-500">Simple steps, clean inputs, and strong security.</p>
 
-      <div className="mb-6 grid grid-cols-3 gap-2 rounded-xl border border-slate-200 bg-slate-50 p-2">
+      {/* ✅ Updated to grid-cols-4 */}
+      <div className="mb-6 grid grid-cols-4 gap-2 rounded-xl border border-slate-200 bg-slate-50 p-2">
         {steps.map((step) => {
           const active = step.id === currentStep;
           const done = step.id < currentStep;
@@ -271,13 +274,12 @@ const Register = () => {
               onClick={() => {
                 if (step.id <= currentStep) setCurrentStep(step.id);
               }}
-              className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                active
+              className={`rounded-lg px-2 py-2 text-xs font-semibold transition ${active
                   ? "bg-white text-orange-600 shadow"
                   : done
-                  ? "bg-emerald-50 text-emerald-700"
-                  : "text-slate-500"
-              }`}
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "text-slate-500"
+                }`}
             >
               {done ? "Done" : `Step ${step.id}`} - {step.title}
             </button>
@@ -287,11 +289,10 @@ const Register = () => {
 
       {message && (
         <div
-          className={`mb-4 flex items-start gap-2 rounded-xl border p-3 text-sm ${
-            messageType === "success"
+          className={`mb-4 flex items-start gap-2 rounded-xl border p-3 text-sm ${messageType === "success"
               ? "border-emerald-200 bg-emerald-50 text-emerald-700"
               : "border-red-200 bg-red-50 text-red-700"
-          }`}
+            }`}
         >
           {messageType === "success" ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
           <span>{message}</span>
@@ -451,17 +452,19 @@ const Register = () => {
                 </div>
               </div>
 
+              {/* ✅ Converted City, State, and Country to standard text inputs */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div>
                   <label className="mb-1 block text-sm font-medium text-slate-700">City</label>
                   <div className="relative">
                     <MapPin size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <select className="lms-input pl-10" value={formData.city} onChange={(e) => updateField("city", e.target.value)}>
-                      <option value="">Select</option>
-                      {cities.map((city) => (
-                        <option key={city} value={city}>{city}</option>
-                      ))}
-                    </select>
+                    <input
+                      type="text"
+                      className="lms-input pl-10"
+                      placeholder="Enter your city"
+                      value={formData.city}
+                      onChange={(e) => updateField("city", e.target.value)}
+                    />
                   </div>
                   <FieldError name="city" />
                 </div>
@@ -470,12 +473,13 @@ const Register = () => {
                   <label className="mb-1 block text-sm font-medium text-slate-700">State</label>
                   <div className="relative">
                     <MapPin size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <select className="lms-input pl-10" value={formData.state} onChange={(e) => updateField("state", e.target.value)}>
-                      <option value="">Select</option>
-                      {states.map((state) => (
-                        <option key={state} value={state}>{state}</option>
-                      ))}
-                    </select>
+                    <input
+                      type="text"
+                      className="lms-input pl-10"
+                      placeholder="Enter your state"
+                      value={formData.state}
+                      onChange={(e) => updateField("state", e.target.value)}
+                    />
                   </div>
                   <FieldError name="state" />
                 </div>
@@ -484,12 +488,13 @@ const Register = () => {
                   <label className="mb-1 block text-sm font-medium text-slate-700">Country</label>
                   <div className="relative">
                     <Globe size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <select className="lms-input pl-10" value={formData.country} onChange={(e) => updateField("country", e.target.value)}>
-                      <option value="">Select</option>
-                      {countries.map((country) => (
-                        <option key={country} value={country}>{country}</option>
-                      ))}
-                    </select>
+                    <input
+                      type="text"
+                      className="lms-input pl-10"
+                      placeholder="Enter your country"
+                      value={formData.country}
+                      onChange={(e) => updateField("country", e.target.value)}
+                    />
                   </div>
                   <FieldError name="country" />
                 </div>
@@ -536,18 +541,54 @@ const Register = () => {
                   </div>
                 </div>
               </div>
+            </motion.div>
+          )}
 
-              <div>
-                <label className="inline-flex items-center gap-2 text-sm text-slate-600">
-                  <input
-                    type="checkbox"
-                    checked={formData.agreeToTerms}
-                    onChange={(e) => updateField("agreeToTerms", e.target.checked)}
-                    className="h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
-                  />
-                  I agree to the Terms and Privacy Policy
-                </label>
-                <FieldError name="agreeToTerms" />
+          {/* ✅ Added Step 4: Terms & Conditions */}
+          {currentStep === 4 && (
+            <motion.div
+              key="step-4"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.22 }}
+              className="space-y-4"
+            >
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-6">
+                <h3 className="mb-3 text-lg font-semibold text-slate-800">Terms & Conditions</h3>
+                <div className="mb-4 max-h-48 overflow-y-auto rounded-lg bg-white p-4 text-sm text-slate-600 shadow-inner border border-slate-100">
+                  <p className="mb-2">
+                    <strong>1. Acceptance of Terms</strong><br />
+                    By registering for an account on LearnMaster, you agree to abide by these Terms & Conditions and our Privacy Policy.
+                  </p>
+                  <p className="mb-2">
+                    <strong>2. User Responsibilities</strong><br />
+                    You are solely responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account.
+                  </p>
+                  <p className="mb-2">
+                    <strong>3. Account Accuracy</strong><br />
+                    You agree to provide accurate, current, and complete information during the registration process and to update such information to keep it accurate, current, and complete.
+                  </p>
+                  <p>
+                    <strong>4. Privacy</strong><br />
+                    We respect your privacy. Please refer to our Privacy Policy for information on how we collect, use, and protect your personal data.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.agreeToTerms}
+                      onChange={(e) => updateField("agreeToTerms", e.target.checked)}
+                      className="mt-0.5 h-5 w-5 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
+                    />
+                    <span className="text-sm text-slate-700 leading-relaxed">
+                      I have read and agree to the <button type="button" className="text-orange-600 hover:underline font-medium">Terms of Service</button> and <button type="button" className="text-orange-600 hover:underline font-medium">Privacy Policy</button>.
+                    </span>
+                  </label>
+                  <FieldError name="agreeToTerms" />
+                </div>
               </div>
             </motion.div>
           )}
@@ -566,14 +607,15 @@ const Register = () => {
             <span />
           )}
 
-          {currentStep < 3 ? (
+          {/* ✅ Logic changed to show "Next" until Step 4, then "Create Account" */}
+          {currentStep < 4 ? (
             <button type="button" onClick={handleNext} className="lms-btn-primary w-auto px-5">
               Next <ArrowRight size={16} />
             </button>
           ) : (
             <button type="submit" disabled={loading || photoUploading} className="lms-btn-primary w-auto px-5">
               {loading ? "Creating Account..." : "Create Account"}
-              {!loading && <CheckCircle size={16} />}
+              {!loading && <CheckCircle size={16} className="ml-1" />}
             </button>
           )}
         </div>

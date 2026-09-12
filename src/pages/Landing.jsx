@@ -1,6 +1,6 @@
 // src/pages/Landing.jsx
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
 import { 
   BookOpen, Code, Briefcase, TrendingUp, Award, Users, Star, ChevronRight, Play, 
@@ -8,20 +8,19 @@ import {
   Quote, ThumbsUp, Target, ShoppingCart, Search, Menu, X, Heart, LogOut, Filter,
   ChevronDown
 } from "lucide-react";
-import ProfileDropdown from "../utils/profiledropdown";
+import ProfileDropdown from "../utils/ProfileDropdown";
 import { useAuth } from "../context/AuthContext"; // ✅ Import useAuth
 
 function Landing() {
   const navigate = useNavigate();
   const { user: authUser, isAuthenticated, loading: authLoading, logout } = useAuth(); // ✅ Use AuthContext
   
-  // ✅ Redirect to dashboard if already authenticated
+  // Sync context user
   useEffect(() => {
-    if (!authLoading && isAuthenticated) {
-      console.log('[Landing] User already authenticated, redirecting to dashboard');
-      navigate('/admin/dashboard', { replace: true });
+    if (authUser) {
+      setUser(authUser);
     }
-  }, [isAuthenticated, authLoading, navigate]);
+  }, [authUser]);
 
   const [scrolled, setScrolled] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -344,9 +343,16 @@ function Landing() {
     );
   }
 
-  // ✅ If authenticated, redirect (this is a safety net)
-  if (!authLoading && isAuthenticated) {
-    return null; // Will redirect via useEffect
+  // ✅ If authenticated, redirect to appropriate dashboard
+  if (!authLoading && isAuthenticated && authUser) {
+    const role = String(authUser?.role || '').toLowerCase();
+    if (role.includes('main') || role.includes('admin') || role.includes('super')) {
+      return <Navigate to="/admin/dashboard" replace />;
+    } else if (role.includes('instructor')) {
+      return <Navigate to="/instructor/dashboard" replace />;
+    } else {
+      return <Navigate to="/student/dashboard" replace />;
+    }
   }
 
   return (

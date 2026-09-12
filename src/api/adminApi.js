@@ -73,23 +73,43 @@ export const adminApi = {
     return response.data;
   },
 
+  // GET /api/v1/admin/instructors/applications
+  // Params: { status: 'PENDING'|'APPROVED'|'REJECTED'|'all', page: 0, size: 10 }
+  // Response: { success, data: [ { application, user, documents, nextSteps } ], pagination: { currentPage, totalPages, totalApplications, pageSize } }
   getInstructorApplications: async (params = {}) => {
-    const response = await axiosInstance.get('/api/v1/admin/instructors/applications', { params });
+    // Map 'all' to no status filter; capitalize status for backend
+    const queryParams = { ...params };
+    if (queryParams.status === 'all' || !queryParams.status) {
+      delete queryParams.status;
+    } else {
+      queryParams.status = String(queryParams.status).toUpperCase();
+    }
+    const response = await axiosInstance.get('/api/v1/admin/instructors/applications', { params: queryParams });
     return response.data;
   },
 
-  approveInstructorApplication: async (userId) => {
-    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/approve`);
+  // PUT /api/v1/admin/instructors/applications/{applicationId}/approve
+  // applicationId = application.applicationId from the GET response
+  approveInstructorApplication: async (applicationId) => {
+    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${applicationId}/approve`);
     return response.data;
   },
 
-  rejectInstructorApplication: async (userId) => {
-    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/reject`);
+  // PUT /api/v1/admin/instructors/applications/{applicationId}/reject
+  // applicationId = application.applicationId from the GET response
+  rejectInstructorApplication: async (applicationId, reason) => {
+    const body = reason ? { reason } : {};
+    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${applicationId}/reject`, body);
     return response.data;
   },
 
   getInstructorCourses: async (instructorId) => {
     const response = await axiosInstance.get(`/api/v1/admin/instructors/${instructorId}/courses`);
+    return response.data;
+  },
+
+  deleteInstructor: async (instructorId) => {
+    const response = await axiosInstance.delete(`/api/v1/admin/instructors/${instructorId}`);
     return response.data;
   },
 

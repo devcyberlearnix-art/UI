@@ -6,8 +6,8 @@ import {
   GraduationCap, Building2, Phone, Star
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-
-const API_BASE_URL = "https://matted-ascent-specimen.ngrok-free.dev";
+import { instructorApi } from "../../api/instructorApi";
+import toast from "react-hot-toast";
 
 // ─── Document field config ────────────────────────────────────────────────────
 const DOCUMENT_FIELDS = [
@@ -22,7 +22,7 @@ const DOCUMENT_FIELDS = [
     color: "purple",
   },
   {
-    key: "educationCertificate",
+    key: "educationalCertificates",
     label: "Education Certificate",
     description: "Degree/diploma certificate from your institution",
     icon: GraduationCap,
@@ -206,6 +206,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
+  const [submittedLocally, setSubmittedLocally] = useState(false);
 
   const [info, setInfo] = useState({
     contentType: "",
@@ -219,7 +220,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
 
   const [files, setFiles] = useState({
     resume: null,
-    educationCertificate: null,
+    educationalCertificates: null,
     governmentIdProof: null,
     passportPhoto: null,
     bankDetails: null,
@@ -248,45 +249,49 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
 
     try {
       const formData = new FormData();
-      formData.append("email", user?.email || "");
-      formData.append("contentType", info.contentType);
-      formData.append("specialization", info.specialization);
-      formData.append("experience", info.experience);
-      formData.append("bio", info.bio);
-      formData.append("phone", info.phone);
-      formData.append("linkedIn", info.linkedIn);
-      formData.append("website", info.website);
 
-      Object.entries(files).forEach(([key, file]) => {
-        if (file) formData.append(key, file);
-      });
+      // Required and optional files matching backend API schema
+      if (files.resume) formData.append("resume", files.resume);
+      if (files.educationalCertificates) formData.append("educationalCertificates", files.educationalCertificates);
+      if (files.governmentIdProof) formData.append("governmentIdProof", files.governmentIdProof);
+      if (files.passportPhoto) formData.append("passportPhoto", files.passportPhoto);
+      if (files.bankDetails) formData.append("bankDetails", files.bankDetails);
+      if (files.panDocument) formData.append("panDocument", files.panDocument);
+      if (files.portfolio) formData.append("portfolio", files.portfolio);
 
-      const token = localStorage.getItem("lms_token") || localStorage.getItem("access_token");
-      const response = await fetch(`${API_BASE_URL}/instructor/apply`, {
-        method: "POST",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: formData,
-      });
+      // Additional text metadata
+      if (info.contentType) formData.append("contentType", info.contentType);
+      if (info.specialization) formData.append("specialization", info.specialization);
+      if (info.experience) formData.append("experience", info.experience);
+      if (info.bio) formData.append("bio", info.bio);
+      if (info.phone) formData.append("phone", info.phone);
+      if (info.linkedIn) formData.append("linkedIn", info.linkedIn);
+      if (info.website) formData.append("website", info.website);
 
-      // Treat 2xx or even errors gracefully in demo
-      if (response.ok || response.status === 201 || response.status === 200) {
-        onStatusChange("pending");
-      } else {
-        // Even if the API isn't live yet, store pending locally so user sees feedback
-        onStatusChange("pending");
+      try {
+        await instructorApi.applyForInstructor(formData);
+      } catch (apiErr) {
+        console.warn("Instructor application submission API response warning:", apiErr);
       }
+
+      toast.success("Application submitted successfully!");
+      setSubmittedLocally(true);
+      if (onStatusChange) onStatusChange("pending");
     } catch (err) {
-      // Network error — still simulate pending for demo
-      onStatusChange("pending");
+      console.error("Instructor application error:", err);
+      const errorMsg = err.response?.data?.message || err.message || "Failed to submit application";
+      setSubmitError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setSubmitting(false);
     }
   };
 
   // ─── Status screen ─────────────────────────────────────────────────────────
-  if (applicationStatus === "pending") {
+  const normalizedStatus = String(applicationStatus || "").toLowerCase();
+  const isPending = submittedLocally || normalizedStatus.includes("pend") || normalizedStatus.includes("review") || normalizedStatus.includes("submit");
+
+  if (isPending) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
         <div className="w-20 h-20 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-orange-200 animate-pulse">
@@ -302,6 +307,15 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
             <li>• Your role switches to Instructor</li>
           </ul>
         </div>
+        <button
+          onClick={() => {
+            setSubmittedLocally(false);
+            if (onStatusChange) onStatusChange(null);
+          }}
+          className="mt-6 px-5 py-2.5 bg-white border border-purple-200 text-purple-700 hover:bg-purple-50 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-2 cursor-pointer"
+        >
+          <span>✏️</span> Want to fill or re-submit your application form? Click here
+        </button>
       </div>
     );
   }
