@@ -281,27 +281,18 @@ const Instructors = () => {
     setShowModal(true);
   };
 
-  // Filter instructors by search query & status filter tab
-  const filteredInstructors = instructors.filter((inst) => {
+  // Filter instructors by search query (Only show Approved / Active instructors)
+  const approvedInstructors = instructors.filter(inst => {
+    const s = String(inst.status).toLowerCase();
+    return s === 'active' || s === 'approved';
+  });
+
+  const filteredInstructors = approvedInstructors.filter((inst) => {
     const matchesSearch =
       (inst.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (inst.email || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (inst.qualification || '').toLowerCase().includes(searchQuery.toLowerCase());
-
-    const normStatus = String(inst.status).toLowerCase();
-    let matchesStatus = true;
-
-    if (statusFilter === "active") {
-      matchesStatus = normStatus === "active" || normStatus === "approved";
-    } else if (statusFilter === "pending") {
-      matchesStatus = normStatus.includes("pending");
-    } else if (statusFilter === "rejected") {
-      matchesStatus = normStatus === "rejected";
-    } else if (statusFilter === "suspended") {
-      matchesStatus = normStatus === "suspended" || normStatus === "locked";
-    }
-
-    return matchesSearch && matchesStatus;
+    return matchesSearch;
   });
 
   if (loading) {
@@ -309,7 +300,7 @@ const Instructors = () => {
       <div className="py-16 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-10 h-10 text-orange-500 animate-spin mx-auto mb-3" />
-          <p className="text-gray-600 font-medium">Fetching all instructors...</p>
+          <p className="text-gray-600 font-medium">Fetching approved instructors...</p>
         </div>
       </div>
     );
@@ -348,13 +339,13 @@ const Instructors = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <span>Instructor Management</span>
-            <span className="text-xs bg-orange-100 text-orange-700 font-medium px-2.5 py-0.5 rounded-full border border-orange-200">
-              Get all instructors API
+            <span>Approved Instructors</span>
+            <span className="text-xs bg-green-100 text-green-700 font-semibold px-2.5 py-0.5 rounded-full border border-green-200">
+              Verified Educators
             </span>
           </h1>
           <p className="text-gray-500 text-sm mt-0.5">
-            Approve, reject, inspect and manage registered platform instructors
+            List of official approved instructors teaching on the platform
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -375,29 +366,18 @@ const Instructors = () => {
             Refresh
           </button>
           <div className="bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm flex items-center gap-2">
-            <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Total</span>
-            <span className="font-bold text-gray-900 text-base">{instructors.length}</span>
+            <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Total Approved</span>
+            <span className="font-bold text-green-600 text-base">{approvedInstructors.length}</span>
           </div>
         </div>
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-xs text-gray-500 font-medium uppercase">Total Instructors</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{instructors.length}</p>
-          </div>
-          <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
-            <User size={22} />
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs text-gray-500 font-medium uppercase">Active / Approved</p>
-            <p className="text-2xl font-bold text-green-600 mt-1">
-              {instructors.filter(i => String(i.status).toLowerCase() === 'active' || String(i.status).toLowerCase() === 'approved').length}
-            </p>
+            <p className="text-xs text-gray-500 font-medium uppercase">Approved Instructors</p>
+            <p className="text-2xl font-bold text-green-600 mt-1">{approvedInstructors.length}</p>
           </div>
           <div className="p-3 bg-green-50 text-green-600 rounded-xl">
             <ShieldCheck size={22} />
@@ -405,63 +385,39 @@ const Instructors = () => {
         </div>
         <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-xs text-gray-500 font-medium uppercase">Pending Verification</p>
-            <p className="text-2xl font-bold text-amber-600 mt-1">
-              {instructors.filter(i => String(i.status).toLowerCase().includes('pending')).length}
+            <p className="text-xs text-gray-500 font-medium uppercase">Total Courses Taught</p>
+            <p className="text-2xl font-bold text-orange-600 mt-1">
+              {approvedInstructors.reduce((sum, i) => sum + (Number(i.courses) || 0), 0)}
             </p>
           </div>
-          <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
-            <AlertCircle size={22} />
+          <div className="p-3 bg-orange-50 text-orange-600 rounded-xl">
+            <BookOpen size={22} />
           </div>
         </div>
         <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-xs text-gray-500 font-medium uppercase">Suspended / Rejected</p>
-            <p className="text-2xl font-bold text-red-600 mt-1">
-              {instructors.filter(i => ['suspended', 'locked', 'rejected'].includes(String(i.status).toLowerCase())).length}
+            <p className="text-xs text-gray-500 font-medium uppercase">Total Active Students</p>
+            <p className="text-2xl font-bold text-blue-600 mt-1">
+              {approvedInstructors.reduce((sum, i) => sum + (Number(i.students) || 0), 0)}
             </p>
           </div>
-          <div className="p-3 bg-red-50 text-red-600 rounded-xl">
-            <XCircle size={22} />
+          <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+            <User size={22} />
           </div>
         </div>
       </div>
 
       {/* Filter & Search Toolbar */}
-      <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-        {/* Search Bar */}
-        <div className="relative flex-1">
+      <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+        <div className="relative">
           <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search by instructor name, email, qualification..."
+            placeholder="Search approved instructors by name, email, specialization..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition"
           />
-        </div>
-
-        {/* Status Filter Tabs */}
-        <div className="flex items-center gap-1 overflow-x-auto pb-1 md:pb-0">
-          {[
-            { id: "all", label: "All" },
-            { id: "active", label: "Active" },
-            { id: "pending", label: "Pending" },
-            { id: "rejected", label: "Rejected" },
-            { id: "suspended", label: "Suspended" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setStatusFilter(tab.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition ${
-                statusFilter === tab.id
-                  ? "bg-orange-500 text-white shadow-xs"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
         </div>
       </div>
 
@@ -476,22 +432,25 @@ const Instructors = () => {
                 <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Specialization</th>
                 <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Courses</th>
                 <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Students</th>
-                <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3.5 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Joined Date</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
               {filteredInstructors.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                     <User className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-                    <p className="font-medium text-base text-gray-600">No instructors found</p>
-                    <p className="text-xs text-gray-400 mt-1">Try adjusting your search query or status filter</p>
+                    <p className="font-medium text-base text-gray-600">No approved instructors found</p>
+                    <p className="text-xs text-gray-400 mt-1">Pending instructor applications can be approved in the Applications tab</p>
                   </td>
                 </tr>
               ) : (
                 filteredInstructors.map((instructor) => (
-                  <tr key={instructor.id} className="hover:bg-gray-50/80 transition">
+                  <tr
+                    key={instructor.id}
+                    onClick={() => handleViewDetails(instructor)}
+                    className="hover:bg-orange-50/40 transition cursor-pointer"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-orange-100 border border-orange-200 flex items-center justify-center text-orange-700 font-semibold text-sm">
@@ -499,63 +458,15 @@ const Instructors = () => {
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-gray-900">{instructor.name}</p>
-                          <p className="text-xs text-gray-400">Joined {instructor.createdAt}</p>
+                          <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">Approved</span>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{instructor.email}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">{instructor.qualification}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{instructor.courses}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{instructor.students}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2.5 py-1 text-xs rounded-full font-medium capitalize inline-flex items-center gap-1 ${
-                        ['active', 'approved'].includes(String(instructor.status).toLowerCase())
-                          ? 'bg-green-100 text-green-700 border border-green-200'
-                          : String(instructor.status).toLowerCase().includes('pending')
-                          ? 'bg-amber-100 text-amber-700 border border-amber-200'
-                          : ['suspended', 'locked'].includes(String(instructor.status).toLowerCase())
-                          ? 'bg-red-100 text-red-700 border border-red-200'
-                          : 'bg-gray-100 text-gray-700 border border-gray-200'
-                      }`}>
-                        {instructor.status.replace(/_/g, ' ')}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm space-x-1">
-                      <button
-                        onClick={() => handleViewDetails(instructor)}
-                        className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                        title="View Details"
-                      >
-                        <User size={16} />
-                      </button>
-                      {hasPermission('instructors:approve') && String(instructor.status).toLowerCase() !== "approved" && String(instructor.status).toLowerCase() !== "active" && (
-                        <button
-                          onClick={() => handleApprove(instructor.id)}
-                          className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition"
-                          title="Approve Instructor"
-                        >
-                          <CheckCircle size={16} />
-                        </button>
-                      )}
-                      {hasPermission('instructors:approve') && String(instructor.status).toLowerCase() !== "rejected" && (
-                        <button
-                          onClick={() => handleReject(instructor.id)}
-                          className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
-                          title="Reject Instructor"
-                        >
-                          <XCircle size={16} />
-                        </button>
-                      )}
-                      {hasPermission('instructors:edit') && (
-                        <button
-                          onClick={() => handleDelete(instructor.id)}
-                          className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                          title="Delete Instructor"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      )}
-                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">{instructor.courses}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">{instructor.students}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{instructor.createdAt}</td>
                   </tr>
                 ))
               )}
