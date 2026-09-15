@@ -145,7 +145,10 @@ export const AuthProvider = ({ children }) => {
       if (instStatus) {
         userData.instructorStatus = instStatus;
         if (instStatus === 'active' || instStatus === 'approved') {
-          userData.role = 'instructor';
+          userData.isInstructor = true;
+          if (!userData.isAdmin) {
+            userData.role = 'instructor';
+          }
         }
       }
       
@@ -209,6 +212,60 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const switchRole = async (targetRole) => {
+    try {
+      setLoading(true);
+      const roleUpper = String(targetRole).toUpperCase(); // "INSTRUCTOR" | "STUDENT" | "ADMIN"
+      console.log('[AuthProvider] Calling POST /api/v1/auth/switch-role with:', { switchRole: roleUpper });
+      
+      const res = await authApi.switchRole(roleUpper);
+      console.log('[AuthProvider] switchRole API response:', res);
+      
+      let tokenData = res?.authentication?.accessToken || res?.authentication?.token || res?.accessToken || res?.token || res?.access_token;
+      let refreshTokenData = res?.authentication?.refreshToken || res?.refreshToken || res?.refresh_token;
+
+      if (tokenData) {
+        localStorage.setItem('lms_token', tokenData);
+        localStorage.setItem('access_token', tokenData);
+        sessionStorage.setItem('lms_token', tokenData);
+        setToken(tokenData);
+      }
+      if (refreshTokenData) {
+        localStorage.setItem('refresh_token', refreshTokenData);
+      }
+
+      const newRoleLower = String(targetRole).toLowerCase();
+      const updatedUser = {
+        ...(user || {}),
+        role: newRoleLower,
+        role1: newRoleLower,
+        userRole: newRoleLower,
+        effectiveRole: roleUpper,
+      };
+
+      localStorage.setItem('lms_user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+
+      const label = targetRole.charAt(0).toUpperCase() + targetRole.slice(1).toLowerCase();
+      toast.success(`Switched to ${label} view`);
+      return { success: true, data: res };
+    } catch (err) {
+      console.error('[AuthProvider] switchRole error:', err);
+      const newRoleLower = String(targetRole).toLowerCase();
+      const updatedUser = {
+        ...(user || {}),
+        role: newRoleLower,
+        role1: newRoleLower,
+        userRole: newRoleLower,
+      };
+      localStorage.setItem('lms_user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      return { success: false, error: err };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = async () => {
     try {
       await authApi.logout();
@@ -237,6 +294,7 @@ export const AuthProvider = ({ children }) => {
     error,
     login,
     logout,
+    switchRole,
     isAuthenticated: !!token,
   };
 

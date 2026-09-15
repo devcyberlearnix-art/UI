@@ -64,6 +64,18 @@ export const authApi = {
     }
   },
 
+  // ======================== SWITCH ROLE ========================
+  switchRole: async (role) => {
+    try {
+      const targetRole = String(role).toUpperCase(); // "INSTRUCTOR" | "STUDENT" | "ADMIN"
+      const response = await axiosInstance.post('/api/v1/auth/switch-role', { switchRole: targetRole });
+      return response.data;
+    } catch (error) {
+      console.warn('[Auth] switchRole API warning:', error);
+      return { success: false, message: error?.message };
+    }
+  },
+
   // ======================== SUB-ADMIN MANAGEMENT ========================
   getSubAdminProfile: async () => {
     try {

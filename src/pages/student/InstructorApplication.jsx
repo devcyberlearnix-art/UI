@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Upload, X, CheckCircle, FileText, User, BookOpen,
   Camera, CreditCard, Briefcase, Award, Shield, ArrowRight,
@@ -201,7 +202,8 @@ function StepIndicator({ steps, current }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function InstructorApplication({ onBack, applicationStatus, onStatusChange }) {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, switchRole } = useAuth();
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -371,9 +373,18 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         </div>
         <h2 className="text-2xl font-bold text-gray-800 mb-2">🎉 Application Approved!</h2>
         <p className="text-gray-500 max-w-md">Congratulations! Your instructor application form has been reviewed and approved by the Admin.</p>
-        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-2xl max-w-md text-sm text-green-800 shadow-sm">
-          <p className="font-semibold">🚀 You are now an official Instructor!</p>
-          <p className="text-xs text-green-600 mt-1">Please log out and log back in to access your Instructor Dashboard and start creating courses.</p>
+        <div className="mt-6 p-6 bg-green-50 border border-green-200 rounded-2xl max-w-md text-center shadow-sm">
+          <p className="font-bold text-green-900 text-base">🚀 You are now an official Instructor!</p>
+          <p className="text-xs text-green-700 mt-1 mb-4">Click below to switch to your Instructor Dashboard and start creating & managing courses.</p>
+          <button
+            onClick={async () => {
+              if (switchRole) await switchRole('instructor');
+              navigate("/instructor/dashboard");
+            }}
+            className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer"
+          >
+            Switch to Instructor Dashboard →
+          </button>
         </div>
       </div>
     );

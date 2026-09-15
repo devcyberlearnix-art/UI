@@ -8,7 +8,7 @@ import { useMemo } from "react";
 import { getDashboardRole, tabsByRole } from "../../config/navigation";
 
 const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
-  const { user } = useAuth();
+  const { user, switchRole } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const rawRole = user?.role || user?.role1 || user?.userRole || "";
@@ -42,13 +42,16 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
     [location.pathname, roleTabs]
   );
 
-  const handleRoleChange = (newRole) => {
+  const handleRoleChange = async (newRole) => {
+    if (switchRole) {
+      await switchRole(newRole);
+    }
     if (newRole === 'admin') navigate('/admin/dashboard');
     else if (newRole === 'instructor') navigate('/instructor/dashboard');
     else navigate('/student/dashboard');
   };
 
-  const showSwitcher = !!user && (String(rawRole).toLowerCase().includes("admin") || String(rawRole).toLowerCase().includes("instructor"));
+  const showSwitcher = !!user;
 
   const getUserInitials = () => {
     if (!user) return 'A';

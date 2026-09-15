@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { LayoutDashboard, BookOpen, Star, Loader2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { instructorApi } from "../../api/instructorApi";
 import InstructorApplication from "./InstructorApplication";
+import RoleSwitcher from "../../components/ui/RoleSwitcher";
 
 const StudentDashboard = () => {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, switchRole } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [applicationStatus, setApplicationStatus] = useState(() => {
     // Optimistically load from localStorage while we fetch real status
@@ -150,6 +153,14 @@ const StudentDashboard = () => {
     }
   };
 
+  const handleRoleChange = async (newRole) => {
+    if (switchRole) {
+      await switchRole(newRole);
+    }
+    if (newRole === 'admin') navigate('/admin/dashboard');
+    else if (newRole === 'instructor') navigate('/instructor/dashboard');
+    else navigate('/student/dashboard');
+  };
 
   const tabs = [
     { id: "dashboard",    label: "Dashboard",         icon: LayoutDashboard },
@@ -161,7 +172,7 @@ const StudentDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Top Nav Bar */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-1 overflow-x-auto hide-scrollbar">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -196,6 +207,11 @@ const StudentDashboard = () => {
               );
             })}
           </div>
+
+          {/* Role Switcher & Switch to Instructor Action */}
+          <div className="py-2 pl-4 flex items-center gap-3">
+            <RoleSwitcher currentRole="student" onRoleChange={handleRoleChange} />
+          </div>
         </div>
       </div>
 
@@ -205,11 +221,26 @@ const StudentDashboard = () => {
         {/* ── Dashboard Tab ────────────────────────────────────────────── */}
         {activeTab === "dashboard" && (
           <div>
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">
-                Welcome back{user?.name ? `, ${user.name.split(" ")[0]}` : ""}! 👋
-              </h1>
-              <p className="text-gray-500 mt-1">Here's what's happening with your learning journey.</p>
+            <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  Welcome back{user?.name ? `, ${user.name.split(" ")[0]}` : ""}! 👋
+                </h1>
+                <p className="text-gray-500 mt-1">Here's what's happening with your learning journey.</p>
+              </div>
+
+              {(applicationStatus === "approved" || user?.role === "instructor" || user?.isInstructor || user?.isAdmin || user?.role === "admin") && (
+                <button
+                  onClick={async () => {
+                    if (switchRole) await switchRole('instructor');
+                    navigate("/instructor/dashboard");
+                  }}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-xs rounded-xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer self-start sm:self-auto"
+                >
+                  <span>🎓</span>
+                  <span>Switch to Instructor Portal →</span>
+                </button>
+              )}
             </div>
 
             {/* Quick stats */}
@@ -274,14 +305,25 @@ const StudentDashboard = () => {
               </div>
             )}
             {!statusLoading && applicationStatus === "approved" && (
-              <div className="mt-6 bg-green-50 border border-green-200 rounded-2xl p-5 flex items-center gap-4">
-                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-lg">✅</span>
+              <div className="mt-6 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 text-white flex items-center justify-between shadow-lg shadow-green-100">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
+                    🎉
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">Instructor Application Approved!</h3>
+                    <p className="text-green-100 text-sm mt-0.5">Your application is approved. You can switch to your Instructor Dashboard anytime!</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-green-800">Instructor Application Approved! 🎉</p>
-                  <p className="text-green-600 text-sm">Please log out and log back in to access your Instructor Dashboard.</p>
-                </div>
+                <button
+                  onClick={async () => {
+                    if (switchRole) await switchRole('instructor');
+                    navigate("/instructor/dashboard");
+                  }}
+                  className="bg-white text-green-700 hover:bg-green-50 px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all whitespace-nowrap cursor-pointer ml-4"
+                >
+                  Go to Instructor Dashboard →
+                </button>
               </div>
             )}
             {!statusLoading && applicationStatus === "rejected" && (
