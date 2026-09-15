@@ -30,6 +30,26 @@ const Instructors = () => {
     setError("");
     try {
       let apiInstructors = [];
+      let apiApplications = [];
+
+      // 1. Try GET /api/v1/admin/instructors/applications
+      try {
+        const appResponse = await adminApi.getInstructorApplications({ status: 'all' });
+        console.log('[Instructors] Response from GET /api/v1/admin/instructors/applications:', appResponse);
+        if (Array.isArray(appResponse?.data)) {
+          apiApplications = appResponse.data;
+        } else if (Array.isArray(appResponse?.applications)) {
+          apiApplications = appResponse.applications;
+        } else if (Array.isArray(appResponse)) {
+          apiApplications = appResponse;
+        } else if (appResponse?.data && typeof appResponse.data === 'object' && !Array.isArray(appResponse.data)) {
+          apiApplications = appResponse.data.applications || appResponse.data.content || [];
+        }
+      } catch (appErr) {
+        console.warn('[Instructors] GET /api/v1/admin/instructors/applications warning:', appErr?.message);
+      }
+
+      // 2. Try GET /api/v1/admin/instructors
       try {
         const response = await adminApi.getInstructors();
         if (response?.data?.users && Array.isArray(response.data.users)) {
@@ -69,6 +89,39 @@ const Instructors = () => {
             qualification: item.qualification || item.specialization || 'Not specified',
             experience: item.experience || 0,
             createdAt: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : new Date().toLocaleDateString()
+          });
+        }
+      });
+
+      // Add API applications from GET /api/v1/admin/instructors/applications
+      apiApplications.forEach(item => {
+        const userObj = item.user || {};
+        const appObj = item.application || item;
+        const docsObj = item.documents || {};
+        const email = (userObj.email || appObj.email || item.email || "").toLowerCase();
+
+        if (email) {
+          const existing = map.get(email) || {};
+          const name = userObj.name ||
+            (userObj.firstName ? `${userObj.firstName} ${userObj.lastName || ''}`.trim() : null) ||
+            appObj.fullName || appObj.name || item.name || email.split('@')[0];
+
+          map.set(email, {
+            ...existing,
+            id: appObj.applicationId || appObj.id || item.id || existing.id || `inst_${Math.random()}`,
+            name: name,
+            email: email,
+            status: String(appObj.status || item.status || existing.status || 'pending_verification').toLowerCase(),
+            courses: appObj.courses || item.courses || existing.courses || 0,
+            students: appObj.students || item.students || existing.students || 0,
+            qualification: appObj.specialization || appObj.qualifications || item.specialization || item.qualification || existing.qualification || 'Not specified',
+            experience: appObj.experience || item.experience || existing.experience || '1-3 years',
+            bio: appObj.bio || item.bio || existing.bio || '',
+            phone: appObj.phone || item.phone || userObj.phone || existing.phone || '',
+            linkedIn: appObj.linkedIn || item.linkedIn || existing.linkedIn || '',
+            website: appObj.website || item.website || existing.website || '',
+            documents: docsObj,
+            createdAt: appObj.submittedAt ? new Date(appObj.submittedAt).toLocaleDateString() : (existing.createdAt || new Date().toLocaleDateString())
           });
         }
       });
