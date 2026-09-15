@@ -51,22 +51,7 @@ const Instructors = () => {
       const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
       const localInstructors = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
 
-      // Default seed matching Admin Management interface
-      const defaultInstructors = [
-        { id: "inst_1", name: "emily.johnson", email: "emily.johnson@yahoo.com", courses: 0, students: 0, status: "locked" },
-        { id: "inst_2", name: "amanda.smith", email: "amanda.smith@outlook.com", courses: 0, students: 0, status: "suspended" },
-        { id: "inst_3", name: "jane.martinez", email: "jane.martinez@outlook.com", courses: 0, students: 0, status: "active" },
-        { id: "inst_4", name: "michael.johnson", email: "michael.johnson@outlook.com", courses: 0, students: 0, status: "suspended" },
-        { id: "inst_5", name: "william.davis", email: "william.davis@outlook.com", courses: 0, students: 0, status: "pending_verification" },
-        { id: "inst_6", name: "emily.thomas", email: "emily.thomas@icloud.com", courses: 0, students: 0, status: "active" }
-      ];
-
       const map = new Map();
-
-      // Seed default instructors
-      defaultInstructors.forEach(item => {
-        if (item.email) map.set(item.email.toLowerCase(), item);
-      });
 
       // Add API instructors
       apiInstructors.forEach(item => {

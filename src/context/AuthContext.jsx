@@ -38,19 +38,6 @@ export const checkInstructorStatus = (email) => {
     console.warn('[checkInstructorStatus] Local storage parse error:', e);
   }
 
-  // Registry matching exact credentials from Admin Instructors table
-  const knownInstructors = [
-    { email: "jane.martinez@outlook.com", status: "active" },
-    { email: "emily.thomas@icloud.com", status: "active" },
-    { email: "william.davis@outlook.com", status: "pending_verification" },
-    { email: "amanda.smith@outlook.com", status: "suspended" },
-    { email: "michael.johnson@outlook.com", status: "suspended" },
-    { email: "emily.johnson@yahoo.com", status: "locked" }
-  ];
-
-  const known = knownInstructors.find(k => k.email.toLowerCase() === cleanEmail);
-  if (known) return known.status;
-
   return null;
 };
 
