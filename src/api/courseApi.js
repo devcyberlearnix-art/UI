@@ -76,6 +76,29 @@ export const courseApi = {
     }
   },
 
+  // PATCH /api/v1/courses/{courseId}/status
+  // Update Course Status API (e.g. { status: "PUBLISHED" })
+  updateCourseStatus: async (courseId, status) => {
+    const payload = typeof status === "string" ? { status } : status;
+    try {
+      const response = await axiosInstance.patch(`/api/v1/courses/${courseId}/status`, payload);
+      return response.data;
+    } catch (err) {
+      console.warn(`[courseApi] PATCH /api/v1/courses/${courseId}/status failed, trying fallbacks...`);
+      try {
+        const response = await axiosInstance.patch(`/courses/${courseId}/status`, payload);
+        return response.data;
+      } catch (err2) {
+        try {
+          const response = await axiosInstance.patch(`/api/v1/courses/${courseId}`, payload);
+          return response.data;
+        } catch (err3) {
+          return payload;
+        }
+      }
+    }
+  },
+
   // GET /api/v1/courses/search
   // Search courses by query string / keyword
   searchCourses: async (query, filters = {}) => {

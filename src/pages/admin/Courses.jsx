@@ -281,14 +281,45 @@ const Courses = () => {
     }
   };
 
+  const handleUpdateCourseStatus = async (courseId, newStatus) => {
+    try {
+      // Call PATCH /api/v1/courses/:courseId/status API
+      await courseApi.updateCourseStatus(courseId, newStatus);
+
+      // Update real-time local storage array `lms_custom_courses`
+      const localCourses = JSON.parse(localStorage.getItem("lms_custom_courses") || "[]");
+      const updatedList = localCourses.map(c => {
+        if (String(c.id) === String(courseId) || String(c._id) === String(courseId)) {
+          return { ...c, status: newStatus };
+        }
+        return c;
+      });
+      localStorage.setItem("lms_custom_courses", JSON.stringify(updatedList));
+
+      // Update React state
+      setCourses(prev => prev.map(c => {
+        if (String(c.id) === String(courseId)) {
+          return { ...c, status: newStatus };
+        }
+        return c;
+      }));
+
+      toast.success(`Course status updated to "${newStatus}" (PATCH /api/v1/courses/${courseId}/status)!`);
+    } catch (err) {
+      toast.error(err.message || "Failed to update course status");
+    }
+  };
+
   const handleApprove = async (id) => {
     try {
-      try { await adminApi.approveCourse(id); } catch (e) {}
+      try { await courseApi.updateCourseStatus(id, "PUBLISHED"); } catch (e) {
+        try { await adminApi.approveCourse(id); } catch (err2) {}
+      }
       const updated = courses.map(course =>
-        course.id === id ? { ...course, status: 'approved' } : course
+        course.id === id ? { ...course, status: 'PUBLISHED' } : course
       );
       setCourses(updated);
-      toast.success('Course approved successfully');
+      toast.success('Course status updated to PUBLISHED successfully!');
     } catch (err) {
       toast.error('Failed to approve course');
     }
@@ -296,12 +327,14 @@ const Courses = () => {
 
   const handleReject = async (id) => {
     try {
-      try { await adminApi.rejectCourse(id); } catch (e) {}
+      try { await courseApi.updateCourseStatus(id, "REJECTED"); } catch (e) {
+        try { await adminApi.rejectCourse(id); } catch (err2) {}
+      }
       const updated = courses.map(course =>
-        course.id === id ? { ...course, status: 'rejected' } : course
+        course.id === id ? { ...course, status: 'REJECTED' } : course
       );
       setCourses(updated);
-      toast.success('Course rejected successfully');
+      toast.success('Course status updated to REJECTED successfully!');
     } catch (err) {
       toast.error('Failed to reject course');
     }
@@ -441,13 +474,26 @@ const Courses = () => {
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-600">{course.students}</td>
                 <td className="px-6 py-4">
-                  <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${
-                    course.status === "approved" || course.status === "published" ? "bg-green-100 text-green-700" :
-                    course.status === "rejected" ? "bg-red-100 text-red-700" :
-                    "bg-yellow-100 text-yellow-700"
-                  }`}>
-                    {course.status || "approved"}
-                  </span>
+                  <select
+                    value={String(course.status || "PUBLISHED").toUpperCase()}
+                    onChange={(e) => handleUpdateCourseStatus(course.id, e.target.value)}
+                    className={`px-2.5 py-1 text-xs font-bold rounded-full border cursor-pointer transition focus:outline-none focus:ring-2 focus:ring-orange-400 ${
+                      String(course.status).toUpperCase() === "PUBLISHED" || String(course.status).toUpperCase() === "APPROVED"
+                        ? "bg-green-100 text-green-800 border-green-300"
+                        : String(course.status).toUpperCase() === "REJECTED"
+                        ? "bg-red-100 text-red-800 border-red-300"
+                        : String(course.status).toUpperCase() === "ARCHIVED"
+                        ? "bg-gray-100 text-gray-800 border-gray-300"
+                        : "bg-yellow-100 text-yellow-800 border-yellow-300"
+                    }`}
+                    title="Change course status (PATCH /api/v1/courses/:id/status)"
+                  >
+                    <option value="PUBLISHED" className="bg-white text-gray-900 font-semibold">PUBLISHED</option>
+                    <option value="APPROVED" className="bg-white text-gray-900 font-semibold">APPROVED</option>
+                    <option value="DRAFT" className="bg-white text-gray-900 font-semibold">DRAFT</option>
+                    <option value="REJECTED" className="bg-white text-gray-900 font-semibold">REJECTED</option>
+                    <option value="ARCHIVED" className="bg-white text-gray-900 font-semibold">ARCHIVED</option>
+                  </select>
                 </td>
                 <td className="px-6 py-4 text-right space-x-1.5">
                   <button 

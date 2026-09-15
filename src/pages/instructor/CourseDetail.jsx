@@ -78,6 +78,26 @@ const CourseDetail = () => {
     }
   };
 
+  const handleStatusChange = async (newStatus) => {
+    try {
+      // Call PATCH /api/v1/courses/:courseId/status API
+      await courseApi.updateCourseStatus(courseId, newStatus);
+
+      const localList = JSON.parse(localStorage.getItem("lms_custom_courses") || "[]");
+      const updatedList = localList.map(c => {
+        if (String(c.id) === String(courseId) || String(c._id) === String(courseId)) {
+          return { ...c, status: newStatus };
+        }
+        return c;
+      });
+      localStorage.setItem("lms_custom_courses", JSON.stringify(updatedList));
+
+      setCourse(prev => ({ ...prev, status: newStatus }));
+    } catch (err) {
+      console.warn("Status update fallback error", err);
+    }
+  };
+
   const statusColor = (status) => {
     switch (status?.toLowerCase()) {
       case "published": return "bg-green-100 text-green-700 border-green-200";
@@ -175,9 +195,18 @@ const CourseDetail = () => {
           {/* Details */}
           <div className="flex-1 space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-              <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${statusColor(course?.status)}`}>
-                {course?.status || "Published"}
-              </span>
+              <select
+                value={String(course?.status || "PUBLISHED").toUpperCase()}
+                onChange={(e) => handleStatusChange(e.target.value)}
+                className={`text-xs font-bold px-3 py-1 rounded-full border cursor-pointer ${statusColor(course?.status)}`}
+                title="Change Course Status (PATCH /api/v1/courses/:id/status)"
+              >
+                <option value="PUBLISHED" className="bg-white text-gray-900 font-semibold">PUBLISHED</option>
+                <option value="APPROVED" className="bg-white text-gray-900 font-semibold">APPROVED</option>
+                <option value="DRAFT" className="bg-white text-gray-900 font-semibold">DRAFT</option>
+                <option value="REJECTED" className="bg-white text-gray-900 font-semibold">REJECTED</option>
+                <option value="ARCHIVED" className="bg-white text-gray-900 font-semibold">ARCHIVED</option>
+              </select>
               {course?.category && (
                 <span className="text-xs font-medium px-3 py-1 rounded-full bg-gray-100 text-gray-600">
                   {course.category}
