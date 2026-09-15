@@ -145,6 +145,33 @@ const EditCourse = () => {
     }
   };
 
+  const handlePartialPatchPrice = async () => {
+    if (Number(form.price) < 0) return setError("Price must be 0 or greater");
+    setLoading(true);
+    setError("");
+    try {
+      const patchData = { price: parseFloat(form.price) || 0 };
+      await courseApi.patchCourse(courseId, patchData);
+
+      const localCourses = JSON.parse(localStorage.getItem("lms_custom_courses") || "[]");
+      const updatedList = localCourses.map(c => {
+        if (String(c.id) === String(courseId) || String(c._id) === String(courseId)) {
+          return { ...c, ...patchData };
+        }
+        return c;
+      });
+      localStorage.setItem("lms_custom_courses", JSON.stringify(updatedList));
+
+      setSuccess(true);
+      toast.success(`Partial Update (PATCH /api/v1/courses/${courseId}) price updated to ₹${patchData.price}!`);
+      setTimeout(() => navigate("/instructor/my-courses"), 1000);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Failed partial update");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (fetching) {
     return (
       <div className="flex flex-col items-center justify-center py-20">

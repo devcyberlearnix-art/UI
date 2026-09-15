@@ -48,8 +48,59 @@ const Courses = () => {
     language: "English",
   });
 
+  // Admin Quick Patch State (PATCH /api/v1/courses/:id)
+  const [showPatchModal, setShowPatchModal] = useState(false);
+  const [patchingCourseId, setPatchingCourseId] = useState(null);
+  const [patchPrice, setPatchPrice] = useState("");
+  const [patching, setPatching] = useState(false);
+
   const updateCreate = (field, val) => setCreateForm(prev => ({ ...prev, [field]: val }));
   const updateEdit = (field, val) => setEditForm(prev => ({ ...prev, [field]: val }));
+
+  const handleOpenPatchPrice = (course) => {
+    setPatchingCourseId(course.id);
+    setPatchPrice(course.price != null ? String(course.price) : "899.99");
+    setShowPatchModal(true);
+  };
+
+  const handleAdminPatchCourse = async (e) => {
+    if (e) e.preventDefault();
+    if (!patchingCourseId) return;
+
+    setPatching(true);
+    try {
+      const priceNum = parseFloat(patchPrice);
+      const patchData = { price: isNaN(priceNum) ? 899.99 : priceNum };
+
+      // Call PATCH /api/v1/courses/{courseId} API
+      await courseApi.patchCourse(patchingCourseId, patchData);
+
+      // Update real-time local storage array `lms_custom_courses`
+      const localCourses = JSON.parse(localStorage.getItem("lms_custom_courses") || "[]");
+      const updatedList = localCourses.map(c => {
+        if (String(c.id) === String(patchingCourseId) || String(c._id) === String(patchingCourseId)) {
+          return { ...c, ...patchData };
+        }
+        return c;
+      });
+      localStorage.setItem("lms_custom_courses", JSON.stringify(updatedList));
+
+      // Update React state
+      setCourses(prev => prev.map(c => {
+        if (String(c.id) === String(patchingCourseId)) {
+          return { ...c, ...patchData };
+        }
+        return c;
+      }));
+
+      setShowPatchModal(false);
+      toast.success(`Partial Update (PATCH /api/v1/courses/${patchingCourseId}) Successful! New Price: ₹${patchData.price}`);
+    } catch (err) {
+      toast.error(err.message || "Failed partial update");
+    } finally {
+      setPatching(false);
+    }
+  };
 
   const hasPermission = (permission) => {
     return isSuperAdmin || permissions.includes(permission);
@@ -376,7 +427,18 @@ const Courses = () => {
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-600">{course.instructor}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{course.category}</td>
-                <td className="px-6 py-4 text-sm font-semibold text-gray-900">₹{course.price}</td>
+                <td className="px-6 py-4 text-sm font-semibold text-gray-900">
+                  <div className="flex items-center gap-1.5">
+                    <span>₹{course.price}</span>
+                    <button
+                      onClick={() => handleOpenPatchPrice(course)}
+                      className="px-2 py-0.5 text-[10px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-md transition"
+                      title="Quick Partial Update Price (PATCH /api/v1/courses/:id)"
+                    >
+                      PATCH
+                    </button>
+                  </div>
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-600">{course.students}</td>
                 <td className="px-6 py-4">
                   <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${
@@ -391,10 +453,18 @@ const Courses = () => {
                   <button 
                     onClick={() => handleOpenEdit(course)} 
                     className="px-2.5 py-1 text-xs font-semibold bg-orange-50 hover:bg-orange-100 text-orange-600 rounded-lg transition inline-flex items-center gap-1 border border-orange-200"
-                    title="Edit / Update Course"
+                    title="Edit / Update Course (PUT API)"
                   >
                     <Edit size={13} />
                     <span>Edit</span>
+                  </button>
+                  <button 
+                    onClick={() => handleOpenPatchPrice(course)} 
+                    className="px-2.5 py-1 text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg transition inline-flex items-center gap-1 border border-amber-200"
+                    title="Quick Patch Price (PATCH /api/v1/courses/:id)"
+                  >
+                    <Sparkles size={13} />
+                    <span>Patch</span>
                   </button>
                   <button 
                     onClick={() => handleViewContent(course)} 
@@ -541,6 +611,58 @@ const Courses = () => {
                 >
                   {updating ? <Loader2 size={16} className="animate-spin" /> : <Edit size={16} />}
                   Save Changes
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+
+      {/* QUICK PATCH PRICE MODAL (PATCH /api/v1/courses/:id) */}
+      {showPatchModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl border border-gray-100 space-y-4">
+            <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+              <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                <Sparkles size={18} className="text-amber-500" /> Partial Course Update (PATCH API)
+              </h2>
+              <button onClick={() => setShowPatchModal(false)} className="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
+            </div>
+
+            <p className="text-xs text-gray-500">
+              Triggers <code className="bg-gray-100 px-1.5 py-0.5 rounded text-amber-600 font-mono">PATCH /api/v1/courses/{patchingCourseId}</code> with partial JSON data <code className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 font-mono">&#123;"price": {patchPrice || 899.99}&#125;</code>.
+            </p>
+
+            <form onSubmit={handleAdminPatchCourse} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Update Price (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={patchPrice}
+                  onChange={(e) => setPatchPrice(e.target.value)}
+                  placeholder="899.99"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-400 text-sm font-semibold"
+                  required
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => setShowPatchModal(false)}
+                  className="px-4 py-2 border border-gray-200 text-gray-600 rounded-xl text-sm hover:bg-gray-50 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={patching}
+                  className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-xl text-sm font-semibold transition disabled:opacity-60 shadow-md shadow-amber-100"
+                >
+                  {patching ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+                  Send Partial PATCH
                 </button>
               </div>
             </form>

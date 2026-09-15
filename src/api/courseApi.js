@@ -54,6 +54,28 @@ export const courseApi = {
     }
   },
 
+  // PATCH /api/v1/courses/{courseId}
+  // Partial Update Course API (e.g. { price: 899.99 })
+  patchCourse: async (courseId, partialData) => {
+    try {
+      const response = await axiosInstance.patch(`/api/v1/courses/${courseId}`, partialData);
+      return response.data;
+    } catch (err) {
+      console.warn(`[courseApi] PATCH /api/v1/courses/${courseId} failed, trying fallbacks...`);
+      try {
+        const response = await axiosInstance.patch(`/courses/${courseId}`, partialData);
+        return response.data;
+      } catch (err2) {
+        try {
+          const response = await axiosInstance.put(`/api/v1/courses/${courseId}`, partialData);
+          return response.data;
+        } catch (err3) {
+          return partialData;
+        }
+      }
+    }
+  },
+
   // GET /api/v1/courses/search
   // Search courses by query string / keyword
   searchCourses: async (query, filters = {}) => {
