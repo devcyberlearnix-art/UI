@@ -188,9 +188,25 @@ const Courses = () => {
     }
   };
 
-  const handleViewContent = (course) => {
+  const [contentLoading, setContentLoading] = useState(false);
+  const [courseContentData, setCourseContentData] = useState(null);
+
+  const handleViewContent = async (course) => {
     setSelectedCourse(course);
     setShowModal(true);
+    setContentLoading(true);
+    setCourseContentData(null);
+
+    try {
+      // GET /api/v1/admin/content/:courseId
+      const res = await adminApi.getCourseContent(course.id);
+      const data = res?.data || res;
+      setCourseContentData(data);
+    } catch (err) {
+      console.warn("[Courses] Failed to fetch course content from API", err);
+    } finally {
+      setContentLoading(false);
+    }
   };
 
   if (loading) {
@@ -437,37 +453,69 @@ const Courses = () => {
       {/* Course Details Modal */}
       {showModal && selectedCourse && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-xl">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-xl max-h-[85vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-gray-100 pb-3">
-              <h2 className="text-lg font-bold text-gray-900">Course Summary</h2>
+              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <FileText size={18} className="text-orange-500" /> Course Content & Details
+              </h2>
               <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
             </div>
-            <div className="space-y-3 text-sm">
-              <div>
-                <p className="text-xs text-gray-400">Title</p>
-                <p className="font-semibold text-gray-900">{selectedCourse.title}</p>
+
+            {contentLoading ? (
+              <div className="flex flex-col items-center justify-center py-8 space-y-2">
+                <Loader2 size={24} className="animate-spin text-orange-500" />
+                <p className="text-xs text-gray-500">Loading course content...</p>
               </div>
-              <div>
-                <p className="text-xs text-gray-400">Instructor</p>
-                <p className="font-semibold text-gray-900">{selectedCourse.instructor}</p>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
+            ) : (
+              <div className="space-y-4 text-sm">
                 <div>
-                  <p className="text-xs text-gray-400">Category</p>
-                  <p className="font-semibold text-gray-900">{selectedCourse.category}</p>
+                  <p className="text-xs text-gray-400 font-semibold uppercase">Course Title</p>
+                  <p className="font-semibold text-gray-900 text-base">{selectedCourse.title}</p>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-400">Price</p>
-                  <p className="font-semibold text-gray-900">₹{selectedCourse.price}</p>
+                {courseContentData?.description && (
+                  <div>
+                    <p className="text-xs text-gray-400 font-semibold uppercase">Description</p>
+                    <p className="text-gray-600 text-xs mt-0.5 leading-relaxed">{courseContentData.description}</p>
+                  </div>
+                )}
+                <div className="grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <div>
+                    <p className="text-xs text-gray-400 font-semibold uppercase">Instructor</p>
+                    <p className="font-semibold text-gray-900">{selectedCourse.instructor}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 font-semibold uppercase">Category</p>
+                    <p className="font-semibold text-gray-900">{selectedCourse.category}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 font-semibold uppercase">Price</p>
+                    <p className="font-semibold text-gray-900">₹{selectedCourse.price}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 font-semibold uppercase">Status</p>
+                    <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700 inline-block mt-0.5">
+                      {selectedCourse.status}
+                    </span>
+                  </div>
                 </div>
+
+                {courseContentData?.sections && courseContentData.sections.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs font-bold text-gray-700 uppercase">Syllabus & Sections</p>
+                    <div className="space-y-2">
+                      {courseContentData.sections.map((sec, idx) => (
+                        <div key={sec.id || idx} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                          <p className="font-semibold text-xs text-gray-900">{sec.title || `Section ${idx + 1}`}</p>
+                          {sec.lectures && (
+                            <p className="text-xs text-gray-500 mt-0.5">{sec.lectures.length} Lectures</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              <div>
-                <p className="text-xs text-gray-400">Status</p>
-                <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700 inline-block mt-1">
-                  {selectedCourse.status}
-                </span>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       )}

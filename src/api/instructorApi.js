@@ -44,10 +44,17 @@ export const instructorApi = {
   // GET /api/v1/instructors/{instructorId}/courses/{courseId}
   // Returns a single course by ID
   getCourseById: async (instructorId, courseId) => {
-    const response = await axiosInstance.get(
-      `/api/v1/instructors/${instructorId}/courses/${courseId}`
-    );
-    return response.data;
+    const id = instructorId || "me";
+    try {
+      const response = await axiosInstance.get(
+        `/api/v1/instructors/${id}/courses/${courseId}`
+      );
+      return response.data;
+    } catch (err) {
+      console.warn('[instructorApi] /instructors/.../courses/:id failed, trying GET /api/v1/courses/:id...');
+      const fallback = await axiosInstance.get(`/api/v1/courses/${courseId}`);
+      return fallback.data;
+    }
   },
 
   // PUT /api/v1/instructors/{instructorId}/courses/{courseId}

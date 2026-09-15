@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { instructorApi } from "../../api/instructorApi";
+import { courseApi } from "../../api/courseApi";
 
 const CourseDetail = () => {
   const { courseId } = useParams();
@@ -34,13 +35,19 @@ const CourseDetail = () => {
       return;
     }
 
-    // 2. Fetch from API if not found locally
+    // 2. Fetch from GET /api/v1/courses/{courseId} API if not found locally
     try {
-      const res = await instructorApi.getCourseById(instructorId, courseId);
+      const res = await courseApi.getCourseById(courseId);
       const data = res?.data || res;
       setCourse(data);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Failed to load course details");
+      try {
+        const res2 = await instructorApi.getCourseById(instructorId, courseId);
+        const data2 = res2?.data || res2;
+        setCourse(data2);
+      } catch (err2) {
+        setError(err.response?.data?.message || err.message || "Failed to load course details");
+      }
     } finally {
       setLoading(false);
     }

@@ -140,9 +140,25 @@ export const adminApi = {
     return response.data;
   },
 
+  // GET /api/v1/admin/content/{courseId}
   getCourseContent: async (courseId) => {
-    const response = await axiosInstance.get(`/api/v1/admin/content/${courseId}`);
-    return response.data;
+    try {
+      const response = await axiosInstance.get(`/api/v1/admin/content/${courseId}`);
+      return response.data;
+    } catch (err) {
+      console.warn(`[adminApi] GET /api/v1/admin/content/${courseId} failed, trying fallback...`);
+      try {
+        const response = await axiosInstance.get(`/api/v1/courses/${courseId}`);
+        return response.data;
+      } catch (err2) {
+        const localCourses = JSON.parse(localStorage.getItem("lms_custom_courses") || "[]");
+        const found = localCourses.find(
+          (c) => String(c.id) === String(courseId) || String(c._id) === String(courseId)
+        );
+        if (found) return { success: true, data: found };
+        throw err;
+      }
+    }
   },
 
   approveCourse: async (courseId) => {
