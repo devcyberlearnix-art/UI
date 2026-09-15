@@ -1,7 +1,7 @@
-// src/pages/admin/Courses.jsx
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, CheckCircle, XCircle, Trash2, FileText, Loader2, AlertCircle, Plus, Sparkles, RefreshCw, Edit } from "lucide-react";
+import { Eye, CheckCircle, XCircle, Trash2, FileText, Loader2, AlertCircle, Plus, Sparkles, RefreshCw, Edit, Users } from "lucide-react";
 import { adminApi } from "../../api/adminApi";
 import { instructorApi } from "../../api/instructorApi";
 import { courseApi } from "../../api/courseApi";
@@ -12,6 +12,7 @@ const CATEGORIES = ["Development", "Design", "Business", "Marketing", "Data Scie
 const LEVELS     = ["Beginner", "Intermediate", "Advanced", "All Levels"];
 
 const Courses = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const userRole = user?.role || 'admin';
   const isSuperAdmin = userRole === 'super_admin' || userRole === 'admin';
@@ -472,7 +473,16 @@ const Courses = () => {
                     </button>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{course.students}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">
+                  <button
+                    onClick={() => navigate(`/admin/courses/${course.id}/students`)}
+                    className="inline-flex items-center gap-1.5 font-semibold text-gray-700 hover:text-orange-600 transition"
+                    title="View Enrolled Students (GET /api/v1/courses/:id/students)"
+                  >
+                    <Users size={14} className="text-orange-500" />
+                    <span>{course.students}</span>
+                  </button>
+                </td>
                 <td className="px-6 py-4">
                   <select
                     value={String(course.status || "PUBLISHED").toUpperCase()}
@@ -511,6 +521,13 @@ const Courses = () => {
                   >
                     <Sparkles size={13} />
                     <span>Patch</span>
+                  </button>
+                  <button 
+                    onClick={() => navigate(`/admin/courses/${course.id}/students`)}
+                    className="p-1.5 text-gray-400 hover:text-purple-600 rounded-lg hover:bg-purple-50 transition"
+                    title="View Enrolled Students (GET /api/v1/courses/:id/students)"
+                  >
+                    <Users size={16} />
                   </button>
                   <button 
                     onClick={() => handleViewContent(course)} 
@@ -831,6 +848,15 @@ const Courses = () => {
                 <FileText size={18} className="text-orange-500" /> Course Content & Details
               </h2>
               <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setShowModal(false);
+                    navigate(`/admin/courses/${selectedCourse.id}/students`);
+                  }}
+                  className="px-3 py-1 bg-purple-50 text-purple-600 hover:bg-purple-100 rounded-xl text-xs font-semibold flex items-center gap-1 transition"
+                >
+                  <Users size={14} /> Enrolled Students
+                </button>
                 <button
                   onClick={() => {
                     setShowModal(false);

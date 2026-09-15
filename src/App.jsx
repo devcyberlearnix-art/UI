@@ -103,7 +103,7 @@ function App() {
         </Route>
 
         {/* ✅ Instructor routes - protected */}
-        <Route element={<ProtectedRoute allowedRoles={["instructor"]}><DashboardLayout /></ProtectedRoute>}>
+        <Route element={<ProtectedRoute allowedRoles={["instructor", "admin", "super_admin", "sub_admin", "main_admin", "main"]}><DashboardLayout /></ProtectedRoute>}>
           <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
           <Route path="/instructor/create-course" element={<CreateCourse />} />
           <Route path="/instructor/my-courses" element={<InstructorCourses />} />
@@ -124,6 +124,7 @@ function App() {
           {/* User Management */}
           <Route path="/admin/users" element={<ManageUsers />} />
           <Route path="/admin/courses" element={<ManageCourses />} />
+          <Route path="/admin/courses/:courseId/students" element={<CourseStudents />} />
           <Route path="/admin/instructors" element={<Instructors />} />
           <Route path="/admin/instructor-applications" element={<InstructorApplications />} />
           
