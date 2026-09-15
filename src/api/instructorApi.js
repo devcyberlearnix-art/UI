@@ -107,19 +107,48 @@ export const instructorApi = {
     return response.data;
   },
 
+  // GET /api/v1/instructors/applications/me
+  // Returns the current logged-in user's instructor application details
+  // Curl reference: GET https://matted-ascent-specimen.ngrok-free.dev/api/v1/instructors/applications/me
+  getMyApplication: async () => {
+    try {
+      const response = await axiosInstance.get("/api/v1/instructors/applications/me");
+      return response.data;
+    } catch (err) {
+      console.warn('[instructorApi] GET /api/v1/instructors/applications/me failed, trying /my-status and /applications fallbacks...');
+      try {
+        const fallback1 = await axiosInstance.get("/api/v1/instructors/applications/my-status");
+        return fallback1.data;
+      } catch (err1) {
+        const fallback2 = await axiosInstance.get("/api/v1/instructors/applications");
+        return fallback2.data;
+      }
+    }
+  },
+
   // GET /api/v1/instructors/applications/my-status
   // Returns the current logged-in student's instructor application status
   // Response shape: { success, data: { applicationId, status, submittedAt, reviewMessage } }
   getMyApplicationStatus: async () => {
-    const response = await axiosInstance.get("/api/v1/instructors/applications/my-status");
-    return response.data;
+    try {
+      const response = await axiosInstance.get("/api/v1/instructors/applications/me");
+      return response.data;
+    } catch (err) {
+      const response = await axiosInstance.get("/api/v1/instructors/applications/my-status");
+      return response.data;
+    }
   },
 
   // GET /api/v1/instructors/applications
   // Returns list of all applications by the logged-in user
   getMyApplications: async () => {
-    const response = await axiosInstance.get("/api/v1/instructors/applications");
-    return response.data;
+    try {
+      const response = await axiosInstance.get("/api/v1/instructors/applications/me");
+      return response.data;
+    } catch (err) {
+      const response = await axiosInstance.get("/api/v1/instructors/applications");
+      return response.data;
+    }
   },
 
   // ======================== MEDIA UPLOADS ========================

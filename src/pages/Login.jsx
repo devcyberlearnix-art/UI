@@ -92,8 +92,21 @@ const Login = () => {
       const result = await login(email.trim(), password.trim());
       
       if (result.success) {
-        toast.success("Login successful!");
-        navigate(getRedirectByRole(result.user?.role || result.user?.role1 || result.user?.userRole), { replace: true });
+        const userObj = result.user || {};
+        const instStatus = userObj.instructorStatus;
+
+        if (instStatus === "pending" || instStatus === "pending_verification") {
+          toast.success(`Welcome back ${userObj.firstName || userObj.name || ''}! Your Instructor Application is Pending Admin Approval.`);
+        } else if (instStatus === "suspended" || instStatus === "locked") {
+          toast.error(`Notice: Your Instructor Account status is ${instStatus.replace('_', ' ')}. Please contact Admin support.`);
+        } else if (instStatus === "active" || instStatus === "approved" || userObj.role === "instructor") {
+          toast.success(`Welcome to your Instructor Dashboard, ${userObj.firstName || userObj.name || 'Instructor'}!`);
+        } else {
+          toast.success("Login successful!");
+        }
+
+        const redirectPath = getRedirectByRole(userObj.role || userObj.role1 || userObj.userRole);
+        navigate(redirectPath, { replace: true });
       } else {
         setError(result.error || "Login failed");
         toast.error(result.error || "Login failed");

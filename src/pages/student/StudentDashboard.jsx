@@ -22,9 +22,9 @@ const StudentDashboard = () => {
     const fetchApplicationStatus = async () => {
       setStatusLoading(true);
       try {
-        // Try fetching via /my-status endpoint first
-        const res = await instructorApi.getMyApplicationStatus();
-        console.log('[StudentDashboard] Application status response:', res);
+        // Fetch application details via GET /api/v1/instructors/applications/me
+        const res = await instructorApi.getMyApplication();
+        console.log('[StudentDashboard] Application response (GET /me):', res);
 
         // Handle various response shapes
         const data = res?.data || res;
@@ -34,14 +34,16 @@ const StudentDashboard = () => {
           status = String(data.status).toLowerCase();
         } else if (data?.applicationStatus) {
           status = String(data.applicationStatus).toLowerCase();
+        } else if (data?.verificationStatus) {
+          status = String(data.verificationStatus).toLowerCase();
         } else if (Array.isArray(data) && data.length > 0) {
           // If response is an array, pick the latest application
-          const latest = data.sort((a, b) => new Date(b.submittedAt || b.createdAt) - new Date(a.submittedAt || a.createdAt))[0];
-          status = String(latest?.status || latest?.applicationStatus || 'pending').toLowerCase();
+          const latest = [...data].sort((a, b) => new Date(b.submittedAt || b.createdAt || 0) - new Date(a.submittedAt || a.createdAt || 0))[0];
+          status = String(latest?.status || latest?.applicationStatus || latest?.verificationStatus || 'pending').toLowerCase();
           setApplicationData(latest);
         } else if (data?.applicationId || data?.id) {
           setApplicationData(data);
-          status = 'pending';
+          status = String(data.status || 'pending').toLowerCase();
         }
 
         if (status) {

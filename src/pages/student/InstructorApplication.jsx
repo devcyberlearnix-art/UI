@@ -274,9 +274,47 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         console.warn("Instructor application submission API response warning:", apiErr);
       }
 
+      // Persist submitted application details for Admin Management view
+      const appliedUser = user || {};
+      const newApp = {
+        id: "app_" + Date.now(),
+        applicationId: "app_" + Date.now(),
+        userId: appliedUser.id || "usr_" + Date.now(),
+        name: appliedUser.name || appliedUser.firstName || appliedUser.email?.split('@')[0] || "Student Applicant",
+        fullName: appliedUser.name || appliedUser.firstName || "Student Applicant",
+        email: appliedUser.email || "applicant@example.com",
+        status: "pending_verification",
+        verificationStatus: "pending_verification",
+        submittedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        contentType: info.contentType || "Development",
+        specialization: info.specialization || "General",
+        experience: info.experience || "1-3 years",
+        bio: info.bio || "",
+        phone: info.phone || "",
+        linkedIn: info.linkedIn || "",
+        website: info.website || "",
+        courses: 0,
+        students: 0,
+        user: {
+          id: appliedUser.id,
+          name: appliedUser.name || appliedUser.firstName || "Student Applicant",
+          email: appliedUser.email,
+          role: appliedUser.role || "student"
+        }
+      };
+
+      const existingApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const updatedApps = [newApp, ...existingApps.filter(a => String(a.email).toLowerCase() !== String(newApp.email).toLowerCase())];
+      localStorage.setItem("lms_instructor_applications", JSON.stringify(updatedApps));
+
+      const existingInsts = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+      const updatedInsts = [newApp, ...existingInsts.filter(i => String(i.email).toLowerCase() !== String(newApp.email).toLowerCase())];
+      localStorage.setItem("lms_instructors", JSON.stringify(updatedInsts));
+
       toast.success("Application submitted successfully!");
       setSubmittedLocally(true);
-      if (onStatusChange) onStatusChange("pending");
+      if (onStatusChange) onStatusChange("pending_verification");
     } catch (err) {
       console.error("Instructor application error:", err);
       const errorMsg = err.response?.data?.message || err.message || "Failed to submit application";

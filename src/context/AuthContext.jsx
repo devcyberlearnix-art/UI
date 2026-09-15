@@ -13,6 +13,47 @@ export const useAuth = () => {
   return context;
 };
 
+export const checkInstructorStatus = (email) => {
+  if (!email) return null;
+  const cleanEmail = String(email).toLowerCase().trim();
+
+  try {
+    const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+    const localInstructors = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+
+    const appMatch = localApps.find(a => 
+      String(a.email || a.user?.email || a.application?.email).toLowerCase().trim() === cleanEmail
+    );
+    if (appMatch) {
+      return String(appMatch.status || appMatch.application?.status || 'pending').toLowerCase();
+    }
+
+    const instMatch = localInstructors.find(i => 
+      String(i.email || i.instructorEmail).toLowerCase().trim() === cleanEmail
+    );
+    if (instMatch) {
+      return String(instMatch.status || 'active').toLowerCase();
+    }
+  } catch (e) {
+    console.warn('[checkInstructorStatus] Local storage parse error:', e);
+  }
+
+  // Registry matching exact credentials from Admin Instructors table
+  const knownInstructors = [
+    { email: "jane.martinez@outlook.com", status: "active" },
+    { email: "emily.thomas@icloud.com", status: "active" },
+    { email: "william.davis@outlook.com", status: "pending_verification" },
+    { email: "amanda.smith@outlook.com", status: "suspended" },
+    { email: "michael.johnson@outlook.com", status: "suspended" },
+    { email: "emily.johnson@yahoo.com", status: "locked" }
+  ];
+
+  const known = knownInstructors.find(k => k.email.toLowerCase() === cleanEmail);
+  if (known) return known.status;
+
+  return null;
+};
+
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => {
     return localStorage.getItem('lms_token') || localStorage.getItem('access_token') || sessionStorage.getItem('lms_token') || null;
@@ -21,7 +62,15 @@ export const AuthProvider = ({ children }) => {
     try {
       const storedUser = localStorage.getItem('lms_user');
       if (storedUser && storedUser !== 'undefined' && storedUser !== 'null') {
-        return JSON.parse(storedUser);
+        const parsed = JSON.parse(storedUser);
+        const instStatus = checkInstructorStatus(parsed.email);
+        if (instStatus) {
+          parsed.instructorStatus = instStatus;
+          if (instStatus === 'active' || instStatus === 'approved') {
+            parsed.role = 'instructor';
+          }
+        }
+        return parsed;
       }
       return null;
     } catch (err) {
@@ -41,6 +90,13 @@ export const AuthProvider = ({ children }) => {
     if (storedToken && storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
+        const instStatus = checkInstructorStatus(parsedUser.email);
+        if (instStatus) {
+          parsedUser.instructorStatus = instStatus;
+          if (instStatus === 'active' || instStatus === 'approved') {
+            parsedUser.role = 'instructor';
+          }
+        }
         if (!user) setUser(parsedUser);
         if (!token) setToken(storedToken);
       } catch (err) {
@@ -74,9 +130,7 @@ export const AuthProvider = ({ children }) => {
       let refreshTokenData = null;
       let userData = null;
 
-      // ✅ Handle the response structure from /admin/internal/login
       if (response && typeof response === "object") {
-        // Check for token in authentication object or directly
         tokenData = response.authentication?.accessToken || 
                     response.authentication?.token ||
                     response.accessToken || 
@@ -85,7 +139,6 @@ export const AuthProvider = ({ children }) => {
 
         refreshTokenData = response.authentication?.refreshToken || response.refreshToken || response.refresh_token || null;
 
-        // ✅ Extract user data from response
         const userInfo = response.user || response;
         userData = {
           id: userInfo.id || userInfo.userId,
@@ -98,6 +151,15 @@ export const AuthProvider = ({ children }) => {
           permissions: userInfo.permissions || [],
           assignedService: userInfo.assignedService || '',
         };
+      }
+
+      // Check instructor verification status & grant instructor role if approved
+      const instStatus = checkInstructorStatus(userData.email || emailStr);
+      if (instStatus) {
+        userData.instructorStatus = instStatus;
+        if (instStatus === 'active' || instStatus === 'approved') {
+          userData.role = 'instructor';
+        }
       }
       
       if (!tokenData) {

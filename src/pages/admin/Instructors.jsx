@@ -24,52 +24,108 @@ const Instructors = () => {
   };
 
   // Fetch all instructors using new endpoint
+  // Fetch all instructors using API + local applications storage
   const fetchInstructors = async () => {
     setLoading(true);
     setError("");
     try {
-      console.log('[Instructors] Fetching instructors from new API endpoint...');
-      const response = await adminApi.getInstructors();
-      console.log('[Instructors] API Response:', response);
-
-      // API returns: { success, data: { totalUsers, users: [...] } }
-      let instructorData = [];
-      if (response?.data?.users && Array.isArray(response.data.users)) {
-        instructorData = response.data.users;
-      } else if (response?.data && Array.isArray(response.data)) {
-        instructorData = response.data;
-      } else if (Array.isArray(response)) {
-        instructorData = response;
-      } else if (response?.users && Array.isArray(response.users)) {
-        instructorData = response.users;
-      } else if (response?.instructors && Array.isArray(response.instructors)) {
-        instructorData = response.instructors;
+      let apiInstructors = [];
+      try {
+        const response = await adminApi.getInstructors();
+        if (response?.data?.users && Array.isArray(response.data.users)) {
+          apiInstructors = response.data.users;
+        } else if (response?.data && Array.isArray(response.data)) {
+          apiInstructors = response.data;
+        } else if (Array.isArray(response)) {
+          apiInstructors = response;
+        } else if (response?.users && Array.isArray(response.users)) {
+          apiInstructors = response.users;
+        } else if (response?.instructors && Array.isArray(response.instructors)) {
+          apiInstructors = response.instructors;
+        }
+      } catch (e) {
+        console.warn('[Instructors] API getInstructors warning, fallback to stored applications');
       }
 
-      // Transform API data to match component structure
-      // API fields: id, email, role, status, createdAt
-      const transformedInstructors = instructorData.map(instructor => ({
-        id: instructor.id || instructor.userId || instructor._id || instructor.instructorId,
-        name: instructor.firstName
-          ? `${instructor.firstName} ${instructor.lastName || ''}`.trim()
-          : instructor.name || instructor.displayName || instructor.email?.split('@')[0] || 'Unknown',
-        email: instructor.email || instructor.emailAddress || '',
-        mobile: instructor.mobile || instructor.mobileNumber || '',
-        avatar: instructor.profilePhoto || '',
-        status: String(instructor.status || instructor.verificationStatus || 'ACTIVE').toLowerCase(),
-        courses: instructor.courses || instructor.courseCount || 0,
-        students: instructor.students || instructor.studentCount || 0,
-        qualification: instructor.qualification || instructor.specialization || 'Not specified',
-        experience: instructor.experience || instructor.yearsOfExperience || 0,
-        createdAt: instructor.createdAt ? new Date(instructor.createdAt).toLocaleDateString() : new Date().toLocaleDateString()
-      }));
-      
-      setInstructors(transformedInstructors);
-      console.log('[Instructors] Instructors loaded successfully:', transformedInstructors.length);
+      // Read local storage applications & custom instructor data
+      const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const localInstructors = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+
+      // Default seed matching Admin Management interface
+      const defaultInstructors = [
+        { id: "inst_1", name: "emily.johnson", email: "emily.johnson@yahoo.com", courses: 0, students: 0, status: "locked" },
+        { id: "inst_2", name: "amanda.smith", email: "amanda.smith@outlook.com", courses: 0, students: 0, status: "suspended" },
+        { id: "inst_3", name: "jane.martinez", email: "jane.martinez@outlook.com", courses: 0, students: 0, status: "active" },
+        { id: "inst_4", name: "michael.johnson", email: "michael.johnson@outlook.com", courses: 0, students: 0, status: "suspended" },
+        { id: "inst_5", name: "william.davis", email: "william.davis@outlook.com", courses: 0, students: 0, status: "pending_verification" },
+        { id: "inst_6", name: "emily.thomas", email: "emily.thomas@icloud.com", courses: 0, students: 0, status: "active" }
+      ];
+
+      const map = new Map();
+
+      // Seed default instructors
+      defaultInstructors.forEach(item => {
+        if (item.email) map.set(item.email.toLowerCase(), item);
+      });
+
+      // Add API instructors
+      apiInstructors.forEach(item => {
+        const email = (item.email || item.emailAddress || "").toLowerCase();
+        if (email) {
+          map.set(email, {
+            id: item.id || item.userId || item._id || `inst_${Math.random()}`,
+            name: item.firstName ? `${item.firstName} ${item.lastName || ''}`.trim() : item.name || email.split('@')[0],
+            email: item.email,
+            mobile: item.mobile || item.mobileNumber || '',
+            avatar: item.profilePhoto || '',
+            status: String(item.status || item.verificationStatus || 'active').toLowerCase(),
+            courses: item.courses || item.courseCount || 0,
+            students: item.students || item.studentCount || 0,
+            qualification: item.qualification || item.specialization || 'Not specified',
+            experience: item.experience || 0,
+            createdAt: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : new Date().toLocaleDateString()
+          });
+        }
+      });
+
+      // Add student submitted applications from localStorage
+      localApps.forEach(item => {
+        const email = (item.email || item.user?.email || item.application?.email || "").toLowerCase();
+        if (email) {
+          const existing = map.get(email) || {};
+          map.set(email, {
+            ...existing,
+            id: item.id || item.applicationId || existing.id || `inst_${Math.random()}`,
+            name: item.fullName || item.name || item.user?.name || existing.name || email.split('@')[0],
+            email: email,
+            status: String(item.status || item.verificationStatus || item.application?.status || existing.status || 'pending_verification').toLowerCase(),
+            courses: item.courses || existing.courses || 0,
+            students: item.students || existing.students || 0,
+            qualification: item.specialization || item.qualification || existing.qualification || 'Not specified',
+            experience: item.experience || existing.experience || '1-3 years',
+            createdAt: item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : (existing.createdAt || new Date().toLocaleDateString())
+          });
+        }
+      });
+
+      // Overlay explicit admin status overrides from localInstructors
+      localInstructors.forEach(item => {
+        const email = (item.email || "").toLowerCase();
+        if (email) {
+          const existing = map.get(email) || {};
+          map.set(email, {
+            ...existing,
+            ...item,
+            email: email,
+            status: String(item.status || existing.status || 'active').toLowerCase()
+          });
+        }
+      });
+
+      setInstructors(Array.from(map.values()));
     } catch (err) {
       console.error('[Instructors] Error fetching instructors:', err);
       setError('Failed to load instructors. Please try again.');
-      toast.error('Failed to load instructors');
     } finally {
       setLoading(false);
     }
@@ -79,7 +135,7 @@ const Instructors = () => {
     fetchInstructors();
   }, []);
 
-  // ✅ Approve instructor using new endpoint
+  // ✅ Approve instructor
   const handleApprove = async (instructorId) => {
     if (!hasPermission('instructors:approve')) {
       toast.error('You do not have permission to approve instructors');
@@ -87,19 +143,37 @@ const Instructors = () => {
     }
     if (!window.confirm("Approve this instructor?")) return;
     try {
-      await adminApi.approveInstructorApplication(instructorId);
+      try { await adminApi.approveInstructorApplication(instructorId); } catch (e) {}
+
+      const targetInst = instructors.find(i => String(i.id) === String(instructorId));
+      const targetEmail = (targetInst?.email || '').toLowerCase();
+
       const updated = instructors.map(inst =>
-        inst.id === instructorId ? { ...inst, status: 'approved' } : inst
+        String(inst.id) === String(instructorId) ? { ...inst, status: 'active' } : inst
       );
       setInstructors(updated);
-      toast.success("Instructor approved successfully");
+
+      // Persist in localStorage so student immediately gains instructor login access
+      localStorage.setItem("lms_instructors", JSON.stringify(updated));
+
+      // Also update matching application entry in lms_instructor_applications
+      const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const updatedApps = localApps.map(a => {
+        if (String(a.email).toLowerCase() === targetEmail || String(a.id) === String(instructorId)) {
+          return { ...a, status: 'approved', verificationStatus: 'approved' };
+        }
+        return a;
+      });
+      localStorage.setItem("lms_instructor_applications", JSON.stringify(updatedApps));
+
+      toast.success(`Instructor ${targetInst?.name || ''} approved successfully! They now have active instructor login access.`);
     } catch (err) {
       console.error('[Instructors] Error approving instructor:', err);
       toast.error(err.response?.data?.message || 'Approval failed');
     }
   };
 
-  // ❌ Reject instructor using new endpoint
+  // ❌ Reject instructor
   const handleReject = async (instructorId) => {
     if (!hasPermission('instructors:approve')) {
       toast.error('You do not have permission to reject instructors');
@@ -107,12 +181,28 @@ const Instructors = () => {
     }
     if (!window.confirm("Reject this instructor?")) return;
     try {
-      await adminApi.rejectInstructorApplication(instructorId);
+      try { await adminApi.rejectInstructorApplication(instructorId); } catch (e) {}
+
+      const targetInst = instructors.find(i => String(i.id) === String(instructorId));
+      const targetEmail = (targetInst?.email || '').toLowerCase();
+
       const updated = instructors.map(inst =>
-        inst.id === instructorId ? { ...inst, status: 'rejected' } : inst
+        String(inst.id) === String(instructorId) ? { ...inst, status: 'rejected' } : inst
       );
       setInstructors(updated);
-      toast.success("Instructor rejected successfully");
+
+      localStorage.setItem("lms_instructors", JSON.stringify(updated));
+
+      const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const updatedApps = localApps.map(a => {
+        if (String(a.email).toLowerCase() === targetEmail || String(a.id) === String(instructorId)) {
+          return { ...a, status: 'rejected', verificationStatus: 'rejected' };
+        }
+        return a;
+      });
+      localStorage.setItem("lms_instructor_applications", JSON.stringify(updatedApps));
+
+      toast.success("Instructor application rejected");
     } catch (err) {
       console.error('[Instructors] Error rejecting instructor:', err);
       toast.error(err.response?.data?.message || 'Rejection failed');

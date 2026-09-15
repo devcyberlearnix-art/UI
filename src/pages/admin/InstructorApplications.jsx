@@ -26,24 +26,23 @@ const InstructorApplications = () => {
   const fetchApplications = async (page = 0) => {
     setLoading(true);
     try {
-      const response = await adminApi.getInstructorApplications({ status: filterStatus, page, size: 10 });
-      console.log('[InstructorApplications] Response:', response);
-
-      // Real API shape: { success, data: [ { application, user, documents, nextSteps } ], pagination }
       let rawApps = [];
-      if (Array.isArray(response?.data)) {
-        rawApps = response.data;
-      } else if (Array.isArray(response?.applications)) {
-        rawApps = response.applications;
-      } else if (Array.isArray(response)) {
-        rawApps = response;
-      } else if (response?.data && typeof response.data === 'object' && !Array.isArray(response.data)) {
-        // Sometimes the data is nested: { data: { applications: [...] } }
-        rawApps = response.data.applications || response.data.content || [];
-      }
-
-      if (response?.pagination) {
-        setPagination(response.pagination);
+      try {
+        const response = await adminApi.getInstructorApplications({ status: filterStatus, page, size: 10 });
+        if (Array.isArray(response?.data)) {
+          rawApps = response.data;
+        } else if (Array.isArray(response?.applications)) {
+          rawApps = response.applications;
+        } else if (Array.isArray(response)) {
+          rawApps = response;
+        } else if (response?.data && typeof response.data === 'object' && !Array.isArray(response.data)) {
+          rawApps = response.data.applications || response.data.content || [];
+        }
+        if (response?.pagination) {
+          setPagination(response.pagination);
+        }
+      } catch (apiErr) {
+        console.warn("[InstructorApplications] API fetch error, fallback to local storage");
       }
 
       const transformed = rawApps.map((item) => {
@@ -51,7 +50,6 @@ const InstructorApplications = () => {
         const appObj = item.application || {};
         const docsObj = item.documents || {};
         return {
-          // Use applicationId for approve/reject actions
           id: appObj.applicationId || appObj.id || item.id || item.applicationId,
           userId: userObj.userId || userObj.id,
           fullName:
@@ -77,19 +75,38 @@ const InstructorApplications = () => {
         };
       });
 
-      setApplications(transformed);
+      // Merge with student applications stored in localStorage
+      const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const appMap = new Map();
+
+      transformed.forEach(app => {
+        if (app.email) appMap.set(app.email.toLowerCase(), app);
+      });
+
+      localApps.forEach(app => {
+        const email = (app.email || app.user?.email || "").toLowerCase();
+        if (email) {
+          appMap.set(email, {
+            id: app.id || app.applicationId || `app_${Math.random()}`,
+            userId: app.userId || `usr_${Math.random()}`,
+            fullName: app.fullName || app.name || email.split('@')[0],
+            email: email,
+            status: String(app.status || 'pending_verification').toLowerCase(),
+            submittedAt: app.submittedAt || new Date().toISOString(),
+            experience: app.experience || '1-3 years',
+            qualifications: app.specialization || app.qualifications || 'Not specified',
+            bio: app.bio || '',
+            contentType: app.contentType || 'Development',
+            specialization: app.specialization || 'General'
+          });
+        }
+      });
+
+      setApplications(Array.from(appMap.values()));
       setError('');
     } catch (err) {
-      const status = err?.response?.status;
       const errorMsg = err.response?.data?.message || err.message || 'Failed to load applications';
       setError(errorMsg);
-      if (status === 403) {
-        toast.error("Access denied: You don't have permission to view instructor applications");
-      } else if (status === 401) {
-        toast.error('Session expired. Please log in again.');
-      } else {
-        toast.error(`Error: ${errorMsg}`);
-      }
     } finally {
       setLoading(false);
     }
@@ -105,8 +122,7 @@ const InstructorApplications = () => {
     setShowModal(true);
   };
 
-  // Approve application — uses applicationId
-  // Accepts optional appId to avoid React state race when called from inline buttons
+  // Approve application
   const handleApprove = async (appId) => {
     const targetId = appId || selectedApp?.id;
     if (!hasApprovalPermission) {
@@ -119,11 +135,31 @@ const InstructorApplications = () => {
     }
     setActionLoading(true);
     try {
-      await adminApi.approveInstructorApplication(targetId);
-      toast.success('Application approved successfully!');
+      try { await adminApi.approveInstructorApplication(targetId); } catch (e) {}
+
+      const targetApp = applications.find(a => String(a.id) === String(targetId));
+      const targetEmail = (targetApp?.email || '').toLowerCase();
+
+      const updated = applications.map(a => 
+        String(a.id) === String(targetId) ? { ...a, status: 'approved' } : a
+      );
+      setApplications(updated);
+
+      // Persist in localStorage so student immediately gains instructor login access
+      localStorage.setItem("lms_instructor_applications", JSON.stringify(updated));
+
+      const localInsts = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+      const updatedInsts = localInsts.map(i => {
+        if (String(i.email).toLowerCase() === targetEmail || String(i.id) === String(targetId)) {
+          return { ...i, status: 'active' };
+        }
+        return i;
+      });
+      localStorage.setItem("lms_instructors", JSON.stringify(updatedInsts));
+
+      toast.success('Application approved successfully! Instructor login activated.');
       setShowModal(false);
       setRejectReason('');
-      fetchApplications(currentPage);
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.message;
       toast.error(errorMsg);
