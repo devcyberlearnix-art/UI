@@ -63,33 +63,10 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.error('[API Response Error]', error);
+    console.error('[API Response Error]', error?.config?.url, error?.response?.status, error?.message);
     
-    if (error.response) {
-      const { status, config } = error.response;
-      
-      const isPublicAuthCall = config?.url?.includes('/api/v1/auth/');
-
-      if (status === 401 && !isPublicAuthCall && !config?.url?.includes('/login')) {
-        localStorage.removeItem('lms_token');
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('lms_user');
-        sessionStorage.removeItem('lms_token');
-        
-        const currentPath = window.location.pathname;
-        if (currentPath.startsWith('/admin')) {
-          if (!currentPath.includes('/admin/login')) {
-            window.location.href = '/admin/login';
-          }
-        } else {
-          if (currentPath !== '/login' && currentPath !== '/') {
-            window.location.href = '/login';
-          }
-        }
-      }
-    }
-    
+    // Pass errors through to components so they can handle 401/404 gracefully
+    // without unexpectedly wiping user session or redirecting to login
     return Promise.reject(error);
   }
 );

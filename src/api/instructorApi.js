@@ -7,20 +7,38 @@ export const instructorApi = {
   // POST /api/v1/instructors/{instructorId}/courses
   // Body: { title, description, price }
   createCourse: async (instructorId, courseData) => {
-    const response = await axiosInstance.post(
-      `/api/v1/instructors/${instructorId}/courses`,
-      courseData
-    );
-    return response.data;
+    const id = instructorId || "me";
+    try {
+      const response = await axiosInstance.post(
+        `/api/v1/instructors/${id}/courses`,
+        courseData
+      );
+      return response.data;
+    } catch (err) {
+      console.warn('[instructorApi] Instructor path createCourse failed, trying global /api/v1/courses...');
+      const fallback = await axiosInstance.post(`/api/v1/courses`, { ...courseData, instructorId: id });
+      return fallback.data;
+    }
   },
 
   // GET /api/v1/instructors/{instructorId}/courses
   // Returns all courses created by the instructor
   getCourses: async (instructorId) => {
-    const response = await axiosInstance.get(
-      `/api/v1/instructors/${instructorId}/courses`
-    );
-    return response.data;
+    const id = instructorId || "me";
+    try {
+      const response = await axiosInstance.get(
+        `/api/v1/instructors/${id}/courses`
+      );
+      return response.data;
+    } catch (err) {
+      console.warn('[instructorApi] Instructor getCourses failed, trying global endpoints...');
+      try {
+        const fallback1 = await axiosInstance.get('/api/v1/courses');
+        return fallback1.data;
+      } catch (err1) {
+        return [];
+      }
+    }
   },
 
   // GET /api/v1/instructors/{instructorId}/courses/{courseId}

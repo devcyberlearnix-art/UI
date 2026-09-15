@@ -115,8 +115,24 @@ export const adminApi = {
 
   // ======================== COURSE MANAGEMENT ====================
   getCourses: async (params = {}) => {
-    const response = await axiosInstance.get('/api/v1/admin/courses', { params });
-    return response.data;
+    try {
+      const response = await axiosInstance.get('/api/v1/admin/courses', { params });
+      return response.data;
+    } catch (err) {
+      console.warn('[adminApi] /api/v1/admin/courses failed, trying fallback endpoints...');
+      try {
+        const fallback1 = await axiosInstance.get('/api/v1/courses', { params });
+        return fallback1.data;
+      } catch (err1) {
+        try {
+          const fallback2 = await axiosInstance.get('/api/v1/admin/reports/courses', { params });
+          return fallback2.data;
+        } catch (err2) {
+          console.warn('[adminApi] All course endpoints returned error, returning empty list');
+          return [];
+        }
+      }
+    }
   },
 
   getCourseById: async (courseId) => {

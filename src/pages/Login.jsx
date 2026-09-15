@@ -20,7 +20,7 @@ const Login = () => {
   const [otpResending, setOtpResending] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { login, isAuthenticated, loading: authLoading } = useAuth();
+  const { user, login, isAuthenticated, loading: authLoading } = useAuth();
   const canResend = cooldownSeconds === 0;
 
   const getRedirectByRole = (roleValue) => {
@@ -31,11 +31,21 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (!authLoading && isAuthenticated) {
-      const storedUser = JSON.parse(localStorage.getItem("lms_user") || "{}");
-      navigate(getRedirectByRole(storedUser?.role || storedUser?.role1 || storedUser?.userRole), { replace: true });
+    const tokenExists = !!localStorage.getItem("lms_token") || !!localStorage.getItem("access_token");
+    if (!authLoading && (isAuthenticated || tokenExists)) {
+      let storedUser = {};
+      try {
+        const raw = localStorage.getItem("lms_user");
+        if (raw && raw !== "undefined" && raw !== "null") {
+          storedUser = JSON.parse(raw);
+        }
+      } catch (e) {
+        storedUser = {};
+      }
+      const targetRole = user?.role || user?.role1 || user?.userRole || storedUser?.role || storedUser?.role1 || storedUser?.userRole;
+      navigate(getRedirectByRole(targetRole), { replace: true });
     }
-  }, [isAuthenticated, navigate, authLoading]);
+  }, [isAuthenticated, user, navigate, authLoading]);
 
   useEffect(() => {
     if (cooldownSeconds <= 0) return;

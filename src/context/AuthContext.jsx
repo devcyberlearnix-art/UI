@@ -14,40 +14,39 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem('lms_token') || localStorage.getItem('access_token') || sessionStorage.getItem('lms_token') || null;
+  });
+  const [user, setUser] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem('lms_user');
+      if (storedUser && storedUser !== 'undefined' && storedUser !== 'null') {
+        return JSON.parse(storedUser);
+      }
+      return null;
+    } catch (err) {
+      console.warn('[AuthProvider] Invalid lms_user in localStorage, clearing');
+      localStorage.removeItem('lms_user');
+      return null;
+    }
+  });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const restoreSession = () => {
-      try {
-        console.log('[AuthProvider] Checking existing session');
-        
-        const storedToken = localStorage.getItem('lms_token') || localStorage.getItem('access_token');
-        const storedUser = localStorage.getItem('lms_user');
-        
-        if (storedToken && storedUser) {
-          try {
-            const parsedUser = JSON.parse(storedUser);
-            setToken(storedToken);
-            setUser(parsedUser);
-            console.log('[AuthProvider] Session restored successfully');
-          } catch (err) {
-            console.error('[AuthProvider] Failed to parse stored user:', err);
-            localStorage.removeItem('lms_token');
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('lms_user');
-          }
-        }
-      } catch (err) {
-        console.error('[AuthProvider] Session restore error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    // Verify stored session synchronization on mount
+    const storedToken = localStorage.getItem('lms_token') || localStorage.getItem('access_token');
+    const storedUser = localStorage.getItem('lms_user');
 
-    restoreSession();
+    if (storedToken && storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        if (!user) setUser(parsedUser);
+        if (!token) setToken(storedToken);
+      } catch (err) {
+        console.error('[AuthProvider] Failed to parse stored user:', err);
+      }
+    }
   }, []);
 
   const login = async (email, password) => {

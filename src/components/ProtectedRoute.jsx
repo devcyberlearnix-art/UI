@@ -29,7 +29,15 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   }
   
   if (allowedRoles.length > 0) {
-    const storedUser = JSON.parse(localStorage.getItem('lms_user') || '{}');
+    let storedUser = {};
+    try {
+      const rawUser = localStorage.getItem('lms_user');
+      if (rawUser && rawUser !== 'undefined' && rawUser !== 'null') {
+        storedUser = JSON.parse(rawUser);
+      }
+    } catch (e) {
+      storedUser = {};
+    }
     const userRole = String(
       user?.role || user?.role1 || user?.userRole || 
       storedUser?.role || storedUser?.role1 || storedUser?.userRole || ''
