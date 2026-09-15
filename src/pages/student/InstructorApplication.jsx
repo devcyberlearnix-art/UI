@@ -336,7 +336,73 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
 
   // ─── Status screen ─────────────────────────────────────────────────────────
   const normalizedStatus = String(applicationStatus || "").toLowerCase();
-  const isPending = submittedLocally || normalizedStatus.includes("pend") || normalizedStatus.includes("review") || normalizedStatus.includes("submit");
+  const userEmail = (user?.email || "").toLowerCase().trim();
+
+  const isApproved = (() => {
+    if (normalizedStatus === "approved" || normalizedStatus === "active") return true;
+    try {
+      const explicitStatus = userEmail ? localStorage.getItem(`instructor_app_status_${userEmail}`) : null;
+      if (explicitStatus === 'approved') return true;
+
+      const globalStatus = localStorage.getItem("instructor_application_status");
+      if (globalStatus === 'approved') return true;
+
+      const apps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const insts = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+
+      const matchApp = apps.find(a => String(a.email || a.user?.email || "").toLowerCase().trim() === userEmail);
+      const matchInst = insts.find(i => String(i.email || i.user?.email || "").toLowerCase().trim() === userEmail);
+
+      const appS = String(matchApp?.status || matchApp?.verificationStatus || "").toLowerCase();
+      const instS = String(matchInst?.status || "").toLowerCase();
+
+      return appS.includes("approv") || appS === "active" || instS.includes("approv") || instS === "active";
+    } catch (e) {
+      return false;
+    }
+  })();
+
+  // 1. Approved status check (takes precedence over submittedLocally)
+  if (isApproved) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-6 text-center animate-[fadeIn_0.3s_ease]">
+        <div className="w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-green-200">
+          <CheckCircle className="w-10 h-10 text-white" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">🎉 Application Approved!</h2>
+        <p className="text-gray-500 max-w-md">Congratulations! Your instructor application form has been reviewed and approved by the Admin.</p>
+        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-2xl max-w-md text-sm text-green-800 shadow-sm">
+          <p className="font-semibold">🚀 You are now an official Instructor!</p>
+          <p className="text-xs text-green-600 mt-1">Please log out and log back in to access your Instructor Dashboard and start creating courses.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Rejected status check
+  if (normalizedStatus === "rejected") {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-6 text-center animate-[fadeIn_0.3s_ease]">
+        <div className="w-20 h-20 bg-gradient-to-r from-red-400 to-rose-500 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-red-200">
+          <AlertCircle className="w-10 h-10 text-white" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Application Not Approved</h2>
+        <p className="text-gray-500 max-w-md mb-6">Your application was reviewed but not approved. You can submit an updated application with complete documentation.</p>
+        <button
+          onClick={() => {
+            setSubmittedLocally(false);
+            if (onStatusChange) onStatusChange(null);
+          }}
+          className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-sm font-semibold shadow-md hover:shadow-lg transition-all"
+        >
+          Re-submit Application Form
+        </button>
+      </div>
+    );
+  }
+
+  // 3. Pending status check
+  const isPending = (submittedLocally && normalizedStatus !== "approved" && normalizedStatus !== "active") || normalizedStatus.includes("pend") || normalizedStatus.includes("review") || normalizedStatus.includes("submit");
 
   if (isPending) {
     return (
@@ -345,12 +411,12 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
           <Loader2 className="w-10 h-10 text-white animate-spin" />
         </div>
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Application Under Review</h2>
-        <p className="text-gray-500 max-w-md mb-6">Your instructor application has been submitted successfully. Our team will review your documents and get back to you within 3–5 business days.</p>
+        <p className="text-gray-500 max-w-md mb-6">Your instructor application has been submitted successfully. Our team will review your documents and get back to you shortly.</p>
         <div className="bg-amber-50 border border-amber-200 rounded-2xl px-6 py-4 text-sm text-amber-700 max-w-sm">
           <p className="font-semibold mb-1">📬 What happens next?</p>
           <ul className="text-left space-y-1 text-amber-600">
-            <li>• Admin reviews your documents</li>
-            <li>• You get an email once approved</li>
+            <li>• Admin reviews your documents in dashboard</li>
+            <li>• Status updates to Approved upon review</li>
             <li>• Your role switches to Instructor</li>
           </ul>
         </div>
@@ -361,20 +427,8 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
           }}
           className="mt-6 px-5 py-2.5 bg-white border border-purple-200 text-purple-700 hover:bg-purple-50 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-2 cursor-pointer"
         >
-          <span>✏️</span> Want to fill or re-submit your application form? Click here
+          <span>✏️</span> Edit or re-submit application form
         </button>
-      </div>
-    );
-  }
-
-  if (applicationStatus === "approved") {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-        <div className="w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-green-200">
-          <CheckCircle className="w-10 h-10 text-white" />
-        </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">🎉 Application Approved!</h2>
-        <p className="text-gray-500 max-w-md">Congratulations! You are now an instructor. Please log out and log back in to access the Instructor Dashboard.</p>
       </div>
     );
   }

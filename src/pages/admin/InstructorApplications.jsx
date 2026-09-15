@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, XCircle, Clock, FileText, Eye } from "lucide-react";
+import { CheckCircle, XCircle, Clock, FileText, Eye, RefreshCw, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { adminApi } from "../../api/adminApi";
@@ -137,25 +137,40 @@ const InstructorApplications = () => {
     try {
       try { await adminApi.approveInstructorApplication(targetId); } catch (e) {}
 
-      const targetApp = applications.find(a => String(a.id) === String(targetId));
-      const targetEmail = (targetApp?.email || '').toLowerCase();
+      const targetApp = applications.find(a => String(a.id) === String(targetId) || String(a.applicationId) === String(targetId)) || selectedApp;
+      const targetEmail = (targetApp?.email || targetApp?.user?.email || selectedApp?.email || '').toLowerCase().trim();
 
-      const updated = applications.map(a => 
-        String(a.id) === String(targetId) ? { ...a, status: 'approved' } : a
-      );
+      const updated = applications.map(a => {
+        const matchId = String(a.id) === String(targetId) || String(a.applicationId) === String(targetId);
+        const matchEmail = targetEmail && String(a.email || '').toLowerCase().trim() === targetEmail;
+        if (matchId || matchEmail) {
+          return { ...a, status: 'approved', verificationStatus: 'approved' };
+        }
+        return a;
+      });
       setApplications(updated);
 
-      // Persist in localStorage so student immediately gains instructor login access
       localStorage.setItem("lms_instructor_applications", JSON.stringify(updated));
 
       const localInsts = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
-      const updatedInsts = localInsts.map(i => {
-        if (String(i.email).toLowerCase() === targetEmail || String(i.id) === String(targetId)) {
-          return { ...i, status: 'active' };
-        }
-        return i;
+      const instMap = new Map();
+      localInsts.forEach(i => {
+        if (i.email) instMap.set(String(i.email).toLowerCase().trim(), i);
       });
-      localStorage.setItem("lms_instructors", JSON.stringify(updatedInsts));
+
+      if (targetEmail) {
+        const existingInst = instMap.get(targetEmail) || {};
+        instMap.set(targetEmail, {
+          ...existingInst,
+          ...targetApp,
+          email: targetEmail,
+          status: 'active',
+          verificationStatus: 'approved'
+        });
+        localStorage.setItem(`instructor_app_status_${targetEmail}`, 'approved');
+      }
+      localStorage.setItem("lms_instructors", JSON.stringify(Array.from(instMap.values())));
+      localStorage.setItem("instructor_application_status", 'approved');
 
       toast.success('Application approved successfully! Instructor login activated.');
       setShowModal(false);
@@ -233,22 +248,52 @@ const InstructorApplications = () => {
     );
   }
 
+  const handleClearStaleData = () => {
+    if (window.confirm("PERMANENTLY DELETE all current applications from the Admin Dashboard? Count will reset to 0 until a student submits a new application.")) {
+      localStorage.removeItem("lms_instructor_applications");
+      localStorage.removeItem("lms_instructors");
+      setApplications([]);
+      setPagination({ currentPage: 0, totalPages: 1, totalApplications: 0, pageSize: 10 });
+      toast.success("All applications removed permanently! Total set to 0.");
+    }
+  };
+
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Instructor Applications
-          <span className="ml-3 text-lg font-normal text-gray-500">({pagination.totalApplications} total)</span>
-        </h1>
-        <div className="flex gap-2">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+            <span>Instructor Applications</span>
+            <span className="text-lg font-normal text-gray-500">({pagination.totalApplications || applications.length} total)</span>
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">Review student applications submitted to become an instructor</p>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={handleClearStaleData}
+            className="flex items-center gap-1.5 bg-red-50 text-red-600 px-3 py-2 rounded-lg border border-red-200 hover:bg-red-100 text-xs font-semibold transition"
+            title="Clear old cached applications"
+          >
+            <Trash2 size={14} />
+            Clear Cache
+          </button>
+          <button
+            onClick={() => fetchApplications(currentPage)}
+            className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-medium transition shadow-xs"
+            title="Refresh Applications"
+          >
+            <RefreshCw size={16} className={loading ? "animate-spin text-orange-500" : "text-gray-500"} />
+            Refresh
+          </button>
+          <div className="h-6 w-px bg-gray-200 mx-1 hidden sm:block"></div>
           {['all', 'pending', 'approved', 'rejected'].map((status) => (
             <button
               key={status}
               onClick={() => { setFilterStatus(status); setCurrentPage(0); }}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
+              className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition ${
                 filterStatus === status
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'bg-orange-500 text-white shadow-xs'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -316,7 +361,7 @@ const InstructorApplications = () => {
                   View Details
                 </button>
 
-                {(app.status === 'pending' || !app.status) && hasApprovalPermission && (
+                {String(app.status).toLowerCase() !== 'approved' && String(app.status).toLowerCase() !== 'active' && hasApprovalPermission && (
                   <>
                     <button
                       onClick={() => handleApprove(app.id)}
@@ -462,7 +507,7 @@ const InstructorApplications = () => {
                 </div>
               )}
 
-              {(selectedApp.status === "pending" || !selectedApp.status) && (
+              {String(selectedApp.status).toLowerCase() !== 'approved' && String(selectedApp.status).toLowerCase() !== 'active' && (
                 <div>
                   <label className="block text-sm font-semibold text-gray-600 mb-2">
                     Rejection Reason (required if rejecting)
@@ -489,7 +534,7 @@ const InstructorApplications = () => {
                 Close
               </button>
 
-              {(selectedApp.status === "pending" || !selectedApp.status) && hasApprovalPermission && (
+              {String(selectedApp.status).toLowerCase() !== 'approved' && String(selectedApp.status).toLowerCase() !== 'active' && hasApprovalPermission && (
                 <>
                   <button
                     onClick={handleApprove}

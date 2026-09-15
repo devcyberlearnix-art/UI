@@ -17,27 +17,64 @@ const StudentDashboard = () => {
   const [statusLoading, setStatusLoading] = useState(false);
   const [applicationData, setApplicationData] = useState(null);
 
-  // Fetch real application status from backend on mount
+  // Fetch real application status from backend & sync local storage approvals
   useEffect(() => {
+    const checkLocalStatus = () => {
+      const userEmail = (user?.email || "").toLowerCase().trim();
+
+      if (userEmail) {
+        const explicitStatus = localStorage.getItem(`instructor_app_status_${userEmail}`);
+        if (explicitStatus === 'approved') return 'approved';
+        if (explicitStatus === 'rejected') return 'rejected';
+      }
+
+      const globalStatus = localStorage.getItem("instructor_application_status");
+      if (globalStatus === 'approved') return 'approved';
+
+      const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const localInsts = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+
+      const appMatch = localApps.find(a => 
+        String(a.email || a.user?.email || "").toLowerCase().trim() === userEmail
+      );
+      if (appMatch) {
+        const s = String(appMatch.status || appMatch.verificationStatus || "").toLowerCase();
+        if (s.includes("approv") || s === "active") return "approved";
+        if (s.includes("reject")) return "rejected";
+        if (s.includes("pend") || s.includes("review")) return "pending";
+      }
+
+      const instMatch = localInsts.find(i => 
+        String(i.email || i.user?.email || "").toLowerCase().trim() === userEmail
+      );
+      if (instMatch) {
+        const s = String(instMatch.status || "").toLowerCase();
+        if (s.includes("approv") || s === "active") return "approved";
+        if (s.includes("reject")) return "rejected";
+      }
+
+      return null;
+    };
+
     const fetchApplicationStatus = async () => {
       setStatusLoading(true);
-      try {
-        // Fetch application details via GET /api/v1/instructors/applications/me
-        const res = await instructorApi.getMyApplication();
-        console.log('[StudentDashboard] Application response (GET /me):', res);
 
-        // Handle various response shapes
+      const localStatus = checkLocalStatus();
+      if (localStatus) {
+        setApplicationStatus(localStatus);
+        if (user?.email) localStorage.setItem(`instructor_app_status_${user.email}`, localStatus);
+        localStorage.setItem("instructor_application_status", localStatus);
+      }
+
+      try {
+        const res = await instructorApi.getMyApplication();
         const data = res?.data || res;
         let status = null;
 
-        if (data?.status) {
-          status = String(data.status).toLowerCase();
-        } else if (data?.applicationStatus) {
-          status = String(data.applicationStatus).toLowerCase();
-        } else if (data?.verificationStatus) {
-          status = String(data.verificationStatus).toLowerCase();
-        } else if (Array.isArray(data) && data.length > 0) {
-          // If response is an array, pick the latest application
+        if (data?.status) status = String(data.status).toLowerCase();
+        else if (data?.applicationStatus) status = String(data.applicationStatus).toLowerCase();
+        else if (data?.verificationStatus) status = String(data.verificationStatus).toLowerCase();
+        else if (Array.isArray(data) && data.length > 0) {
           const latest = [...data].sort((a, b) => new Date(b.submittedAt || b.createdAt || 0) - new Date(a.submittedAt || a.createdAt || 0))[0];
           status = String(latest?.status || latest?.applicationStatus || latest?.verificationStatus || 'pending').toLowerCase();
           setApplicationData(latest);
@@ -47,25 +84,25 @@ const StudentDashboard = () => {
         }
 
         if (status) {
-          // Map backend status variations to our local keys
           if (status.includes('approv')) status = 'approved';
           else if (status.includes('reject')) status = 'rejected';
           else if (status.includes('pend') || status.includes('review') || status.includes('submit')) status = 'pending';
 
+          // Preserve local approval if backend API returns pending
+          if (localStatus === 'approved' && status === 'pending') {
+            status = 'approved';
+          }
+
           setApplicationStatus(status);
-          // Persist locally as cache
           if (user?.email) localStorage.setItem(`instructor_app_status_${user.email}`, status);
           localStorage.setItem("instructor_application_status", status);
         }
       } catch (err) {
-        // 404 means no application yet — clear local status
-        if (err?.response?.status === 404) {
+        if (!localStatus && err?.response?.status === 404) {
           setApplicationStatus(null);
           if (user?.email) localStorage.removeItem(`instructor_app_status_${user.email}`);
           localStorage.removeItem("instructor_application_status");
-        } else {
-          console.warn('[StudentDashboard] Could not fetch application status (using cached):', err?.response?.data?.message || err.message);
-          // Try /applications list as fallback
+        } else if (!localStatus) {
           try {
             const fallback = await instructorApi.getMyApplications();
             const apps = fallback?.data || fallback;
@@ -77,12 +114,8 @@ const StudentDashboard = () => {
               else status = 'pending';
               setApplicationStatus(status);
               setApplicationData(latest);
-              if (user?.email) localStorage.setItem(`instructor_app_status_${user.email}`, status);
-              localStorage.setItem("instructor_application_status", status);
             }
-          } catch (fallbackErr) {
-            console.warn('[StudentDashboard] Fallback also failed:', fallbackErr?.message);
-          }
+          } catch (fallbackErr) {}
         }
       } finally {
         setStatusLoading(false);
@@ -90,6 +123,20 @@ const StudentDashboard = () => {
     };
 
     fetchApplicationStatus();
+
+    const handleStorageChange = () => {
+      const updatedStatus = checkLocalStatus();
+      if (updatedStatus) {
+        setApplicationStatus(updatedStatus);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+    };
   }, [user?.email]);
 
   const handleStatusChange = (status) => {
