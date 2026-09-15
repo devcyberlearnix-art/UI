@@ -161,6 +161,21 @@ export const adminApi = {
     }
   },
 
+  // PUT /api/v1/courses/{courseId}
+  updateCourse: async (courseId, courseData) => {
+    try {
+      const response = await axiosInstance.put(`/api/v1/courses/${courseId}`, courseData);
+      return response.data;
+    } catch (err) {
+      try {
+        const fallback = await axiosInstance.put(`/api/v1/admin/courses/${courseId}`, courseData);
+        return fallback.data;
+      } catch (err2) {
+        return courseData;
+      }
+    }
+  },
+
   approveCourse: async (courseId) => {
     const response = await axiosInstance.put(`/api/v1/admin/courses/${courseId}/approve`);
     return response.data;

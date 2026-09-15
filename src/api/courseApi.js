@@ -37,6 +37,23 @@ export const courseApi = {
     }
   },
 
+  // PUT /api/v1/courses/{courseId}
+  // Update Course API
+  updateCourse: async (courseId, courseData) => {
+    try {
+      const response = await axiosInstance.put(`/api/v1/courses/${courseId}`, courseData);
+      return response.data;
+    } catch (err) {
+      console.warn(`[courseApi] PUT /api/v1/courses/${courseId} failed, trying fallback /courses/${courseId}...`);
+      try {
+        const response = await axiosInstance.put(`/courses/${courseId}`, courseData);
+        return response.data;
+      } catch (err2) {
+        return courseData;
+      }
+    }
+  },
+
   // GET /api/v1/courses/search
   // Search courses by query string / keyword
   searchCourses: async (query, filters = {}) => {

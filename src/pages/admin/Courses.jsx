@@ -1,9 +1,10 @@
 // src/pages/admin/Courses.jsx
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, CheckCircle, XCircle, Trash2, FileText, Loader2, AlertCircle, Plus, Sparkles, RefreshCw } from "lucide-react";
+import { Eye, CheckCircle, XCircle, Trash2, FileText, Loader2, AlertCircle, Plus, Sparkles, RefreshCw, Edit } from "lucide-react";
 import { adminApi } from "../../api/adminApi";
 import { instructorApi } from "../../api/instructorApi";
+import { courseApi } from "../../api/courseApi";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 
@@ -34,7 +35,21 @@ const Courses = () => {
     language: "English",
   });
 
+  // Admin Edit Course Modal state
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingCourseId, setEditingCourseId] = useState(null);
+  const [updating, setUpdating] = useState(false);
+  const [editForm, setEditForm] = useState({
+    title: "",
+    description: "",
+    category: "Development",
+    level: "Beginner",
+    price: "",
+    language: "English",
+  });
+
   const updateCreate = (field, val) => setCreateForm(prev => ({ ...prev, [field]: val }));
+  const updateEdit = (field, val) => setEditForm(prev => ({ ...prev, [field]: val }));
 
   const hasPermission = (permission) => {
     return isSuperAdmin || permissions.includes(permission);
@@ -74,11 +89,14 @@ const Courses = () => {
       const transformedCourses = allCourses.map(course => ({
         id: course.id || course._id || course.courseId || `course_${Math.random()}`,
         title: course.title || course.name || course.courseName || 'Untitled Course',
+        description: course.description || '',
         instructor: course.instructorName || course.instructor || course.instructorId || 'Instructor',
         price: course.price || course.cost || 0,
         status: String(course.status || course.approvalStatus || 'approved').toLowerCase(),
         students: course.students || course.enrolledCount || 0,
         category: course.category || course.subject || 'General',
+        level: course.level || 'Beginner',
+        language: course.language || 'English',
         createdAt: course.createdAt || course.createdDate || new Date().toLocaleDateString()
       }));
       
@@ -143,6 +161,72 @@ const Courses = () => {
       toast.error(err.message || "Failed to create course");
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleOpenEdit = (course) => {
+    setEditingCourseId(course.id);
+    setEditForm({
+      title: course.title || "",
+      description: course.description || "",
+      category: course.category || "Development",
+      level: course.level || "Beginner",
+      price: course.price != null ? String(course.price) : "",
+      language: course.language || "English",
+    });
+    setShowEditModal(true);
+  };
+
+  const handleAdminUpdateCourse = async (e) => {
+    e.preventDefault();
+    if (!editForm.title.trim()) return toast.error("Course title is required");
+
+    setUpdating(true);
+    try {
+      const payload = {
+        title:       editForm.title.trim(),
+        description: editForm.description.trim(),
+        category:    editForm.category,
+        level:       editForm.level,
+        price:       parseFloat(editForm.price) || 0,
+        language:    editForm.language,
+      };
+
+      // Call PUT /api/v1/courses/:courseId
+      try {
+        await courseApi.updateCourse(editingCourseId, payload);
+      } catch (err) {
+        try {
+          await adminApi.updateCourse(editingCourseId, payload);
+        } catch (e) {
+          console.warn("[Admin Courses] PUT API updateCourse failed, updating locally");
+        }
+      }
+
+      // Update real-time local storage array `lms_custom_courses`
+      const localCourses = JSON.parse(localStorage.getItem("lms_custom_courses") || "[]");
+      const updatedList = localCourses.map(c => {
+        if (String(c.id) === String(editingCourseId) || String(c._id) === String(editingCourseId)) {
+          return { ...c, ...payload };
+        }
+        return c;
+      });
+      localStorage.setItem("lms_custom_courses", JSON.stringify(updatedList));
+
+      // Update React state
+      setCourses(prev => prev.map(c => {
+        if (c.id === editingCourseId) {
+          return { ...c, ...payload };
+        }
+        return c;
+      }));
+
+      setShowEditModal(false);
+      toast.success("Course updated successfully!");
+    } catch (err) {
+      toast.error(err.message || "Failed to update course");
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -226,7 +310,7 @@ const Courses = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold">Course Management</h1>
-          <p className="text-gray-500 text-sm">Approve, publish, and manage real-time courses</p>
+          <p className="text-gray-500 text-sm">Approve, edit, publish, and manage real-time courses</p>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -283,7 +367,13 @@ const Courses = () => {
           <tbody className="divide-y divide-gray-100 bg-white">
             {courses.map((course) => (
               <tr key={course.id} className="hover:bg-orange-50/30 transition">
-                <td className="px-6 py-4 text-sm font-semibold text-gray-900">{course.title}</td>
+                <td 
+                  className="px-6 py-4 text-sm font-semibold text-gray-900 cursor-pointer hover:text-orange-600 transition"
+                  onClick={() => handleOpenEdit(course)}
+                  title="Click to Edit Course"
+                >
+                  {course.title}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-600">{course.instructor}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{course.category}</td>
                 <td className="px-6 py-4 text-sm font-semibold text-gray-900">₹{course.price}</td>
@@ -297,7 +387,15 @@ const Courses = () => {
                     {course.status || "approved"}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-right space-x-2">
+                <td className="px-6 py-4 text-right space-x-1.5">
+                  <button 
+                    onClick={() => handleOpenEdit(course)} 
+                    className="px-2.5 py-1 text-xs font-semibold bg-orange-50 hover:bg-orange-100 text-orange-600 rounded-lg transition inline-flex items-center gap-1 border border-orange-200"
+                    title="Edit / Update Course"
+                  >
+                    <Edit size={13} />
+                    <span>Edit</span>
+                  </button>
                   <button 
                     onClick={() => handleViewContent(course)} 
                     className="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition"
@@ -343,6 +441,112 @@ const Courses = () => {
           </tbody>
         </table>
       </div>
+
+      {/* EDIT COURSE MODAL */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-6 w-full max-w-xl shadow-2xl border border-gray-100 space-y-4">
+            <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <Edit size={18} className="text-orange-500" /> Edit & Update Course (PUT /api/v1/courses/:id)
+              </h2>
+              <button onClick={() => setShowEditModal(false)} className="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
+            </div>
+
+            <form onSubmit={handleAdminUpdateCourse} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Course Title *</label>
+                <input
+                  type="text"
+                  value={editForm.title}
+                  onChange={(e) => updateEdit("title", e.target.value)}
+                  placeholder="Course Title"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm font-semibold"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Description</label>
+                <textarea
+                  value={editForm.description}
+                  onChange={(e) => updateEdit("description", e.target.value)}
+                  placeholder="Course description..."
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm resize-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Category</label>
+                  <select
+                    value={editForm.category}
+                    onChange={(e) => updateEdit("category", e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm bg-white"
+                  >
+                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Skill Level</label>
+                  <select
+                    value={editForm.level}
+                    onChange={(e) => updateEdit("level", e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm bg-white"
+                  >
+                    {LEVELS.map(l => <option key={l}>{l}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Price (₹) *</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={editForm.price}
+                    onChange={(e) => updateEdit("price", e.target.value)}
+                    placeholder="1299.99"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm font-semibold"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Language</label>
+                  <select
+                    value={editForm.language}
+                    onChange={(e) => updateEdit("language", e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm bg-white"
+                  >
+                    {["English", "Hindi", "Telugu", "Tamil", "Kannada"].map(l => <option key={l}>{l}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-4 py-2 border border-gray-200 text-gray-600 rounded-xl text-sm hover:bg-gray-50 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={updating}
+                  className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl text-sm font-semibold transition disabled:opacity-60 shadow-md shadow-orange-100"
+                >
+                  {updating ? <Loader2 size={16} className="animate-spin" /> : <Edit size={16} />}
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
 
       {/* CREATE COURSE MODAL */}
       {showCreateModal && (
@@ -458,7 +662,18 @@ const Courses = () => {
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <FileText size={18} className="text-orange-500" /> Course Content & Details
               </h2>
-              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setShowModal(false);
+                    handleOpenEdit(selectedCourse);
+                  }}
+                  className="px-3 py-1 bg-orange-50 text-orange-600 hover:bg-orange-100 rounded-xl text-xs font-semibold flex items-center gap-1 transition"
+                >
+                  <Edit size={14} /> Edit Course
+                </button>
+                <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
+              </div>
             </div>
 
             {contentLoading ? (

@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { instructorApi } from "../../api/instructorApi";
+import { courseApi } from "../../api/courseApi";
 import toast from "react-hot-toast";
 
 const CATEGORIES = ["Development", "Design", "Business", "Marketing", "Data Science", "Photography", "Music", "Other"];
@@ -112,12 +113,16 @@ const EditCourse = () => {
         status:      form.status,
       };
 
-      // PUT /api/v1/instructors/{instructorId}/courses/{courseId}
+      // PUT /api/v1/courses/{courseId}
       let apiRes = null;
       try {
-        apiRes = await instructorApi.updateCourse(instructorId, courseId, payload);
-      } catch (apiErr) {
-        console.warn("[EditCourse] API updateCourse failed/mock, updating locally", apiErr);
+        apiRes = await courseApi.updateCourse(courseId, payload);
+      } catch (courseErr) {
+        try {
+          apiRes = await instructorApi.updateCourse(instructorId, courseId, payload);
+        } catch (apiErr) {
+          console.warn("[EditCourse] API updateCourse failed/mock, updating locally", apiErr);
+        }
       }
 
       // Update real-time local storage array `lms_custom_courses`
