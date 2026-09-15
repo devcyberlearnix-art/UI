@@ -81,19 +81,42 @@ const Instructors = () => {
       const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
       const localInstructors = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
 
+      const isApprovedEmail = (email) => {
+        const cleanEmail = (email || '').toLowerCase().trim();
+        if (!cleanEmail) return false;
+
+        const explicitStatus = localStorage.getItem(`instructor_app_status_${cleanEmail}`);
+        if (explicitStatus === 'approved') return true;
+
+        const instMatch = localInstructors.find(i => String(i.email || '').toLowerCase().trim() === cleanEmail);
+        if (instMatch) {
+          const s = String(instMatch.status || '').toLowerCase();
+          if (s.includes('approv') || s === 'active') return true;
+        }
+
+        const appMatch = localApps.find(a => String(a.email || a.user?.email || '').toLowerCase().trim() === cleanEmail);
+        if (appMatch) {
+          const s = String(appMatch.status || appMatch.verificationStatus || '').toLowerCase();
+          if (s.includes('approv') || s === 'active') return true;
+        }
+
+        return false;
+      };
+
       const map = new Map();
 
       // Add API instructors
       apiInstructors.forEach(item => {
         const email = (item.email || item.emailAddress || "").toLowerCase();
         if (email) {
+          const isAppr = isApprovedEmail(email) || String(item.status || item.verificationStatus || 'active').toLowerCase().includes('approv') || String(item.status || item.verificationStatus || 'active').toLowerCase() === 'active';
           map.set(email, {
             id: item.id || item.userId || item._id || `inst_${Math.random()}`,
             name: item.firstName ? `${item.firstName} ${item.lastName || ''}`.trim() : item.name || email.split('@')[0],
             email: item.email,
             mobile: item.mobile || item.mobileNumber || '',
             avatar: item.profilePhoto || '',
-            status: String(item.status || item.verificationStatus || 'active').toLowerCase(),
+            status: isAppr ? 'approved' : String(item.status || item.verificationStatus || 'pending').toLowerCase(),
             courses: item.courses || item.courseCount || 0,
             students: item.students || item.studentCount || 0,
             qualification: item.qualification || item.specialization || 'Not specified',
@@ -110,12 +133,13 @@ const Instructors = () => {
         const email = (userObj.email || appObj.email || item.email || "").toLowerCase();
         if (email) {
           const existing = map.get(email) || {};
+          const isAppr = isApprovedEmail(email) || String(appObj.status || item.status || existing.status || '').toLowerCase().includes('approv') || String(appObj.status || item.status || existing.status || '').toLowerCase() === 'active';
           map.set(email, {
             ...existing,
             id: appObj.applicationId || appObj.id || item.id || existing.id || `inst_${Math.random()}`,
             name: userObj.name || (userObj.firstName ? `${userObj.firstName} ${userObj.lastName || ''}`.trim() : null) || existing.name || email.split('@')[0],
             email: email,
-            status: String(appObj.status || item.status || existing.status || 'pending_verification').toLowerCase(),
+            status: isAppr ? 'approved' : String(appObj.status || item.status || existing.status || 'pending_verification').toLowerCase(),
             courses: existing.courses || 0,
             students: existing.students || 0,
             qualification: appObj.specialization || appObj.qualifications || existing.qualification || 'Not specified',
@@ -131,12 +155,13 @@ const Instructors = () => {
         const email = (item.email || item.user?.email || item.application?.email || "").toLowerCase();
         if (email) {
           const existing = map.get(email) || {};
+          const isAppr = isApprovedEmail(email) || String(item.status || item.verificationStatus || item.application?.status || existing.status || '').toLowerCase().includes('approv') || String(item.status || item.verificationStatus || item.application?.status || existing.status || '').toLowerCase() === 'active';
           map.set(email, {
             ...existing,
             id: item.id || item.applicationId || existing.id || `inst_${Math.random()}`,
             name: item.fullName || item.name || item.user?.name || existing.name || email.split('@')[0],
             email: email,
-            status: String(item.status || item.verificationStatus || item.application?.status || existing.status || 'pending_verification').toLowerCase(),
+            status: isAppr ? 'approved' : String(item.status || item.verificationStatus || item.application?.status || existing.status || 'pending_verification').toLowerCase(),
             courses: item.courses || existing.courses || 0,
             students: item.students || existing.students || 0,
             qualification: item.specialization || item.qualification || existing.qualification || 'Not specified',
@@ -156,11 +181,12 @@ const Instructors = () => {
         const email = (item.email || "").toLowerCase();
         if (email) {
           const existing = map.get(email) || {};
+          const isAppr = isApprovedEmail(email) || String(item.status || existing.status || '').toLowerCase().includes('approv') || String(item.status || existing.status || '').toLowerCase() === 'active';
           map.set(email, {
             ...existing,
             ...item,
             email: email,
-            status: String(item.status || existing.status || 'active').toLowerCase()
+            status: isAppr ? 'approved' : String(item.status || existing.status || 'active').toLowerCase()
           });
         }
       });
@@ -193,7 +219,7 @@ const Instructors = () => {
 
       const updated = instructors.map(inst =>
         String(inst.id) === String(instructorId) || (targetEmail && String(inst.email).toLowerCase().trim() === targetEmail)
-          ? { ...inst, status: 'active', verificationStatus: 'approved' }
+          ? { ...inst, status: 'approved', verificationStatus: 'approved' }
           : inst
       );
       setInstructors(updated);
@@ -283,8 +309,14 @@ const Instructors = () => {
 
   // Filter instructors by search query (Only show Approved / Active instructors)
   const approvedInstructors = instructors.filter(inst => {
-    const s = String(inst.status).toLowerCase();
-    return s === 'active' || s === 'approved';
+    const s = String(inst.status || '').toLowerCase();
+    const v = String(inst.verificationStatus || '').toLowerCase();
+    const cleanEmail = (inst.email || '').toLowerCase().trim();
+    const explicitStatus = cleanEmail ? localStorage.getItem(`instructor_app_status_${cleanEmail}`) : null;
+    
+    return explicitStatus === 'approved' ||
+           s.includes('approv') || s === 'active' || s === 'verified' ||
+           v.includes('approv') || v === 'active';
   });
 
   const filteredInstructors = approvedInstructors.filter((inst) => {
@@ -324,15 +356,6 @@ const Instructors = () => {
     );
   }
 
-  const handleClearStaleData = () => {
-    if (window.confirm("Clear cached local applications so you can test a fresh student application form submission?")) {
-      localStorage.removeItem("lms_instructor_applications");
-      localStorage.removeItem("lms_instructors");
-      toast.success("Local applications cleared! Submit a fresh student form to see real-time updates.");
-      fetchInstructors();
-    }
-  };
-
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       {/* Header Bar */}
@@ -349,14 +372,6 @@ const Instructors = () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleClearStaleData}
-            className="flex items-center gap-1.5 bg-red-50 text-red-600 px-3 py-2 rounded-xl border border-red-200 hover:bg-red-100 text-xs font-semibold transition"
-            title="Clear old cached applications"
-          >
-            <Trash2 size={14} />
-            Clear Cache
-          </button>
           <button
             onClick={fetchInstructors}
             className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-medium transition shadow-sm"

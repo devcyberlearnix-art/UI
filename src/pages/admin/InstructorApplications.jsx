@@ -248,16 +248,6 @@ const InstructorApplications = () => {
     );
   }
 
-  const handleClearStaleData = () => {
-    if (window.confirm("PERMANENTLY DELETE all current applications from the Admin Dashboard? Count will reset to 0 until a student submits a new application.")) {
-      localStorage.removeItem("lms_instructor_applications");
-      localStorage.removeItem("lms_instructors");
-      setApplications([]);
-      setPagination({ currentPage: 0, totalPages: 1, totalApplications: 0, pageSize: 10 });
-      toast.success("All applications removed permanently! Total set to 0.");
-    }
-  };
-
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -269,14 +259,6 @@ const InstructorApplications = () => {
           <p className="text-sm text-gray-500 mt-1">Review student applications submitted to become an instructor</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <button
-            onClick={handleClearStaleData}
-            className="flex items-center gap-1.5 bg-red-50 text-red-600 px-3 py-2 rounded-lg border border-red-200 hover:bg-red-100 text-xs font-semibold transition"
-            title="Clear old cached applications"
-          >
-            <Trash2 size={14} />
-            Clear Cache
-          </button>
           <button
             onClick={() => fetchApplications(currentPage)}
             className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-medium transition shadow-xs"
