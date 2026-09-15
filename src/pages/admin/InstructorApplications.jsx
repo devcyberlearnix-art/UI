@@ -441,18 +441,22 @@ const InstructorApplications = () => {
                 </div>
               )}
 
-              {selectedApp.documents && (
+              {selectedApp.documents && Object.keys(selectedApp.documents).length > 0 && (
                 <div>
                   <p className="text-sm font-bold text-gray-800 mb-2">Attached Verification Documents</p>
                   <div className="grid grid-cols-2 gap-2">
-                    {Object.entries({
-                      ...(selectedApp.documents.required || {}),
-                      ...(selectedApp.documents.optional || {})
-                    }).map(([docKey, isUploaded]) => (
-                      <div key={docKey} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg text-xs">
-                        <CheckCircle size={14} className={isUploaded ? "text-green-500" : "text-gray-300"} />
-                        <span className="capitalize font-medium text-gray-700">{docKey.replace(/([A-Z])/g, " $1")}</span>
-                      </div>
+                    {Object.entries(
+                      selectedApp.documents.required || selectedApp.documents.optional
+                        ? { ...(selectedApp.documents.required || {}), ...(selectedApp.documents.optional || {}) }
+                        : selectedApp.documents
+                    ).map(([docKey, docVal]) => (
+                      docVal ? (
+                        <div key={docKey} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg text-xs">
+                          <CheckCircle size={14} className="text-green-500" />
+                          <span className="capitalize font-medium text-gray-700">{docKey.replace(/([A-Z])/g, " $1")}:</span>
+                          <span className="truncate text-gray-600 font-semibold">{typeof docVal === 'string' ? docVal : 'Uploaded'}</span>
+                        </div>
+                      ) : null
                     ))}
                   </div>
                 </div>

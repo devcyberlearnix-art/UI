@@ -296,6 +296,15 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         website: info.website || "",
         courses: 0,
         students: 0,
+        documents: {
+          resume: files.resume ? files.resume.name : null,
+          educationalCertificates: files.educationalCertificates ? files.educationalCertificates.name : null,
+          governmentIdProof: files.governmentIdProof ? files.governmentIdProof.name : null,
+          passportPhoto: files.passportPhoto ? files.passportPhoto.name : null,
+          bankDetails: files.bankDetails ? files.bankDetails.name : null,
+          panDocument: files.panDocument ? files.panDocument.name : null,
+          portfolio: files.portfolio ? files.portfolio.name : null,
+        },
         user: {
           id: appliedUser.id,
           name: appliedUser.name || appliedUser.firstName || "Student Applicant",

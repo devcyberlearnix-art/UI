@@ -88,6 +88,11 @@ const Instructors = () => {
             students: item.students || existing.students || 0,
             qualification: item.specialization || item.qualification || existing.qualification || 'Not specified',
             experience: item.experience || existing.experience || '1-3 years',
+            bio: item.bio || existing.bio || '',
+            phone: item.phone || existing.phone || '',
+            linkedIn: item.linkedIn || existing.linkedIn || '',
+            website: item.website || existing.website || '',
+            documents: item.documents || existing.documents || {},
             createdAt: item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : (existing.createdAt || new Date().toLocaleDateString())
           });
         }
@@ -385,12 +390,12 @@ const Instructors = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-500">Qualification</p>
+                  <p className="text-sm text-gray-500">Qualification / Specialization</p>
                   <p className="font-semibold">{selectedInstructor.qualification}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Experience</p>
-                  <p className="font-semibold">{selectedInstructor.experience} years</p>
+                  <p className="font-semibold">{selectedInstructor.experience} {String(selectedInstructor.experience).includes('year') ? '' : 'years'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Courses</p>
@@ -400,7 +405,42 @@ const Instructors = () => {
                   <p className="text-sm text-gray-500">Students</p>
                   <p className="font-semibold">{selectedInstructor.students}</p>
                 </div>
+                {selectedInstructor.phone && (
+                  <div>
+                    <p className="text-sm text-gray-500">Phone</p>
+                    <p className="font-semibold">{selectedInstructor.phone}</p>
+                  </div>
+                )}
+                {selectedInstructor.linkedIn && (
+                  <div>
+                    <p className="text-sm text-gray-500">LinkedIn</p>
+                    <a href={selectedInstructor.linkedIn} target="_blank" rel="noreferrer" className="text-orange-600 underline font-semibold text-sm truncate block">
+                      {selectedInstructor.linkedIn}
+                    </a>
+                  </div>
+                )}
               </div>
+              {selectedInstructor.bio && (
+                <div>
+                  <p className="text-sm text-gray-500 font-medium">Bio / Overview</p>
+                  <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg mt-1">{selectedInstructor.bio}</p>
+                </div>
+              )}
+              {selectedInstructor.documents && Object.keys(selectedInstructor.documents).length > 0 && (
+                <div>
+                  <p className="text-sm text-gray-500 font-medium mb-1">Attached Documents</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {Object.entries(selectedInstructor.documents).map(([key, val]) => (
+                      val ? (
+                        <div key={key} className="bg-orange-50 text-orange-700 text-xs px-2.5 py-1.5 rounded-lg flex items-center justify-between border border-orange-200">
+                          <span className="capitalize font-medium">{key.replace(/([A-Z])/g, " $1")}:</span>
+                          <span className="truncate max-w-[120px] font-semibold">{typeof val === 'string' ? val : 'Uploaded'}</span>
+                        </div>
+                      ) : null
+                    ))}
+                  </div>
+                </div>
+              )}
               <div>
                 <p className="text-sm text-gray-500">Status</p>
                 <span className={`px-2 py-1 text-xs rounded-full font-medium capitalize ${
