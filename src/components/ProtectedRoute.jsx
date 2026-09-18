@@ -1,50 +1,38 @@
-// src/components/ProtectedRoute.jsx
-import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getActingRole } from '../utils/roleSwitch';
 
-const ProtectedRoute = ({ children, requiredRoles = [] }) => {
-  const location = useLocation();
-  const { isAuthenticated, user, loading } = useAuth();
+const ProtectedRoute = ({ children, allowedRoles = [] }) => {
+  const { user, loading } = useAuth();
 
-  // Show loading state while checking authentication
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
-          <p className="mt-2 text-sm text-slate-500">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     );
   }
 
-  // If not authenticated, redirect to login (NOT register!)
-  if (!isAuthenticated) {
-    console.log('[ProtectedRoute] User not authenticated - redirecting to login');
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!user) {
+    const isAdminRoute = allowedRoles.some(role =>
+      String(role).toLowerCase().includes('admin')
+    );
+    return <Navigate to={isAdminRoute ? '/admin/login' : '/login'} replace />;
   }
 
-  // Check if user has required roles (if specified)
-  if (requiredRoles.length > 0 && user) {
-    const userRole = user.role?.toLowerCase() || user.normalizedRole?.toLowerCase() || 'student';
-    const hasRequiredRole = requiredRoles.some(role => 
-      userRole === role.toLowerCase()
+  if (allowedRoles.length > 0) {
+    const effectiveRole = String(getActingRole() || user?.role || '').toLowerCase();
+    const hasAllowedRole = allowedRoles.some(role =>
+      effectiveRole.includes(String(role).toLowerCase())
     );
-    
-    if (!hasRequiredRole) {
-      console.log('[ProtectedRoute] User does not have required role:', requiredRoles);
-      return <Navigate to="/unauthorized" replace />;
+    if (!hasAllowedRole) {
+      return <Navigate to="/" replace />;
     }
   }
 
-  // Only check verification if user exists and has verified property
-  if (user && user.verified === false) {
-    console.log('[ProtectedRoute] User email not verified');
-    return <Navigate to="/otp-verify" replace />;
-  }
-
-  // All checks passed, render children
   return children;
 };
 

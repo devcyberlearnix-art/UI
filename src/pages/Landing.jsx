@@ -1,4 +1,3 @@
-// src/pages/Landing.jsx
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion";
@@ -10,16 +9,27 @@ import {
 } from "lucide-react";
 import ProfileDropdown from "../utils/profiledropdown";
 import { useAuth } from "../context/AuthContext";
+import logoImage from "../assets/learnmaster-logo.png";
+import { landingApi } from "../api/landingApi";
 
 function Landing() {
   const navigate = useNavigate();
   const { user: authUser, isAuthenticated, loading: authLoading, logout } = useAuth();
-  
-  // Refs to prevent multiple redirects
-  const hasRedirected = useRef(false);
-  const isMounted = useRef(true);
 
-  // State declarations
+  // Redirect authenticated users to their appropriate dashboard
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && authUser) {
+      const role = (authUser.role || '').toLowerCase();
+      let dashboardPath = '/student/dashboard';
+      if (role.includes('admin') || role === 'super_admin' || role === 'sub_admin') {
+        dashboardPath = '/admin/dashboard';
+      } else if (role.includes('instructor')) {
+        dashboardPath = '/instructor/dashboard';
+      }
+      navigate(dashboardPath, { replace: true });
+    }
+  }, [isAuthenticated, authLoading, authUser, navigate]);
+
   const [scrolled, setScrolled] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [counters, setCounters] = useState({ students: 0, courses: 0, instructors: 0, satisfaction: 0 });
@@ -27,28 +37,84 @@ function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [landingLoading, setLandingLoading] = useState(true);
+  const [landingError, setLandingError] = useState("");
+  const [slides, setSlides] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [categoryData, setCategoryData] = useState([]);
+  const [features, setFeatures] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
+  const [statsTarget, setStatsTarget] = useState({ students: 0, courses: 0, instructors: 0, satisfaction: 0 });
+  
   const [dashboardDropdownOpen, setDashboardDropdownOpen] = useState(false);
   const dashboardRef = useRef(null);
   const [coursesDropdownOpen, setCoursesDropdownOpen] = useState(false);
   const coursesDropdownRef = useRef(null);
+  
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [wishlist, setWishlist] = useState([]);
   const [cartCount, setCartCount] = useState(0);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [expandedCategory, setExpandedCategory] = useState(null);
   
+  const [activeTab, setActiveTab] = useState("Most Popular");
+
+  const [trendingCourses, setTrendingCourses] = useState([]);
+  const [loadingTrending, setLoadingTrending] = useState(false);
+  const [trendingError, setTrendingError] = useState(null);
+  const [hasMoreTrending, setHasMoreTrending] = useState(true);
+  const [trendingCurrentPage, setTrendingCurrentPage] = useState(0);
+  
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
-  // Update user when authUser changes
+  const fetchTrendingCourses = async (page = 0, append = false) => {
+    if (loadingTrending) return;
+    setLoadingTrending(true);
+    setTrendingError(null);
+    try {
+      const response = await landingApi.getTrendingCourses(page, 5);
+      const fetchedCourses = response?.data?.courses || [];
+      const pagination = response?.data?.pagination || {};
+
+      setTrendingCourses(prev => append ? [...prev, ...fetchedCourses] : fetchedCourses);
+      setHasMoreTrending(Number(pagination.totalPages || 1) > page + 1);
+      setTrendingCurrentPage(page);
+    } catch (error) {
+      console.error("Failed to fetch trending courses", error);
+      setTrendingError(error.message || "Network error");
+      if (!append) setTrendingCourses([]);
+    } finally {
+      setLoadingTrending(false);
+    }
+  };
+
+  // Reset trending when tab changes
+  useEffect(() => {
+    if (activeTab === "Trending") {
+      setTrendingCourses([]);
+      setTrendingCurrentPage(0);
+      setHasMoreTrending(true);
+      setTrendingError(null);
+      fetchTrendingCourses(0, false);
+    }
+  }, [activeTab]);
+
+  const loadMoreTrending = () => {
+    if (!loadingTrending && hasMoreTrending) {
+      fetchTrendingCourses(trendingCurrentPage + 1, true);
+    }
+  };
+
   useEffect(() => {
     setUser(authUser);
   }, [authUser]);
 
-  // Close dashboard dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dashboardRef.current && !dashboardRef.current.contains(event.target)) {
@@ -59,7 +125,6 @@ function Landing() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close courses dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (coursesDropdownRef.current && !coursesDropdownRef.current.contains(event.target)) {
@@ -70,137 +135,82 @@ function Landing() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ---------- Banner slides ----------
-  const slides = [
-    { id: 1, title: "30% off for a limited time", description: "Start learning high-demand skills from top instructors.", cta: "Start Learning", bgImage: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1400&auto=format", link: "/register" },
-    { id: 2, title: "Become an AI Expert", description: "Master machine learning and earn a certificate.", cta: "Explore AI Courses", bgImage: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1400&auto=format", link: "/courses" },
-    { id: 3, title: "Learn from Industry Leaders", description: "Join 50,000+ students learning real-world skills.", cta: "Browse Courses", bgImage: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1400&auto=format", link: "/courses" },
-    { id: 4, title: "Learn Python in 4.5 Hours", description: "Become a certified Python programmer with hands-on projects & free PyCharm Pro.", cta: "View Python Course", bgImage: "https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?w=1400&auto=format", link: "/courses/python-pcep" },
-    { id: 5, title: "Master UI/UX Design", description: "Learn Figma, prototyping, and user research from industry experts.", cta: "Explore Design Courses", bgImage: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1400&auto=format", link: "/courses/design" },
-    { id: 6, title: "Cloud Computing with AWS", description: "Get AWS certified and boost your cloud career.", cta: "Start Learning Cloud", bgImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1400&auto=format", link: "/courses/cloud" },
-  ];
+  const iconCycle = [Zap, Users, Award, Globe, TrendingUp, Target, BookOpen, Shield, Briefcase, Code];
 
-  // ---------- Courses (with subcategories) ----------
-  const courses = [
-    {
-      id: 1,
-      title: "Full Stack Web Development",
-      category: "Development",
-      subcategory: "Web Development",
-      students: 12450,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500",
-      duration: "24 weeks",
-      level: "Beginner to Advanced",
-      tag: "Most Popular",
-      price: 49,
-      description: "Learn to build full-stack web applications using React, Node.js, MongoDB, and Express. Master frontend and backend development with hands-on projects.",
-      instructor: "Dr. Sarah Johnson",
-    },
-    {
-      id: 2,
-      title: "Data Science & Machine Learning",
-      category: "Data Science",
-      subcategory: "Machine Learning",
-      students: 8932,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500",
-      duration: "32 weeks",
-      level: "Intermediate",
-      tag: "Trending",
-      price: 79,
-      description: "Master data analysis, visualization, and machine learning algorithms using Python, Pandas, Scikit-learn, and TensorFlow.",
-      instructor: "Prof. Michael Chen",
-    },
-    {
-      id: 3,
-      title: "UI/UX Design Masterclass",
-      category: "Design",
-      subcategory: "UI/UX",
-      students: 6700,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500",
-      duration: "16 weeks",
-      level: "Beginner",
-      tag: "New",
-      price: 39,
-      description: "Learn UI/UX design principles, Figma, prototyping, and user research. Build a professional portfolio.",
-      instructor: "Emily Davis",
-    },
-    {
-      id: 4,
-      title: "Python Programming for Beginners",
-      category: "Development",
-      subcategory: "Programming Languages",
-      students: 15300,
-      rating: 4.6,
-      image: "https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?w=500",
-      duration: "12 weeks",
-      level: "Beginner",
-      tag: "Popular",
-      price: 29,
-      description: "Master Python programming from scratch. Learn variables, functions, OOP, and build real-world projects.",
-      instructor: "John Smith",
-    },
-    {
-      id: 5,
-      title: "AWS Cloud Practitioner",
-      category: "IT & Software",
-      subcategory: "Cloud Computing",
-      students: 4500,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500",
-      duration: "20 weeks",
-      level: "Intermediate",
-      tag: "Certification",
-      price: 89,
-      description: "Prepare for AWS Cloud Practitioner certification. Learn cloud concepts, security, and AWS services.",
-      instructor: "David Wilson",
-    },
-    {
-      id: 6,
-      title: "Digital Marketing Strategy",
-      category: "Marketing",
-      subcategory: "Digital Marketing",
-      students: 5800,
-      rating: 4.5,
-      image: "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=500",
-      duration: "18 weeks",
-      level: "All Levels",
-      tag: "Trending",
-      price: 59,
-      description: "Master digital marketing including SEO, SEM, social media, email marketing, and analytics.",
-      instructor: "Lisa Anderson",
-    },
-  ];
+  useEffect(() => {
+    const loadLandingData = async () => {
+      setLandingLoading(true);
+      setLandingError("");
 
-  // Categories with subcategories mapping
-  const categoryData = [
-    { name: "Development", icon: Code, subcategories: ["Web Development", "Mobile Development", "Programming Languages", "Game Development"] },
-    { name: "Data Science", icon: TrendingUp, subcategories: ["Machine Learning", "Data Analysis", "Deep Learning", "NLP"] },
-    { name: "Design", icon: Award, subcategories: ["UI/UX", "Graphic Design", "Web Design", "3D Animation"] },
-    { name: "IT & Software", icon: BookOpen, subcategories: ["Cloud Computing", "Cyber Security", "DevOps", "Networking", "Blockchain"] },
-    { name: "Marketing", icon: Briefcase, subcategories: ["Digital Marketing", "SEO", "Social Media", "Content Marketing"] },
-    { name: "Business", icon: Briefcase, subcategories: ["Entrepreneurship", "Management", "Sales", "Finance"] },
-  ];
+      try {
+        const payload = await landingApi.getLandingPageData();
 
-  // Features and testimonials
-  const features = [
-    { icon: Zap, title: "Learn by Doing", desc: "Hands-on projects & real-world assignments" },
-    { icon: Users, title: "Expert Mentors", desc: "Industry professionals as guides" },
-    { icon: Award, title: "Certified Programs", desc: "Industry-recognized certificates" },
-    { icon: Globe, title: "Global Community", desc: "Connect with learners worldwide" },
-    { icon: TrendingUp, title: "Career Support", desc: "Job placement assistance" },
-    { icon: Target, title: "Personalized Learning", desc: "Adaptive learning paths" }
-  ];
+        const backendSlides = (payload.slides || []).map((slide, index) => ({
+          id: slide.id || index + 1,
+          title: slide.title || "Learn Smarter",
+          description: slide.description || "Explore professional learning journeys.",
+          cta: slide.cta || "Explore Courses",
+          bgImage: slide.bgImage || slide.image || "",
+          link: slide.link || "/courses",
+        }));
 
-  const testimonials = [
-    { name: "Sarah Johnson", role: "Software Engineer at Google", content: "This platform completely transformed my career. The hands-on projects and expert mentors made all the difference.", rating: 5, image: "https://randomuser.me/api/portraits/women/1.jpg" },
-    { name: "Michael Chen", role: "Data Analyst at Amazon", content: "Best learning platform I've ever used. The courses are up-to-date and the community support is amazing.", rating: 5, image: "https://randomuser.me/api/portraits/men/2.jpg" },
-    { name: "Priya Sharma", role: "Product Designer at Microsoft", content: "The UI/UX course was phenomenal. I got a promotion within 3 months of completing it!", rating: 5, image: "https://randomuser.me/api/portraits/women/3.jpg" }
-  ];
+        const backendCourses = (payload.courses || []).map((course, index) => ({
+          id: course.id || index + 1,
+          title: course.title || "Untitled Course",
+          category: course.category || "General",
+          subcategory: course.subcategory || "General",
+          students: Number(course.students || course.enrollments || 0),
+          rating: Number(course.rating || 0),
+          image: course.image || course.thumbnail || "https://via.placeholder.com/500x300?text=Course",
+          duration: course.duration || "Self-paced",
+          level: course.level || "All levels",
+          tag: course.tag || "",
+          premium: Boolean(course.premium),
+          featuredScore: Number(course.featuredScore || 0),
+          totalReviews: Number(course.totalReviews || 0),
+          price: Number(course.price || 0),
+          description: course.description || "",
+          instructor: course.instructor || course.instructorName || "Instructor",
+        }));
 
-  // Filter logic
+        const backendCategories = (payload.categories || []).map((category, index) => ({
+          name: category.name || `Category ${index + 1}`,
+          icon: iconCycle[index % iconCycle.length],
+          subcategories: category.subcategories || [],
+        }));
+
+        const backendFeatures = (payload.features || []).map((feature, index) => ({
+          icon: iconCycle[index % iconCycle.length],
+          title: feature.title || "Feature",
+          desc: feature.desc || feature.description || "",
+        }));
+
+        const backendTestimonials = (payload.testimonials || []).map((item) => ({
+          name: item.name || "Student",
+          role: item.role || "Learner",
+          content: item.content || item.review || "",
+          rating: Number(item.rating || 5),
+          image: item.image || "https://via.placeholder.com/80",
+        }));
+
+        setSlides(backendSlides);
+        setCourses(backendCourses);
+        setCategoryData(backendCategories);
+        setFeatures(backendFeatures);
+        setTestimonials(backendTestimonials);
+        setStatsTarget(payload.stats || { students: 0, courses: 0, instructors: 0, satisfaction: 0 });
+      } catch (error) {
+        console.error("[Landing] Failed to load backend content", error);
+        setLandingError("Unable to load landing content from backend.");
+      } finally {
+        setLandingLoading(false);
+      }
+    };
+
+    loadLandingData();
+  }, []);
+
+  // Filter logic for non‑trending tabs
   const filteredCourses = courses.filter(course => {
     if (selectedCategory && course.category !== selectedCategory) return false;
     if (selectedSubcategory && course.subcategory !== selectedSubcategory) return false;
@@ -216,6 +226,22 @@ function Landing() {
     }
     return true;
   });
+
+  // Determine which courses to show based on active tab
+  let displayCourses = [];
+  if (activeTab === "Trending") {
+    displayCourses = trendingCourses;
+  } else {
+    // For "Most Popular" and "New" – we can sort accordingly
+    let sorted = [...filteredCourses];
+    if (activeTab === "Most Popular") {
+      sorted.sort((a, b) => (b.students || 0) - (a.students || 0));
+    } else if (activeTab === "New") {
+      // Assume newer courses have higher id (or add a date field)
+      sorted.sort((a, b) => (b.id || 0) - (a.id || 0));
+    }
+    displayCourses = sorted;
+  }
 
   const mainCategories = categoryData.map(c => c.name);
 
@@ -269,14 +295,13 @@ function Landing() {
     alert(`Added "${course.title}" to cart.`);
   };
 
-  // Updated handleLogout using AuthContext
   const handleLogout = async () => {
     await logout();
     setUser(null);
     navigate('/');
   };
 
-  // Auth, counters, slider, etc.
+  // Wishlist
   useEffect(() => {
     const savedWishlist = localStorage.getItem('lms_wishlist');
     if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
@@ -304,7 +329,13 @@ function Landing() {
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
-    const targets = { students: 50000, courses: 200, instructors: 150, satisfaction: 98 };
+    const targets = {
+      students: Number(statsTarget.students || 0),
+      courses: Number(statsTarget.courses || 0),
+      instructors: Number(statsTarget.instructors || 0),
+      satisfaction: Number(statsTarget.satisfaction || 0),
+    };
+
     const interval = setInterval(() => {
       setCounters(prev => {
         let newState = { ...prev };
@@ -323,14 +354,15 @@ function Landing() {
       window.removeEventListener("scroll", handleScroll);
       clearInterval(interval);
     };
-  }, []);
+  }, [statsTarget]);
 
   useEffect(() => {
+    if (!testimonials.length) return;
     const interval = setInterval(() => {
       setActiveTestimonial(prev => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [testimonials]);
 
   const nextSlide = () => {
     setDirection(1);
@@ -341,9 +373,10 @@ function Landing() {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
   useEffect(() => {
+    if (slides.length <= 1) return;
     const interval = setInterval(() => nextSlide(), 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [slides]);
 
   const sliderVariants = {
     enter: (direction) => ({
@@ -358,6 +391,10 @@ function Landing() {
   };
 
   const openCoursePopup = (course) => {
+    const impressionSource = searchQuery.trim() ? "SEARCH" : "HOME";
+    landingApi.trackCourseImpression(course.id, impressionSource).catch((error) => {
+      console.warn("[Landing] Failed to track course impression", error);
+    });
     setSelectedCourse(course);
     setShowPopup(true);
     document.body.style.overflow = 'hidden';
@@ -371,14 +408,13 @@ function Landing() {
 
   const getRoleLabel = () => {
     if (!user) return null;
-    const r = (user.role || user.role1 || user.userRole || user.normalizedRole || '').toLowerCase();
-    if (r === 'admin' || r === 'subadmin' || r === 'super_admin') return 'Admin';
-    if (r === 'instructor') return 'Instructor';
+    if (user.role === 'admin' || user.role === 'Admin' || user.role === 'ADMIN') return 'Admin';
+    if (user.role === 'instructor' || user.role === 'Instructor') return 'Instructor';
     return null;
   };
   const roleLabel = getRoleLabel();
 
-  // Show loading while auth is initializing
+  // If still loading auth, show spinner
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -390,26 +426,29 @@ function Landing() {
     );
   }
 
+  // If authenticated, we already redirect (see useEffect above), but to avoid flash we return null
+  if (!authLoading && isAuthenticated) {
+    return null;
+  }
+
+  const currentSlideData = slides[currentSlide] || null;
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Rest of your JSX remains the same */}
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-orange-500 origin-left z-50" style={{ scaleX }} />
 
-      {/* Navbar */}
+      {/* Navbar – unchanged from your code, but ensure ProfileDropdown exists */}
       <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? "bg-white/95 backdrop-blur-md shadow-lg py-2" : "bg-white/80 backdrop-blur-sm py-4"} border-b border-gray-100`}>
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
-              <div className="relative">
-                <div className="absolute inset-0 bg-orange-500 blur-lg rounded-full opacity-0 group-hover:opacity-30 transition duration-500"></div>
-                <span className="relative text-2xl font-bold text-orange-600 group-hover:scale-105 transition-transform duration-300 inline-block -ml-2">LearnMaster</span>
+              <div className="relative flex items-center gap-3">
+                <img src={logoImage} alt="LearnMaster" className="h-16 w-auto rounded-lg shadow-md group-hover:scale-105 transition-transform duration-300" />
+                <span className="text-lg font-semibold text-slate-800 hidden sm:inline">LearnMaster</span>
               </div>
             </Link>
 
-            {/* Desktop menu items */}
             <div className="hidden md:flex items-center space-x-8 text-gray-700 font-medium">
-              {/* Courses dropdown */}
               <div className="relative" ref={coursesDropdownRef}>
                 <button
                   onClick={() => setCoursesDropdownOpen(!coursesDropdownOpen)}
@@ -472,7 +511,6 @@ function Landing() {
                 )}
               </div>
 
-              {/* Other menu links */}
               <Link to="/certification" className="relative group text-gray-600 hover:text-orange-600 transition-colors duration-300">
                 Get Certified
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 group-hover:w-full transition-all duration-300 ease-out"></span>
@@ -483,7 +521,6 @@ function Landing() {
               </Link>
             </div>
 
-            {/* Search bar */}
             <div className="hidden md:flex flex-1 max-w-xl mx-6">
               <div className="relative w-full group">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors duration-300" size={18} />
@@ -497,9 +534,7 @@ function Landing() {
               </div>
             </div>
 
-            {/* Right side icons & auth */}
             <div className="hidden md:flex items-center gap-6">
-              {/* Dashboard dropdown */}
               <div className="relative" ref={dashboardRef}>
                 <button
                   onClick={() => setDashboardDropdownOpen(!dashboardDropdownOpen)}
@@ -517,7 +552,6 @@ function Landing() {
                 )}
               </div>
 
-              {/* Role label */}
               {roleLabel && (
                 <span className="text-xs font-medium bg-gray-100 text-gray-700 px-3 py-1 rounded-full border border-gray-200 shadow-sm">
                   {roleLabel}
@@ -552,13 +586,11 @@ function Landing() {
               )}
             </div>
 
-            {/* Mobile menu button */}
             <button className="md:hidden text-gray-700 hover:text-orange-600 transition-colors duration-300" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
 
-          {/* Mobile menu */}
           {mobileMenuOpen && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -670,19 +702,26 @@ function Landing() {
 
       {/* Hero Banner */}
       <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden rounded-2xl shadow-xl mt-20">
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.div key={currentSlide} custom={direction} variants={sliderVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.5, ease: "easeInOut" }} className="absolute inset-0 w-full h-full">
-            <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${slides[currentSlide].bgImage})` }}>
-              <div className="absolute inset-0 bg-black/30"></div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+        {landingLoading ? (
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 animate-pulse" />
+        ) : currentSlideData ? (
+          <AnimatePresence initial={false} custom={direction}>
+            <motion.div key={currentSlide} custom={direction} variants={sliderVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.5, ease: "easeInOut" }} className="absolute inset-0 w-full h-full">
+              <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${currentSlideData.bgImage})` }}>
+                <div className="absolute inset-0 bg-black/30"></div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900" />
+        )}
         <div className="absolute inset-0 flex items-center justify-start px-6 md:px-12 lg:px-24">
           <div className="bg-white/95 backdrop-blur-md rounded-2xl p-6 md:p-8 max-w-md shadow-2xl border border-white/30">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">{slides[currentSlide].title}</h2>
-            <p className="text-gray-600 mb-6">{slides[currentSlide].description}</p>
-            <button onClick={() => (window.location.href = slides[currentSlide].link)} className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition shadow-md flex items-center gap-2">
-              {slides[currentSlide].cta} →
+            <img src={logoImage} alt="LearnMaster" className="h-20 w-auto mb-4" />
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">{currentSlideData?.title || "Learn • Skill • Grow"}</h2>
+            <p className="text-gray-600 mb-6">{currentSlideData?.description || "Dynamic learning paths, real outcomes, and premium mentorship."}</p>
+            <button onClick={() => (window.location.href = (currentSlideData?.link || "/courses"))} className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition shadow-md flex items-center gap-2">
+              {currentSlideData?.cta || "Explore Courses"} →
             </button>
           </div>
         </div>
@@ -698,6 +737,12 @@ function Landing() {
           ))}
         </div>
       </div>
+
+      {landingError && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+          <div className="rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm">{landingError}</div>
+        </div>
+      )}
 
       {/* Stats Section */}
       <section className="py-16 bg-white border-y border-gray-100">
@@ -784,15 +829,47 @@ function Landing() {
           <div className="flex justify-between items-center mb-12">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Courses to get you started</h2>
-              <p className="text-gray-600">Showing {filteredCourses.length} of {courses.length} courses</p>
+              <p className="text-gray-600">
+                {activeTab === "Trending" 
+                  ? `Showing ${displayCourses.length} trending courses`
+                  : `Showing ${displayCourses.length} of ${courses.length} courses`
+                }
+              </p>
             </div>
             <div className="flex gap-2">
-              <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm">Most Popular</span>
-              <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">New</span>
-              <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Trending</span>
+              <button 
+                onClick={() => setActiveTab("Most Popular")} 
+                className={`px-3 py-1 rounded-full text-sm transition ${activeTab === "Most Popular" ? "bg-orange-100 text-orange-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+              >
+                Most Popular
+              </button>
+              <button 
+                onClick={() => setActiveTab("New")} 
+                className={`px-3 py-1 rounded-full text-sm transition ${activeTab === "New" ? "bg-orange-100 text-orange-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+              >
+                New
+              </button>
+              <button 
+                onClick={() => { setActiveTab("Trending"); }} 
+                className={`px-3 py-1 rounded-full text-sm transition ${activeTab === "Trending" ? "bg-orange-100 text-orange-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+              >
+                Trending
+              </button>
             </div>
           </div>
-          {filteredCourses.length === 0 ? (
+
+          {(activeTab === "Trending" && loadingTrending && displayCourses.length === 0) ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+              <p className="text-gray-500 mt-2">Loading trending courses...</p>
+            </div>
+          ) : trendingError && activeTab === "Trending" ? (
+            <div className="text-center py-12">
+              <div className="text-red-500 font-semibold mb-2">Error loading courses</div>
+              <p className="text-gray-600">{trendingError}</p>
+              <button onClick={() => { setTrendingCourses([]); setTrendingCurrentPage(0); setHasMoreTrending(true); fetchTrendingCourses(0); }} className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg">Retry</button>
+            </div>
+          ) : displayCourses.length === 0 ? (
             <div className="text-center py-12">
               <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-700">No courses found</h3>
@@ -800,42 +877,74 @@ function Landing() {
               <button onClick={clearFilters} className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Clear all filters</button>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {filteredCourses.map((course) => (
-                <div key={course.id} className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm group hover:shadow-lg transition cursor-pointer" onClick={() => openCoursePopup(course)}>
-                  <div className="relative h-48 overflow-hidden">
-                    <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    <div className="absolute top-3 right-3 flex gap-2">
-                      <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs text-gray-800 font-medium">{course.category}</div>
-                      {course.tag && <div className="bg-orange-600 px-2 py-1 rounded-lg text-xs text-white">{course.tag}</div>}
+            <>
+              <div className="overflow-x-auto pb-3 hide-scrollbar">
+                <div className="flex gap-5 min-w-max">
+                  {displayCourses.map((course) => (
+                    <div key={course.id} className="w-[280px] sm:w-[300px] bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm group hover:shadow-lg transition cursor-pointer shrink-0" onClick={() => openCoursePopup(course)}>
+                      <div className="relative h-48 overflow-hidden">
+                        <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <div className="absolute top-3 right-3 flex gap-2">
+                          <div className="bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs text-gray-800 font-medium">{course.category}</div>
+                          {course.tag && <div className="bg-orange-600 px-2 py-1 rounded-lg text-xs text-white">{course.tag}</div>}
+                        </div>
+                      </div>
+                      <div className="p-5">
+                        <h3 className="text-gray-800 font-semibold text-lg mb-2 line-clamp-2">{course.title}</h3>
+                        <p className="text-sm text-gray-500 mb-2">{course.instructor}</p>
+                        <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                          <div className="flex items-center gap-1"><Users size={14} /><span>{course.students.toLocaleString()}</span></div>
+                          <div className="flex items-center gap-1"><Star size={14} className="text-yellow-400" /><span>{course.rating}</span></div>
+                        </div>
+                        <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
+                          <div className="flex items-center gap-1"><Clock size={12} /><span>{course.duration}</span></div>
+                          <div className="flex items-center gap-1"><User size={12} /><span>{course.level}</span></div>
+                        </div>
+                        <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
+                          <span className="text-2xl font-bold text-gray-800">₹{course.price}</span>
+                          <button onClick={(e) => { e.stopPropagation(); addToCart(course); }} className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg text-white font-semibold transition-colors">
+                            <ShoppingCart size={16} /> Add to Cart
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="text-gray-800 font-semibold text-lg mb-2 line-clamp-2">{course.title}</h3>
-                    <p className="text-sm text-gray-500 mb-2">{course.instructor}</p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                      <div className="flex items-center gap-1"><Users size={14} /><span>{course.students.toLocaleString()}</span></div>
-                      <div className="flex items-center gap-1"><Star size={14} className="text-yellow-400" /><span>{course.rating}</span></div>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
-                      <div className="flex items-center gap-1"><Clock size={12} /><span>{course.duration}</span></div>
-                      <div className="flex items-center gap-1"><User size={12} /><span>{course.level}</span></div>
-                    </div>
-                    <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
-                      <span className="text-2xl font-bold text-gray-800">₹{course.price}</span>
-                      <button onClick={(e) => { e.stopPropagation(); addToCart(course); }} className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg text-white font-semibold transition-colors">
-                        <ShoppingCart size={16} /> Add to Cart
-                      </button>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+
+              {/* Load More button – only for Trending tab */}
+              {activeTab === "Trending" && (
+                <div className="flex justify-center mt-10">
+                  {loadingTrending && displayCourses.length > 0 && (
+                    <div className="flex items-center gap-3 text-gray-500">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-500"></div>
+                      <span>Loading more...</span>
+                    </div>
+                  )}
+                  {!loadingTrending && hasMoreTrending && (
+                    <button
+                      onClick={loadMoreTrending}
+                      className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition shadow-md flex items-center gap-2"
+                    >
+                      Load More <ChevronDown size={18} />
+                    </button>
+                  )}
+                  {!hasMoreTrending && displayCourses.length > 0 && (
+                    <p className="text-gray-400 text-sm">You've seen all trending courses</p>
+                  )}
+                  {trendingError && (
+                    <button onClick={() => { setTrendingCourses([]); setTrendingCurrentPage(0); setHasMoreTrending(true); fetchTrendingCourses(0, false); }} className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                      Retry
+                    </button>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
 
-      {/* Course Details Popup */}
+      {/* Course Details Popup – same as before */}
       {showPopup && selectedCourse && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={closePopup}>
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -905,6 +1014,7 @@ function Landing() {
             <h2 className="text-3xl font-bold text-gray-900 mb-4">What Our Students Say</h2>
             <p className="text-gray-600">Join thousands of satisfied learners</p>
           </div>
+          {testimonials.length > 0 ? (
           <div className="relative max-w-4xl mx-auto">
             <AnimatePresence mode="wait">
               <motion.div key={activeTestimonial} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} transition={{ duration: 0.5 }} className="bg-gray-50 rounded-2xl p-8 border border-gray-100 shadow-sm">
@@ -916,6 +1026,9 @@ function Landing() {
             </AnimatePresence>
             <div className="flex justify-center gap-2 mt-6">{testimonials.map((_, idx) => (<button key={idx} onClick={() => setActiveTestimonial(idx)} className={`w-2 h-2 rounded-full transition-all duration-300 ${activeTestimonial === idx ? 'w-6 bg-orange-600' : 'bg-gray-300'}`} />))}</div>
           </div>
+          ) : (
+            <div className="text-center text-gray-500">No testimonials available right now.</div>
+          )}
         </div>
       </section>
 
@@ -936,7 +1049,7 @@ function Landing() {
       <footer className="bg-white border-t border-gray-100 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
-            <div><div className="flex items-center gap-2 mb-4"><span className="text-gray-800 font-bold text-xl">LearnMaster</span></div><p className="text-gray-500 text-sm">Empowering learners worldwide with quality education.</p></div>
+            <div><div className="flex items-center gap-3 mb-4"><img src={logoImage} alt="LearnMaster" className="h-16 w-auto" /><span className="text-gray-800 font-bold text-xl">LearnMaster</span></div><p className="text-gray-500 text-sm">Empowering learners worldwide with quality education.</p></div>
             <div><h4 className="text-gray-800 font-semibold mb-4">Quick Links</h4><ul className="space-y-2 text-gray-500 text-sm"><li><a href="#courses" className="hover:text-orange-600 transition">Courses</a></li><li><a href="#features" className="hover:text-orange-600 transition">Features</a></li><li><a href="#" className="hover:text-orange-600 transition">About Us</a></li><li><a href="#" className="hover:text-orange-600 transition">Contact</a></li></ul></div>
             <div><h4 className="text-gray-800 font-semibold mb-4">Support</h4><ul className="space-y-2 text-gray-500 text-sm"><li><a href="#" className="hover:text-orange-600 transition">Help Center</a></li><li><a href="#" className="hover:text-orange-600 transition">Terms of Service</a></li><li><a href="#" className="hover:text-orange-600 transition">Privacy Policy</a></li><li><a href="#" className="hover:text-orange-600 transition">Refund Policy</a></li></ul></div>
             <div><h4 className="text-gray-800 font-semibold mb-4">Contact Us</h4><ul className="space-y-2 text-gray-500 text-sm"><li className="flex items-center gap-2"><Mail size={14} /> support@learnmaster.com</li><li className="flex items-center gap-2"><Phone size={14} /> +1 234 567 890</li><li className="flex items-center gap-2"><MapPin size={14} /> 123 Learning St, Silicon Valley</li></ul></div>

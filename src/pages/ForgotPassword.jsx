@@ -1,16 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AlertCircle,
   CheckCircle,
+  CheckCircle2,
   KeyRound,
   Lock,
   Mail,
   ShieldCheck,
+  XCircle,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { authApi } from "../api/authApi";
 import AuthShell from "../components/ui/AuthShell";
+
+// ✅ Your ngrok base URL (can be overridden via .env)
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -26,9 +30,32 @@ const ForgotPassword = () => {
   const [error, setError] = useState("");
 
   const validateEmail = (value) => /\S+@\S+\.\S+/.test(value);
-
   const canResend = cooldownSeconds === 0;
 
+  // ─── Password Strength Logic ──────────────────────────────────────────
+  const passwordStrength = useMemo(() => {
+    const password = newPassword;
+    let strength = 0;
+    if (password.length >= 6) strength += 1;
+    if (/[a-z]/.test(password)) strength += 1;
+    if (/[A-Z]/.test(password)) strength += 1;
+    if (/\d/.test(password)) strength += 1;
+    if (/[$@#&!]/.test(password)) strength += 1;
+
+    let label = "Weak";
+    if (strength >= 3 && strength < 5) label = "Medium";
+    if (strength === 5) label = "Strong";
+
+    return { strength, label };
+  }, [newPassword]);
+
+  // ─── Password Match Logic ─────────────────────────────────────────────
+  const passwordsMatch = useMemo(() => {
+    if (confirmPassword.length === 0) return null; // Don't show anything if empty
+    return newPassword === confirmPassword;
+  }, [newPassword, confirmPassword]);
+
+  // Cooldown timer for OTP resend
   useEffect(() => {
     if (cooldownSeconds <= 0) return;
     const timer = setTimeout(() => {
@@ -37,6 +64,7 @@ const ForgotPassword = () => {
     return () => clearTimeout(timer);
   }, [cooldownSeconds]);
 
+  // ─── Step 1: Request OTP ──────────────────────────────────────────────
   const handleSendOtp = async () => {
     setError("");
     if (!validateEmail(email)) {
@@ -46,13 +74,25 @@ const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      const result = await authApi.requestForgotPasswordOtp(email);
-      setOtpSessionId(result.otpSessionId || "");
-      setCooldownSeconds(Number(result.cooldownSeconds || 30));
-      toast.success(result.message || "OTP sent to your email");
+      const response = await fetch(`${API_BASE_URL}/api/v1/auth/password/forgot`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to send OTP");
+      }
+
+      const sessionId = data.otpSessionId || data.sessionId || data.data?.otpSessionId || "";
+      setOtpSessionId(sessionId);
+      setCooldownSeconds(Number(data.cooldownSeconds || data.cooldown || 30));
+
+      toast.success(data.message || "OTP sent to your email");
       setStep(2);
     } catch (err) {
-      const message = err.response?.data?.message || "Failed to send OTP";
+      const message = err.message || "Failed to send OTP";
       setError(message);
       toast.error(message);
     } finally {
@@ -60,6 +100,7 @@ const ForgotPassword = () => {
     }
   };
 
+  // ─── Step 2: Verify OTP ──────────────────────────────────────────────
   const handleVerifyOtp = async () => {
     setError("");
     if (!otp || otp.length !== 6) {
@@ -67,17 +108,32 @@ const ForgotPassword = () => {
       return;
     }
 
+    if (!otpSessionId) {
+      setError("OTP session expired. Please request OTP again.");
+      return;
+    }
+
     setLoading(true);
     try {
-      if (!otpSessionId) {
-        throw new Error("OTP session expired. Please request OTP again.");
+      const response = await fetch(`${API_BASE_URL}/api/v1/auth/password/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim(),
+          otpSessionId,
+          otp: otp.trim(),
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "OTP verification failed");
       }
 
-      await authApi.verifyPasswordOtp({ email, otpSessionId, otp });
-      toast.success("OTP verified");
+      toast.success(data.message || "OTP verified");
       setStep(3);
     } catch (err) {
-      const message = err.response?.data?.message || err.message || "Invalid OTP";
+      const message = err.message || "Invalid OTP";
       setError(message);
       toast.error(message);
     } finally {
@@ -85,6 +141,7 @@ const ForgotPassword = () => {
     }
   };
 
+  // ─── Step 3: Reset Password ──────────────────────────────────────────
   const handleResetPassword = async () => {
     setError("");
     if (!newPassword || newPassword.length < 6) {
@@ -96,17 +153,33 @@ const ForgotPassword = () => {
       return;
     }
 
+    if (!otpSessionId) {
+      setError("OTP session expired. Please restart the process.");
+      return;
+    }
+
     setLoading(true);
     try {
-      if (!otpSessionId) {
-        throw new Error("OTP session expired. Please request OTP again.");
+      const response = await fetch(`${API_BASE_URL}/api/v1/auth/password/reset`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim(),
+          otpSessionId,
+          newPassword: newPassword.trim(),
+          confirmPassword: confirmPassword.trim(),
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Password reset failed");
       }
 
-      await authApi.resetPassword({ email, otpSessionId, newPassword, confirmPassword });
-      toast.success("Password reset successful");
+      toast.success(data.message || "Password reset successful");
       navigate("/admin/login");
     } catch (err) {
-      const message = err.response?.data?.message || err.message || "Password reset failed";
+      const message = err.message || "Password reset failed";
       setError(message);
       toast.error(message);
     } finally {
@@ -128,6 +201,7 @@ const ForgotPassword = () => {
       <h1 className="mb-2 text-2xl font-bold text-slate-900">Reset Password</h1>
       <p className="mb-6 text-sm text-slate-500">Follow the secure flow to regain access</p>
 
+      {/* Step indicators */}
       <div className="mb-6 flex items-center gap-2">
         {[1, 2, 3].map((item) => (
           <div key={item} className="flex items-center gap-2">
@@ -162,6 +236,7 @@ const ForgotPassword = () => {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
               />
             </div>
           </div>
@@ -183,7 +258,8 @@ const ForgotPassword = () => {
                 placeholder="6-digit code"
                 value={otp}
                 maxLength={6}
-                onChange={(e) => setOtp(e.target.value)}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                disabled={loading}
               />
             </div>
           </div>
@@ -203,6 +279,7 @@ const ForgotPassword = () => {
 
       {step === 3 && (
         <div className="space-y-4">
+          {/* New Password */}
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">New Password</label>
             <div className="relative">
@@ -212,9 +289,31 @@ const ForgotPassword = () => {
                 className="lms-input pl-10"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
+                disabled={loading}
+                placeholder="Minimum 6 characters"
               />
             </div>
+            
+            {/* ✅ Cleaned Password Strength Indicator */}
+            {newPassword.length > 0 && (
+              <div className="mt-2 flex items-center gap-2">
+                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className="h-full transition-all duration-300"
+                    style={{
+                      width: `${(passwordStrength.strength / 5) * 100}%`,
+                      backgroundColor: passwordStrength.strength <= 2 ? "#ef4444" : passwordStrength.strength <= 4 ? "#f59e0b" : "#10b981"
+                    }}
+                  />
+                </div>
+                <span className={`text-xs font-bold ${passwordStrength.strength <= 2 ? "text-red-500" : passwordStrength.strength <= 4 ? "text-amber-500" : "text-emerald-500"}`}>
+                  {passwordStrength.label}
+                </span>
+              </div>
+            )}
           </div>
+
+          {/* Confirm New Password */}
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">Confirm New Password</label>
             <div className="relative">
@@ -224,9 +323,29 @@ const ForgotPassword = () => {
                 className="lms-input pl-10"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                disabled={loading}
+                placeholder="Re-enter new password"
               />
             </div>
+            
+            {/* ✅ Password Match / Do Not Match Indicator */}
+            {passwordsMatch !== null && (
+              <div className="mt-1.5 flex items-center gap-1.5 text-sm">
+                {passwordsMatch ? (
+                  <>
+                    <CheckCircle2 size={16} className="text-emerald-500" />
+                    <span className="text-emerald-600 font-medium">Passwords match</span>
+                  </>
+                ) : (
+                  <>
+                    <XCircle size={16} className="text-red-500" />
+                    <span className="text-red-600 font-medium">Passwords do not match</span>
+                  </>
+                )}
+              </div>
+            )}
           </div>
+
           <button onClick={handleResetPassword} disabled={loading} className="lms-btn-primary">
             {loading ? "Updating..." : "Reset Password"}
           </button>

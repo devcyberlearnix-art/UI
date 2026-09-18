@@ -1,165 +1,37 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { LayoutDashboard, BookOpen, Star, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { LayoutDashboard, BookOpen, Star, Users, Clock, User, ShoppingCart } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { instructorApi } from "../../api/instructorApi";
 import InstructorApplication from "./InstructorApplication";
-import RoleSwitcher from "../../components/ui/RoleSwitcher";
+import { landingApi } from "../../api/landingApi";
 
 const StudentDashboard = () => {
-  const navigate = useNavigate();
-  const { user, switchRole } = useAuth();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [trendingCourses, setTrendingCourses] = useState([]);
+  const [loadingCourses, setLoadingCourses] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState(() => {
-    // Optimistically load from localStorage while we fetch real status
-    if (user?.email) {
-      return localStorage.getItem(`instructor_app_status_${user.email}`) || null;
-    }
     return localStorage.getItem("instructor_application_status") || null;
   });
-  const [statusLoading, setStatusLoading] = useState(false);
-  const [applicationData, setApplicationData] = useState(null);
 
-  // Fetch real application status from backend & sync local storage approvals
   useEffect(() => {
-    const checkLocalStatus = () => {
-      const userEmail = (user?.email || "").toLowerCase().trim();
-
-      if (userEmail) {
-        const explicitStatus = localStorage.getItem(`instructor_app_status_${userEmail}`);
-        if (explicitStatus === 'approved') return 'approved';
-        if (explicitStatus === 'rejected') return 'rejected';
-      }
-
-      const globalStatus = localStorage.getItem("instructor_application_status");
-      if (globalStatus === 'approved') return 'approved';
-
-      const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
-      const localInsts = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
-
-      const appMatch = localApps.find(a => 
-        String(a.email || a.user?.email || "").toLowerCase().trim() === userEmail
-      );
-      if (appMatch) {
-        const s = String(appMatch.status || appMatch.verificationStatus || "").toLowerCase();
-        if (s.includes("approv") || s === "active") return "approved";
-        if (s.includes("reject")) return "rejected";
-        if (s.includes("pend") || s.includes("review")) return "pending";
-      }
-
-      const instMatch = localInsts.find(i => 
-        String(i.email || i.user?.email || "").toLowerCase().trim() === userEmail
-      );
-      if (instMatch) {
-        const s = String(instMatch.status || "").toLowerCase();
-        if (s.includes("approv") || s === "active") return "approved";
-        if (s.includes("reject")) return "rejected";
-      }
-
-      return null;
-    };
-
-    const fetchApplicationStatus = async () => {
-      setStatusLoading(true);
-
-      const localStatus = checkLocalStatus();
-      if (localStatus) {
-        setApplicationStatus(localStatus);
-        if (user?.email) localStorage.setItem(`instructor_app_status_${user.email}`, localStatus);
-        localStorage.setItem("instructor_application_status", localStatus);
-      }
-
+    const loadTrendingCourses = async () => {
       try {
-        const res = await instructorApi.getMyApplication();
-        const data = res?.data || res;
-        let status = null;
-
-        if (data?.status) status = String(data.status).toLowerCase();
-        else if (data?.applicationStatus) status = String(data.applicationStatus).toLowerCase();
-        else if (data?.verificationStatus) status = String(data.verificationStatus).toLowerCase();
-        else if (Array.isArray(data) && data.length > 0) {
-          const latest = [...data].sort((a, b) => new Date(b.submittedAt || b.createdAt || 0) - new Date(a.submittedAt || a.createdAt || 0))[0];
-          status = String(latest?.status || latest?.applicationStatus || latest?.verificationStatus || 'pending').toLowerCase();
-          setApplicationData(latest);
-        } else if (data?.applicationId || data?.id) {
-          setApplicationData(data);
-          status = String(data.status || 'pending').toLowerCase();
-        }
-
-        if (status) {
-          if (status.includes('approv')) status = 'approved';
-          else if (status.includes('reject')) status = 'rejected';
-          else if (status.includes('pend') || status.includes('review') || status.includes('submit')) status = 'pending';
-
-          // Preserve local approval if backend API returns pending
-          if (localStatus === 'approved' && status === 'pending') {
-            status = 'approved';
-          }
-
-          setApplicationStatus(status);
-          if (user?.email) localStorage.setItem(`instructor_app_status_${user.email}`, status);
-          localStorage.setItem("instructor_application_status", status);
-        }
-      } catch (err) {
-        if (!localStatus && err?.response?.status === 404) {
-          setApplicationStatus(null);
-          if (user?.email) localStorage.removeItem(`instructor_app_status_${user.email}`);
-          localStorage.removeItem("instructor_application_status");
-        } else if (!localStatus) {
-          try {
-            const fallback = await instructorApi.getMyApplications();
-            const apps = fallback?.data || fallback;
-            if (Array.isArray(apps) && apps.length > 0) {
-              const latest = apps.sort((a, b) => new Date(b.submittedAt || b.createdAt) - new Date(a.submittedAt || a.createdAt))[0];
-              let status = String(latest?.status || latest?.applicationStatus || 'pending').toLowerCase();
-              if (status.includes('approv')) status = 'approved';
-              else if (status.includes('reject')) status = 'rejected';
-              else status = 'pending';
-              setApplicationStatus(status);
-              setApplicationData(latest);
-            }
-          } catch (fallbackErr) {}
-        }
+        setLoadingCourses(true);
+        const result = await landingApi.getTrendingCourses(0, 5);
+        setTrendingCourses(result?.data?.courses || []);
+      } catch (error) {
+        console.error("[StudentDashboard] Unable to load trending courses", error);
       } finally {
-        setStatusLoading(false);
+        setLoadingCourses(false);
       }
     };
 
-    fetchApplicationStatus();
-
-    const handleStorageChange = () => {
-      const updatedStatus = checkLocalStatus();
-      if (updatedStatus) {
-        setApplicationStatus(updatedStatus);
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('focus', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('focus', handleStorageChange);
-    };
-  }, [user?.email]);
+    loadTrendingCourses();
+  }, []);
 
   const handleStatusChange = (status) => {
     setApplicationStatus(status);
-    if (status) {
-      if (user?.email) localStorage.setItem(`instructor_app_status_${user.email}`, status);
-      localStorage.setItem("instructor_application_status", status);
-    } else {
-      if (user?.email) localStorage.removeItem(`instructor_app_status_${user.email}`);
-      localStorage.removeItem("instructor_application_status");
-    }
-  };
-
-  const handleRoleChange = async (newRole) => {
-    if (switchRole) {
-      await switchRole(newRole);
-    }
-    if (newRole === 'admin') navigate('/admin/dashboard');
-    else if (newRole === 'instructor') navigate('/instructor/dashboard');
-    else navigate('/student/dashboard');
+    localStorage.setItem("instructor_application_status", status);
   };
 
   const tabs = [
@@ -172,7 +44,7 @@ const StudentDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Top Nav Bar */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center gap-1 overflow-x-auto hide-scrollbar">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -191,26 +63,15 @@ const StudentDashboard = () => {
                 >
                   <Icon className={`w-4 h-4 ${tab.highlight && !isActive ? "text-purple-500" : ""}`} />
                   {tab.label}
-                  {tab.id === "become-instructor" && statusLoading && (
-                    <Loader2 className="ml-1 w-3 h-3 animate-spin text-gray-400" />
-                  )}
-                  {tab.id === "become-instructor" && applicationStatus === "pending" && !statusLoading && (
+                  {tab.id === "become-instructor" && applicationStatus === "pending" && (
                     <span className="ml-1 w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
                   )}
-                  {tab.id === "become-instructor" && applicationStatus === "approved" && !statusLoading && (
-                    <span className="ml-1 w-2 h-2 rounded-full bg-green-500" />
-                  )}
-                  {tab.id === "become-instructor" && !applicationStatus && !statusLoading && (
+                  {tab.id === "become-instructor" && !applicationStatus && (
                     <span className="ml-1 text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-bold">NEW</span>
                   )}
                 </button>
               );
             })}
-          </div>
-
-          {/* Role Switcher & Switch to Instructor Action */}
-          <div className="py-2 pl-4 flex items-center gap-3">
-            <RoleSwitcher currentRole="student" onRoleChange={handleRoleChange} />
           </div>
         </div>
       </div>
@@ -221,26 +82,11 @@ const StudentDashboard = () => {
         {/* ── Dashboard Tab ────────────────────────────────────────────── */}
         {activeTab === "dashboard" && (
           <div>
-            <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  Welcome back{user?.name ? `, ${user.name.split(" ")[0]}` : ""}! 👋
-                </h1>
-                <p className="text-gray-500 mt-1">Here's what's happening with your learning journey.</p>
-              </div>
-
-              {(applicationStatus === "approved" || user?.role === "instructor" || user?.isInstructor || user?.isAdmin || user?.role === "admin") && (
-                <button
-                  onClick={async () => {
-                    if (switchRole) await switchRole('instructor');
-                    navigate("/instructor/dashboard");
-                  }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-xs rounded-xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer self-start sm:self-auto"
-                >
-                  <span>🎓</span>
-                  <span>Switch to Instructor Portal →</span>
-                </button>
-              )}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-gray-900">
+                Welcome back{user?.name ? `, ${user.name.split(" ")[0]}` : ""}! 👋
+              </h1>
+              <p className="text-gray-500 mt-1">Here's what's happening with your learning journey.</p>
             </div>
 
             {/* Quick stats */}
@@ -258,18 +104,58 @@ const StudentDashboard = () => {
               ))}
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 text-center shadow-sm">
-              <p className="text-gray-400 text-sm">No courses yet. Browse the catalog to get started!</p>
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">Trending courses</h2>
+                  <p className="text-sm text-gray-500">Top picks for your next learning milestone.</p>
+                </div>
+              </div>
+
+              {loadingCourses ? (
+                <div className="flex items-center gap-3 text-gray-500 py-6">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-500" />
+                  <span>Loading courses...</span>
+                </div>
+              ) : trendingCourses.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-400 text-sm">No courses available right now.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto pb-2 hide-scrollbar">
+                  <div className="flex gap-4 min-w-max">
+                    {trendingCourses.map((course) => (
+                      <div key={course.id} className="w-[280px] rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden shrink-0">
+                        <div className="h-40 overflow-hidden">
+                          <img src={course.image} alt={course.title} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] bg-orange-100 text-orange-700 font-semibold px-2 py-1 rounded-full">{course.category}</span>
+                            <span className="text-xs text-gray-500">{course.level}</span>
+                          </div>
+                          <h3 className="text-base font-bold text-gray-900 line-clamp-2">{course.title}</h3>
+                          <p className="text-xs text-gray-500 mt-1">{course.instructor}</p>
+                          <div className="flex items-center gap-3 text-[11px] text-gray-500 mt-3">
+                            <span className="flex items-center gap-1"><Users size={12} /> {course.students}</span>
+                            <span className="flex items-center gap-1"><Clock size={12} /> {course.duration}</span>
+                          </div>
+                          <div className="mt-4 flex items-center justify-between">
+                            <span className="text-lg font-bold text-gray-900">₹{course.price}</span>
+                            <button className="flex items-center gap-1 bg-orange-600 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-orange-700">
+                              <ShoppingCart size={12} /> Enroll
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Instructor Application Status Banner */}
-            {statusLoading && (
-              <div className="mt-6 bg-gray-50 border border-gray-200 rounded-2xl p-5 flex items-center gap-4">
-                <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
-                <p className="text-gray-500 text-sm">Checking your instructor application status…</p>
-              </div>
-            )}
-            {!statusLoading && !applicationStatus && (
+            {/* Become Instructor CTA */}
+            {!applicationStatus && (
               <div
                 onClick={() => setActiveTab("become-instructor")}
                 className="mt-6 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 text-white flex items-center justify-between cursor-pointer hover:shadow-xl hover:shadow-purple-200 hover:scale-[1.01] transition-all duration-200"
@@ -287,60 +173,15 @@ const StudentDashboard = () => {
                 </div>
               </div>
             )}
-            {!statusLoading && applicationStatus === "pending" && (
+            {applicationStatus === "pending" && (
               <div className="mt-6 bg-amber-50 border border-amber-200 rounded-2xl p-5 flex items-center gap-4">
                 <div className="w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-lg">⏳</span>
                 </div>
-                <div className="flex-1">
+                <div>
                   <p className="font-semibold text-amber-800">Instructor application under review</p>
                   <p className="text-amber-600 text-sm">We'll notify you once it's approved (3–5 business days)</p>
                 </div>
-                <button
-                  onClick={() => setActiveTab("become-instructor")}
-                  className="text-xs text-amber-700 border border-amber-300 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition"
-                >
-                  View Status
-                </button>
-              </div>
-            )}
-            {!statusLoading && applicationStatus === "approved" && (
-              <div className="mt-6 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 text-white flex items-center justify-between shadow-lg shadow-green-100">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
-                    🎉
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg">Instructor Application Approved!</h3>
-                    <p className="text-green-100 text-sm mt-0.5">Your application is approved. You can switch to your Instructor Dashboard anytime!</p>
-                  </div>
-                </div>
-                <button
-                  onClick={async () => {
-                    if (switchRole) await switchRole('instructor');
-                    navigate("/instructor/dashboard");
-                  }}
-                  className="bg-white text-green-700 hover:bg-green-50 px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all whitespace-nowrap cursor-pointer ml-4"
-                >
-                  Go to Instructor Dashboard →
-                </button>
-              </div>
-            )}
-            {!statusLoading && applicationStatus === "rejected" && (
-              <div className="mt-6 bg-red-50 border border-red-200 rounded-2xl p-5 flex items-center gap-4">
-                <div className="w-10 h-10 bg-red-400 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-lg">❌</span>
-                </div>
-                <div className="flex-1">
-                  <p className="font-semibold text-red-800">Application Not Approved</p>
-                  <p className="text-red-600 text-sm">Your application was reviewed but not approved. You may re-apply with updated documents.</p>
-                </div>
-                <button
-                  onClick={() => { handleStatusChange(null); setActiveTab("become-instructor"); }}
-                  className="text-xs text-red-700 border border-red-300 px-3 py-1.5 rounded-lg hover:bg-red-100 transition whitespace-nowrap"
-                >
-                  Re-apply
-                </button>
               </div>
             )}
           </div>
