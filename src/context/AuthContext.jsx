@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 
 const AuthContext = createContext(null);
 
-const normalizeRole = (roleValue = '') => {
+export const normalizeRole = (roleValue = '') => {
   const role = String(roleValue || '').trim().toLowerCase();
   if (role.includes('super')) return 'super_admin';
   if (role.includes('sub')) return 'sub_admin';
@@ -20,6 +20,23 @@ export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export const useSafeAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    return {
+      user: null,
+      token: null,
+      loading: false,
+      error: null,
+      login: async () => ({ success: false, error: 'Auth not available' }),
+      logout: async () => {},
+      syncSession: () => null,
+      isAuthenticated: false,
+    };
   }
   return context;
 };

@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Mail, Lock, LogIn, AlertCircle, KeyRound, RefreshCw } from "lucide-react";
+import { Mail, Lock, LogIn, AlertCircle, KeyRound, RefreshCw, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
@@ -19,6 +19,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [otpResending, setOtpResending] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login, isAuthenticated, loading: authLoading } = useAuth();
   const canResend = cooldownSeconds === 0;
@@ -282,13 +283,21 @@ const Login = () => {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
-                  className="lms-input pl-10"
+                  className="lms-input pl-10 pr-10"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={loading}
                 />
+                <button
+                  type="button"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-600"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 
