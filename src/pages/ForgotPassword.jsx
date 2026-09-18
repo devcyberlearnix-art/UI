@@ -76,7 +76,11 @@ const ForgotPassword = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/auth/password/forgot`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
         body: JSON.stringify({ email: email.trim() }),
       });
 
@@ -117,7 +121,11 @@ const ForgotPassword = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/auth/password/verify-otp`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
         body: JSON.stringify({
           email: email.trim(),
           otpSessionId,
@@ -162,7 +170,11 @@ const ForgotPassword = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/auth/password/reset`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
         body: JSON.stringify({
           email: email.trim(),
           otpSessionId,
