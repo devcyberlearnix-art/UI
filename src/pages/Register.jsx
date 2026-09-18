@@ -253,6 +253,7 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showCountryCodeMenu, setShowCountryCodeMenu] = useState(false);
   const [countryCodeSearch, setCountryCodeSearch] = useState("");
+  const [skillInput, setSkillInput] = useState("");
   const [otpSessionId, setOtpSessionId] = useState("");
 
   const [formData, setFormData] = useState({
@@ -269,7 +270,7 @@ const Register = () => {
     country: "",
     preferredLanguage: "",
     organization: "",
-    skills: "",
+    skills: [],
     fieldOfStudy: "",
     highestQualification: "",
     agreeToTerms: false,
@@ -314,6 +315,31 @@ const Register = () => {
     }
   };
 
+  const addSkill = () => {
+    const trimmed = skillInput.trim();
+    if (!trimmed) return;
+
+    const normalizedValue = trimmed.replace(/,$/, "");
+    if (!normalizedValue) return;
+
+    const nextSkills = [...(Array.isArray(formData.skills) ? formData.skills : [])];
+    const skillValue = normalizedValue.trim();
+
+    if (!nextSkills.includes(skillValue)) {
+      nextSkills.push(skillValue);
+      updateField("skills", nextSkills);
+    }
+
+    setSkillInput("");
+  };
+
+  const removeSkill = (skillToRemove) => {
+    const nextSkills = (Array.isArray(formData.skills) ? formData.skills : []).filter(
+      (skill) => skill !== skillToRemove
+    );
+    updateField("skills", nextSkills);
+  };
+
   const FieldError = ({ name }) =>
     errors[name] ? <p className="mt-1 text-xs text-red-600">{errors[name]}</p> : null;
 
@@ -336,13 +362,19 @@ const Register = () => {
     }
 
     if (step === 3) {
+      const mobileValue = formData.mobile.trim();
+      const skillsArray = Array.isArray(formData.skills) ? formData.skills : [];
+
+      const isValidMobile = /^[6-9]\d{9}$/.test(mobileValue);
+
       return (
-        /^[6-9]\d{9}$/.test(formData.mobile) &&
+        isValidMobile &&
         !!formData.dob &&
         formData.city.trim() !== "" &&
         formData.state.trim() !== "" &&
         formData.country.trim() !== "" &&
-        !!formData.preferredLanguage
+        !!formData.preferredLanguage &&
+        skillsArray.length > 0
       );
     }
 
@@ -352,6 +384,11 @@ const Register = () => {
 
     return false;
   };
+
+  const currentStepValidationMessage =
+    currentStep < 4 && !isStepValid(currentStep)
+      ? "Please fill all required fields before moving to the next step."
+      : "";
 
   const validateStep = (step) => {
     const nextErrors = {};
@@ -371,12 +408,18 @@ const Register = () => {
     }
 
     if (step === 3) {
-      if (!/^[6-9]\d{9}$/.test(formData.mobile)) nextErrors.mobile = "Valid 10-digit mobile is required";
+      const mobileValue = formData.mobile.trim();
+      if (!/^[6-9]\d{9}$/.test(mobileValue)) {
+        nextErrors.mobile = "Valid 10-digit mobile number starting with 6-9 is required";
+      }
       if (!formData.dob) nextErrors.dob = "Date of birth is required";
       if (!formData.city.trim()) nextErrors.city = "City is required"; // ✅ Updated for Text Input
       if (!formData.state.trim()) nextErrors.state = "State is required"; // ✅ Updated for Text Input
       if (!formData.country.trim()) nextErrors.country = "Country is required"; // ✅ Updated for Text Input
       if (!formData.preferredLanguage) nextErrors.preferredLanguage = "Preferred language is required";
+      if (!Array.isArray(formData.skills) || formData.skills.length === 0) {
+        nextErrors.skills = "At least one skill is required";
+      }
     }
 
     if (step === 4) {
@@ -468,9 +511,7 @@ const Register = () => {
         country: formData.country,
         preferredLanguage: formData.preferredLanguage,
         organization: formData.organization || "",
-        skills: formData.skills
-          ? formData.skills.split(",").map((item) => item.trim()).filter(Boolean)
-          : [],
+        skills: Array.isArray(formData.skills) ? formData.skills : [],
         fieldOfStudy: formData.fieldOfStudy || "",
         highestQualification: formData.highestQualification || "",
       };
@@ -560,6 +601,13 @@ const Register = () => {
         >
           {messageType === "success" ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
           <span>{message}</span>
+        </div>
+      )}
+
+      {currentStepValidationMessage && (
+        <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          <AlertCircle size={18} />
+          <span>{currentStepValidationMessage}</span>
         </div>
       )}
 
@@ -754,7 +802,17 @@ const Register = () => {
 
                     <div className="relative">
                       <Phone size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                      <input className="lms-input pl-10" value={formData.mobile} onChange={(e) => updateField("mobile", e.target.value)} />
+                      <input
+                        className="lms-input pl-10"
+                        value={formData.mobile}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                          updateField("mobile", value);
+                        }}
+                        inputMode="numeric"
+                        maxLength={10}
+                        placeholder="Enter 10-digit mobile"
+                      />
                     </div>
                   </div>
                   <FieldError name="mobile" />
@@ -858,8 +916,55 @@ const Register = () => {
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Skills</label>
-                  <input className="lms-input" value={formData.skills} onChange={(e) => updateField("skills", e.target.value)} />
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Skills <span className="text-red-500">*</span>
+                  </label>
+
+                  <div className="rounded-xl border border-slate-200 bg-white p-2">
+                    <div className="mb-2 flex min-h-[42px] flex-wrap gap-2">
+                      {(Array.isArray(formData.skills) ? formData.skills : []).map((skill) => (
+                        <span
+                          key={skill}
+                          className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-2.5 py-1 text-sm text-orange-700"
+                        >
+                          {skill}
+                          <button
+                            type="button"
+                            className="text-xs font-semibold text-orange-700 hover:text-orange-900"
+                            onClick={() => removeSkill(skill)}
+                            aria-label={`Remove ${skill}`}
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+
+                    <input
+                      className="w-full border-0 bg-transparent p-0 text-sm text-slate-700 outline-none placeholder:text-slate-400"
+                      value={skillInput}
+                      onChange={(e) => setSkillInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === ",") {
+                          e.preventDefault();
+                          addSkill();
+                        }
+                      }}
+                      placeholder="Type a skill and press Enter"
+                    />
+                  </div>
+
+                  <div className="mt-2 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={addSkill}
+                      className="rounded-lg border border-orange-200 bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-700 transition hover:bg-orange-100"
+                    >
+                      Add Skill
+                    </button>
+                  </div>
+
+                  <FieldError name="skills" />
                 </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-slate-700">Highest Qualification</label>
