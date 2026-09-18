@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 
 const CATEGORIES = ["Development", "Design", "Business", "Marketing", "Data Science", "Photography", "Music", "Other"];
-const LEVELS     = ["Beginner", "Intermediate", "Advanced", "All Levels"];
+const LEVELS = ["Beginner", "Intermediate", "Advanced", "All Levels"];
 
 const Courses = () => {
   const navigate = useNavigate();
@@ -151,7 +151,7 @@ const Courses = () => {
         language: course.language || 'English',
         createdAt: course.createdAt || course.createdDate || new Date().toLocaleDateString()
       }));
-      
+
       setCourses(transformedCourses);
     } catch (err) {
       console.error('[Courses] Error fetching courses:', err);
@@ -174,15 +174,15 @@ const Courses = () => {
     try {
       const newId = "course_" + Date.now();
       const payload = {
-        id:          newId,
-        title:       createForm.title.trim(),
+        id: newId,
+        title: createForm.title.trim(),
         description: createForm.description.trim(),
-        category:    createForm.category,
-        level:       createForm.level,
-        price:       parseFloat(createForm.price) || 0,
-        language:    createForm.language,
-        status:      "approved",
-        createdAt:   new Date().toLocaleDateString(),
+        category: createForm.category,
+        level: createForm.level,
+        price: parseFloat(createForm.price) || 0,
+        language: createForm.language,
+        status: "approved",
+        createdAt: new Date().toLocaleDateString(),
         instructorName: user?.name || user?.firstName || "Admin",
       };
 
@@ -236,12 +236,12 @@ const Courses = () => {
     setUpdating(true);
     try {
       const payload = {
-        title:       editForm.title.trim(),
+        title: editForm.title.trim(),
         description: editForm.description.trim(),
-        category:    editForm.category,
-        level:       editForm.level,
-        price:       parseFloat(editForm.price) || 0,
-        language:    editForm.language,
+        category: editForm.category,
+        level: editForm.level,
+        price: parseFloat(editForm.price) || 0,
+        language: editForm.language,
       };
 
       // Call PUT /api/v1/courses/:courseId
@@ -314,7 +314,7 @@ const Courses = () => {
   const handleApprove = async (id) => {
     try {
       try { await courseApi.updateCourseStatus(id, "PUBLISHED"); } catch (e) {
-        try { await adminApi.approveCourse(id); } catch (err2) {}
+        try { await adminApi.approveCourse(id); } catch (err2) { }
       }
       const updated = courses.map(course =>
         course.id === id ? { ...course, status: 'PUBLISHED' } : course
@@ -329,7 +329,7 @@ const Courses = () => {
   const handleReject = async (id) => {
     try {
       try { await courseApi.updateCourseStatus(id, "REJECTED"); } catch (e) {
-        try { await adminApi.rejectCourse(id); } catch (err2) {}
+        try { await adminApi.rejectCourse(id); } catch (err2) { }
       }
       const updated = courses.map(course =>
         course.id === id ? { ...course, status: 'REJECTED' } : course
@@ -344,8 +344,8 @@ const Courses = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this course permanently?")) return;
     try {
-      try { await adminApi.deleteCourse(id); } catch (e) {}
-      
+      try { await adminApi.deleteCourse(id); } catch (e) { }
+
       const localList = JSON.parse(localStorage.getItem("lms_custom_courses") || "[]");
       const filtered = localList.filter(c => String(c.id) !== String(id));
       localStorage.setItem("lms_custom_courses", JSON.stringify(filtered));
@@ -452,7 +452,7 @@ const Courses = () => {
           <tbody className="divide-y divide-gray-100 bg-white">
             {courses.map((course) => (
               <tr key={course.id} className="hover:bg-orange-50/30 transition">
-                <td 
+                <td
                   className="px-6 py-4 text-sm font-semibold text-gray-900 cursor-pointer hover:text-orange-600 transition"
                   onClick={() => handleOpenEdit(course)}
                   title="Click to Edit Course"
@@ -487,15 +487,14 @@ const Courses = () => {
                   <select
                     value={String(course.status || "PUBLISHED").toUpperCase()}
                     onChange={(e) => handleUpdateCourseStatus(course.id, e.target.value)}
-                    className={`px-2.5 py-1 text-xs font-bold rounded-full border cursor-pointer transition focus:outline-none focus:ring-2 focus:ring-orange-400 ${
-                      String(course.status).toUpperCase() === "PUBLISHED" || String(course.status).toUpperCase() === "APPROVED"
+                    className={`px-2.5 py-1 text-xs font-bold rounded-full border cursor-pointer transition focus:outline-none focus:ring-2 focus:ring-orange-400 ${String(course.status).toUpperCase() === "PUBLISHED" || String(course.status).toUpperCase() === "APPROVED"
                         ? "bg-green-100 text-green-800 border-green-300"
                         : String(course.status).toUpperCase() === "REJECTED"
-                        ? "bg-red-100 text-red-800 border-red-300"
-                        : String(course.status).toUpperCase() === "ARCHIVED"
-                        ? "bg-gray-100 text-gray-800 border-gray-300"
-                        : "bg-yellow-100 text-yellow-800 border-yellow-300"
-                    }`}
+                          ? "bg-red-100 text-red-800 border-red-300"
+                          : String(course.status).toUpperCase() === "ARCHIVED"
+                            ? "bg-gray-100 text-gray-800 border-gray-300"
+                            : "bg-yellow-100 text-yellow-800 border-yellow-300"
+                      }`}
                     title="Change course status (PATCH /api/v1/courses/:id/status)"
                   >
                     <option value="PUBLISHED" className="bg-white text-gray-900 font-semibold">PUBLISHED</option>
@@ -506,39 +505,39 @@ const Courses = () => {
                   </select>
                 </td>
                 <td className="px-6 py-4 text-right space-x-1.5">
-                  <button 
-                    onClick={() => handleOpenEdit(course)} 
+                  <button
+                    onClick={() => handleOpenEdit(course)}
                     className="px-2.5 py-1 text-xs font-semibold bg-orange-50 hover:bg-orange-100 text-orange-600 rounded-lg transition inline-flex items-center gap-1 border border-orange-200"
                     title="Edit / Update Course (PUT API)"
                   >
                     <Edit size={13} />
                     <span>Edit</span>
                   </button>
-                  <button 
-                    onClick={() => handleOpenPatchPrice(course)} 
+                  <button
+                    onClick={() => handleOpenPatchPrice(course)}
                     className="px-2.5 py-1 text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg transition inline-flex items-center gap-1 border border-amber-200"
                     title="Quick Patch Price (PATCH /api/v1/courses/:id)"
                   >
                     <Sparkles size={13} />
                     <span>Patch</span>
                   </button>
-                  <button 
+                  <button
                     onClick={() => navigate(`/admin/courses/${course.id}/students`)}
                     className="p-1.5 text-gray-400 hover:text-purple-600 rounded-lg hover:bg-purple-50 transition"
                     title="View Enrolled Students (GET /api/v1/courses/:id/students)"
                   >
                     <Users size={16} />
                   </button>
-                  <button 
-                    onClick={() => handleViewContent(course)} 
+                  <button
+                    onClick={() => handleViewContent(course)}
                     className="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition"
                     title="View Details"
                   >
                     <FileText size={16} />
                   </button>
                   {course.status !== "approved" && (
-                    <button 
-                      onClick={() => handleApprove(course.id)} 
+                    <button
+                      onClick={() => handleApprove(course.id)}
                       className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition"
                       title="Approve"
                     >
@@ -546,16 +545,16 @@ const Courses = () => {
                     </button>
                   )}
                   {course.status !== "rejected" && (
-                    <button 
-                      onClick={() => handleReject(course.id)} 
+                    <button
+                      onClick={() => handleReject(course.id)}
                       className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition"
                       title="Reject"
                     >
                       <XCircle size={16} />
                     </button>
                   )}
-                  <button 
-                    onClick={() => handleDelete(course.id)} 
+                  <button
+                    onClick={() => handleDelete(course.id)}
                     className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition"
                     title="Delete"
                   >

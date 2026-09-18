@@ -1,16 +1,19 @@
 // src/api/axiosInstance.js
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    // Required to bypass ngrok's browser interstitial warning page
+    // Required to bypass the ngrok browser-warning interstitial page
     "ngrok-skip-browser-warning": "true",
   },
+  // ✅ Send cookies (accessToken, refreshToken, JSESSIONID) with every request
+  // This mirrors --cookie in curl and is required by the backend
+  withCredentials: true,
   timeout: 30000,
 });
 
@@ -38,12 +41,18 @@ axiosInstance.interceptors.request.use(
     const isPublicEndpoint = publicEndpoints.some(endpoint => config.url.includes(endpoint));
     
     if (!isPublicEndpoint) {
-      const token = localStorage.getItem('lms_token') || 
-                    localStorage.getItem('access_token') || 
-                    sessionStorage.getItem('lms_token');
-      
+      // Read token — stored under lms_token or access_token by AuthContext after login
+      const token =
+        localStorage.getItem('lms_token') ||
+        localStorage.getItem('access_token') ||
+        sessionStorage.getItem('lms_token') ||
+        sessionStorage.getItem('access_token');
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+        console.log(`[API] Auth token attached (${token.substring(0, 20)}...)`);
+      } else {
+        console.warn('[API] No auth token found in storage for:', config.url);
       }
     }
     

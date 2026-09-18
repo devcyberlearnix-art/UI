@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authApi } from '../api/authApi';
 import toast from 'react-hot-toast';
+// Utility extracted to a plain .js file so React Fast Refresh works correctly
+import { checkInstructorStatus } from './authHelpers';
 
 const AuthContext = createContext(null);
 
@@ -13,33 +15,6 @@ export const useAuth = () => {
   return context;
 };
 
-export const checkInstructorStatus = (email) => {
-  if (!email) return null;
-  const cleanEmail = String(email).toLowerCase().trim();
-
-  try {
-    const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
-    const localInstructors = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
-
-    const appMatch = localApps.find(a => 
-      String(a.email || a.user?.email || a.application?.email).toLowerCase().trim() === cleanEmail
-    );
-    if (appMatch) {
-      return String(appMatch.status || appMatch.application?.status || 'pending').toLowerCase();
-    }
-
-    const instMatch = localInstructors.find(i => 
-      String(i.email || i.instructorEmail).toLowerCase().trim() === cleanEmail
-    );
-    if (instMatch) {
-      return String(instMatch.status || 'active').toLowerCase();
-    }
-  } catch (e) {
-    console.warn('[checkInstructorStatus] Local storage parse error:', e);
-  }
-
-  return null;
-};
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => {

@@ -11,6 +11,11 @@ const AdminLogin = () => {
   const location = useLocation();
   const { login, isAuthenticated, loading: authLoading, user } = useAuth();
 
+  // If the user was sent here from another page (e.g. /admin/users?redirect=/admin/users)
+  // we want to send them back there after successful login
+  const searchParams = new URLSearchParams(location.search);
+  const redirectTo = searchParams.get("redirect") || null;
+
   const [loginMethod, setLoginMethod] = useState("password");
   const [email, setEmail] = useState(location.state?.email || "");
   const [password, setPassword] = useState("");
@@ -96,9 +101,9 @@ const AdminLogin = () => {
       }
 
       toast.success("Login successful!");
-      navigate(getRedirectByRole(result.user?.role || result.user?.role1 || result.user?.userRole), {
-        replace: true,
-      });
+      // Prefer redirect param → then role-based destination
+      const dest = redirectTo || getRedirectByRole(result.user?.role || result.user?.role1 || result.user?.userRole);
+      navigate(dest, { replace: true });
     } catch {
       setError("An unexpected error occurred");
       toast.error("An unexpected error occurred");

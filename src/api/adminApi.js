@@ -47,25 +47,78 @@ export const adminApi = {
   },
 
   // ======================== USER MANAGEMENT ========================
+  // Helper: build config with override token if stored
+  _userConfig(extra = {}) {
+    const t = localStorage.getItem('lms_users_api_token');
+    return t ? { ...extra, headers: { ...(extra.headers || {}), Authorization: `Bearer ${t}` } } : extra;
+  },
+
   getUsers: async (params = {}) => {
-    const response = await axiosInstance.get('/api/v1/admin/users', { params });
-    return response.data;
+    try {
+      const response = await axiosInstance.get('/api/v1/admin/users', adminApi._userConfig({ params }));
+      return response.data;
+    } catch (err) {
+      const status = err?.response?.status;
+      if (status === 401 || status === 403) {
+        const e = new Error(err?.response?.data?.message || `Access denied (${status}). The token may lack USER_SERVICE permission.`);
+        e.status = status;
+        throw e;
+      }
+      throw err;
+    }
   },
 
+  // GET /api/v1/admin/users/:userId
   getUserById: async (userId) => {
-    const response = await axiosInstance.get(`/api/v1/admin/users/${userId}`);
+    const response = await axiosInstance.get(
+      `/api/v1/admin/users/${userId}`,
+      adminApi._userConfig()
+    );
     return response.data;
   },
 
+  // PUT /api/v1/admin/users/:userId/status   body: { status: "ACTIVE" | "BLOCKED" | "INACTIVE" }
   updateUserStatus: async (userId, status) => {
-    const response = await axiosInstance.put(`/api/v1/admin/users/${userId}/status`, { status });
+    const response = await axiosInstance.put(
+      `/api/v1/admin/users/${userId}/status`,
+      { status },
+      adminApi._userConfig()
+    );
     return response.data;
   },
 
+  // DELETE /api/v1/admin/users/:userId
   deleteUser: async (userId) => {
-    const response = await axiosInstance.delete(`/api/v1/admin/users/${userId}`);
+    const response = await axiosInstance.delete(
+      `/api/v1/admin/users/${userId}`,
+      adminApi._userConfig()
+    );
     return response.data;
   },
+
+  // POST /api/v1/admin/users
+  createUser: async (userData) => {
+    const response = await axiosInstance.post(
+      '/api/v1/admin/users',
+      userData,
+      adminApi._userConfig()
+    );
+    return response.data;
+  },
+
+  // PUT /api/v1/admin/users/:userId
+  updateUser: async (userId, userData) => {
+    const response = await axiosInstance.put(
+      `/api/v1/admin/users/${userId}`,
+      userData,
+      adminApi._userConfig()
+    );
+    return response.data;
+  },
+
+  banUser:   async (userId) => adminApi.updateUserStatus(userId, 'BLOCKED'),
+  unbanUser: async (userId) => adminApi.updateUserStatus(userId, 'ACTIVE'),
+
 
   // ======================== INSTRUCTOR MANAGEMENT ========================
   getInstructors: async (params = {}) => {

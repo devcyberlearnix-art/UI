@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowRightLeft } from "lucide-react";
-import { useAuth, checkInstructorStatus } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
+import { checkInstructorStatus } from "../../context/authHelpers";
 
 const rolesConfig = {
   admin: { label: "Admin" },
