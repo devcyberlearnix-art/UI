@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AlertCircle, Eye, EyeOff, KeyRound, Lock, LogIn, Mail, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth, normalizeRole } from "../../context/AuthContext";
 import { authApi } from "../../api/authApi";
 import AuthShell from "../../components/ui/AuthShell";
 
@@ -10,11 +10,6 @@ const AdminLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login, isAuthenticated, loading: authLoading, user } = useAuth();
-
-  // If the user was sent here from another page (e.g. /admin/users?redirect=/admin/users)
-  // we want to send them back there after successful login
-  const searchParams = new URLSearchParams(location.search);
-  const redirectTo = searchParams.get("redirect") || null;
 
   const [loginMethod, setLoginMethod] = useState("password");
   const [email, setEmail] = useState(location.state?.email || "");
@@ -31,10 +26,10 @@ const AdminLogin = () => {
   const canResend = cooldownSeconds === 0;
 
   const getRedirectByRole = (roleValue) => {
-    const role = String(roleValue || "").toLowerCase();
-    if (role.includes("sub")) return "/admin/sub-dashboard";
-    if (role.includes("admin") || role.includes("super") || role.includes("main")) return "/admin/dashboard";
-    if (role.includes("instructor")) return "/instructor/dashboard";
+    const role = normalizeRole(roleValue);
+    if (role === "subadmin") return "/admin/sub-dashboard";
+    if (role === "admin") return "/admin/dashboard";
+    if (role === "instructor") return "/instructor/dashboard";
     return "/student/dashboard";
   };
 
@@ -101,9 +96,9 @@ const AdminLogin = () => {
       }
 
       toast.success("Login successful!");
-      // Prefer redirect param → then role-based destination
-      const dest = redirectTo || getRedirectByRole(result.user?.role || result.user?.role1 || result.user?.userRole);
-      navigate(dest, { replace: true });
+      navigate(getRedirectByRole(result.user?.role || result.user?.role1 || result.user?.userRole), {
+        replace: true,
+      });
     } catch {
       setError("An unexpected error occurred");
       toast.error("An unexpected error occurred");
@@ -177,7 +172,7 @@ const AdminLogin = () => {
           : userInfo.name || "",
         email: userInfo.email || email,
         mobileNumber: userInfo.mobileNumber || userInfo.mobile || "",
-        role: userInfo.role || userInfo.role1 || userInfo.userRole || "admin",
+        role: normalizeRole(userInfo.role || userInfo.role1 || userInfo.userRole || "admin"),
         permissions: userInfo.permissions || [],
         assignedService: userInfo.assignedService || "",
       };

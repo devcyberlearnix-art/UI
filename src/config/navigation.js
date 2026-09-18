@@ -77,6 +77,7 @@ const instructorGroups = [
       { path: "/instructor/create-course", icon: BookOpen, label: "Create Course" },
       { path: "/instructor/my-courses", icon: GraduationCap, label: "My Courses" },
       { path: "/instructor/analytics", icon: BarChart3, label: "Analytics" },
+      { path: "/profile", icon: User, label: "My Profile" },
     ],
   },
 ];
@@ -91,6 +92,7 @@ const studentGroups = [
       { path: "/student/orders", icon: ShoppingCart, label: "Orders" },
       { path: "/cart", icon: ShoppingCart, label: "Cart" },
       { path: "/checkout", icon: CreditCard, label: "Checkout" },
+      { path: "/profile", icon: User, label: "My Profile" },
     ],
   },
 ];
@@ -166,20 +168,21 @@ export const tabsByRole = {
   instructor: [
     {
       label: "Workspace",
-      match: ["/instructor/dashboard", "/instructor/create-course", "/instructor/my-courses", "/instructor/analytics"],
+      match: ["/instructor/dashboard", "/instructor/create-course", "/instructor/my-courses", "/instructor/analytics", "/profile"],
       defaultPath: "/instructor/dashboard",
       subtabs: [
         { label: "Dashboard", path: "/instructor/dashboard" },
         { label: "Create", path: "/instructor/create-course" },
         { label: "My Courses", path: "/instructor/my-courses" },
         { label: "Analytics", path: "/instructor/analytics" },
+        { label: "Profile", path: "/profile" },
       ],
     },
   ],
   student: [
     {
       label: "Learning",
-      match: ["/student/dashboard", "/student/my-learning", "/student/wishlist", "/student/orders", "/cart", "/checkout"],
+      match: ["/student/dashboard", "/student/my-learning", "/student/wishlist", "/student/orders", "/cart", "/checkout", "/profile"],
       defaultPath: "/student/dashboard",
       subtabs: [
         { label: "Dashboard", path: "/student/dashboard" },
@@ -187,24 +190,30 @@ export const tabsByRole = {
         { label: "Wishlist", path: "/student/wishlist" },
         { label: "Orders", path: "/student/orders" },
         { label: "Cart", path: "/cart" },
+        { label: "Profile", path: "/profile" },
       ],
     },
   ],
 };
 
 export const normalizeRole = (roleValue = "") => {
-  const role = String(roleValue).toLowerCase();
-  if (role.includes("super")) return "super_admin";
-  if (role.includes("sub")) return "sub_admin";
-  if (role.includes("instructor")) return "instructor";
+  const role = String(roleValue || "").trim().toLowerCase();
+  if (!role) return "student";
+  if (role.includes("super") || role.includes("main") || role.includes("admin")) return "admin";
+  if (role.includes("subadmin") || role.includes("sub-admin") || role.includes("sub_admin") || role.includes("sub admin")) return "subadmin";
   if (role.includes("student")) return "student";
-  if (role.includes("admin")) return "admin";
-  return "student";
+  if (role.includes("instructor")) return "instructor";
+  return role;
 };
 
 export const getDashboardRole = (pathname, userRole) => {
-  if (pathname.startsWith("/admin")) return normalizeRole(userRole).includes("admin") ? normalizeRole(userRole) : "admin";
+  const normalizedRole = normalizeRole(userRole);
+
+  if (pathname.startsWith("/admin")) {
+    if (normalizedRole === "admin" || normalizedRole === "subadmin") return normalizedRole;
+    return "admin";
+  }
   if (pathname.startsWith("/instructor")) return "instructor";
   if (pathname.startsWith("/student") || pathname === "/cart" || pathname === "/checkout") return "student";
-  return normalizeRole(userRole);
+  return normalizedRole;
 };

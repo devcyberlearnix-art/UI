@@ -1,13 +1,12 @@
-// src/pages/admin/AdminProfile.jsx
-import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import { User, Mail, Phone, Save, LogOut, Loader2, AlertCircle, MapPin, Globe, Image, Languages, Camera } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
-import { adminApi } from "../../api/adminApi";
-import authApi from "../../api/authApi";
-import toast from "react-hot-toast";
+// src/pages/Profile.jsx
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { User, Mail, Phone, Save, LogOut, Loader2, AlertCircle, MapPin, Globe, Camera, Languages } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import authApi from '../api/authApi';
+import toast from 'react-hot-toast';
 
-const AdminProfile = () => {
+const ProfilePage = () => {
   const { logout } = useAuth();
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -18,29 +17,24 @@ const AdminProfile = () => {
   const [error, setError] = useState("");
   const fileInputRef = useRef(null);
 
-  // ✅ Fetch profile data from API only
+  // Fetch profile data from API only
   const fetchProfile = async () => {
     setLoading(true);
     setError("");
     try {
-      console.log('[AdminProfile] Fetching profile from API...');
+      console.log('[ProfilePage] Fetching profile from API...');
       
-      const response = await adminApi.getAdminProfile();
-      console.log('[AdminProfile] API Response:', response);
-      console.log('[AdminProfile] Response.data:', response.data);
-      console.log('[AdminProfile] Response.data.data:', response.data?.data);
-      console.log('[AdminProfile] Response.data.admin:', response.data?.admin);
+      const response = await authApi.getUserProfile();
+      console.log('[ProfilePage] API Response:', response);
       
-      // Handle different response structures
-      const data = response.data?.admin || response.data?.data || response.data || response;
+      const data = response.data?.user || response.data?.data || response.data || response;
       
-      console.log('[AdminProfile] Extracted data:', data);
+      console.log('[ProfilePage] Extracted data:', data);
       
       if (!data || Object.keys(data).length === 0) {
         throw new Error('No data received from API');
       }
       
-      // ✅ Extract name - only from API
       const name = data.name || 
                    data.fullName || 
                    `${data.firstName || ''} ${data.lastName || ''}`.trim() ||
@@ -48,10 +42,7 @@ const AdminProfile = () => {
                    data.displayName || 
                    null;
       
-      // ✅ Extract email - only from API
       const email = data.email || null;
-      
-      // ✅ Extract phone - only from API
       const phone = data.phone || 
                     data.mobile || 
                     data.mobileNumber || 
@@ -59,29 +50,18 @@ const AdminProfile = () => {
                     data.phoneNumber || 
                     null;
       
-      // ✅ Extract role - only from API
       const role = data.role || 
-                   data.adminType ||
                    data.role1 || 
                    data.userRole || 
                    null;
       
-      // ✅ Extract additional fields
-      const profilePhoto = data.profilePhoto || null;
+      const profilePhoto = data.profilePhoto || data.photoURL || data.avatar || null;
       const preferredLanguage = data.preferredLanguage || 'EN';
       const city = data.city || '';
       const state = data.state || '';
       const country = data.country || '';
       const firstName = data.firstName || '';
       const lastName = data.lastName || '';
-      
-      // ✅ If any required field is missing, throw error
-      if (!name) {
-        console.warn('[AdminProfile] Name not found in API response');
-      }
-      if (!email) {
-        console.warn('[AdminProfile] Email not found in API response');
-      }
       
       const profileData = {
         name: name || '',
@@ -95,24 +75,22 @@ const AdminProfile = () => {
         city: city,
         state: state,
         country: country,
-        // Store raw data for debugging
         _raw: data
       };
       
-      console.log('[AdminProfile] Profile data from API:', profileData);
+      console.log('[ProfilePage] Profile data from API:', profileData);
       setProfile(profileData);
       setTemp(profileData);
       
     } catch (error) {
-      console.error('[AdminProfile] API Error:', error);
-      console.error('[AdminProfile] Error response:', error.response);
+      console.error('[ProfilePage] API Error:', error);
       
       let errorMessage = 'Failed to load profile';
       
       if (error.response?.status === 401) {
         errorMessage = 'Session expired. Please login again.';
         toast.error('Session expired. Please login again.');
-        window.location.href = '/admin/login';
+        window.location.href = '/login';
       } else if (error.response?.status === 404) {
         errorMessage = 'Profile API not found. Please contact support.';
         toast.error('Profile API not found');
@@ -138,57 +116,54 @@ const AdminProfile = () => {
     fetchProfile();
   }, []);
 
-  // ✅ Save profile to API only
+  // Save profile to API only
   const handleSave = async () => {
     if (!temp) return;
     
     setSaving(true);
     setError("");
     try {
-      console.log('[AdminProfile] Saving profile to API...');
-      console.log('[AdminProfile] Data to save:', temp);
+      console.log('[ProfilePage] Saving profile to API...');
+      console.log('[ProfilePage] Data to save:', temp);
       
-      // Map frontend fields to backend API field names
       const updateData = {
         firstName: temp.firstName,
         lastName: temp.lastName,
         email: temp.email,
-        mobileNumber: temp.phone,
-        // profilePhoto: temp.profilePhoto, // Removed due to 500 character limit validation
+        mobile: temp.phone,
         preferredLanguage: temp.preferredLanguage,
         city: temp.city,
         state: temp.state,
         country: temp.country,
       };
 
-      console.log('[AdminProfile] Update data being sent:', updateData);
+      console.log('[ProfilePage] Update data being sent:', updateData);
+      console.log('[ProfilePage] Update data JSON:', JSON.stringify(updateData, null, 2));
 
-      const response = await adminApi.updateAdminProfile(updateData);
-      console.log('[AdminProfile] Update response:', response);
+      const response = await authApi.updateUserProfile(updateData);
+      console.log('[ProfilePage] Update response:', response);
 
       setProfile(temp);
       setEditMode(false);
       toast.success('Profile updated successfully!');
       
-      // ✅ Refresh profile data after update
       setTimeout(() => {
         fetchProfile();
-        // Trigger navbar refresh
         window.dispatchEvent(new CustomEvent('profileUpdated'));
       }, 500);
       
     } catch (error) {
-      console.error('[AdminProfile] Save error:', error);
-      console.error('[AdminProfile] Error response:', error.response);
-      console.error('[AdminProfile] Error response data:', error.response?.data);
-      console.error('[AdminProfile] Error response data details:', error.response?.data?.details || error.response?.data?.errors);
+      console.error('[ProfilePage] Save error:', error);
+      console.error('[ProfilePage] Error response:', error.response);
+      console.error('[ProfilePage] Error response data:', error.response?.data);
+      console.error('[ProfilePage] Error response data details:', error.response?.data?.details || error.response?.data?.errors);
       
       let errorMessage = 'Failed to update profile';
       
       if (error.response?.status === 401) {
         errorMessage = 'Session expired. Please login again.';
         toast.error('Session expired. Please login again.');
-        window.location.href = '/admin/login';
+        window.location.href = '/login';
       } else if (error.response?.status === 400) {
         errorMessage = error.response?.data?.message || 'Invalid data provided';
         toast.error(errorMessage);
@@ -215,9 +190,9 @@ const AdminProfile = () => {
     try {
       await logout();
       toast.success('Logged out successfully');
-      window.location.href = '/admin/login';
+      window.location.href = '/login';
     } catch (error) {
-      console.error('[AdminProfile] Logout error:', error);
+      console.error('[ProfilePage] Logout error:', error);
       toast.error('Failed to logout');
     }
   };
@@ -226,7 +201,6 @@ const AdminProfile = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file type and size
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       toast.error('Please select a valid image file (JPEG, PNG, GIF, WEBP)');
@@ -239,11 +213,10 @@ const AdminProfile = () => {
 
     setUploadingPhoto(true);
     try {
-      console.log('[AdminProfile] Uploading profile photo to API...');
+      console.log('[ProfilePage] Uploading profile photo to API...');
       
-      // Try to upload via authApi (same endpoint works for both admin and user)
       const response = await authApi.uploadProfilePhoto(file);
-      console.log('[AdminProfile] Photo upload response:', response);
+      console.log('[ProfilePage] Photo upload response:', response);
 
       const newPhotoUrl =
         response?.data?.profilePhoto ||
@@ -258,7 +231,7 @@ const AdminProfile = () => {
         toast.error('Failed to get photo URL from response');
       }
     } catch (error) {
-      console.error('[AdminProfile] Photo upload error:', error);
+      console.error('[ProfilePage] Photo upload error:', error);
       toast.error(error.response?.data?.message || 'Failed to upload photo');
     } finally {
       setUploadingPhoto(false);
@@ -268,7 +241,6 @@ const AdminProfile = () => {
     }
   };
 
-  // ✅ Loading state
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -280,7 +252,6 @@ const AdminProfile = () => {
     );
   }
 
-  // ✅ Error state - Show error message when API fails
   if (error || !profile) {
     return (
       <div className="max-w-2xl mx-auto mt-12">
@@ -313,12 +284,12 @@ const AdminProfile = () => {
       />
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Admin Profile</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
           <p className="text-sm text-gray-500">Manage your account information</p>
         </div>
         <div className="flex items-center gap-2">
           <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">
-            {profile.role || profile.adminType || "Admin"}
+            {profile.role || "User"}
           </span>
           <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
             Profile
@@ -361,8 +332,8 @@ const AdminProfile = () => {
               {profile.name?.charAt(0)?.toUpperCase() || "?"}
             </div>
             <div className="text-white">
-              <h2 className="text-2xl font-bold">{profile.firstName && profile.lastName ? `${profile.firstName} ${profile.lastName}` : profile.name || "Admin"}</h2>
-              <p className="text-orange-100 text-sm">{profile.role || profile.adminType || "Administrator"}</p>
+              <h2 className="text-2xl font-bold">{profile.firstName && profile.lastName ? `${profile.firstName} ${profile.lastName}` : profile.name || "User"}</h2>
+              <p className="text-orange-100 text-sm">{profile.role || "User"}</p>
             </div>
           </div>
         </div>
@@ -386,7 +357,7 @@ const AdminProfile = () => {
               </div>
               <div className="p-4 bg-gray-50 rounded-xl">
                 <p className="text-xs text-gray-500 mb-1">Role</p>
-                <p className="text-sm font-semibold text-gray-800">{profile.role || profile.adminType || "Not set"}</p>
+                <p className="text-sm font-semibold text-gray-800">{profile.role || "Not set"}</p>
               </div>
               <div className="p-4 bg-gray-50 rounded-xl">
                 <p className="text-xs text-gray-500 mb-1">Preferred Language</p>
@@ -584,4 +555,4 @@ const AdminProfile = () => {
   );
 };
 
-export default AdminProfile;
+export default ProfilePage;

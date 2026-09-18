@@ -1,160 +1,186 @@
 // src/App.jsx
-import { Suspense, lazy } from "react";
+import React from 'react';
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { AuthProvider, useAuth, getDashboardPath } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 import { OrderProvider } from "./context/OrderContext";
 import ScrollToTop from "./components/ScrollToTop";
 
-// ─── Lazy-loaded pages: each chunk only loads when that route is visited ───────
-
 // Auth Pages
-const Login            = lazy(() => import("./pages/Login"));
-const Register         = lazy(() => import("./pages/Register"));
-const ForgotPassword   = lazy(() => import("./pages/ForgotPassword"));
-const ResetOtp         = lazy(() => import("./pages/ResetOtp"));
-const OtpLogin         = lazy(() => import("./pages/OtpLogin"));
-const OtpVerify        = lazy(() => import("./pages/OtpVerify"));
-const Landing          = lazy(() => import("./pages/Landing"));
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetOtp from "./pages/ResetOtp";
+import OtpLogin from "./pages/OtpLogin";
+import OtpVerify from "./pages/OtpVerify";
+import Landing from "./pages/Landing";
+
+// Dashboard Redirect Component
+const DashboardRedirect = () => {
+  const { user, isAuthenticated, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+      </div>
+    );
+  }
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  const role = user?.role || user?.role1 || user?.userRole || user?.normalizedRole;
+  return <Navigate to={getDashboardPath(role)} replace />;
+};
 
 // Student Pages
-const StudentDashboard = lazy(() => import("./pages/student/StudentDashboard"));
-const MyLearning       = lazy(() => import("./pages/student/MyLearning"));
-const Wishlist         = lazy(() => import("./pages/student/Wishlist"));
-const Orders           = lazy(() => import("./pages/student/Orders"));
-const Checkout         = lazy(() => import("./pages/student/Checkout"));
-const Cart             = lazy(() => import("./pages/student/Cart"));
+import StudentDashboard from "./pages/student/StudentDashboard";
+import MyLearning from "./pages/student/MyLearning";
+import Wishlist from "./pages/student/Wishlist";
+import Orders from "./pages/student/Orders";
+import Checkout from "./pages/student/Checkout";
+import Cart from "./pages/student/Cart";
 
 // Instructor Pages
-const InstructorDashboard = lazy(() => import("./pages/instructor/InstructorDashboard"));
-const CreateCourse        = lazy(() => import("./pages/instructor/CreateCourse"));
-const InstructorCourses   = lazy(() => import("./pages/instructor/MyCourses"));
-const InstructorAnalytics = lazy(() => import("./pages/instructor/Analytics"));
-const CourseStudents      = lazy(() => import("./pages/instructor/CourseStudents"));
-const CourseDetail        = lazy(() => import("./pages/instructor/CourseDetail"));
-const EditCourse          = lazy(() => import("./pages/instructor/EditCourse"));
+import InstructorDashboard from "./pages/instructor/InstructorDashboard";
+import CreateCourse from "./pages/instructor/CreateCourse";
+import InstructorCourses from "./pages/instructor/MyCourses";
+import InstructorAnalytics from "./pages/instructor/Analytics";
 
 // Admin Pages
-const AdminDashboard         = lazy(() => import("./pages/admin/Dashboard"));
-const ManageUsers            = lazy(() => import("./pages/admin/Users"));
-const ManageCourses          = lazy(() => import("./pages/admin/Courses"));
-const Instructors            = lazy(() => import("./pages/admin/Instructors"));
-const AdminOrders            = lazy(() => import("./pages/admin/Orders"));
-const Analytics              = lazy(() => import("./pages/admin/Analytics"));
-const Certificates           = lazy(() => import("./pages/admin/Certificates"));
-const Notifications          = lazy(() => import("./pages/admin/Notifications"));
-const Moderation             = lazy(() => import("./pages/admin/Moderation"));
-const Support                = lazy(() => import("./pages/admin/Support"));
-const CMS                    = lazy(() => import("./pages/admin/CMS"));
-const Settings               = lazy(() => import("./pages/admin/Settings"));
-const Roles                  = lazy(() => import("./pages/admin/Roles"));
-const AIFeatures             = lazy(() => import("./pages/admin/AIFeatures"));
-const Gamification           = lazy(() => import("./pages/admin/Gamification"));
-const Payments               = lazy(() => import("./pages/admin/Payments"));
-const Reviews                = lazy(() => import("./pages/admin/Reviews"));
-const AdminProfile           = lazy(() => import("./pages/admin/Profile"));
-const AdminLogin             = lazy(() => import("./pages/admin/AdminLogin"));
-const AdminManagement        = lazy(() => import("./pages/admin/AdminManagement"));
-const AdminRegister          = lazy(() => import("./pages/admin/AdminRegister"));
-const RegistrationSuccess    = lazy(() => import("./pages/admin/RegistrationSuccess"));
-const OrderDetails           = lazy(() => import("./pages/admin/OrderDetails"));
-const Reports                = lazy(() => import("./pages/admin/Reports"));
-const InstructorApplications = lazy(() => import("./pages/admin/InstructorApplications"));
-const SubDashboard           = lazy(() => import("./pages/admin/SubDashboard"));
+import AdminDashboard from "./pages/admin/Dashboard";
+import ManageUsers from "./pages/admin/Users";
+import ManageCourses from "./pages/admin/Courses";
+import Instructors from "./pages/admin/Instructors";
+import AdminOrders from "./pages/admin/Orders";
+import Analytics from "./pages/admin/Analytics";
+import Certificates from "./pages/admin/Certificates";
+import Notifications from "./pages/admin/Notifications";
+import Moderation from "./pages/admin/Moderation";
+import Support from "./pages/admin/Support";
+import CMS from "./pages/admin/CMS";
+import Settings from "./pages/admin/Settings";
+import Roles from "./pages/admin/Roles";
+import AIFeatures from "./pages/admin/AIFeatures";
+import Gamification from "./pages/admin/Gamification";
+import Payments from "./pages/admin/Payments";
+import Reviews from "./pages/admin/Reviews";
+import AdminProfile from "./pages/admin/Profile";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminManagement from "./pages/admin/AdminManagement";
+import AdminRegister from "./pages/admin/AdminRegister";
+import RegistrationSuccess from "./pages/admin/RegistrationSuccess";
+import OrderDetails from "./pages/admin/OrderDetails";
+import Reports from "./pages/admin/Reports";
+import InstructorApplications from "./pages/admin/InstructorApplications";
+import SubDashboard from "./pages/admin/SubDashboard";
 
-// ─── Lightweight inline page-transition spinner ───────────────────────────────
-const PageLoader = () => (
-  <div style={{
-    display: "flex", alignItems: "center", justifyContent: "center",
-    minHeight: "100vh", background: "#f8fafc",
-  }}>
-    <div style={{
-      width: 40, height: 40, borderRadius: "50%",
-      border: "4px solid #fee2e2",
-      borderTop: "4px solid #f97316",
-      animation: "spin 0.7s linear infinite",
-    }} />
-    <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
-  </div>
-);
+// Profile Pages
+import ProfilePage from "./pages/Profile";
+import { Toaster } from "react-hot-toast";
 
-// ─── App ──────────────────────────────────────────────────────────────────────
+console.log('App.jsx is loading!');
+
 function App() {
   const location = useLocation();
+  console.log('App rendering at path:', location.pathname);
 
   return (
-    <OrderProvider>
-      <ScrollToTop />
-      <Suspense fallback={<PageLoader />}>
-        <Routes location={location}>
-          {/* Public */}
-          <Route path="/"                      element={<Landing />} />
-          <Route path="/login"                 element={<Login />} />
-          <Route path="/register"              element={<Register />} />
-          <Route path="/forgot-password"       element={<ForgotPassword />} />
-          <Route path="/reset-otp"             element={<ResetOtp />} />
-          <Route path="/otp-login"             element={<OtpLogin />} />
-          <Route path="/otp-verify"            element={<OtpVerify />} />
+    <AuthProvider>
+      <OrderProvider>
+        <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
+        <ScrollToTop />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            <Routes location={location}>
+              {/* Landing page - public */}
+              <Route path="/" element={<Landing />} />
+              
+              {/* Universal dashboard redirect */}
+              <Route path="/dashboard" element={<DashboardRedirect />} />
+              
+              {/* ✅ Auth routes - wrapped with PublicRoute */}
+              <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+              <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+              <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+              <Route path="/reset-otp" element={<PublicRoute><ResetOtp /></PublicRoute>} />
+              <Route path="/otp-login" element={<PublicRoute><OtpLogin /></PublicRoute>} />
+              <Route path="/otp-verify" element={<PublicRoute><OtpVerify /></PublicRoute>} />
 
-          {/* Admin auth */}
-          <Route path="/admin/login"               element={<AdminLogin />} />
-          <Route path="/admin/registration-success" element={<RegistrationSuccess />} />
+              {/* Admin auth routes */}
+              <Route path="/admin/login" element={<AdminLogin />} />
 
-          {/* Student routes */}
-          <Route element={<ProtectedRoute allowedRoles={["student"]}><DashboardLayout /></ProtectedRoute>}>
-            <Route path="/student/dashboard"   element={<StudentDashboard />} />
-            <Route path="/student/my-learning" element={<MyLearning />} />
-            <Route path="/student/wishlist"    element={<Wishlist />} />
-            <Route path="/student/orders"      element={<Orders />} />
-            <Route path="/checkout"            element={<Checkout />} />
-            <Route path="/cart"                element={<Cart />} />
-          </Route>
+              {/* Registration Success Page */}
+              <Route path="/admin/registration-success" element={<RegistrationSuccess />} />
 
-          {/* Instructor routes */}
-          <Route element={<ProtectedRoute allowedRoles={["instructor","admin","super_admin","sub_admin","main_admin","main"]}><DashboardLayout /></ProtectedRoute>}>
-            <Route path="/instructor/dashboard"                       element={<InstructorDashboard />} />
-            <Route path="/instructor/create-course"                   element={<CreateCourse />} />
-            <Route path="/instructor/my-courses"                      element={<InstructorCourses />} />
-            <Route path="/instructor/courses/:courseId"               element={<CourseDetail />} />
-            <Route path="/instructor/courses/:courseId/edit"          element={<EditCourse />} />
-            <Route path="/instructor/courses/:courseId/students"      element={<CourseStudents />} />
-            <Route path="/instructor/analytics"                       element={<InstructorAnalytics />} />
-          </Route>
+              {/* Student routes - protected */}
+              <Route element={<ProtectedRoute allowedRoles={["student"]}><DashboardLayout /></ProtectedRoute>}>
+                <Route path="/student/dashboard" element={<StudentDashboard />} />
+                <Route path="/student/my-learning" element={<MyLearning />} />
+                <Route path="/student/wishlist" element={<Wishlist />} />
+                <Route path="/student/orders" element={<Orders />} />
+                <Route path="/student/profile" element={<ProfilePage />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/cart" element={<Cart />} />
+              </Route>
 
-          {/* Admin routes */}
-          <Route element={<ProtectedRoute allowedRoles={["admin","super_admin","sub_admin","main_admin","main"]}><DashboardLayout /></ProtectedRoute>}>
-            <Route path="/admin/dashboard"               element={<AdminDashboard />} />
-            <Route path="/admin/sub-dashboard"           element={<SubDashboard />} />
-            <Route path="/admin/users"                   element={<ManageUsers />} />
-            <Route path="/admin/courses"                 element={<ManageCourses />} />
-            <Route path="/admin/courses/:courseId/students" element={<CourseStudents />} />
-            <Route path="/admin/instructors"             element={<Instructors />} />
-            <Route path="/admin/instructor-applications" element={<InstructorApplications />} />
-            <Route path="/admin/orders"                  element={<AdminOrders />} />
-            <Route path="/admin/orders/:orderId"         element={<OrderDetails />} />
-            <Route path="/admin/payments"                element={<Payments />} />
-            <Route path="/admin/certificates"            element={<Certificates />} />
-            <Route path="/admin/analytics"               element={<Analytics />} />
-            <Route path="/admin/reports"                 element={<Reports />} />
-            <Route path="/admin/reviews"                 element={<Reviews />} />
-            <Route path="/admin/notifications"           element={<Notifications />} />
-            <Route path="/admin/admins"                  element={<AdminManagement />} />
-            <Route path="/admin/register"                element={<AdminRegister />} />
-            <Route path="/admin/moderation"              element={<Moderation />} />
-            <Route path="/admin/support"                 element={<Support />} />
-            <Route path="/admin/cms"                     element={<CMS />} />
-            <Route path="/admin/settings"                element={<Settings />} />
-            <Route path="/admin/roles"                   element={<Roles />} />
-            <Route path="/admin/ai-features"             element={<AIFeatures />} />
-            <Route path="/admin/gamification"            element={<Gamification />} />
-            <Route path="/admin/profile"                 element={<AdminProfile />} />
-          </Route>
+              {/* Instructor routes - protected */}
+              <Route element={<ProtectedRoute allowedRoles={["instructor"]}><DashboardLayout /></ProtectedRoute>}>
+                <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
+                <Route path="/instructor/create-course" element={<CreateCourse />} />
+                <Route path="/instructor/my-courses" element={<InstructorCourses />} />
+                <Route path="/instructor/analytics" element={<InstructorAnalytics />} />
+                <Route path="/instructor/profile" element={<ProfilePage />} />
+              </Route>
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
-    </OrderProvider>
+              {/* Admin routes - protected */}
+              <Route element={<ProtectedRoute allowedRoles={["admin", "subadmin", "sub_admin", "super_admin"]}><DashboardLayout /></ProtectedRoute>}>
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/sub-dashboard" element={<SubDashboard />} />
+                <Route path="/admin/users" element={<ManageUsers />} />
+                <Route path="/admin/courses" element={<ManageCourses />} />
+                <Route path="/admin/instructors" element={<Instructors />} />
+                <Route path="/admin/instructor-applications" element={<InstructorApplications />} />
+                <Route path="/admin/orders" element={<AdminOrders />} />
+                <Route path="/admin/orders/:orderId" element={<OrderDetails />} />
+                <Route path="/admin/payments" element={<Payments />} />
+                <Route path="/admin/certificates" element={<Certificates />} />
+                <Route path="/admin/analytics" element={<Analytics />} />
+                <Route path="/admin/reports" element={<Reports />} />
+                <Route path="/admin/reviews" element={<Reviews />} />
+                <Route path="/admin/notifications" element={<Notifications />} />
+                <Route path="/admin/admins" element={<AdminManagement />} />
+                <Route path="/admin/register" element={<AdminRegister />} />
+                <Route path="/admin/moderation" element={<Moderation />} />
+                <Route path="/admin/support" element={<Support />} />
+                <Route path="/admin/cms" element={<CMS />} />
+                <Route path="/admin/settings" element={<Settings />} />
+                <Route path="/admin/roles" element={<Roles />} />
+                <Route path="/admin/ai-features" element={<AIFeatures />} />
+                <Route path="/admin/gamification" element={<Gamification />} />
+                <Route path="/admin/profile" element={<AdminProfile />} />
+              </Route>
+
+              {/* Shared protected routes (for all authenticated users) */}
+              <Route element={<ProtectedRoute allowedRoles={["admin", "subadmin", "sub_admin", "student", "instructor"]}><DashboardLayout /></ProtectedRoute>}>
+                <Route path="/profile" element={<ProfilePage />} />
+              </Route>
+
+              {/* Fallback - redirect to landing */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
+      </OrderProvider>
+    </AuthProvider>
   );
 }
 

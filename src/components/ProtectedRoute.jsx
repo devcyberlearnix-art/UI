@@ -1,68 +1,50 @@
 // src/components/ProtectedRoute.jsx
-import { Navigate } from 'react-router-dom';
+import React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { checkInstructorStatus } from '../context/authHelpers';
 
-const ProtectedRoute = ({ children, allowedRoles = [] }) => {
-  const { user, isAuthenticated, loading } = useAuth();
+const ProtectedRoute = ({ children, requiredRoles = [] }) => {
+  const location = useLocation();
+  const { isAuthenticated, user, loading } = useAuth();
 
-  const hasToken = !!localStorage.getItem('lms_token') || 
-                   !!localStorage.getItem('access_token') ||
-                   !!sessionStorage.getItem('lms_token');
-
+  // Show loading state while checking authentication
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+          <p className="mt-2 text-sm text-slate-500">Loading...</p>
         </div>
       </div>
     );
   }
-  
-  const isAuth = isAuthenticated || hasToken;
-  const adminOnly = allowedRoles.some((role) => String(role).toLowerCase().includes('admin'));
-  const loginPath = adminOnly ? '/admin/login' : '/login';
-  
-  if (!isAuth) {
-    return <Navigate to={loginPath} replace />;
+
+  // If not authenticated, redirect to login (NOT register!)
+  if (!isAuthenticated) {
+    console.log('[ProtectedRoute] User not authenticated - redirecting to login');
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
-  
-  if (allowedRoles.length > 0) {
-    let storedUser = {};
-    try {
-      const rawUser = localStorage.getItem('lms_user');
-      if (rawUser && rawUser !== 'undefined' && rawUser !== 'null') {
-        storedUser = JSON.parse(rawUser);
-      }
-    } catch (e) {
-      storedUser = {};
-    }
-    const userRole = String(
-      user?.role || user?.role1 || user?.userRole || 
-      storedUser?.role || storedUser?.role1 || storedUser?.userRole || ''
-    ).toLowerCase();
 
-    const userEmail = user?.email || storedUser?.email;
-    const instStatus = checkInstructorStatus(userEmail);
-    const isApprovedInst = instStatus === 'active' || instStatus === 'approved' || localStorage.getItem('instructor_application_status') === 'approved';
-    const isAdmin = userRole.includes('admin') || storedUser?.isAdmin || (localStorage.getItem('lms_user') || '').toLowerCase().includes('admin');
-
-    const hasAllowedRole = allowedRoles.some(role => {
-      const targetRole = String(role).toLowerCase();
-      if (targetRole === 'student') return true;
-      if (targetRole === 'instructor' && (isApprovedInst || isAdmin || user?.isInstructor)) return true;
-      if (targetRole.includes('admin') && isAdmin) return true;
-      return userRole.includes(targetRole) || targetRole.includes(userRole) || 
-             (userRole.includes('main') && targetRole.includes('admin'));
-    });
+  // Check if user has required roles (if specified)
+  if (requiredRoles.length > 0 && user) {
+    const userRole = user.role?.toLowerCase() || user.normalizedRole?.toLowerCase() || 'student';
+    const hasRequiredRole = requiredRoles.some(role => 
+      userRole === role.toLowerCase()
+    );
     
-    if (!hasAllowedRole && userRole) {
-      return <Navigate to="/" replace />;
+    if (!hasRequiredRole) {
+      console.log('[ProtectedRoute] User does not have required role:', requiredRoles);
+      return <Navigate to="/unauthorized" replace />;
     }
   }
 
+  // Only check verification if user exists and has verified property
+  if (user && user.verified === false) {
+    console.log('[ProtectedRoute] User email not verified');
+    return <Navigate to="/otp-verify" replace />;
+  }
+
+  // All checks passed, render children
   return children;
 };
 

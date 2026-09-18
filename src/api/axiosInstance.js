@@ -1,61 +1,54 @@
 // src/api/axiosInstance.js
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
+// Use environment variable or default to localhost
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    // Required to bypass the ngrok browser-warning interstitial page
-    "ngrok-skip-browser-warning": "true",
+    // Removed ngrok headers to fix CORS
   },
-  // ✅ Send cookies (accessToken, refreshToken, JSESSIONID) with every request
-  // This mirrors --cookie in curl and is required by the backend
-  withCredentials: true,
   timeout: 30000,
+  withCredentials: true, // Important for cookies
 });
 
-// ✅ Request interceptor - Log and add token
+// Request interceptor - Log and add token
 axiosInstance.interceptors.request.use(
   (config) => {
-    // If sending FormData, delete Content-Type so Axios/browser sets boundary automatically
-    if (config.data instanceof FormData) {
-      delete config.headers["Content-Type"];
-    }
-
-    // Skip auth header for public endpoints (forgot password, verify email, etc.)
+    // Skip auth header for public endpoints
     const publicEndpoints = [
-      '/api/v1/auth/register',
-      '/api/v1/auth/verify-email',
-      '/api/v1/auth/login',
-      '/api/v1/auth/login/otp/request',
-      '/api/v1/auth/login/otp/verify',
-      '/api/v1/auth/password/forgot',
-      '/api/v1/auth/password/verify-otp',
-      '/api/v1/auth/password/reset',
-      '/api/v1/auth/refresh'
+      '/auth/register',
+      '/auth/verify-email',
+      '/auth/login',
+      '/auth/login/otp/request',
+      '/auth/login/otp/verify',
+      '/auth/password/forgot',
+      '/auth/password/verify-otp',
+      '/auth/password/reset',
+      '/auth/refresh',
+      '/auth/upload/profile-photo'
     ];
-    
+
     const isPublicEndpoint = publicEndpoints.some(endpoint => config.url.includes(endpoint));
-    
+
     if (!isPublicEndpoint) {
-      // Read token — stored under lms_token or access_token by AuthContext after login
-      const token =
+      const token = localStorage.getItem('authToken') ||
         localStorage.getItem('lms_token') ||
         localStorage.getItem('access_token') ||
-        sessionStorage.getItem('lms_token') ||
-        sessionStorage.getItem('access_token');
+        sessionStorage.getItem('authToken') ||
+        sessionStorage.getItem('lms_token');
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-        console.log(`[API] Auth token attached (${token.substring(0, 20)}...)`);
+        console.log(`[API] Added Authorization header for ${config.url}`);
       } else {
-        console.warn('[API] No auth token found in storage for:', config.url);
+        console.log(`[API] No token found for ${config.url}`);
       }
     }
-    
+
     console.log(`[API] ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
@@ -65,17 +58,57 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// ✅ Response interceptor
+// Response interceptor (unchanged)
 axiosInstance.interceptors.response.use(
   (response) => {
     console.log(`[API] ${response.config.url} - ${response.status}`);
     return response;
   },
   (error) => {
-    console.error('[API Response Error]', error?.config?.url, error?.response?.status, error?.message);
-    
-    // Pass errors through to components so they can handle 401/404 gracefully
-    // without unexpectedly wiping user session or redirecting to login
+    console.error('[API Response Error]', error);
+
+    // CORS-specific error handling
+    if (!error.response && error.message === 'Network Error') {
+      console.error('[CORS Error] Network Error detected - likely CORS issue');
+      console.error('[CORS Error] Origin:', window.location.origin);
+      console.error('[CORS Error] API URL:', BASE_URL);
+      console.error('[CORS Error] Request URL:', error.config?.url);
+      console.error('[CORS Error] Troubleshooting: Clear browser cache or test in incognito mode');
+    }
+
+    if (error.response) {
+      const { status, config, data } = error.response;
+
+      const isPublicAuthCall = config?.url?.includes('/auth/') ||
+        config?.url?.includes('/verify-email') ||
+        config?.url?.includes('/register');
+
+      if (status === 401 && !isPublicAuthCall) {
+        console.warn('[API] 401 Unauthorized - Clearing tokens');
+
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('lms_token');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('userData');
+        localStorage.removeItem('lms_user');
+        sessionStorage.removeItem('authToken');
+        sessionStorage.removeItem('lms_token');
+
+        if (!window.location.pathname.includes('/login') &&
+          !window.location.pathname.includes('/register') &&
+          !window.location.pathname.includes('/otp-verify')) {
+          window.location.href = '/login';
+        }
+      }
+
+      console.error('[API] Error details:', {
+        status,
+        message: data?.message || data?.error || 'Unknown error',
+        path: config?.url
+      });
+    }
+
     return Promise.reject(error);
   }
 );

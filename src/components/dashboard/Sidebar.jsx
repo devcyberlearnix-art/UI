@@ -5,7 +5,9 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Crown
+  Crown,
+  User,
+  Settings
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getDashboardRole, sidebarByRole } from '../../config/navigation';
@@ -16,16 +18,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const currentPath = location.pathname;
 
   const userRole = user?.role || user?.role1 || user?.userRole || '';
   const roleKey = getDashboardRole(currentPath, userRole);
-  const isSuperAdmin = roleKey === 'super_admin';
+  const isSuperAdmin = roleKey === 'admin';
 
   const displayRole =
-    roleKey === 'super_admin'
-      ? 'Super Admin'
-      : roleKey === 'sub_admin'
+    roleKey === 'subadmin'
       ? 'Sub Admin'
       : roleKey === 'admin'
       ? 'Admin'
@@ -54,21 +55,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   };
 
   const filteredMenuItems = useMemo(() => {
-    const baseRole = roleKey === 'super_admin' || roleKey === 'sub_admin' ? 'admin' : roleKey;
+    const baseRole = ['admin', 'subadmin'].includes(roleKey) ? 'admin' : roleKey;
     const menuItems = sidebarByRole[baseRole] || sidebarByRole.student;
 
     return menuItems
       .map((section) => {
         if (baseRole !== 'admin') return section;
 
-        if (section.section === 'Management' && roleKey === 'sub_admin') {
+        if (section.section === 'Management' && roleKey === 'subadmin') {
           return {
             ...section,
             items: section.items.filter((item) => item.path !== '/admin/admins'),
           };
         }
 
-        if (section.section === 'System' && roleKey === 'sub_admin') {
+        if (section.section === 'System' && roleKey === 'subadmin') {
           return {
             ...section,
             items: section.items.filter(
@@ -158,7 +159,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     {sidebarOpen && isActive && (
                       <span className="ml-auto w-1.5 h-1.5 bg-white rounded-full"></span>
                     )}
-                    {/* ✅ Show crown icon for Admin Management */}
                     {sidebarOpen && item.path === '/admin/admins' && isSuperAdmin && (
                       <Crown size={14} className="text-yellow-400 ml-auto" />
                     )}
@@ -170,48 +170,28 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         ))}
       </nav>
 
-      {/* Bottom Section - User Info & Logout */}
+      {/* Bottom Section - Logout Only */}
       <div className="border-t border-orange-100 p-3">
         {sidebarOpen ? (
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 px-2 py-2 rounded-xl bg-gray-50">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-xs shadow-lg shadow-orange-500/20">
-                {user?.firstName?.charAt(0)?.toUpperCase() || user?.name?.charAt(0)?.toUpperCase() || 'A'}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-800 truncate">
-                  {user?.firstName || user?.name || 'Admin'}
-                </p>
-                <p className="text-[10px] text-orange-500 font-medium truncate">
-                  {isSuperAdmin ? 'Crown ' : ''}{displayRole}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 transition-all duration-200 disabled:opacity-50"
-            >
-              <LogOut size={20} />
-              <span className="text-sm font-medium">
-                {isLoggingOut ? 'Logging out...' : 'Logout'}
-              </span>
-            </button>
-          </div>
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 transition-all duration-200 disabled:opacity-50 font-medium"
+          >
+            <LogOut size={20} />
+            <span className="text-sm">
+              {isLoggingOut ? 'Logging out...' : 'Logout'}
+            </span>
+          </button>
         ) : (
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-orange-500/20">
-              {user?.firstName?.charAt(0)?.toUpperCase() || user?.name?.charAt(0)?.toUpperCase() || 'A'}
-            </div>
-            <button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="flex items-center justify-center w-full px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 transition-all duration-200 disabled:opacity-50"
-              title="Logout"
-            >
-              <LogOut size={20} />
-            </button>
-          </div>
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex items-center justify-center w-full px-3 py-2.5 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 transition-all duration-200 disabled:opacity-50"
+            title="Logout"
+          >
+            <LogOut size={20} />
+          </button>
         )}
       </div>
     </aside>
