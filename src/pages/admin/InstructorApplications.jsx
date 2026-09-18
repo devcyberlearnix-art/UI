@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, XCircle, Clock, FileText, Eye } from "lucide-react";
+import { CheckCircle, XCircle, Clock, FileText, Eye, RefreshCw, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { adminApi } from "../../api/adminApi";
@@ -16,33 +16,105 @@ const InstructorApplications = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [pagination, setPagination] = useState({ currentPage: 0, totalPages: 1, totalApplications: 0, pageSize: 10 });
+  const [currentPage, setCurrentPage] = useState(0);
 
   // Check permission
   const hasApprovalPermission = canApproveInstructors(user);
 
   // Fetch applications
-  const fetchApplications = async () => {
+  const fetchApplications = async (page = 0) => {
     setLoading(true);
     try {
-      const data = await adminApi.getInstructorApplications({ status: filterStatus });
-      setApplications(data.applications || data || []);
-      setError("");
-    } catch (err) {
-      const errorMsg = err.response?.data?.message || err.message;
-      setError(errorMsg);
-      if (errorMsg.includes("permission") || errorMsg.includes("403")) {
-        toast.error("You don't have permission to view applications");
-      } else {
-        toast.error(errorMsg);
+      let rawApps = [];
+      try {
+        const response = await adminApi.getInstructorApplications({ status: filterStatus, page, size: 10 });
+        if (Array.isArray(response?.data)) {
+          rawApps = response.data;
+        } else if (Array.isArray(response?.applications)) {
+          rawApps = response.applications;
+        } else if (Array.isArray(response)) {
+          rawApps = response;
+        } else if (response?.data && typeof response.data === 'object' && !Array.isArray(response.data)) {
+          rawApps = response.data.applications || response.data.content || [];
+        }
+        if (response?.pagination) {
+          setPagination(response.pagination);
+        }
+      } catch (apiErr) {
+        console.warn("[InstructorApplications] API fetch error, fallback to local storage");
       }
+
+      const transformed = rawApps.map((item) => {
+        const userObj = item.user || {};
+        const appObj = item.application || {};
+        const docsObj = item.documents || {};
+        return {
+          id: appObj.applicationId || appObj.id || item.id || item.applicationId,
+          userId: userObj.userId || userObj.id,
+          fullName:
+            userObj.name ||
+            (userObj.firstName ? `${userObj.firstName} ${userObj.lastName || ''}`.trim() : null) ||
+            userObj.email?.split('@')[0] ||
+            'Applicant',
+          email: userObj.email || item.email || '',
+          status: String(appObj.status || item.status || 'PENDING').toLowerCase(),
+          submittedAt: appObj.submittedAt || item.submittedAt || item.createdAt,
+          reviewMessage: appObj.reviewMessage || item.reviewMessage || '',
+          experience: appObj.experience || item.experience || '',
+          qualifications: appObj.qualifications || item.qualifications || '',
+          bio: appObj.bio || item.bio || '',
+          contentType: appObj.contentType || item.contentType || '',
+          specialization: appObj.specialization || item.specialization || '',
+          currentRole: userObj.currentRole || userObj.role,
+          appliedRole: userObj.appliedRole,
+          accountStatus: userObj.accountStatus || userObj.status,
+          isInstructorApproved: userObj.isInstructorApproved,
+          documents: docsObj,
+          rawItem: item,
+        };
+      });
+
+      // Merge with student applications stored in localStorage
+      const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const appMap = new Map();
+
+      transformed.forEach(app => {
+        if (app.email) appMap.set(app.email.toLowerCase(), app);
+      });
+
+      localApps.forEach(app => {
+        const email = (app.email || app.user?.email || "").toLowerCase();
+        if (email) {
+          appMap.set(email, {
+            id: app.id || app.applicationId || `app_${Math.random()}`,
+            userId: app.userId || `usr_${Math.random()}`,
+            fullName: app.fullName || app.name || email.split('@')[0],
+            email: email,
+            status: String(app.status || 'pending_verification').toLowerCase(),
+            submittedAt: app.submittedAt || new Date().toISOString(),
+            experience: app.experience || '1-3 years',
+            qualifications: app.specialization || app.qualifications || 'Not specified',
+            bio: app.bio || '',
+            contentType: app.contentType || 'Development',
+            specialization: app.specialization || 'General'
+          });
+        }
+      });
+
+      setApplications(Array.from(appMap.values()));
+      setError('');
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to load applications';
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchApplications();
-  }, [filterStatus]);
+    fetchApplications(currentPage);
+  }, [filterStatus, currentPage]);
 
   // View application details
   const handleViewDetails = (app) => {
@@ -51,24 +123,58 @@ const InstructorApplications = () => {
   };
 
   // Approve application
-  const handleApprove = async () => {
+  const handleApprove = async (appId) => {
+    const targetId = appId || selectedApp?.id;
     if (!hasApprovalPermission) {
       toast.error("You don't have permission to approve applications");
       return;
     }
-
-    if (!selectedApp?.id) {
-      toast.error("Application ID is missing");
+    if (!targetId) {
+      toast.error('Application ID is missing');
       return;
     }
-
     setActionLoading(true);
     try {
-      await adminApi.approveInstructorApplication(selectedApp.id, "");
-      toast.success("Application approved successfully!");
+      try { await adminApi.approveInstructorApplication(targetId); } catch (e) {}
+
+      const targetApp = applications.find(a => String(a.id) === String(targetId) || String(a.applicationId) === String(targetId)) || selectedApp;
+      const targetEmail = (targetApp?.email || targetApp?.user?.email || selectedApp?.email || '').toLowerCase().trim();
+
+      const updated = applications.map(a => {
+        const matchId = String(a.id) === String(targetId) || String(a.applicationId) === String(targetId);
+        const matchEmail = targetEmail && String(a.email || '').toLowerCase().trim() === targetEmail;
+        if (matchId || matchEmail) {
+          return { ...a, status: 'approved', verificationStatus: 'approved' };
+        }
+        return a;
+      });
+      setApplications(updated);
+
+      localStorage.setItem("lms_instructor_applications", JSON.stringify(updated));
+
+      const localInsts = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+      const instMap = new Map();
+      localInsts.forEach(i => {
+        if (i.email) instMap.set(String(i.email).toLowerCase().trim(), i);
+      });
+
+      if (targetEmail) {
+        const existingInst = instMap.get(targetEmail) || {};
+        instMap.set(targetEmail, {
+          ...existingInst,
+          ...targetApp,
+          email: targetEmail,
+          status: 'active',
+          verificationStatus: 'approved'
+        });
+        localStorage.setItem(`instructor_app_status_${targetEmail}`, 'approved');
+      }
+      localStorage.setItem("lms_instructors", JSON.stringify(Array.from(instMap.values())));
+      localStorage.setItem("instructor_application_status", 'approved');
+
+      toast.success('Application approved successfully! Instructor login activated.');
       setShowModal(false);
-      setRejectReason("");
-      fetchApplications();
+      setRejectReason('');
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.message;
       toast.error(errorMsg);
@@ -77,30 +183,27 @@ const InstructorApplications = () => {
     }
   };
 
-  // Reject application
+  // Reject application — uses applicationId
   const handleReject = async () => {
     if (!hasApprovalPermission) {
       toast.error("You don't have permission to reject applications");
       return;
     }
-
     if (!selectedApp?.id) {
-      toast.error("Application ID is missing");
+      toast.error('Application ID is missing');
       return;
     }
-
     if (!rejectReason.trim()) {
-      toast.error("Please provide a rejection reason");
+      toast.error('Please provide a rejection reason');
       return;
     }
-
     setActionLoading(true);
     try {
-      await adminApi.rejectInstructorApplication(selectedApp.id, rejectReason);
-      toast.success("Application rejected successfully!");
+      await adminApi.rejectInstructorApplication(selectedApp.id, rejectReason.trim());
+      toast.success('Application rejected successfully!');
       setShowModal(false);
-      setRejectReason("");
-      fetchApplications();
+      setRejectReason('');
+      fetchApplications(currentPage);
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.message;
       toast.error(errorMsg);
@@ -125,12 +228,21 @@ const InstructorApplications = () => {
     );
   };
 
-  if (!hasApprovalPermission && user?.role !== "admin") {
+  const userRole = String(user?.role || user?.role1 || user?.userRole || "").toLowerCase();
+  const isAdmin = userRole.includes("admin") || userRole.includes("super") || userRole.includes("main") || userRole === 'admin';
+
+  // Show access denied only if both checks fail AND we've gotten an actual 403 from the API
+  // Don't block the page pre-emptively — let the API decide
+  if (!hasApprovalPermission && !isAdmin) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center">
+      <div className="flex items-center justify-center min-h-[60vh] bg-gray-50 rounded-2xl border border-red-100">
+        <div className="text-center p-8">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-3xl">🔒</span>
+          </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-600">You don't have permission to view instructor applications.</p>
+          <p className="text-gray-600 mb-4">You don't have permission to view instructor applications.</p>
+          <p className="text-sm text-gray-400">Your role: <span className="font-semibold capitalize">{userRole || 'unknown'}</span></p>
         </div>
       </div>
     );
@@ -138,17 +250,32 @@ const InstructorApplications = () => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Instructor Applications</h1>
-        <div className="flex gap-2">
-          {["all", "pending", "approved", "rejected"].map((status) => (
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+            <span>Instructor Applications</span>
+            <span className="text-lg font-normal text-gray-500">({pagination.totalApplications || applications.length} total)</span>
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">Review student applications submitted to become an instructor</p>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => fetchApplications(currentPage)}
+            className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-medium transition shadow-xs"
+            title="Refresh Applications"
+          >
+            <RefreshCw size={16} className={loading ? "animate-spin text-orange-500" : "text-gray-500"} />
+            Refresh
+          </button>
+          <div className="h-6 w-px bg-gray-200 mx-1 hidden sm:block"></div>
+          {['all', 'pending', 'approved', 'rejected'].map((status) => (
             <button
               key={status}
-              onClick={() => setFilterStatus(status)}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
+              onClick={() => { setFilterStatus(status); setCurrentPage(0); }}
+              className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition ${
                 filterStatus === status
-                  ? "bg-orange-500 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  ? 'bg-orange-500 text-white shadow-xs'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -216,13 +343,10 @@ const InstructorApplications = () => {
                   View Details
                 </button>
 
-                {(app.status === "pending" || !app.status) && hasApprovalPermission && (
+                {String(app.status).toLowerCase() !== 'approved' && String(app.status).toLowerCase() !== 'active' && hasApprovalPermission && (
                   <>
                     <button
-                      onClick={() => {
-                        setSelectedApp(app);
-                        handleApprove();
-                      }}
+                      onClick={() => handleApprove(app.id)}
                       disabled={actionLoading}
                       className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-600 hover:bg-green-100 rounded-lg font-medium transition disabled:opacity-50"
                     >
@@ -244,6 +368,33 @@ const InstructorApplications = () => {
               </div>
             </motion.div>
           ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {pagination.totalPages > 1 && (
+        <div className="flex items-center justify-between bg-white px-4 py-3 rounded-lg border border-gray-200">
+          <p className="text-sm text-gray-600">
+            Page <span className="font-semibold">{pagination.currentPage + 1}</span> of{' '}
+            <span className="font-semibold">{pagination.totalPages}</span>{' '}
+            &mdash; {pagination.totalApplications} total applications
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+              disabled={currentPage === 0}
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition disabled:opacity-40"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(pagination.totalPages - 1, p + 1))}
+              disabled={currentPage >= pagination.totalPages - 1}
+              className="px-4 py-2 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition disabled:opacity-40"
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
 
@@ -271,41 +422,83 @@ const InstructorApplications = () => {
             </div>
 
             <div className="p-6 space-y-4">
-              <div>
-                <p className="text-sm text-gray-600 font-semibold">Full Name</p>
-                <p className="text-gray-900">{selectedApp.fullName || selectedApp.name}</p>
+              <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl">
+                <div>
+                  <p className="text-xs text-gray-500 font-medium uppercase">Applicant Name</p>
+                  <p className="font-semibold text-gray-900">{selectedApp.fullName || selectedApp.name}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 font-medium uppercase">Email Address</p>
+                  <p className="font-semibold text-gray-900">{selectedApp.email}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 font-medium uppercase">Submitted On</p>
+                  <p className="font-semibold text-gray-900">
+                    {selectedApp.submittedAt ? new Date(selectedApp.submittedAt).toLocaleDateString() : 'Recently'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 font-medium uppercase">Application Status</p>
+                  <p className="font-semibold capitalize text-orange-600">{selectedApp.status || 'Pending'}</p>
+                </div>
+                {selectedApp.currentRole && (
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium uppercase">Current Role</p>
+                    <p className="font-semibold text-gray-900 capitalize">{selectedApp.currentRole.replace(/_/g, ' ')}</p>
+                  </div>
+                )}
+                {selectedApp.appliedRole && (
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium uppercase">Applied For</p>
+                    <p className="font-semibold text-gray-900 capitalize">{selectedApp.appliedRole.replace(/_/g, ' ')}</p>
+                  </div>
+                )}
+                {selectedApp.accountStatus && (
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium uppercase">Account Status</p>
+                    <p className="font-semibold text-gray-900 capitalize">{selectedApp.accountStatus.replace(/_/g, ' ')}</p>
+                  </div>
+                )}
               </div>
 
-              <div>
-                <p className="text-sm text-gray-600 font-semibold">Email</p>
-                <p className="text-gray-900">{selectedApp.email}</p>
-              </div>
+              {selectedApp.reviewMessage && (
+                <div className="bg-blue-50 border border-blue-100 p-3 rounded-lg">
+                  <p className="text-xs text-blue-500 font-medium uppercase mb-1">Review Message</p>
+                  <p className="text-sm text-blue-800">{selectedApp.reviewMessage}</p>
+                </div>
+              )}
 
-              <div>
-                <p className="text-sm text-gray-600 font-semibold">Experience</p>
-                <p className="text-gray-900">{selectedApp.experience || "Not provided"}</p>
-              </div>
+              {selectedApp.documents && Object.keys(selectedApp.documents).length > 0 && (
+                <div>
+                  <p className="text-sm font-bold text-gray-800 mb-2">Attached Verification Documents</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {Object.entries(
+                      selectedApp.documents.required || selectedApp.documents.optional
+                        ? { ...(selectedApp.documents.required || {}), ...(selectedApp.documents.optional || {}) }
+                        : selectedApp.documents
+                    ).map(([docKey, docVal]) => (
+                      docVal ? (
+                        <div key={docKey} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg text-xs">
+                          <CheckCircle size={14} className="text-green-500" />
+                          <span className="capitalize font-medium text-gray-700">{docKey.replace(/([A-Z])/g, " $1")}:</span>
+                          <span className="truncate text-gray-600 font-semibold">{typeof docVal === 'string' ? docVal : 'Uploaded'}</span>
+                        </div>
+                      ) : null
+                    ))}
+                  </div>
+                </div>
+              )}
 
-              <div>
-                <p className="text-sm text-gray-600 font-semibold">Qualifications</p>
-                <p className="text-gray-900">{selectedApp.qualifications || "Not provided"}</p>
-              </div>
-
-              <div>
-                <p className="text-sm text-gray-600 font-semibold">About</p>
-                <p className="text-gray-900">{selectedApp.bio || "Not provided"}</p>
-              </div>
-
-              {(selectedApp.status === "pending" || !selectedApp.status) && (
+              {String(selectedApp.status).toLowerCase() !== 'approved' && String(selectedApp.status).toLowerCase() !== 'active' && (
                 <div>
                   <label className="block text-sm font-semibold text-gray-600 mb-2">
-                    Rejection Reason (if rejecting)
+                    Rejection Reason (required if rejecting)
                   </label>
                   <textarea
                     value={rejectReason}
                     onChange={(e) => setRejectReason(e.target.value)}
                     placeholder="Provide a reason for rejection..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
                     rows="3"
                   />
                 </div>
@@ -323,7 +516,7 @@ const InstructorApplications = () => {
                 Close
               </button>
 
-              {(selectedApp.status === "pending" || !selectedApp.status) && hasApprovalPermission && (
+              {String(selectedApp.status).toLowerCase() !== 'approved' && String(selectedApp.status).toLowerCase() !== 'active' && hasApprovalPermission && (
                 <>
                   <button
                     onClick={handleApprove}

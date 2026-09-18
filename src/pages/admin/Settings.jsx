@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
+import axiosInstance from "../../api/axiosInstance";
 import { motion } from "framer-motion";
-import { adminApi } from "../../api/adminApi";
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState("platform");
@@ -43,7 +43,7 @@ const Settings = () => {
     const loadPlatformSettings = async () => {
       setPlatformLoading(true);
       try {
-        const data = await adminApi.getPlatformSettings();
+        const { data } = await axiosInstance.get("/api/v1/admin/settings/platform");
         setPlatformSettings({
           siteName: data.siteName || "",
           maintenanceMode: data.maintenanceMode ?? false,
@@ -64,7 +64,7 @@ const Settings = () => {
     setPlatformError("");
     setPlatformSuccess("");
     try {
-      await adminApi.savePlatformSettings({
+      await axiosInstance.put("/api/v1/admin/settings/platform", {
         siteName: platformSettings.siteName,
         maintenanceMode: platformSettings.maintenanceMode,
         maxUsers: platformSettings.maxUsers,
@@ -72,18 +72,18 @@ const Settings = () => {
       setPlatformSuccess("Platform settings saved successfully!");
       setTimeout(() => setPlatformSuccess(""), 3000);
     } catch (err) {
-      setPlatformError(err.message || "Failed to save settings");
+      setPlatformError(err.response?.data?.message || err.message || "Failed to save settings");
     } finally {
       setPlatformSaving(false);
     }
   };
 
-  // Load payment settings (unchanged)
+  // Load payment settings
   useEffect(() => {
     const loadPaymentSettings = async () => {
       setPaymentLoading(true);
       try {
-        const data = await adminApi.getPaymentSettings();
+        const { data } = await axiosInstance.get("/api/v1/admin/settings/payment");
         setPaymentSettings({
           paymentGateway: data.paymentGateway || "Stripe",
           currency: data.currency || "INR",
@@ -104,7 +104,7 @@ const Settings = () => {
     setPaymentError("");
     setPaymentSuccess("");
     try {
-      await adminApi.savePaymentSettings({
+      await axiosInstance.put("/api/v1/admin/settings/payment", {
         paymentGateway: paymentSettings.paymentGateway,
         currency: paymentSettings.currency,
         taxPercentage: paymentSettings.taxPercentage,
@@ -112,18 +112,18 @@ const Settings = () => {
       setPaymentSuccess("Payment settings saved successfully!");
       setTimeout(() => setPaymentSuccess(""), 3000);
     } catch (err) {
-      setPaymentError(err.message || "Failed to save settings");
+      setPaymentError(err.response?.data?.message || err.message || "Failed to save settings");
     } finally {
       setPaymentSaving(false);
     }
   };
 
-  // Load notification settings (unchanged)
+  // Load notification settings
   useEffect(() => {
     const loadNotifSettings = async () => {
       setNotifLoading(true);
       try {
-        const data = await adminApi.getNotificationSettings();
+        const { data } = await axiosInstance.get("/api/v1/admin/settings/notifications");
         setNotifications({
           emailEnabled: data.emailEnabled ?? true,
           smsEnabled: data.smsEnabled ?? false,
@@ -144,7 +144,7 @@ const Settings = () => {
     setNotifError("");
     setNotifSuccess("");
     try {
-      await adminApi.saveNotificationSettings({
+      await axiosInstance.put("/api/v1/admin/settings/notifications", {
         emailEnabled: notifications.emailEnabled,
         smsEnabled: notifications.smsEnabled,
         pushNotifications: notifications.pushNotifications,
@@ -152,7 +152,7 @@ const Settings = () => {
       setNotifSuccess("Notification settings saved successfully!");
       setTimeout(() => setNotifSuccess(""), 3000);
     } catch (err) {
-      setNotifError(err.message || "Failed to save settings");
+      setNotifError(err.response?.data?.message || err.message || "Failed to save settings");
     } finally {
       setNotifSaving(false);
     }

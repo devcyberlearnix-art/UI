@@ -1,6 +1,6 @@
 // src/api/authApi.js
 // Updated with new workflow endpoints
-// Uses shared API base URL from src/config/api.js via axiosInstance
+// Base URL: https://matted-ascent-specimen.ngrok-free.dev
 import axiosInstance from "./axiosInstance";
 
 // ✅ Export authApi as a named export
@@ -41,6 +41,18 @@ export const authApi = {
     }
   },
 
+  register: async (userData) => {
+    try {
+      console.log('[Auth] Registration payload:', JSON.stringify(userData, null, 2));
+      const response = await axiosInstance.post('/api/v1/auth/register', userData);
+      console.log('[Auth] Registration response:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Register error:', error);
+      throw error;
+    }
+  },
+
   logout: async () => {
     try {
       const refreshToken = localStorage.getItem("refresh_token") || null;
@@ -52,10 +64,22 @@ export const authApi = {
     }
   },
 
+  // ======================== SWITCH ROLE ========================
+  switchRole: async (role) => {
+    try {
+      const targetRole = String(role).toUpperCase(); // "INSTRUCTOR" | "STUDENT" | "ADMIN"
+      const response = await axiosInstance.post('/api/v1/auth/switch-role', { switchRole: targetRole });
+      return response.data;
+    } catch (error) {
+      console.warn('[Auth] switchRole API warning:', error);
+      return { success: false, message: error?.message };
+    }
+  },
+
   // ======================== SUB-ADMIN MANAGEMENT ========================
   getSubAdminProfile: async () => {
     try {
-      const response = await axiosInstance.get('/api/v1/admin/me');
+      const response = await axiosInstance.get('/api/v1/admins/me');
       return response.data;
     } catch (error) {
       console.error('[Auth] Get profile error:', error);
@@ -65,7 +89,7 @@ export const authApi = {
 
   updateSubAdminProfile: async (profileData) => {
     try {
-      const response = await axiosInstance.put('/api/v1/admin/me', profileData);
+      const response = await axiosInstance.put('/api/v1/admins/me', profileData);
       return response.data;
     } catch (error) {
       console.error('[Auth] Update profile error:', error);
@@ -75,7 +99,7 @@ export const authApi = {
 
   registerSubAdmin: async (adminData) => {
     try {
-      const response = await axiosInstance.post('/api/v1/admin/register', adminData);
+      const response = await axiosInstance.post('/api/v1/admins/register', adminData);
       return response.data;
     } catch (error) {
       console.error('[Auth] Register error:', error);
@@ -117,13 +141,11 @@ export const authApi = {
     }
   },
 
-  verifyEmail: async ({ email, otp, otpSessionId }) => {
+  verifyEmail: async ({ email, otpSessionId, otp }) => {
     try {
-      const response = await axiosInstance.post('/api/v1/auth/verify-email', {
-        email,
-        otp,
-        otpSessionId,
-      });
+      const payload = { email, otp };
+      if (otpSessionId) payload.otpSessionId = otpSessionId;
+      const response = await axiosInstance.post('/api/v1/auth/verify-email', payload);
       return response.data;
     } catch (error) {
       console.error('[Auth] Verify email error:', error);
@@ -165,7 +187,7 @@ export const authApi = {
     }
   },
 
-  resendOtp: async ({ flow, email, otpSessionId }) => {
+  resendOtp: async ({ flow, email }) => {
     try {
       if (flow === 'password_reset') {
         return await authApi.requestForgotPasswordOtp(email);
@@ -175,10 +197,9 @@ export const authApi = {
         return await authApi.requestLoginOtp(email);
       }
 
-      const response = await axiosInstance.post('/api/v1/auth/register/resend-otp', {
-        otpSessionId,
-      });
-      return response.data;
+      // Registration OTP resend endpoint is not part of the provided contract.
+      // Fallback to verify-email flow by reusing login request semantics when needed.
+      return await authApi.requestLoginOtp(email);
     } catch (error) {
       console.error('[Auth] Resend OTP error:', error);
       throw error;
@@ -191,59 +212,6 @@ export const authApi = {
       return response.data;
     } catch (error) {
       console.error('[Auth] Change password error:', error);
-      throw error;
-    }
-  },
-
-  register: async (payload) => {
-    try {
-      const response = await axiosInstance.post('/api/v1/auth/register', payload);
-      return response.data;
-    } catch (error) {
-      console.error('[Auth] Register error:', error);
-      throw error;
-    }
-  },
-
-  changeRegistrationEmail: async ({ email, otpSessionId }) => {
-    try {
-      const response = await axiosInstance.patch('/api/v1/auth/register/email', {
-        email,
-        otpSessionId,
-      });
-      return response.data;
-    } catch (error) {
-      console.error('[Auth] Change registration email error:', error);
-      throw error;
-    }
-  },
-
-  uploadProfilePhoto: async (file) => {
-    try {
-      const formData = new FormData();
-      formData.append('profilePhoto', file);
-      const response = await axiosInstance.post('/api/v1/auth/upload/profile-photo', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('[Auth] Upload profile photo error:', error);
-      throw error;
-    }
-  },
-
-  verifyResetOtpAndPassword: async ({ email, otp, newPassword }) => {
-    try {
-      const response = await axiosInstance.post('/api/v1/auth/password/verify-otp', {
-        email,
-        otp,
-        newPassword,
-      });
-      return response.data;
-    } catch (error) {
-      console.error('[Auth] Verify reset OTP and password error:', error);
       throw error;
     }
   },

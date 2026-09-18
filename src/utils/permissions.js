@@ -29,14 +29,13 @@ export const ROLES = {
  * Check if user is Main Admin
  */
 export const isMainAdmin = (user) => {
-  return user?.role === "admin";
+  const role = String(user?.role || user?.role1 || user?.userRole || "").toLowerCase();
+  return role.includes("admin") || role.includes("super") || role.includes("main");
 };
 
-/**
- * Check if user is Sub Admin
- */
 export const isSubAdmin = (user) => {
-  return user?.role === "sub_admin";
+  const role = String(user?.role || user?.role1 || user?.userRole || "").toLowerCase();
+  return role.includes("sub");
 };
 
 /**
@@ -66,8 +65,10 @@ export const canManageSettings = (user) => {
 
 /**
  * Check if user can approve instructors
+ * Main Admin always can; Sub Admin needs explicit permission
  */
 export const canApproveInstructors = (user) => {
+  if (isMainAdmin(user)) return true;
   return hasPermission(user, PERMISSIONS.APPROVE_INSTRUCTORS);
 };
 

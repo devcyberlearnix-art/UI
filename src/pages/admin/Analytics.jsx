@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import { adminApi } from "../../api/adminApi";
+import axiosInstance from "../../api/axiosInstance";
 
 const Analytics = () => {
   const [revenueData, setRevenueData] = useState([]);
@@ -17,22 +17,22 @@ const Analytics = () => {
     const fetchAnalytics = async () => {
       try {
         // Fetch revenue reports
-        const revenueData = await adminApi.getRevenueReport();
-        setRevenueData(revenueData.revenue || revenueData);
+        const { data: revenueData } = await axiosInstance.get("/api/v1/admin/reports/revenue");
+        setRevenueData(revenueData.revenue || revenueData.data || revenueData || []);
 
         // Fetch order analytics
-        const orderData = await adminApi.getOrderAnalytics();
-        setOrderAnalytics(orderData.orders || orderData);
+        const { data: orderData } = await axiosInstance.get("/api/v1/admin/reports/orders");
+        setOrderAnalytics(orderData.orders || orderData.data || orderData || []);
 
-        // ✅ NEW: Fetch course statistics
-        const courseData = await adminApi.getCourseReport();
+        // Fetch course statistics
+        const { data: courseData } = await axiosInstance.get("/api/v1/admin/reports/courses");
         setCourseStats({
           totalCourses: courseData.totalCourses || 0,
           activeCourses: courseData.activeCourses || 0,
           topCategories: courseData.topCategories || [],
         });
       } catch (err) {
-        setError(err.message);
+        setError(err.response?.data?.message || err.message);
       } finally {
         setLoading(false);
       }

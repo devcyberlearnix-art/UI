@@ -2,19 +2,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authApi } from '../api/authApi';
 import toast from 'react-hot-toast';
+// Utility extracted to a plain .js file so React Fast Refresh works correctly
+import { checkInstructorStatus } from './authHelpers';
 
 const AuthContext = createContext(null);
-
-const normalizeRole = (roleValue = '') => {
-  const role = String(roleValue || '').trim().toLowerCase();
-  if (role.includes('super')) return 'super_admin';
-  if (role.includes('sub')) return 'sub_admin';
-  if (role.includes('main')) return 'admin';
-  if (role.includes('admin')) return 'admin';
-  if (role.includes('instructor')) return 'instructor';
-  if (role.includes('student')) return 'student';
-  return role || 'student';
-};
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -24,44 +15,56 @@ export const useAuth = () => {
   return context;
 };
 
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem('lms_token') || localStorage.getItem('access_token') || sessionStorage.getItem('lms_token') || null;
+  });
+  const [user, setUser] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem('lms_user');
+      if (storedUser && storedUser !== 'undefined' && storedUser !== 'null') {
+        const parsed = JSON.parse(storedUser);
+        const instStatus = checkInstructorStatus(parsed.email);
+        if (instStatus) {
+          parsed.instructorStatus = instStatus;
+          if (instStatus === 'active' || instStatus === 'approved') {
+            parsed.role = 'instructor';
+          }
+        }
+        return parsed;
+      }
+      return null;
+    } catch (err) {
+      console.warn('[AuthProvider] Invalid lms_user in localStorage, clearing');
+      localStorage.removeItem('lms_user');
+      return null;
+    }
+  });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const restoreSession = () => {
+    // Verify stored session synchronization on mount
+    const storedToken = localStorage.getItem('lms_token') || localStorage.getItem('access_token');
+    const storedUser = localStorage.getItem('lms_user');
+
+    if (storedToken && storedUser) {
       try {
-        console.log('[AuthProvider] Checking existing session');
-        
-        const storedToken = localStorage.getItem('lms_token') || localStorage.getItem('access_token');
-        const storedUser = localStorage.getItem('lms_user');
-        
-        if (storedToken && storedUser) {
-          try {
-            const parsedUser = JSON.parse(storedUser);
-            setToken(storedToken);
-            setUser({
-              ...parsedUser,
-              role: normalizeRole(parsedUser?.role),
-            });
-            console.log('[AuthProvider] Session restored successfully');
-          } catch (err) {
-            console.error('[AuthProvider] Failed to parse stored user:', err);
-            localStorage.removeItem('lms_token');
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('lms_user');
+        const parsedUser = JSON.parse(storedUser);
+        const instStatus = checkInstructorStatus(parsedUser.email);
+        if (instStatus) {
+          parsedUser.instructorStatus = instStatus;
+          if (instStatus === 'active' || instStatus === 'approved') {
+            parsedUser.role = 'instructor';
           }
         }
+        if (!user) setUser(parsedUser);
+        if (!token) setToken(storedToken);
       } catch (err) {
-        console.error('[AuthProvider] Session restore error:', err);
-      } finally {
-        setLoading(false);
+        console.error('[AuthProvider] Failed to parse stored user:', err);
       }
-    };
-
-    restoreSession();
+    }
   }, []);
 
   const login = async (email, password) => {
@@ -89,9 +92,7 @@ export const AuthProvider = ({ children }) => {
       let refreshTokenData = null;
       let userData = null;
 
-      // ✅ Handle the response structure from /admin/internal/login
       if (response && typeof response === "object") {
-        // Check for token in authentication object or directly
         tokenData = response.authentication?.accessToken || 
                     response.authentication?.token ||
                     response.accessToken || 
@@ -100,19 +101,30 @@ export const AuthProvider = ({ children }) => {
 
         refreshTokenData = response.authentication?.refreshToken || response.refreshToken || response.refresh_token || null;
 
-        // ✅ Extract user data from response
         const userInfo = response.user || response;
         userData = {
           id: userInfo.id || userInfo.userId,
           firstName: userInfo.firstName || userInfo.name || '',
-          lastName: userInfo.lastName || userInfo.lastName || '',
+          lastName: userInfo.lastName || '',
           name: userInfo.firstName ? `${userInfo.firstName} ${userInfo.lastName || ''}`.trim() : userInfo.name || '',
           email: userInfo.email || emailStr,
           mobileNumber: userInfo.mobileNumber || userInfo.mobile || '',
-          role: normalizeRole(userInfo.role || userInfo.role1 || userInfo.userRole || userInfo.effectiveRole || 'student'),
+          role: userInfo.role || userInfo.role1 || userInfo.userRole || userInfo.effectiveRole || 'student',
           permissions: userInfo.permissions || [],
           assignedService: userInfo.assignedService || '',
         };
+      }
+
+      // Check instructor verification status & grant instructor role if approved
+      const instStatus = checkInstructorStatus(userData.email || emailStr);
+      if (instStatus) {
+        userData.instructorStatus = instStatus;
+        if (instStatus === 'active' || instStatus === 'approved') {
+          userData.isInstructor = true;
+          if (!userData.isAdmin) {
+            userData.role = 'instructor';
+          }
+        }
       }
       
       if (!tokenData) {
@@ -161,7 +173,7 @@ export const AuthProvider = ({ children }) => {
           errorMessage = data.message;
         }
       } else if (error.request) {
-        errorMessage = 'Cannot connect to the server. Please check your internet connection.';
+        errorMessage = 'Cannot connect to the backend server. Please verify that the backend API server / ngrok tunnel is active.';
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -170,6 +182,60 @@ export const AuthProvider = ({ children }) => {
       toast.error(errorMessage);
       
       return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const switchRole = async (targetRole) => {
+    try {
+      setLoading(true);
+      const roleUpper = String(targetRole).toUpperCase(); // "INSTRUCTOR" | "STUDENT" | "ADMIN"
+      console.log('[AuthProvider] Calling POST /api/v1/auth/switch-role with:', { switchRole: roleUpper });
+      
+      const res = await authApi.switchRole(roleUpper);
+      console.log('[AuthProvider] switchRole API response:', res);
+      
+      let tokenData = res?.authentication?.accessToken || res?.authentication?.token || res?.accessToken || res?.token || res?.access_token;
+      let refreshTokenData = res?.authentication?.refreshToken || res?.refreshToken || res?.refresh_token;
+
+      if (tokenData) {
+        localStorage.setItem('lms_token', tokenData);
+        localStorage.setItem('access_token', tokenData);
+        sessionStorage.setItem('lms_token', tokenData);
+        setToken(tokenData);
+      }
+      if (refreshTokenData) {
+        localStorage.setItem('refresh_token', refreshTokenData);
+      }
+
+      const newRoleLower = String(targetRole).toLowerCase();
+      const updatedUser = {
+        ...(user || {}),
+        role: newRoleLower,
+        role1: newRoleLower,
+        userRole: newRoleLower,
+        effectiveRole: roleUpper,
+      };
+
+      localStorage.setItem('lms_user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+
+      const label = targetRole.charAt(0).toUpperCase() + targetRole.slice(1).toLowerCase();
+      toast.success(`Switched to ${label} view`);
+      return { success: true, data: res };
+    } catch (err) {
+      console.error('[AuthProvider] switchRole error:', err);
+      const newRoleLower = String(targetRole).toLowerCase();
+      const updatedUser = {
+        ...(user || {}),
+        role: newRoleLower,
+        role1: newRoleLower,
+        userRole: newRoleLower,
+      };
+      localStorage.setItem('lms_user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      return { success: false, error: err };
     } finally {
       setLoading(false);
     }
@@ -203,11 +269,11 @@ export const AuthProvider = ({ children }) => {
     error,
     login,
     logout,
+    switchRole,
     isAuthenticated: !!token,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export { AuthContext };
 export default AuthProvider;

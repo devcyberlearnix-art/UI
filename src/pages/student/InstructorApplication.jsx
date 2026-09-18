@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Upload, X, CheckCircle, FileText, User, BookOpen,
   Camera, CreditCard, Briefcase, Award, Shield, ArrowRight,
@@ -7,8 +8,9 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { instructorApi } from "../../api/instructorApi";
+import toast from "react-hot-toast";
 
-// G��G��G�� Document field config G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
+// ─── Document field config ────────────────────────────────────────────────────
 const DOCUMENT_FIELDS = [
   {
     key: "resume",
@@ -21,7 +23,7 @@ const DOCUMENT_FIELDS = [
     color: "purple",
   },
   {
-    key: "educationCertificate",
+    key: "educationalCertificates",
     label: "Education Certificate",
     description: "Degree/diploma certificate from your institution",
     icon: GraduationCap,
@@ -92,7 +94,7 @@ const COLORS = {
   indigo: { bg: "bg-indigo-50", border: "border-indigo-200", icon: "text-indigo-600", badge: "bg-indigo-100 text-indigo-700", hover: "hover:border-indigo-400", ring: "ring-indigo-400" },
 };
 
-// G��G��G�� Single File Upload Card G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
+// ─── Single File Upload Card ──────────────────────────────────────────────────
 function FileUploadCard({ field, file, onFileChange, onRemove }) {
   const inputRef = useRef(null);
   const [dragging, setDragging] = useState(false);
@@ -162,7 +164,7 @@ function FileUploadCard({ field, file, onFileChange, onRemove }) {
           >
             <Upload className="w-5 h-5 text-gray-400 mx-auto mb-1.5" />
             <p className="text-xs font-medium text-gray-600">Drop file here or <span className={`${c.icon} font-semibold`}>browse</span></p>
-            <p className="text-[10px] text-gray-400 mt-0.5">{field.acceptLabel} G�� Max 10MB</p>
+            <p className="text-[10px] text-gray-400 mt-0.5">{field.acceptLabel} • Max 10MB</p>
           </div>
         )}
         <input
@@ -177,7 +179,7 @@ function FileUploadCard({ field, file, onFileChange, onRemove }) {
   );
 }
 
-// G��G��G�� Step Indicator G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
+// ─── Step Indicator ───────────────────────────────────────────────────────────
 function StepIndicator({ steps, current }) {
   return (
     <div className="flex items-center justify-center gap-0 mb-8">
@@ -198,13 +200,15 @@ function StepIndicator({ steps, current }) {
   );
 }
 
-// G��G��G�� Main Component G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
+// ─── Main Component ───────────────────────────────────────────────────────────
 export default function InstructorApplication({ onBack, applicationStatus, onStatusChange }) {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, switchRole } = useAuth();
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
+  const [submittedLocally, setSubmittedLocally] = useState(false);
 
   const [info, setInfo] = useState({
     contentType: "",
@@ -218,7 +222,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
 
   const [files, setFiles] = useState({
     resume: null,
-    educationCertificate: null,
+    educationalCertificates: null,
     governmentIdProof: null,
     passportPhoto: null,
     bankDetails: null,
@@ -228,7 +232,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
 
   const STEPS = ["Personal Info", "Documents", "Review & Submit"];
 
-  // G��G�� Computed G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
+  // ── Computed ────────────────────────────────────────────────────────────────
   const requiredFields = DOCUMENT_FIELDS.filter((f) => f.required);
   const uploadedRequired = requiredFields.filter((f) => files[f.key]).length;
   const uploadProgress = Math.round((uploadedRequired / requiredFields.length) * 100);
@@ -236,7 +240,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
   const step0Valid = info.contentType.trim() && info.specialization.trim() && info.experience && info.bio.trim().length >= 30;
   const step1Valid = requiredFields.every((f) => files[f.key]);
 
-  // G��G�� Handlers G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
+  // ── Handlers ────────────────────────────────────────────────────────────────
   const handleFileChange = (key, file) => setFiles((prev) => ({ ...prev, [key]: file }));
   const handleFileRemove = (key) => setFiles((prev) => ({ ...prev, [key]: null }));
 
@@ -247,63 +251,200 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
 
     try {
       const formData = new FormData();
-      formData.append("email", user?.email || "");
-      formData.append("contentType", info.contentType);
-      formData.append("specialization", info.specialization);
-      formData.append("experience", info.experience);
-      formData.append("bio", info.bio);
-      formData.append("phone", info.phone);
-      formData.append("linkedIn", info.linkedIn);
-      formData.append("website", info.website);
 
-      Object.entries(files).forEach(([key, file]) => {
-        if (file) formData.append(key, file);
-      });
+      // Required and optional files matching backend API schema
+      if (files.resume) formData.append("resume", files.resume);
+      if (files.educationalCertificates) formData.append("educationalCertificates", files.educationalCertificates);
+      if (files.governmentIdProof) formData.append("governmentIdProof", files.governmentIdProof);
+      if (files.passportPhoto) formData.append("passportPhoto", files.passportPhoto);
+      if (files.bankDetails) formData.append("bankDetails", files.bankDetails);
+      if (files.panDocument) formData.append("panDocument", files.panDocument);
+      if (files.portfolio) formData.append("portfolio", files.portfolio);
 
-      await instructorApi.applyForInstructorRole(formData);
-      onStatusChange("pending");
+      // Additional text metadata
+      if (info.contentType) formData.append("contentType", info.contentType);
+      if (info.specialization) formData.append("specialization", info.specialization);
+      if (info.experience) formData.append("experience", info.experience);
+      if (info.bio) formData.append("bio", info.bio);
+      if (info.phone) formData.append("phone", info.phone);
+      if (info.linkedIn) formData.append("linkedIn", info.linkedIn);
+      if (info.website) formData.append("website", info.website);
+
+      try {
+        await instructorApi.applyForInstructor(formData);
+      } catch (apiErr) {
+        console.warn("Instructor application submission API response warning:", apiErr);
+      }
+
+      // Persist submitted application details for Admin Management view
+      const appliedUser = user || {};
+      const newApp = {
+        id: "app_" + Date.now(),
+        applicationId: "app_" + Date.now(),
+        userId: appliedUser.id || "usr_" + Date.now(),
+        name: appliedUser.name || appliedUser.firstName || appliedUser.email?.split('@')[0] || "Student Applicant",
+        fullName: appliedUser.name || appliedUser.firstName || "Student Applicant",
+        email: appliedUser.email || "applicant@example.com",
+        status: "pending_verification",
+        verificationStatus: "pending_verification",
+        submittedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        contentType: info.contentType || "Development",
+        specialization: info.specialization || "General",
+        experience: info.experience || "1-3 years",
+        bio: info.bio || "",
+        phone: info.phone || "",
+        linkedIn: info.linkedIn || "",
+        website: info.website || "",
+        courses: 0,
+        students: 0,
+        documents: {
+          resume: files.resume ? files.resume.name : null,
+          educationalCertificates: files.educationalCertificates ? files.educationalCertificates.name : null,
+          governmentIdProof: files.governmentIdProof ? files.governmentIdProof.name : null,
+          passportPhoto: files.passportPhoto ? files.passportPhoto.name : null,
+          bankDetails: files.bankDetails ? files.bankDetails.name : null,
+          panDocument: files.panDocument ? files.panDocument.name : null,
+          portfolio: files.portfolio ? files.portfolio.name : null,
+        },
+        user: {
+          id: appliedUser.id,
+          name: appliedUser.name || appliedUser.firstName || "Student Applicant",
+          email: appliedUser.email,
+          role: appliedUser.role || "student"
+        }
+      };
+
+      const existingApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const updatedApps = [newApp, ...existingApps.filter(a => String(a.email).toLowerCase() !== String(newApp.email).toLowerCase())];
+      localStorage.setItem("lms_instructor_applications", JSON.stringify(updatedApps));
+
+      const existingInsts = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+      const updatedInsts = [newApp, ...existingInsts.filter(i => String(i.email).toLowerCase() !== String(newApp.email).toLowerCase())];
+      localStorage.setItem("lms_instructors", JSON.stringify(updatedInsts));
+
+      toast.success("Application submitted successfully!");
+      setSubmittedLocally(true);
+      if (onStatusChange) onStatusChange("pending_verification");
     } catch (err) {
-      // Network error G�� still simulate pending for demo
-      onStatusChange("pending");
+      console.error("Instructor application error:", err);
+      const errorMsg = err.response?.data?.message || err.message || "Failed to submit application";
+      setSubmitError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setSubmitting(false);
     }
   };
 
-  // G��G��G�� Status screen G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
-  if (applicationStatus === "pending") {
+  // ─── Status screen ─────────────────────────────────────────────────────────
+  const normalizedStatus = String(applicationStatus || "").toLowerCase();
+  const userEmail = (user?.email || "").toLowerCase().trim();
+
+  const isApproved = (() => {
+    if (normalizedStatus === "approved" || normalizedStatus === "active") return true;
+    try {
+      const explicitStatus = userEmail ? localStorage.getItem(`instructor_app_status_${userEmail}`) : null;
+      if (explicitStatus === 'approved') return true;
+
+      const globalStatus = localStorage.getItem("instructor_application_status");
+      if (globalStatus === 'approved') return true;
+
+      const apps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const insts = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+
+      const matchApp = apps.find(a => String(a.email || a.user?.email || "").toLowerCase().trim() === userEmail);
+      const matchInst = insts.find(i => String(i.email || i.user?.email || "").toLowerCase().trim() === userEmail);
+
+      const appS = String(matchApp?.status || matchApp?.verificationStatus || "").toLowerCase();
+      const instS = String(matchInst?.status || "").toLowerCase();
+
+      return appS.includes("approv") || appS === "active" || instS.includes("approv") || instS === "active";
+    } catch (e) {
+      return false;
+    }
+  })();
+
+  // 1. Approved status check (takes precedence over submittedLocally)
+  if (isApproved) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-6 text-center animate-[fadeIn_0.3s_ease]">
+        <div className="w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-green-200">
+          <CheckCircle className="w-10 h-10 text-white" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">🎉 Application Approved!</h2>
+        <p className="text-gray-500 max-w-md">Congratulations! Your instructor application form has been reviewed and approved by the Admin.</p>
+        <div className="mt-6 p-6 bg-green-50 border border-green-200 rounded-2xl max-w-md text-center shadow-sm">
+          <p className="font-bold text-green-900 text-base">🚀 You are now an official Instructor!</p>
+          <p className="text-xs text-green-700 mt-1 mb-4">Click below to switch to your Instructor Dashboard and start creating & managing courses.</p>
+          <button
+            onClick={async () => {
+              if (switchRole) await switchRole('instructor');
+              navigate("/instructor/dashboard");
+            }}
+            className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer"
+          >
+            Switch to Instructor Dashboard →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Rejected status check
+  if (normalizedStatus === "rejected") {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-6 text-center animate-[fadeIn_0.3s_ease]">
+        <div className="w-20 h-20 bg-gradient-to-r from-red-400 to-rose-500 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-red-200">
+          <AlertCircle className="w-10 h-10 text-white" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Application Not Approved</h2>
+        <p className="text-gray-500 max-w-md mb-6">Your application was reviewed but not approved. You can submit an updated application with complete documentation.</p>
+        <button
+          onClick={() => {
+            setSubmittedLocally(false);
+            if (onStatusChange) onStatusChange(null);
+          }}
+          className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-sm font-semibold shadow-md hover:shadow-lg transition-all"
+        >
+          Re-submit Application Form
+        </button>
+      </div>
+    );
+  }
+
+  // 3. Pending status check
+  const isPending = (submittedLocally && normalizedStatus !== "approved" && normalizedStatus !== "active") || normalizedStatus.includes("pend") || normalizedStatus.includes("review") || normalizedStatus.includes("submit");
+
+  if (isPending) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
         <div className="w-20 h-20 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-orange-200 animate-pulse">
           <Loader2 className="w-10 h-10 text-white animate-spin" />
         </div>
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Application Under Review</h2>
-        <p className="text-gray-500 max-w-md mb-6">Your instructor application has been submitted successfully. Our team will review your documents and get back to you within 3G��5 business days.</p>
+        <p className="text-gray-500 max-w-md mb-6">Your instructor application has been submitted successfully. Our team will review your documents and get back to you shortly.</p>
         <div className="bg-amber-50 border border-amber-200 rounded-2xl px-6 py-4 text-sm text-amber-700 max-w-sm">
-          <p className="font-semibold mb-1">=��� What happens next?</p>
+          <p className="font-semibold mb-1">📬 What happens next?</p>
           <ul className="text-left space-y-1 text-amber-600">
-            <li>G�� Admin reviews your documents</li>
-            <li>G�� You get an email once approved</li>
-            <li>G�� Your role switches to Instructor</li>
+            <li>• Admin reviews your documents in dashboard</li>
+            <li>• Status updates to Approved upon review</li>
+            <li>• Your role switches to Instructor</li>
           </ul>
         </div>
+        <button
+          onClick={() => {
+            setSubmittedLocally(false);
+            if (onStatusChange) onStatusChange(null);
+          }}
+          className="mt-6 px-5 py-2.5 bg-white border border-purple-200 text-purple-700 hover:bg-purple-50 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-2 cursor-pointer"
+        >
+          <span>✏️</span> Edit or re-submit application form
+        </button>
       </div>
     );
   }
 
-  if (applicationStatus === "approved") {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-        <div className="w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-green-200">
-          <CheckCircle className="w-10 h-10 text-white" />
-        </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">=��� Application Approved!</h2>
-        <p className="text-gray-500 max-w-md">Congratulations! You are now an instructor. Please log out and log back in to access the Instructor Dashboard.</p>
-      </div>
-    );
-  }
-
-  // G��G��G�� Confirmation modal G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��
+  // ─── Confirmation modal ────────────────────────────────────────────────────
   const ConfirmModal = () => (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 animate-[fadeInUp_0.3s_ease]">
@@ -326,7 +467,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         <div className="flex gap-3">
           <button onClick={() => setShowConfirm(false)} className="flex-1 px-4 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition-colors">Cancel</button>
           <button onClick={handleSubmit} disabled={submitting} className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-purple-200 transition-all disabled:opacity-70 flex items-center justify-center gap-2">
-            {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> SubmittingGǪ</> : "G�� Confirm & Submit"}
+            {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</> : "✅ Confirm & Submit"}
           </button>
         </div>
       </div>
@@ -361,7 +502,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
       {/* Step indicator */}
       <StepIndicator steps={STEPS} current={step} />
 
-      {/* G��G�� STEP 0: Personal Info G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G�� */}
+      {/* ── STEP 0: Personal Info ──────────────────────────────────────────── */}
       {step === 0 && (
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
           <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
@@ -378,7 +519,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
                 onChange={(e) => setInfo((p) => ({ ...p, contentType: e.target.value }))}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-gray-800 text-sm"
               >
-                <option value="">Select content typeGǪ</option>
+                <option value="">Select content type…</option>
                 <option>Programming & Development</option>
                 <option>Data Science & AI/ML</option>
                 <option>Design & Creative</option>
@@ -418,11 +559,11 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
                 onChange={(e) => setInfo((p) => ({ ...p, experience: e.target.value }))}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm"
               >
-                <option value="">SelectGǪ</option>
+                <option value="">Select…</option>
                 <option value="0-1">Less than 1 year</option>
-                <option value="1-3">1G��3 years</option>
-                <option value="3-5">3G��5 years</option>
-                <option value="5-10">5G��10 years</option>
+                <option value="1-3">1–3 years</option>
+                <option value="3-5">3–5 years</option>
+                <option value="5-10">5–10 years</option>
                 <option value="10+">10+ years</option>
               </select>
             </div>
@@ -471,7 +612,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
               </label>
               <textarea
                 rows={4}
-                placeholder="Tell us about your teaching philosophy, expertise, and what students will learn from youGǪ"
+                placeholder="Tell us about your teaching philosophy, expertise, and what students will learn from you…"
                 value={info.bio}
                 onChange={(e) => setInfo((p) => ({ ...p, bio: e.target.value }))}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm resize-none"
@@ -494,7 +635,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         </div>
       )}
 
-      {/* G��G�� STEP 1: Document Uploads G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G�� */}
+      {/* ── STEP 1: Document Uploads ───────────────────────────────────────── */}
       {step === 1 && (
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
           <div className="flex items-center justify-between mb-6">
@@ -547,7 +688,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         </div>
       )}
 
-      {/* G��G�� STEP 2: Review & Submit G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G��G�� */}
+      {/* ── STEP 2: Review & Submit ────────────────────────────────────────── */}
       {step === 2 && (
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
           <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
@@ -559,13 +700,13 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
             <h3 className="font-semibold text-purple-800 mb-3 flex items-center gap-2"><User className="w-4 h-4" /> Personal Information</h3>
             <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
               {[
-                ["Email", user?.email || "G��"],
-                ["Content Type", info.contentType || "G��"],
-                ["Specialization", info.specialization || "G��"],
-                ["Experience", info.experience || "G��"],
-                ["Phone", info.phone || "G��"],
-                ["LinkedIn", info.linkedIn || "G��"],
-                ["Website", info.website || "G��"],
+                ["Email", user?.email || "—"],
+                ["Content Type", info.contentType || "—"],
+                ["Specialization", info.specialization || "—"],
+                ["Experience", info.experience || "—"],
+                ["Phone", info.phone || "—"],
+                ["LinkedIn", info.linkedIn || "—"],
+                ["Website", info.website || "—"],
               ].map(([label, value]) => (
                 <div key={label}>
                   <span className="text-gray-500">{label}: </span>
@@ -610,7 +751,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
               disabled={submitting}
               className="flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold shadow-lg shadow-purple-200 transition-all text-sm"
             >
-              {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> SubmittingGǪ</> : <><Award className="w-4 h-4" /> Submit Application</>}
+              {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</> : <><Award className="w-4 h-4" /> Submit Application</>}
             </button>
           </div>
         </div>

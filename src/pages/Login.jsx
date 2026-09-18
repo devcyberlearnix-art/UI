@@ -20,22 +20,32 @@ const Login = () => {
   const [otpResending, setOtpResending] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { login, isAuthenticated, loading: authLoading } = useAuth();
+  const { user, login, isAuthenticated, loading: authLoading } = useAuth();
   const canResend = cooldownSeconds === 0;
 
   const getRedirectByRole = (roleValue) => {
     const role = String(roleValue || "").toLowerCase();
-    if (role.includes("admin") || role.includes("super") || role.includes("sub")) return "/admin/dashboard";
+    if (role.includes("admin") || role.includes("super") || role.includes("sub") || role.includes("main")) return "/admin/dashboard";
     if (role.includes("instructor")) return "/instructor/dashboard";
     return "/student/dashboard";
   };
 
   useEffect(() => {
-    if (!authLoading && isAuthenticated) {
-      const storedUser = JSON.parse(localStorage.getItem("lms_user") || "{}");
-      navigate(getRedirectByRole(storedUser?.role || storedUser?.role1 || storedUser?.userRole), { replace: true });
+    const tokenExists = !!localStorage.getItem("lms_token") || !!localStorage.getItem("access_token");
+    if (!authLoading && (isAuthenticated || tokenExists)) {
+      let storedUser = {};
+      try {
+        const raw = localStorage.getItem("lms_user");
+        if (raw && raw !== "undefined" && raw !== "null") {
+          storedUser = JSON.parse(raw);
+        }
+      } catch (e) {
+        storedUser = {};
+      }
+      const targetRole = user?.role || user?.role1 || user?.userRole || storedUser?.role || storedUser?.role1 || storedUser?.userRole;
+      navigate(getRedirectByRole(targetRole), { replace: true });
     }
-  }, [isAuthenticated, navigate, authLoading]);
+  }, [isAuthenticated, user, navigate, authLoading]);
 
   useEffect(() => {
     if (cooldownSeconds <= 0) return;
@@ -82,8 +92,21 @@ const Login = () => {
       const result = await login(email.trim(), password.trim());
       
       if (result.success) {
-        toast.success("Login successful!");
-        navigate(getRedirectByRole(result.user?.role || result.user?.role1 || result.user?.userRole), { replace: true });
+        const userObj = result.user || {};
+        const instStatus = userObj.instructorStatus;
+
+        if (instStatus === "pending" || instStatus === "pending_verification") {
+          toast.success(`Welcome back ${userObj.firstName || userObj.name || ''}! Your Instructor Application is Pending Admin Approval.`);
+        } else if (instStatus === "suspended" || instStatus === "locked") {
+          toast.error(`Notice: Your Instructor Account status is ${instStatus.replace('_', ' ')}. Please contact Admin support.`);
+        } else if (instStatus === "active" || instStatus === "approved" || userObj.role === "instructor") {
+          toast.success(`Welcome to your Instructor Dashboard, ${userObj.firstName || userObj.name || 'Instructor'}!`);
+        } else {
+          toast.success("Login successful!");
+        }
+
+        const redirectPath = getRedirectByRole(userObj.role || userObj.role1 || userObj.userRole);
+        navigate(redirectPath, { replace: true });
       } else {
         setError(result.error || "Login failed");
         toast.error(result.error || "Login failed");

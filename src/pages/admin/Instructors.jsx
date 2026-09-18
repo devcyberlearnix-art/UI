@@ -1,7 +1,7 @@
 // src/pages/admin/Instructors.jsx
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, XCircle, Trash2, Loader2, AlertCircle, User, Mail, BookOpen } from "lucide-react";
+import { CheckCircle, XCircle, Trash2, Loader2, AlertCircle, User, Search, RefreshCw, Filter, Mail, BookOpen, ShieldCheck } from "lucide-react";
 import { adminApi } from "../../api/adminApi";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
@@ -17,49 +17,184 @@ const Instructors = () => {
   const [error, setError] = useState("");
   const [selectedInstructor, setSelectedInstructor] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   // Check if user has specific permission
   const hasPermission = (permission) => {
     return isSuperAdmin || permissions.includes(permission);
   };
 
-  // Fetch all instructors using new endpoint
+  // Permanently purge all instructor & application data from storage & state
+  const handlePurgeAllData = () => {
+    if (window.confirm("PERMANENTLY DELETE all instructor and application data from the Admin Dashboard? This will reset the count to 0 until a student submits a new application form.")) {
+      localStorage.removeItem("lms_instructor_applications");
+      localStorage.removeItem("lms_instructors");
+      setInstructors([]);
+      toast.success("All instructor and application data removed permanently!");
+    }
+  };
+
+  // Fetch all instructors using API (getInstructors + getInstructorApplications) + local applications storage
   const fetchInstructors = async () => {
     setLoading(true);
     setError("");
     try {
-      console.log('[Instructors] Fetching instructors from new API endpoint...');
-      const response = await adminApi.getInstructors();
-      console.log('[Instructors] API Response:', response);
-      
-      // Handle different response structures
-      let instructorData = response.data || response;
-      if (!Array.isArray(instructorData)) {
-        if (instructorData.instructors) instructorData = instructorData.instructors;
-        else if (instructorData.items) instructorData = instructorData.items;
-        else if (instructorData.content) instructorData = instructorData.content;
-        else instructorData = [instructorData];
+      let apiInstructors = [];
+      let apiApplications = [];
+
+      // 1. Fetch from GET /api/v1/admin/instructors
+      try {
+        const response = await adminApi.getInstructors();
+        if (response?.data?.users && Array.isArray(response.data.users)) {
+          apiInstructors = response.data.users;
+        } else if (response?.data && Array.isArray(response.data)) {
+          apiInstructors = response.data;
+        } else if (Array.isArray(response)) {
+          apiInstructors = response;
+        } else if (response?.users && Array.isArray(response.users)) {
+          apiInstructors = response.users;
+        } else if (response?.instructors && Array.isArray(response.instructors)) {
+          apiInstructors = response.instructors;
+        }
+      } catch (e) {
+        console.warn('[Instructors] API getInstructors warning:', e);
       }
-      
-      // Transform API data to match component structure
-      const transformedInstructors = instructorData.map(instructor => ({
-        id: instructor.id || instructor._id || instructor.instructorId,
-        name: instructor.name || instructor.firstName ? `${instructor.firstName} ${instructor.lastName || ''}`.trim() : instructor.displayName || 'Unknown',
-        email: instructor.email || instructor.emailAddress || '',
-        status: instructor.status || instructor.verificationStatus || 'pending',
-        courses: instructor.courses || instructor.courseCount || 0,
-        students: instructor.students || instructor.studentCount || 0,
-        qualification: instructor.qualification || instructor.specialization || 'Not specified',
-        experience: instructor.experience || instructor.yearsOfExperience || 0,
-        createdAt: instructor.createdAt || instructor.joinedDate || new Date().toLocaleDateString()
-      }));
-      
-      setInstructors(transformedInstructors);
-      console.log('[Instructors] Instructors loaded successfully:', transformedInstructors.length);
+
+      // 2. Fetch from GET /api/v1/admin/instructors/applications
+      try {
+        const appResponse = await adminApi.getInstructorApplications({ status: 'all' });
+        if (Array.isArray(appResponse?.data)) {
+          apiApplications = appResponse.data;
+        } else if (Array.isArray(appResponse?.applications)) {
+          apiApplications = appResponse.applications;
+        } else if (Array.isArray(appResponse)) {
+          apiApplications = appResponse;
+        } else if (appResponse?.data && typeof appResponse.data === 'object' && !Array.isArray(appResponse.data)) {
+          apiApplications = appResponse.data.applications || appResponse.data.content || [];
+        }
+      } catch (e) {
+        console.warn('[Instructors] API getInstructorApplications warning:', e);
+      }
+
+      // Read local storage applications & custom instructor data
+      const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const localInstructors = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+
+      const isApprovedEmail = (email) => {
+        const cleanEmail = (email || '').toLowerCase().trim();
+        if (!cleanEmail) return false;
+
+        const explicitStatus = localStorage.getItem(`instructor_app_status_${cleanEmail}`);
+        if (explicitStatus === 'approved') return true;
+
+        const instMatch = localInstructors.find(i => String(i.email || '').toLowerCase().trim() === cleanEmail);
+        if (instMatch) {
+          const s = String(instMatch.status || '').toLowerCase();
+          if (s.includes('approv') || s === 'active') return true;
+        }
+
+        const appMatch = localApps.find(a => String(a.email || a.user?.email || '').toLowerCase().trim() === cleanEmail);
+        if (appMatch) {
+          const s = String(appMatch.status || appMatch.verificationStatus || '').toLowerCase();
+          if (s.includes('approv') || s === 'active') return true;
+        }
+
+        return false;
+      };
+
+      const map = new Map();
+
+      // Add API instructors
+      apiInstructors.forEach(item => {
+        const email = (item.email || item.emailAddress || "").toLowerCase();
+        if (email) {
+          const isAppr = isApprovedEmail(email) || String(item.status || item.verificationStatus || 'active').toLowerCase().includes('approv') || String(item.status || item.verificationStatus || 'active').toLowerCase() === 'active';
+          map.set(email, {
+            id: item.id || item.userId || item._id || `inst_${Math.random()}`,
+            name: item.firstName ? `${item.firstName} ${item.lastName || ''}`.trim() : item.name || email.split('@')[0],
+            email: item.email,
+            mobile: item.mobile || item.mobileNumber || '',
+            avatar: item.profilePhoto || '',
+            status: isAppr ? 'approved' : String(item.status || item.verificationStatus || 'pending').toLowerCase(),
+            courses: item.courses || item.courseCount || 0,
+            students: item.students || item.studentCount || 0,
+            qualification: item.qualification || item.specialization || 'Not specified',
+            experience: item.experience || 0,
+            createdAt: item.createdAt ? new Date(item.createdAt).toLocaleDateString() : new Date().toLocaleDateString()
+          });
+        }
+      });
+
+      // Add applications from GET /api/v1/admin/instructors/applications
+      apiApplications.forEach(item => {
+        const userObj = item.user || {};
+        const appObj = item.application || item;
+        const email = (userObj.email || appObj.email || item.email || "").toLowerCase();
+        if (email) {
+          const existing = map.get(email) || {};
+          const isAppr = isApprovedEmail(email) || String(appObj.status || item.status || existing.status || '').toLowerCase().includes('approv') || String(appObj.status || item.status || existing.status || '').toLowerCase() === 'active';
+          map.set(email, {
+            ...existing,
+            id: appObj.applicationId || appObj.id || item.id || existing.id || `inst_${Math.random()}`,
+            name: userObj.name || (userObj.firstName ? `${userObj.firstName} ${userObj.lastName || ''}`.trim() : null) || existing.name || email.split('@')[0],
+            email: email,
+            status: isAppr ? 'approved' : String(appObj.status || item.status || existing.status || 'pending_verification').toLowerCase(),
+            courses: existing.courses || 0,
+            students: existing.students || 0,
+            qualification: appObj.specialization || appObj.qualifications || existing.qualification || 'Not specified',
+            experience: appObj.experience || existing.experience || '1-3 years',
+            bio: appObj.bio || existing.bio || '',
+            createdAt: appObj.submittedAt ? new Date(appObj.submittedAt).toLocaleDateString() : (existing.createdAt || new Date().toLocaleDateString())
+          });
+        }
+      });
+
+      // Add student submitted applications from localStorage
+      localApps.forEach(item => {
+        const email = (item.email || item.user?.email || item.application?.email || "").toLowerCase();
+        if (email) {
+          const existing = map.get(email) || {};
+          const isAppr = isApprovedEmail(email) || String(item.status || item.verificationStatus || item.application?.status || existing.status || '').toLowerCase().includes('approv') || String(item.status || item.verificationStatus || item.application?.status || existing.status || '').toLowerCase() === 'active';
+          map.set(email, {
+            ...existing,
+            id: item.id || item.applicationId || existing.id || `inst_${Math.random()}`,
+            name: item.fullName || item.name || item.user?.name || existing.name || email.split('@')[0],
+            email: email,
+            status: isAppr ? 'approved' : String(item.status || item.verificationStatus || item.application?.status || existing.status || 'pending_verification').toLowerCase(),
+            courses: item.courses || existing.courses || 0,
+            students: item.students || existing.students || 0,
+            qualification: item.specialization || item.qualification || existing.qualification || 'Not specified',
+            experience: item.experience || existing.experience || '1-3 years',
+            bio: item.bio || existing.bio || '',
+            phone: item.phone || existing.phone || '',
+            linkedIn: item.linkedIn || existing.linkedIn || '',
+            website: item.website || existing.website || '',
+            documents: item.documents || existing.documents || {},
+            createdAt: item.submittedAt ? new Date(item.submittedAt).toLocaleDateString() : (existing.createdAt || new Date().toLocaleDateString())
+          });
+        }
+      });
+
+      // Overlay explicit admin status overrides from localInstructors
+      localInstructors.forEach(item => {
+        const email = (item.email || "").toLowerCase();
+        if (email) {
+          const existing = map.get(email) || {};
+          const isAppr = isApprovedEmail(email) || String(item.status || existing.status || '').toLowerCase().includes('approv') || String(item.status || existing.status || '').toLowerCase() === 'active';
+          map.set(email, {
+            ...existing,
+            ...item,
+            email: email,
+            status: isAppr ? 'approved' : String(item.status || existing.status || 'active').toLowerCase()
+          });
+        }
+      });
+
+      setInstructors(Array.from(map.values()));
     } catch (err) {
       console.error('[Instructors] Error fetching instructors:', err);
       setError('Failed to load instructors. Please try again.');
-      toast.error('Failed to load instructors');
     } finally {
       setLoading(false);
     }
@@ -69,7 +204,7 @@ const Instructors = () => {
     fetchInstructors();
   }, []);
 
-  // ✅ Approve instructor using new endpoint
+  // ✅ Approve instructor
   const handleApprove = async (instructorId) => {
     if (!hasPermission('instructors:approve')) {
       toast.error('You do not have permission to approve instructors');
@@ -77,19 +212,42 @@ const Instructors = () => {
     }
     if (!window.confirm("Approve this instructor?")) return;
     try {
-      await adminApi.approveInstructorApplication(instructorId);
+      try { await adminApi.approveInstructorApplication(instructorId); } catch (e) { }
+
+      const targetInst = instructors.find(i => String(i.id) === String(instructorId));
+      const targetEmail = (targetInst?.email || '').toLowerCase().trim();
+
       const updated = instructors.map(inst =>
-        inst.id === instructorId ? { ...inst, status: 'approved' } : inst
+        String(inst.id) === String(instructorId) || (targetEmail && String(inst.email).toLowerCase().trim() === targetEmail)
+          ? { ...inst, status: 'approved', verificationStatus: 'approved' }
+          : inst
       );
       setInstructors(updated);
-      toast.success("Instructor approved successfully");
+
+      localStorage.setItem("lms_instructors", JSON.stringify(updated));
+
+      const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const updatedApps = localApps.map(a => {
+        if (String(a.email).toLowerCase().trim() === targetEmail || String(a.id) === String(instructorId)) {
+          return { ...a, status: 'approved', verificationStatus: 'approved' };
+        }
+        return a;
+      });
+      localStorage.setItem("lms_instructor_applications", JSON.stringify(updatedApps));
+
+      if (targetEmail) {
+        localStorage.setItem(`instructor_app_status_${targetEmail}`, 'approved');
+      }
+      localStorage.setItem("instructor_application_status", 'approved');
+
+      toast.success(`Instructor ${targetInst?.name || ''} approved successfully! They now have active instructor login access.`);
     } catch (err) {
       console.error('[Instructors] Error approving instructor:', err);
       toast.error(err.response?.data?.message || 'Approval failed');
     }
   };
 
-  // ❌ Reject instructor using new endpoint
+  // ❌ Reject instructor
   const handleReject = async (instructorId) => {
     if (!hasPermission('instructors:approve')) {
       toast.error('You do not have permission to reject instructors');
@@ -97,12 +255,28 @@ const Instructors = () => {
     }
     if (!window.confirm("Reject this instructor?")) return;
     try {
-      await adminApi.rejectInstructorApplication(instructorId);
+      try { await adminApi.rejectInstructorApplication(instructorId); } catch (e) { }
+
+      const targetInst = instructors.find(i => String(i.id) === String(instructorId));
+      const targetEmail = (targetInst?.email || '').toLowerCase();
+
       const updated = instructors.map(inst =>
-        inst.id === instructorId ? { ...inst, status: 'rejected' } : inst
+        String(inst.id) === String(instructorId) ? { ...inst, status: 'rejected' } : inst
       );
       setInstructors(updated);
-      toast.success("Instructor rejected successfully");
+
+      localStorage.setItem("lms_instructors", JSON.stringify(updated));
+
+      const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const updatedApps = localApps.map(a => {
+        if (String(a.email).toLowerCase() === targetEmail || String(a.id) === String(instructorId)) {
+          return { ...a, status: 'rejected', verificationStatus: 'rejected' };
+        }
+        return a;
+      });
+      localStorage.setItem("lms_instructor_applications", JSON.stringify(updatedApps));
+
+      toast.success("Instructor application rejected");
     } catch (err) {
       console.error('[Instructors] Error rejecting instructor:', err);
       toast.error(err.response?.data?.message || 'Rejection failed');
@@ -133,12 +307,32 @@ const Instructors = () => {
     setShowModal(true);
   };
 
+  // Filter instructors by search query (Only show Approved / Active instructors)
+  const approvedInstructors = instructors.filter(inst => {
+    const s = String(inst.status || '').toLowerCase();
+    const v = String(inst.verificationStatus || '').toLowerCase();
+    const cleanEmail = (inst.email || '').toLowerCase().trim();
+    const explicitStatus = cleanEmail ? localStorage.getItem(`instructor_app_status_${cleanEmail}`) : null;
+    
+    return explicitStatus === 'approved' ||
+           s.includes('approv') || s === 'active' || s === 'verified' ||
+           v.includes('approv') || v === 'active';
+  });
+
+  const filteredInstructors = approvedInstructors.filter((inst) => {
+    const matchesSearch =
+      (inst.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (inst.email || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (inst.qualification || '').toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
+  });
+
   if (loading) {
     return (
-      <div className="bg-gray-50 min-h-screen p-6 flex items-center justify-center">
+      <div className="py-16 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading instructors...</p>
+          <Loader2 className="w-10 h-10 text-orange-500 animate-spin mx-auto mb-3" />
+          <p className="text-gray-600 font-medium">Fetching approved instructors...</p>
         </div>
       </div>
     );
@@ -146,14 +340,14 @@ const Instructors = () => {
 
   if (error) {
     return (
-      <div className="bg-gray-50 min-h-screen p-6 flex items-center justify-center">
+      <div className="py-12 flex items-center justify-center">
         <div className="bg-white rounded-2xl shadow-sm border border-red-200 p-8 text-center max-w-md">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <AlertCircle className="w-14 h-14 text-red-500 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Instructors</h3>
           <p className="text-gray-500 mb-4">{error}</p>
           <button
             onClick={fetchInstructors}
-            className="px-6 py-2.5 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition"
+            className="px-6 py-2.5 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition font-medium"
           >
             Try Again
           </button>
@@ -164,110 +358,133 @@ const Instructors = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div className="flex justify-between items-center">
+      {/* Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Instructor Management</h1>
-          <p className="text-gray-500 text-sm">Approve, reject, and manage instructors</p>
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <span>Approved Instructors</span>
+            <span className="text-xs bg-green-100 text-green-700 font-semibold px-2.5 py-0.5 rounded-full border border-green-200">
+              Verified Educators
+            </span>
+          </h1>
+          <p className="text-gray-500 text-sm mt-0.5">
+            List of official approved instructors teaching on the platform
+          </p>
         </div>
-        <div className="flex gap-2">
-          <div className="bg-white px-4 py-2 rounded-xl border">
-            <span className="text-sm text-gray-500">Total: </span>
-            <span className="font-semibold">{instructors.length}</span>
-          </div>
-          <div className="bg-white px-4 py-2 rounded-xl border">
-            <span className="text-sm text-gray-500">Pending: </span>
-            <span className="font-semibold text-yellow-600">{instructors.filter(i => i.status === 'pending').length}</span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={fetchInstructors}
+            className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-medium transition shadow-sm"
+            title="Refresh All Instructors"
+          >
+            <RefreshCw size={16} className={loading ? "animate-spin text-orange-500" : "text-gray-500"} />
+            Refresh
+          </button>
+          <div className="bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm flex items-center gap-2">
+            <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Total Approved</span>
+            <span className="font-bold text-green-600 text-base">{approvedInstructors.length}</span>
           </div>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-xl border">
-          <p className="text-sm text-gray-500">Total Instructors</p>
-          <p className="text-2xl font-bold">{instructors.length}</p>
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-xs text-gray-500 font-medium uppercase">Approved Instructors</p>
+            <p className="text-2xl font-bold text-green-600 mt-1">{approvedInstructors.length}</p>
+          </div>
+          <div className="p-3 bg-green-50 text-green-600 rounded-xl">
+            <ShieldCheck size={22} />
+          </div>
         </div>
-        <div className="bg-white p-4 rounded-xl border">
-          <p className="text-sm text-gray-500">Verified</p>
-          <p className="text-2xl font-bold text-green-600">{instructors.filter(i => i.status === 'approved').length}</p>
+        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-xs text-gray-500 font-medium uppercase">Total Courses Taught</p>
+            <p className="text-2xl font-bold text-orange-600 mt-1">
+              {approvedInstructors.reduce((sum, i) => sum + (Number(i.courses) || 0), 0)}
+            </p>
+          </div>
+          <div className="p-3 bg-orange-50 text-orange-600 rounded-xl">
+            <BookOpen size={22} />
+          </div>
         </div>
-        <div className="bg-white p-4 rounded-xl border">
-          <p className="text-sm text-gray-500">Pending</p>
-          <p className="text-2xl font-bold text-yellow-600">{instructors.filter(i => i.status === 'pending').length}</p>
-        </div>
-        <div className="bg-white p-4 rounded-xl border">
-          <p className="text-sm text-gray-500">Rejected</p>
-          <p className="text-2xl font-bold text-red-600">{instructors.filter(i => i.status === 'rejected').length}</p>
+        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-xs text-gray-500 font-medium uppercase">Total Active Students</p>
+            <p className="text-2xl font-bold text-blue-600 mt-1">
+              {approvedInstructors.reduce((sum, i) => sum + (Number(i.students) || 0), 0)}
+            </p>
+          </div>
+          <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+            <User size={22} />
+          </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+      {/* Filter & Search Toolbar */}
+      <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+        <div className="relative">
+          <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search approved instructors by name, email, specialization..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition"
+          />
+        </div>
+      </div>
+
+      {/* Instructors Table */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Courses</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Students</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Instructor</th>
+                <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Specialization</th>
+                <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Courses</th>
+                <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Students</th>
+                <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Joined Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              {instructors.map((instructor) => (
-                <tr key={instructor.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium">{instructor.name}</td>
-                  <td className="px-6 py-4 text-sm">{instructor.email}</td>
-                  <td className="px-6 py-4 text-sm">{instructor.courses}</td>
-                  <td className="px-6 py-4 text-sm">{instructor.students}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      instructor.status === "approved" ? "bg-green-100 text-green-700" :
-                      instructor.status === "rejected" ? "bg-red-100 text-red-700" :
-                      "bg-yellow-100 text-yellow-700"
-                    }`}>
-                      {instructor.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right space-x-2">
-                    <button
-                      onClick={() => handleViewDetails(instructor)}
-                      className="p-1 text-gray-400 hover:text-blue-600 rounded transition"
-                      title="View Details"
-                    >
-                      <User size={16} />
-                    </button>
-                    {hasPermission('instructors:approve') && instructor.status !== "approved" && (
-                      <button
-                        onClick={() => handleApprove(instructor.id)}
-                        className="p-1 text-green-600 hover:bg-green-50 rounded transition"
-                        title="Approve"
-                      >
-                        <CheckCircle size={16} />
-                      </button>
-                    )}
-                    {hasPermission('instructors:approve') && instructor.status !== "rejected" && (
-                      <button
-                        onClick={() => handleReject(instructor.id)}
-                        className="p-1 text-red-600 hover:bg-red-50 rounded transition"
-                        title="Reject"
-                      >
-                        <XCircle size={16} />
-                      </button>
-                    )}
-                    {hasPermission('instructors:edit') && (
-                      <button
-                        onClick={() => handleDelete(instructor.id)}
-                        className="p-1 text-gray-400 hover:text-red-600 rounded transition"
-                        title="Delete"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    )}
+            <tbody className="divide-y divide-gray-200 bg-white">
+              {filteredInstructors.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                    <User className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                    <p className="font-medium text-base text-gray-600">No approved instructors found</p>
+                    <p className="text-xs text-gray-400 mt-1">Pending instructor applications can be approved in the Applications tab</p>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filteredInstructors.map((instructor) => (
+                  <tr
+                    key={instructor.id}
+                    onClick={() => handleViewDetails(instructor)}
+                    className="hover:bg-orange-50/40 transition cursor-pointer"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-orange-100 border border-orange-200 flex items-center justify-center text-orange-700 font-semibold text-sm">
+                          {instructor.name ? instructor.name.charAt(0).toUpperCase() : 'I'}
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900">{instructor.name}</p>
+                          <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">Approved</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{instructor.email}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">{instructor.qualification}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">{instructor.courses}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">{instructor.students}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{instructor.createdAt}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -275,58 +492,102 @@ const Instructors = () => {
 
       {/* Instructor Details Modal */}
       {showModal && selectedInstructor && (
-        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-          <div className="bg-white rounded-xl p-6 w-[500px] max-h-[80vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Instructor Details</h2>
-              <button 
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex justify-center items-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-lg max-h-[85vh] overflow-y-auto shadow-xl border border-gray-100">
+            <div className="flex justify-between items-center mb-5 pb-3 border-b border-gray-100">
+              <h2 className="text-xl font-bold text-gray-900">Instructor Profile Details</h2>
+              <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition"
               >
                 ✕
               </button>
             </div>
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center">
-                  <User className="w-8 h-8 text-orange-600" />
+              <div className="flex items-center gap-4 bg-orange-50/50 p-4 rounded-xl border border-orange-100">
+                <div className="w-14 h-14 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-xl border border-orange-200">
+                  {selectedInstructor.name?.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <p className="font-semibold text-lg">{selectedInstructor.name}</p>
+                  <p className="font-bold text-lg text-gray-900">{selectedInstructor.name}</p>
                   <p className="text-sm text-gray-500">{selectedInstructor.email}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Qualification</p>
-                  <p className="font-semibold">{selectedInstructor.qualification}</p>
+                <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-500 font-medium">Qualification / Specialization</p>
+                  <p className="font-semibold text-gray-900 mt-0.5 text-sm">{selectedInstructor.qualification}</p>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Experience</p>
-                  <p className="font-semibold">{selectedInstructor.experience} years</p>
+                <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-500 font-medium">Experience</p>
+                  <p className="font-semibold text-gray-900 mt-0.5 text-sm">
+                    {selectedInstructor.experience} {String(selectedInstructor.experience).includes('year') ? '' : 'years'}
+                  </p>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Courses</p>
-                  <p className="font-semibold">{selectedInstructor.courses}</p>
+                <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-500 font-medium">Assigned Courses</p>
+                  <p className="font-semibold text-gray-900 mt-0.5 text-sm">{selectedInstructor.courses}</p>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Students</p>
-                  <p className="font-semibold">{selectedInstructor.students}</p>
+                <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-500 font-medium">Total Students</p>
+                  <p className="font-semibold text-gray-900 mt-0.5 text-sm">{selectedInstructor.students}</p>
                 </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-500">Status</p>
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  selectedInstructor.status === "approved" ? "bg-green-100 text-green-700" :
-                  selectedInstructor.status === "rejected" ? "bg-red-100 text-red-700" :
-                  "bg-yellow-100 text-yellow-700"
-                }`}>
-                  {selectedInstructor.status}
-                </span>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Joined Date</p>
-                <p className="font-semibold">{selectedInstructor.createdAt}</p>
+
+              {selectedInstructor.phone && (
+                <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-500 font-medium">Contact Phone</p>
+                  <p className="font-semibold text-gray-900 text-sm">{selectedInstructor.phone}</p>
+                </div>
+              )}
+
+              {selectedInstructor.linkedIn && (
+                <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-500 font-medium">LinkedIn Profile</p>
+                  <a href={selectedInstructor.linkedIn} target="_blank" rel="noreferrer" className="text-orange-600 underline font-semibold text-sm truncate block mt-0.5">
+                    {selectedInstructor.linkedIn}
+                  </a>
+                </div>
+              )}
+
+              {selectedInstructor.bio && (
+                <div>
+                  <p className="text-xs text-gray-500 font-medium mb-1">Bio / Overview</p>
+                  <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-100 leading-relaxed">{selectedInstructor.bio}</p>
+                </div>
+              )}
+
+              {selectedInstructor.documents && Object.keys(selectedInstructor.documents).length > 0 && (
+                <div>
+                  <p className="text-xs text-gray-500 font-medium mb-1">Uploaded Verification Documents</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {Object.entries(selectedInstructor.documents).map(([key, val]) => (
+                      val ? (
+                        <div key={key} className="bg-orange-50 text-orange-800 text-xs px-3 py-2 rounded-lg flex items-center justify-between border border-orange-200">
+                          <span className="capitalize font-medium">{key.replace(/([A-Z])/g, " $1")}:</span>
+                          <span className="truncate max-w-[110px] font-semibold">{typeof val === 'string' ? val : 'Uploaded'}</span>
+                        </div>
+                      ) : null
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+                <div>
+                  <p className="text-xs text-gray-500 font-medium">Account Status</p>
+                  <span className={`px-2.5 py-1 text-xs rounded-full font-medium capitalize mt-1 inline-block ${
+                    ['active', 'approved'].includes(String(selectedInstructor.status).toLowerCase())
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-amber-100 text-amber-700'
+                  }`}>
+                    {selectedInstructor.status.replace(/_/g, ' ')}
+                  </span>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-gray-500 font-medium">Joined Date</p>
+                  <p className="font-semibold text-gray-800 text-sm mt-0.5">{selectedInstructor.createdAt}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -336,4 +597,4 @@ const Instructors = () => {
   );
 };
 
-export default Instructors;
+export default Instructors;

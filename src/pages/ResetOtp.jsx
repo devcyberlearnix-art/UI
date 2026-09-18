@@ -5,7 +5,7 @@ import {
   CheckCircle, AlertCircle, ArrowLeft, Timer,
   AlertTriangle, Mail, KeyRound
 } from "lucide-react";
-import authApi from "../api/authApi";
+import axiosInstance from "../api/axiosInstance";
 
 function ResetOtp() {
   const navigate = useNavigate();
@@ -164,11 +164,16 @@ function ResetOtp() {
     setError("");
 
     try {
-      await authApi.verifyResetOtpAndPassword({
-        email,
+      // ✅ Use axiosInstance so ngrok-skip-browser-warning header is included
+      const { data } = await axiosInstance.post("/api/v1/auth/password/verify-otp", {
+        email: email,
         otp: otp.join(""),
         newPassword: password,
       });
+
+      if (data && !data.success && data.message) {
+        throw new Error(data.message);
+      }
 
       // Success
       setSuccess(true);
@@ -176,7 +181,7 @@ function ResetOtp() {
         navigate("/login");
       }, 2000);
     } catch (err) {
-      setError(err.message || "Something went wrong. Please try again.");
+      setError(err.response?.data?.message || err.message || "Something went wrong. Please try again.");
       setSuccess(false);
     } finally {
       setLoading(false);
