@@ -317,6 +317,42 @@ const Register = () => {
   const FieldError = ({ name }) =>
     errors[name] ? <p className="mt-1 text-xs text-red-600">{errors[name]}</p> : null;
 
+  const isStepValid = (step) => {
+    if (step === 1) {
+      return (
+        formData.firstName.trim() !== "" &&
+        formData.lastName.trim() !== "" &&
+        /\S+@\S+\.\S+/.test(formData.email)
+      );
+    }
+
+    if (step === 2) {
+      return (
+        formData.password.length >= 6 &&
+        passwordStrength >= 3 &&
+        formData.password === formData.confirmPassword &&
+        formData.confirmPassword.trim() !== ""
+      );
+    }
+
+    if (step === 3) {
+      return (
+        /^[6-9]\d{9}$/.test(formData.mobile) &&
+        !!formData.dob &&
+        formData.city.trim() !== "" &&
+        formData.state.trim() !== "" &&
+        formData.country.trim() !== "" &&
+        !!formData.preferredLanguage
+      );
+    }
+
+    if (step === 4) {
+      return !!formData.agreeToTerms;
+    }
+
+    return false;
+  };
+
   const validateStep = (step) => {
     const nextErrors = {};
 
@@ -540,7 +576,9 @@ const Register = () => {
             >
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">First Name</label>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    First Name <span className="text-red-500">*</span>
+                  </label>
                   <div className="relative">
                     <User size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input className="lms-input pl-10" value={formData.firstName} onChange={(e) => updateField("firstName", e.target.value)} />
@@ -548,7 +586,9 @@ const Register = () => {
                   <FieldError name="firstName" />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Last Name</label>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Last Name <span className="text-red-500">*</span>
+                  </label>
                   <div className="relative">
                     <User size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input className="lms-input pl-10" value={formData.lastName} onChange={(e) => updateField("lastName", e.target.value)} />
@@ -558,7 +598,9 @@ const Register = () => {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Email Address</label>
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Email Address <span className="text-red-500">*</span>
+                </label>
                 <div className="relative">
                   <Mail size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
@@ -584,7 +626,9 @@ const Register = () => {
             >
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Password</label>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Password <span className="text-red-500">*</span>
+                  </label>
                   <div className="relative">
                     <Lock size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
@@ -607,7 +651,9 @@ const Register = () => {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Confirm Password</label>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Confirm Password <span className="text-red-500">*</span>
+                  </label>
                   <div className="relative">
                     <Lock size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
@@ -655,7 +701,9 @@ const Register = () => {
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Mobile Number</label>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Mobile Number <span className="text-red-500">*</span>
+                  </label>
                   <div className="grid grid-cols-[120px_1fr] gap-2">
                     <div className="relative">
                       <button
@@ -713,7 +761,9 @@ const Register = () => {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Date of Birth</label>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Date of Birth <span className="text-red-500">*</span>
+                  </label>
                   <div className="relative">
                     <Calendar size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input type="date" className="lms-input pl-10" value={formData.dob} onChange={(e) => updateField("dob", e.target.value)} />
@@ -725,7 +775,9 @@ const Register = () => {
               {/* ✅ Converted City, State, and Country to standard text inputs */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">City</label>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    City <span className="text-red-500">*</span>
+                  </label>
                   <div className="relative">
                     <MapPin size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input 
@@ -740,7 +792,9 @@ const Register = () => {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">State</label>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    State <span className="text-red-500">*</span>
+                  </label>
                   <div className="relative">
                     <MapPin size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input 
@@ -755,7 +809,9 @@ const Register = () => {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Country</label>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Country <span className="text-red-500">*</span>
+                  </label>
                   <div className="relative">
                     <Globe size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input 
@@ -772,7 +828,9 @@ const Register = () => {
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">Preferred Language</label>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Preferred Language <span className="text-red-500">*</span>
+                  </label>
                   <div className="relative">
                     <Languages size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <select
@@ -854,7 +912,7 @@ const Register = () => {
                       className="mt-0.5 h-5 w-5 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
                     />
                     <span className="text-sm text-slate-700 leading-relaxed">
-                      I have read and agree to the <button type="button" className="text-orange-600 hover:underline font-medium">Terms of Service</button> and <button type="button" className="text-orange-600 hover:underline font-medium">Privacy Policy</button>.
+                      I have read and agree to the <button type="button" className="text-orange-600 hover:underline font-medium">Terms of Service</button> and <button type="button" className="text-orange-600 hover:underline font-medium">Privacy Policy</button>.<span className="text-red-500"> *</span>
                     </span>
                   </label>
                   <FieldError name="agreeToTerms" />
@@ -879,11 +937,20 @@ const Register = () => {
 
           {/* ✅ Logic changed to show "Next" until Step 4, then "Create Account" */}
           {currentStep < 4 ? (
-            <button type="button" onClick={handleNext} className="lms-btn-primary w-auto px-5">
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={!isStepValid(currentStep)}
+              className="lms-btn-primary w-auto px-5 disabled:cursor-not-allowed disabled:opacity-50"
+            >
               Next <ArrowRight size={16} />
             </button>
           ) : (
-            <button type="submit" disabled={loading || photoUploading} className="lms-btn-primary w-auto px-5">
+            <button
+              type="submit"
+              disabled={loading || photoUploading || !isStepValid(4)}
+              className="lms-btn-primary w-auto px-5 disabled:cursor-not-allowed disabled:opacity-50"
+            >
               {loading ? "Creating Account..." : "Create Account"}
               {!loading && <CheckCircle size={16} className="ml-1" />}
             </button>
