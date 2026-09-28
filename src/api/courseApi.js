@@ -1,6 +1,38 @@
 import axiosInstance from "./axiosInstance";
 
 export const courseApi = {
+  // GET /api/v1/courses/trending?page=0&size=10&category=Programming&level=Beginner
+  getTrendingCourses: async ({ page = 0, size = 10, category = '', level = '' } = {}) => {
+    const params = { page, size };
+    if (category && category !== 'All') params.category = category;
+    if (level && level !== 'All') params.level = level;
+
+    try {
+      const response = await axiosInstance.get('/api/v1/courses/trending', {
+        params,
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+        },
+      });
+      return response.data;
+    } catch (err) {
+      console.warn('[courseApi] GET /api/v1/courses/trending failed, trying fallback...', err);
+      try {
+        const response = await axiosInstance.get('/courses/trending', {
+          params,
+          headers: {
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true',
+          },
+        });
+        return response.data;
+      } catch (err2) {
+        throw err;
+      }
+    }
+  },
+
   // GET /api/v1/courses
   // Get all courses
   getAllCourses: async (params = {}) => {

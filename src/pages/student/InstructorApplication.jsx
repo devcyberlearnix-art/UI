@@ -368,22 +368,22 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
   if (isApproved) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-6 text-center animate-[fadeIn_0.3s_ease]">
-        <div className="w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-green-200">
-          <CheckCircle className="w-10 h-10 text-white" />
+        <div className="w-16 h-16 bg-emerald-100 border border-emerald-200 rounded-2xl flex items-center justify-center mb-5 text-emerald-600">
+          <CheckCircle className="w-8 h-8" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">🎉 Application Approved!</h2>
-        <p className="text-gray-500 max-w-md">Congratulations! Your instructor application form has been reviewed and approved by the Admin.</p>
-        <div className="mt-6 p-6 bg-green-50 border border-green-200 rounded-2xl max-w-md text-center shadow-sm">
-          <p className="font-bold text-green-900 text-base">🚀 You are now an official Instructor!</p>
-          <p className="text-xs text-green-700 mt-1 mb-4">Click below to switch to your Instructor Dashboard and start creating & managing courses.</p>
+        <h2 className="text-2xl font-bold text-slate-900 mb-2">Application Approved</h2>
+        <p className="text-slate-500 max-w-md text-sm">Congratulations! Your instructor application has been reviewed and verified by the administration team.</p>
+        <div className="mt-6 p-6 bg-emerald-50 border border-emerald-200 rounded-2xl max-w-md text-center shadow-2xs">
+          <p className="font-bold text-emerald-950 text-sm">You are now an accredited Instructor</p>
+          <p className="text-xs text-emerald-700 mt-1 mb-4">Click below to open your Instructor Dashboard and start creating and managing your course catalog.</p>
           <button
             onClick={async () => {
               if (switchRole) await switchRole('instructor');
               navigate("/instructor/dashboard");
             }}
-            className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer"
+            className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl shadow-xs transition-all cursor-pointer"
           >
-            Switch to Instructor Dashboard →
+            Open Instructor Dashboard
           </button>
         </div>
       </div>
@@ -394,19 +394,19 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
   if (normalizedStatus === "rejected") {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-6 text-center animate-[fadeIn_0.3s_ease]">
-        <div className="w-20 h-20 bg-gradient-to-r from-red-400 to-rose-500 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-red-200">
-          <AlertCircle className="w-10 h-10 text-white" />
+        <div className="w-16 h-16 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-center mb-5 text-rose-600">
+          <AlertCircle className="w-8 h-8" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Application Not Approved</h2>
-        <p className="text-gray-500 max-w-md mb-6">Your application was reviewed but not approved. You can submit an updated application with complete documentation.</p>
+        <h2 className="text-2xl font-bold text-slate-900 mb-2">Application Not Approved</h2>
+        <p className="text-slate-500 max-w-md mb-6 text-sm">Your application was reviewed but could not be approved at this time. You can submit an updated application with complete documentation.</p>
         <button
           onClick={() => {
             setSubmittedLocally(false);
             if (onStatusChange) onStatusChange(null);
           }}
-          className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-sm font-semibold shadow-md hover:shadow-lg transition-all"
+          className="px-5 py-2 bg-slate-900 text-white rounded-xl text-xs font-semibold shadow-xs hover:bg-slate-800 transition-all"
         >
-          Re-submit Application Form
+          Re-submit Application
         </button>
       </div>
     );
@@ -418,17 +418,17 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
   if (isPending) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-        <div className="w-20 h-20 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-orange-200 animate-pulse">
-          <Loader2 className="w-10 h-10 text-white animate-spin" />
+        <div className="w-16 h-16 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-center mb-5 text-amber-600">
+          <Loader2 className="w-8 h-8 animate-spin" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Application Under Review</h2>
-        <p className="text-gray-500 max-w-md mb-6">Your instructor application has been submitted successfully. Our team will review your documents and get back to you shortly.</p>
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl px-6 py-4 text-sm text-amber-700 max-w-sm">
-          <p className="font-semibold mb-1">📬 What happens next?</p>
-          <ul className="text-left space-y-1 text-amber-600">
-            <li>• Admin reviews your documents in dashboard</li>
-            <li>• Status updates to Approved upon review</li>
-            <li>• Your role switches to Instructor</li>
+        <h2 className="text-2xl font-bold text-slate-900 mb-2">Application Under Review</h2>
+        <p className="text-slate-500 max-w-md mb-6 text-sm">Your instructor application has been submitted successfully. Our administration team is reviewing your documents.</p>
+        <div className="bg-amber-50/80 border border-amber-200 rounded-2xl px-6 py-4 text-xs text-amber-800 max-w-sm">
+          <p className="font-semibold mb-1 text-slate-800">Verification Timeline</p>
+          <ul className="text-left space-y-1 text-amber-700">
+            <li>• Admin team reviews uploaded documents</li>
+            <li>• Verification status updates automatically</li>
+            <li>• Instructor privileges unlocked upon approval</li>
           </ul>
         </div>
         <button
@@ -436,9 +436,9 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
             setSubmittedLocally(false);
             if (onStatusChange) onStatusChange(null);
           }}
-          className="mt-6 px-5 py-2.5 bg-white border border-purple-200 text-purple-700 hover:bg-purple-50 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-2 cursor-pointer"
+          className="mt-6 px-4 py-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-semibold shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer"
         >
-          <span>✏️</span> Edit or re-submit application form
+          Edit or update application
         </button>
       </div>
     );

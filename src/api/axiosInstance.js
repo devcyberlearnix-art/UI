@@ -35,11 +35,26 @@ axiosInstance.interceptors.request.use(
     const isPublicEndpoint = publicEndpoints.some(endpoint => config.url.includes(endpoint));
 
     if (!isPublicEndpoint) {
+      const getCookie = (name) => {
+        try {
+          const match = typeof document !== 'undefined' && document.cookie.match(new RegExp('(^|; )' + name + '=([^;]+)'));
+          return match ? decodeURIComponent(match[2]) : null;
+        } catch {
+          return null;
+        }
+      };
+
       const token = localStorage.getItem('authToken') ||
+        localStorage.getItem('accessToken') ||
+        localStorage.getItem('token') ||
         localStorage.getItem('lms_token') ||
         localStorage.getItem('access_token') ||
         sessionStorage.getItem('authToken') ||
-        sessionStorage.getItem('lms_token');
+        sessionStorage.getItem('accessToken') ||
+        sessionStorage.getItem('token') ||
+        sessionStorage.getItem('lms_token') ||
+        getCookie('accessToken') ||
+        getCookie('token');
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;

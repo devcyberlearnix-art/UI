@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../components/dashboard/Sidebar';
-import TopNav from '../components/dashboard/TopNav'; // ✅ Imports the default export
+import TopNav from '../components/dashboard/TopNav';
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -17,19 +17,20 @@ const DashboardLayout = () => {
   }, [location.pathname]);
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50">
+    <div className="flex h-screen bg-slate-50 text-slate-900 font-sans antialiased overflow-hidden">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <TopNav setSidebarOpen={setSidebarOpen} sidebarOpen={sidebarOpen} />
-        <main ref={contentRef} className="flex-1 overflow-y-auto p-4 md:p-6">
+        <main ref={contentRef} className="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, y: 14, scale: 0.995 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.995 }}
-              transition={{ duration: 0.24, ease: 'easeOut' }}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full max-w-7xl mx-auto"
             >
               <Outlet />
             </motion.div>

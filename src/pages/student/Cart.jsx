@@ -83,8 +83,8 @@ const Cart = () => {
         <h2 className="text-xl font-semibold mb-2">Your cart is empty</h2>
         <p className="text-slate-500 mb-4">Browse courses and add your favorites to checkout.</p>
         <button
-          onClick={() => navigate("/")}
-          className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition"
+          onClick={() => navigate("/student/courses")}
+          className="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold px-6 py-2.5 rounded-xl hover:from-orange-600 hover:to-amber-600 transition shadow-md shadow-orange-500/20"
         >
           Browse Courses
         </button>

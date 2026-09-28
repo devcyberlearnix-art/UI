@@ -20,6 +20,7 @@ import {
   UserCheck,
   GraduationCap,
   Heart,
+  Compass,
 } from "lucide-react";
 
 const adminGroups = [
@@ -84,14 +85,19 @@ const instructorGroups = [
 
 const studentGroups = [
   {
-    section: "Student",
+    section: "Learning",
     items: [
       { path: "/student/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-      { path: "/student/my-learning", icon: GraduationCap, label: "My Learning" },
+      { path: "/student/courses", icon: Compass, label: "Browse Courses" },
+      { path: "/student/my-learning", icon: BookOpen, label: "My Courses" },
       { path: "/student/wishlist", icon: Heart, label: "Wishlist" },
-      { path: "/student/orders", icon: ShoppingCart, label: "Orders" },
-      { path: "/cart", icon: ShoppingCart, label: "Cart" },
-      { path: "/checkout", icon: CreditCard, label: "Checkout" },
+      { path: "/student/orders", icon: CreditCard, label: "Order History" },
+    ],
+  },
+  {
+    section: "Account",
+    items: [
+      { path: "/cart", icon: ShoppingCart, label: "Shopping Cart" },
       { path: "/profile", icon: User, label: "My Profile" },
     ],
   },
@@ -179,21 +185,7 @@ export const tabsByRole = {
       ],
     },
   ],
-  student: [
-    {
-      label: "Learning",
-      match: ["/student/dashboard", "/student/my-learning", "/student/wishlist", "/student/orders", "/cart", "/checkout", "/profile"],
-      defaultPath: "/student/dashboard",
-      subtabs: [
-        { label: "Dashboard", path: "/student/dashboard" },
-        { label: "My Learning", path: "/student/my-learning" },
-        { label: "Wishlist", path: "/student/wishlist" },
-        { label: "Orders", path: "/student/orders" },
-        { label: "Cart", path: "/cart" },
-        { label: "Profile", path: "/profile" },
-      ],
-    },
-  ],
+  student: [],
 };
 
 export const normalizeRole = (roleValue = "") => {

@@ -23,9 +23,9 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
     user?.name ||
     user?.fullName ||
     user?.username ||
-    (user?.email ? user.email.split("@")[0] : "Admin");
+    (user?.email ? user.email.split("@")[0] : "Learner");
 
-  const displayEmail = user?.email || "admin@lms.com";
+  const displayEmail = user?.email || "learner@learnmaster.edu";
   const displayRole =
     roleKey === "super_admin"
       ? "Super Admin"
@@ -76,43 +76,45 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
   const showSwitcher = !!user && (String(rawRole).toLowerCase().includes("admin") || String(rawRole).toLowerCase().includes("instructor"));
 
   const getUserInitials = () => {
-    if (!user) return 'A';
-    const name = displayName || 'Admin';
+    if (!user) return 'L';
+    const name = displayName || 'Learner';
     return name.charAt(0).toUpperCase();
   };
 
   return (
-    <div className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-orange-100 shadow-sm">
-      <div className="h-16 flex justify-between items-center px-6">
+    <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-2xs">
+      <div className="h-14 flex justify-between items-center px-4 sm:px-6">
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-orange-50 rounded-lg transition-colors text-gray-600 hover:text-orange-600"
+            className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-600 hover:text-slate-900"
+            title="Toggle Sidebar"
           >
-            {sidebarOpen ? <Menu size={22} /> : <Menu size={22} />}
+            <Menu size={18} />
           </button>
-          <div className="hidden md:block">
-            <p className="text-sm font-semibold text-gray-800 truncate">{displayName}</p>
-            <p className="text-xs text-gray-500 truncate">{displayRole}</p>
+          <div className="hidden sm:flex items-center gap-2 min-w-0 text-xs">
+            <span className="font-semibold text-slate-400">Portal</span>
+            <span className="text-slate-300">/</span>
+            <span className="font-bold text-slate-800 tracking-tight">{displayRole} Workspace</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {showSwitcher && (
             <RoleSwitcher currentRole={tabRole} onRoleChange={handleRoleChange} />
           )}
 
-          <button className="relative p-2 hover:bg-orange-50 rounded-lg transition-colors text-gray-600 hover:text-orange-600">
-            <Bell size={20} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full border-2 border-white"></span>
+          <button className="relative p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-500 hover:text-slate-800">
+            <Bell size={16} />
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-orange-600 rounded-full"></span>
           </button>
 
-          <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
+          <div className="flex items-center gap-2.5 pl-3 border-l border-slate-200">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-semibold text-gray-800">{displayName}</p>
-              <p className="text-xs text-gray-500">{displayEmail}</p>
+              <p className="text-xs font-bold text-slate-900 leading-tight">{displayName}</p>
+              <p className="text-[10px] text-slate-400 font-mono leading-tight">{displayRole}</p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-orange-500/20">
+            <div className="h-8 w-8 rounded-lg bg-slate-900 flex items-center justify-center text-white font-bold text-xs shadow-2xs">
               {getUserInitials()}
             </div>
           </div>
@@ -120,18 +122,18 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
       </div>
 
       {roleTabs.length > 0 && (
-        <div className="px-6 pb-3">
-          <div className="flex flex-wrap gap-2 mb-2">
+        <div className="px-6 pb-2.5 border-t border-slate-100 bg-slate-50/50">
+          <div className="flex flex-wrap gap-1.5 pt-2">
             {roleTabs.map((tab) => {
               const isActive = activeTab?.label === tab.label;
               return (
                 <NavLink
                   key={tab.label}
                   to={tab.defaultPath}
-                  className={`px-4 py-1.5 text-sm rounded-full border transition-all duration-200 ${
+                  className={`px-3 py-1 text-xs rounded-lg font-semibold transition-all ${
                     isActive
-                      ? "bg-orange-500 text-white border-orange-500 shadow"
-                      : "bg-white text-gray-600 border-gray-200 hover:border-orange-300 hover:text-orange-600"
+                      ? "bg-slate-900 text-white shadow-2xs"
+                      : "bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:text-slate-900"
                   }`}
                 >
                   {tab.label}
@@ -143,20 +145,20 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
           {activeTab?.subtabs?.length > 0 && (
             <motion.div
               key={activeTab.label}
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2 }}
-              className="flex flex-wrap gap-2"
+              transition={{ duration: 0.15 }}
+              className="flex flex-wrap gap-1.5 mt-2"
             >
               {activeTab.subtabs.map((subtab) => (
                 <NavLink
                   key={subtab.path}
                   to={subtab.path}
                   className={({ isActive }) =>
-                    `px-3 py-1 text-xs rounded-lg transition-colors ${
+                    `px-2.5 py-0.5 text-xs rounded-md transition-colors ${
                       isActive
-                        ? "bg-orange-100 text-orange-700 font-semibold"
-                        : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                        ? "bg-orange-100 text-orange-800 font-semibold"
+                        : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
                     }`
                   }
                 >

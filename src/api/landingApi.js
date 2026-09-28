@@ -70,15 +70,21 @@ export const landingApi = {
     if (!response.ok) throw new Error(`Failed to track course impression: ${courseId}`);
   },
 
-  getTrendingCourses: async (page = 0, limit = 5) => {
+  getTrendingCourses: async (page = 0, size = 10, category = '', level = '') => {
     const requestUrl = new URL(buildApiUrl('/api/v1/courses/trending'));
     requestUrl.searchParams.set('page', String(page));
-    requestUrl.searchParams.set('limit', String(limit));
+    requestUrl.searchParams.set('size', String(size));
+    requestUrl.searchParams.set('limit', String(size));
+    if (category && category !== 'All') requestUrl.searchParams.set('category', category);
+    if (level && level !== 'All') requestUrl.searchParams.set('level', level);
 
     const response = await fetch(requestUrl.toString(), {
       method: 'GET',
+      credentials: 'include',
       headers: {
         Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -88,16 +94,16 @@ export const landingApi = {
 
     const payload = await response.json();
     const data = payload?.data || payload;
-    const rawCourses = data?.courses || data?.content || data?.items || data?.results || [];
+    const rawCourses = data?.courses || data?.content || data?.items || data?.results || (Array.isArray(data) ? data : []);
     const items = Array.isArray(rawCourses) ? rawCourses.map(normalizeCourse) : [];
     const totalCourses = Number(data?.totalElements || data?.totalItems || data?.totalCourses || items.length || 0);
-    const totalPages = Number(data?.totalPages || Math.ceil(totalCourses / limit) || 1);
+    const totalPages = Number(data?.totalPages || Math.ceil(totalCourses / size) || 1);
 
     return {
       success: true,
       data: {
         courses: items,
-        pagination: { page, limit, totalPages, totalCourses },
+        pagination: { page, size, totalPages, totalCourses },
       },
     };
   },

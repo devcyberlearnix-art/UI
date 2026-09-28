@@ -1,9 +1,11 @@
 // src/pages/Certifications.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Award, CheckCircle } from "lucide-react";
 
 const Certifications = () => {
+  const navigate = useNavigate();
   const certifications = [
     { name: "Full Stack Web Development", provider: "LearnMaster", level: "Advanced" },
     { name: "Data Science & Machine Learning", provider: "LearnMaster", level: "Intermediate" },
@@ -44,7 +46,10 @@ const Certifications = () => {
         <div className="mt-12 text-center bg-white rounded-xl border p-8">
           <h2 className="text-xl font-bold text-gray-800 mb-2">Ready to start?</h2>
           <p className="text-gray-600 mb-4">Browse our courses and earn your certificate today.</p>
-          <button className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+          <button
+            onClick={() => navigate("/courses")}
+            className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold rounded-xl hover:from-orange-600 hover:to-amber-600 transition shadow-md shadow-orange-500/20 cursor-pointer"
+          >
             Browse Courses
           </button>
         </div>

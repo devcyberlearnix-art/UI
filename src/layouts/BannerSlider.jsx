@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -30,6 +31,7 @@ const slides = [
 ];
 
 const BannerSlider = () => {
+  const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
 
@@ -90,8 +92,8 @@ const BannerSlider = () => {
           </h2>
           <p className="text-gray-600 mb-6">{slides[current].description}</p>
           <button
-            onClick={() => (window.location.href = slides[current].link)}
-            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition shadow-md flex items-center gap-2"
+            onClick={() => navigate(slides[current].link)}
+            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl hover:from-orange-600 hover:to-amber-600 font-bold transition shadow-md shadow-orange-500/20 flex items-center gap-2 cursor-pointer"
           >
             {slides[current].cta} →
           </button>
