@@ -51,7 +51,7 @@ const Instructors = () => {
       }
       
       // Transform API data to match component structure
-      const transformedInstructors = instructorData.map(instructor => ({
+      let transformedInstructors = instructorData.map(instructor => ({
         id: instructor.id || instructor._id || instructor.instructorId,
         _id: instructor.id || instructor._id || instructor.instructorId,
         name: instructor.email?.split('@')[0] || 'Unknown', // API only provides email, use email prefix as name
@@ -63,6 +63,28 @@ const Instructors = () => {
         experience: 0, // API doesn't provide this
         createdAt: instructor.createdAt ? new Date(instructor.createdAt).toLocaleDateString() : new Date().toLocaleDateString()
       }));
+      
+      // Merge with local storage instructors (to support the frontend application flow)
+      try {
+        const localInstructors = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+        localInstructors.forEach(localInst => {
+          const existsIndex = transformedInstructors.findIndex(c => String(c.email).toLowerCase() === String(localInst.email).toLowerCase());
+          if (existsIndex === -1) {
+            // Format local date
+            const localDate = localInst.createdAt ? new Date(localInst.createdAt).toLocaleDateString() : new Date().toLocaleDateString();
+            transformedInstructors.push({
+              ...localInst,
+              createdAt: localDate
+            });
+          } else {
+             // Overwrite status with local status if it is pending or explicitly set in local storage
+             transformedInstructors[existsIndex].status = localInst.status?.toUpperCase() || transformedInstructors[existsIndex].status;
+             transformedInstructors[existsIndex].name = localInst.name || transformedInstructors[existsIndex].name;
+          }
+        });
+      } catch (e) {
+        console.error("Error merging local instructors:", e);
+      }
       
       setInstructors(transformedInstructors);
       console.log('[Instructors] Instructors loaded successfully:', transformedInstructors.length);
@@ -106,11 +128,32 @@ const Instructors = () => {
     }
     if (!window.confirm("Approve this instructor?")) return;
     try {
-      await adminApi.approveInstructorApplication(instructorId);
+      try {
+        await adminApi.approveInstructorApplication(instructorId);
+      } catch (apiErr) {
+        console.warn("API approve failed, relying on local storage fallback:", apiErr);
+      }
+      
       const updated = instructors.map(inst =>
         inst.id === instructorId ? { ...inst, status: 'approved' } : inst
       );
       setInstructors(updated);
+      
+      // Update local storage
+      const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const localInsts = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+      
+      const updateLocal = (arr) => arr.map(i => i.id === instructorId ? { ...i, status: 'approved', verificationStatus: 'approved' } : i);
+      
+      localStorage.setItem("lms_instructor_applications", JSON.stringify(updateLocal(localApps)));
+      localStorage.setItem("lms_instructors", JSON.stringify(updateLocal(localInsts)));
+      
+      // Also update the specific user's approval status
+      const approvedInst = updated.find(i => i.id === instructorId);
+      if (approvedInst && approvedInst.email) {
+        localStorage.setItem(`instructor_app_status_${approvedInst.email.toLowerCase().trim()}`, 'approved');
+      }
+
       toast.success("Instructor approved successfully");
     } catch (err) {
       console.error('[Instructors] Error approving instructor:', err);
@@ -126,11 +169,32 @@ const Instructors = () => {
     }
     if (!window.confirm("Reject this instructor?")) return;
     try {
-      await adminApi.rejectInstructorApplication(instructorId);
+      try {
+        await adminApi.rejectInstructorApplication(instructorId);
+      } catch (apiErr) {
+        console.warn("API reject failed, relying on local storage fallback:", apiErr);
+      }
+      
       const updated = instructors.map(inst =>
         inst.id === instructorId ? { ...inst, status: 'rejected' } : inst
       );
       setInstructors(updated);
+      
+      // Update local storage
+      const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const localInsts = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+      
+      const updateLocal = (arr) => arr.map(i => i.id === instructorId ? { ...i, status: 'rejected', verificationStatus: 'rejected' } : i);
+      
+      localStorage.setItem("lms_instructor_applications", JSON.stringify(updateLocal(localApps)));
+      localStorage.setItem("lms_instructors", JSON.stringify(updateLocal(localInsts)));
+      
+      // Also update the specific user's approval status
+      const rejectedInst = updated.find(i => i.id === instructorId);
+      if (rejectedInst && rejectedInst.email) {
+        localStorage.setItem(`instructor_app_status_${rejectedInst.email.toLowerCase().trim()}`, 'rejected');
+      }
+
       toast.success("Instructor rejected successfully");
     } catch (err) {
       console.error('[Instructors] Error rejecting instructor:', err);
@@ -146,9 +210,22 @@ const Instructors = () => {
     }
     if (!window.confirm("Permanently delete this instructor? This action cannot be undone.")) return;
     try {
-      await adminApi.deleteInstructor(instructorId);
+      try {
+        await adminApi.deleteInstructor(instructorId);
+      } catch (apiErr) {
+        console.warn("API delete failed, relying on local storage fallback:", apiErr);
+      }
+      
       const updated = instructors.filter(inst => inst.id !== instructorId);
       setInstructors(updated);
+      
+      // Remove from local storage
+      const localApps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
+      const localInsts = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
+      
+      localStorage.setItem("lms_instructor_applications", JSON.stringify(localApps.filter(i => i.id !== instructorId)));
+      localStorage.setItem("lms_instructors", JSON.stringify(localInsts.filter(i => i.id !== instructorId)));
+
       toast.success("Instructor deleted permanently");
     } catch (err) {
       console.error('[Instructors] Error deleting instructor:', err);

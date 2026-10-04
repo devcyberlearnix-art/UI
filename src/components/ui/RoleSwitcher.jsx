@@ -27,7 +27,7 @@ const RoleSwitcher = ({ currentRole, onRoleChange }) => {
 
   const rawRole = String(user?.role || user?.role1 || user?.userRole || "").toLowerCase();
   const instStatus = checkInstructorStatus(user?.email);
-  const isApprovedInst = instStatus === 'active' || instStatus === 'approved' || localStorage.getItem('instructor_application_status') === 'approved';
+  const isApprovedInst = instStatus === 'active' || instStatus === 'approved' || localStorage.getItem(`instructor_app_status_${user?.email || ''}`) === 'approved';
 
   const isUserAdmin = useMemo(() => {
     const stored = localStorage.getItem("lms_user") || "";

@@ -10,7 +10,7 @@ const StudentDashboard = () => {
   const [trendingCourses, setTrendingCourses] = useState([]);
   const [loadingCourses, setLoadingCourses] = useState(false);
   const [applicationStatus, setApplicationStatus] = useState(() => {
-    return localStorage.getItem("instructor_application_status") || null;
+    return localStorage.getItem(`instructor_app_status_${user?.email || ''}`) || null;
   });
 
   useEffect(() => {
@@ -31,7 +31,11 @@ const StudentDashboard = () => {
 
   const handleStatusChange = (status) => {
     setApplicationStatus(status);
-    localStorage.setItem("instructor_application_status", status);
+    if (status) {
+      localStorage.setItem(`instructor_app_status_${user?.email || ''}`, status);
+    } else {
+      localStorage.removeItem(`instructor_app_status_${user?.email || ''}`);
+    }
   };
 
   const tabs = [
