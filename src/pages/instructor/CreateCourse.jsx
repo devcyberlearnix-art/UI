@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  BookOpen, DollarSign, FileText, Tag, Loader2, CheckCircle, AlertCircle, ArrowLeft
+  BookOpen, DollarSign, FileText, Tag, Loader2, CheckCircle, AlertCircle, ArrowLeft, Image as ImageIcon, Crown, Type, User
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { instructorApi } from "../../api/instructorApi";
@@ -27,17 +27,30 @@ const CreateCourse = () => {
 
   const [form, setForm] = useState({
     title: "",
+    subtitle: "",
     description: "",
     category: "Development",
     level: "Beginner",
     price: "",
     language: "English",
+    isPremium: false,
+    thumbnail: null
   });
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState("");
   const [success, setSuccess] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   const update = (field, value) => setForm((p) => ({ ...p, [field]: value }));
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      update("thumbnail", file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,11 +65,13 @@ const CreateCourse = () => {
       const payload = {
         id:          newId,
         title:       form.title.trim(),
+        subtitle:    form.subtitle.trim(),
         description: form.description.trim(),
         category:    form.category,
         level:       form.level,
         price:       parseFloat(form.price) || 0,
         language:    form.language,
+        isPremium:   form.isPremium,
         status:      "Published",
         createdAt:   new Date().toLocaleDateString(),
         instructorId: instructorId,
@@ -66,6 +81,11 @@ const CreateCourse = () => {
       // 1. Send to API (if available)
       let apiResult = null;
       try {
+        // Mocking formData if API accepts files, otherwise sending JSON
+        // If we needed formData:
+        // const formData = new FormData();
+        // Object.keys(payload).forEach(k => formData.append(k, payload[k]));
+        // if (form.thumbnail) formData.append("thumbnail", form.thumbnail);
         const res = await instructorApi.createCourse(instructorId, payload);
         apiResult = res?.data || res;
       } catch (apiErr) {
@@ -75,6 +95,7 @@ const CreateCourse = () => {
       // Combine API result with form payload
       const courseToSave = {
         ...payload,
+        thumbnailUrl: previewUrl, // Storing locally for demo
         ...(apiResult && typeof apiResult === "object" ? apiResult : {}),
         id: apiResult?.id || apiResult?._id || apiResult?.courseId || payload.id,
       };
@@ -124,6 +145,44 @@ const CreateCourse = () => {
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-5"
       >
+        {/* Instructor ID (Read Only) */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <User size={14} className="inline mr-1" /> Instructor ID
+          </label>
+          <input
+            type="text"
+            value={instructorId}
+            readOnly
+            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-gray-500 text-sm cursor-not-allowed"
+          />
+        </div>
+
+        {/* Thumbnail Upload */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <ImageIcon size={14} className="inline mr-1" /> Course Thumbnail
+          </label>
+          <div className="flex items-center gap-4">
+            <div className={`w-32 h-20 rounded-xl border-2 border-dashed flex items-center justify-center overflow-hidden ${previewUrl ? 'border-orange-200' : 'border-gray-200 bg-gray-50'}`}>
+              {previewUrl ? (
+                <img src={previewUrl} alt="Thumbnail preview" className="w-full h-full object-cover" />
+              ) : (
+                <ImageIcon size={24} className="text-gray-300" />
+              )}
+            </div>
+            <div className="flex-1">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100"
+              />
+              <p className="text-xs text-gray-400 mt-2">Recommended size: 1280x720px (JPG, PNG)</p>
+            </div>
+          </div>
+        </div>
+
         {/* Title */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">
@@ -136,6 +195,20 @@ const CreateCourse = () => {
             placeholder="e.g. Advanced Java Programming"
             className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-transparent text-sm"
             required
+          />
+        </div>
+
+        {/* Subtitle */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <Type size={14} className="inline mr-1" /> Subtitle
+          </label>
+          <input
+            type="text"
+            value={form.subtitle}
+            onChange={(e) => update("subtitle", e.target.value)}
+            placeholder="A short catchy phrase describing the course"
+            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 focus:border-transparent text-sm"
           />
         </div>
 
@@ -208,6 +281,21 @@ const CreateCourse = () => {
               ))}
             </select>
           </div>
+        </div>
+
+        {/* Premium Feature */}
+        <div className="flex items-center gap-3 p-4 bg-orange-50 border border-orange-100 rounded-xl">
+          <input
+            type="checkbox"
+            id="premium"
+            checked={form.isPremium}
+            onChange={(e) => update("isPremium", e.target.checked)}
+            className="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+          />
+          <label htmlFor="premium" className="flex items-center gap-2 text-sm font-semibold text-gray-800 cursor-pointer select-none">
+            <Crown size={16} className="text-orange-500" /> Premium Course
+            <span className="text-xs font-normal text-gray-500 hidden sm:inline">- Only accessible to premium subscribers</span>
+          </label>
         </div>
 
         {/* Submit */}
