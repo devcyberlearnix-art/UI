@@ -343,11 +343,9 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
   const isApproved = (() => {
     if (normalizedStatus === "approved" || normalizedStatus === "active") return true;
     try {
-      const explicitStatus = userEmail ? localStorage.getItem(`instructor_app_status_${userEmail}`) : null;
+      if (!userEmail) return false;
+      const explicitStatus = localStorage.getItem(`instructor_app_status_${userEmail}`);
       if (explicitStatus === 'approved') return true;
-
-      const globalStatus = localStorage.getItem("instructor_application_status");
-      if (globalStatus === 'approved') return true;
 
       const apps = JSON.parse(localStorage.getItem("lms_instructor_applications") || "[]");
       const insts = JSON.parse(localStorage.getItem("lms_instructors") || "[]");
@@ -358,7 +356,10 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
       const appS = String(matchApp?.status || matchApp?.verificationStatus || "").toLowerCase();
       const instS = String(matchInst?.status || "").toLowerCase();
 
-      return appS.includes("approv") || appS === "active" || instS.includes("approv") || instS === "active";
+      if (appS && (appS.includes("approv") || appS === "active")) return true;
+      if (instS && (instS.includes("approv") || instS === "active")) return true;
+      
+      return false;
     } catch (e) {
       return false;
     }

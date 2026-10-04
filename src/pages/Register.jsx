@@ -236,8 +236,8 @@ const steps = [
   { id: 4, title: "Terms" }, // ✅ Added Step 4
 ];
 
-// ✅ Use your ngrok URL as the default base
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev";
+// Base URL — reads from .env (VITE_API_BASE_URL=/api for local, or /ngrok-api for tunnel)
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -246,9 +246,8 @@ const Register = () => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("error");
   const [loading, setLoading] = useState(false);
-  const [photoUploading, setPhotoUploading] = useState(false);
+  const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState("");
-  const [photoUrl, setPhotoUrl] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showCountryCodeMenu, setShowCountryCodeMenu] = useState(false);
@@ -430,7 +429,7 @@ const Register = () => {
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handlePhotoChange = async (e) => {
+  const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -440,32 +439,10 @@ const Register = () => {
       return;
     }
 
+    setPhotoFile(file);
     setPhotoPreview(URL.createObjectURL(file));
-    setPhotoUploading(true);
-
-    const payload = new FormData();
-    payload.append("profilePhoto", file);
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/auth/upload/profile-photo`, {
-        method: "POST",
-        body: payload,
-      });
-
-      if (!response.ok) throw new Error("Upload failed");
-
-      const data = await response.json();
-      setPhotoUrl(data.photoUrl || data.url || data.filePath || "");
-      setMessage("Photo uploaded successfully");
-      setMessageType("success");
-    } catch {
-      setMessage("Failed to upload photo. Please try again");
-      setMessageType("error");
-      setPhotoPreview("");
-      setPhotoUrl("");
-    } finally {
-      setPhotoUploading(false);
-    }
+    setMessage("Photo selected. It will be uploaded with your registration.");
+    setMessageType("success");
   };
 
   const handleNext = () => {
@@ -496,16 +473,16 @@ const Register = () => {
 
     setLoading(true);
     try {
-      const payload = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+      // Build the user JSON object exactly as the API expects
+      const userPayload = {
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.confirmPassword,
-        countryCode: formData.countryCode,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         mobileNumber: formData.mobile,
+        countryCode: formData.countryCode,
         dob: formData.dob,
-        profilePhoto: photoUrl || "",
         city: formData.city,
         state: formData.state,
         country: formData.country,
@@ -516,15 +493,35 @@ const Register = () => {
         highestQualification: formData.highestQualification || "",
       };
 
+      // ✅ Spring controller uses @RequestParam("user") String user
+      // → must be sent as plain text, NOT as a Blob (Blob = MultipartFile = type mismatch error)
+      const formPayload = new FormData();
+      formPayload.append("user", JSON.stringify(userPayload));
+
+      // Only append photo if the user selected one
+      if (photoFile) {
+        formPayload.append("profilePhoto", photoFile);
+      }
+
       const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        // Do NOT set Content-Type — browser sets it with the correct multipart boundary
+        body: formPayload,
       });
 
-      const data = await response.json();
+      // Safely parse response — server may return plain text or HTML on errors
+      let data = {};
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        if (!response.ok) {
+          throw new Error(`Server error (${response.status}): ${text.slice(0, 200)}`);
+        }
+      }
       if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
+        throw new Error(data.message || `Registration failed (${response.status})`);
       }
 
       const sessionId = data.otpSessionId || data.sessionId || data.data?.otpSessionId || "";
@@ -742,7 +739,7 @@ const Register = () => {
                   />
                 </div>
                 <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-orange-300 hover:text-orange-600">
-                  <Upload size={16} /> {photoUploading ? "Uploading..." : "Upload Photo"}
+                  <Upload size={16} /> {photoFile ? photoFile.name : "Upload Photo"}
                   <input type="file" className="hidden" accept="image/*" onChange={handlePhotoChange} />
                 </label>
               </div>
@@ -1053,7 +1050,7 @@ const Register = () => {
           ) : (
             <button
               type="submit"
-              disabled={loading || photoUploading || !isStepValid(4)}
+              disabled={loading || !isStepValid(4)}
               className="lms-btn-primary w-auto px-5 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "Creating Account..." : "Create Account"}
