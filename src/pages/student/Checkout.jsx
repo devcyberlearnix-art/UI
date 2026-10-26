@@ -2,23 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { AlertCircle, CheckCircle, ChevronRight, CreditCard, Loader2, ShoppingBag, Truck } from "lucide-react";
-import axiosInstance from "../../api/axiosInstance";
+import { cartApi, normalizeCart } from "../../api/cartApi";
+import { orderApi } from "../../api/orderApi";
 
-const normalizeItems = (payload) => {
-  const list = Array.isArray(payload)
-    ? payload
-    : Array.isArray(payload?.items)
-    ? payload.items
-    : Array.isArray(payload?.cartItems)
-    ? payload.cartItems
-    : [];
-
-  return list.map((item, idx) => ({
-    id: item.id || item.courseId || `item-${idx}`,
-    title: item.title || item.courseName || item.name || "Untitled course",
-    price: Number(item.price || item.amount || item.coursePrice || 0),
-    quantity: Number(item.quantity || 1),
-  }));
+const normalizeItems = (response) => {
+  const normalized = normalizeCart(response?.data || response);
+  return normalized.courses;
 };
 
 const Checkout = () => {
@@ -41,15 +30,15 @@ const Checkout = () => {
       setLoading(true);
       setError("");
       try {
-        const response = await axiosInstance.get("/api/v1/cart");
-        const payload = response.data?.data || response.data || [];
-        const items = normalizeItems(payload);
-        if (!items.length) {
+        const response = await cartApi.getCart();
+        const items = normalizeItems(response);
+        if (!items || items.length === 0) {
           navigate("/cart");
           return;
         }
         setCart(items);
       } catch (err) {
+        console.error("[Checkout] Failed to load cart", err);
         setError(err.response?.data?.message || err.message || "Failed to load checkout items");
       } finally {
         setLoading(false);
@@ -77,21 +66,36 @@ const Checkout = () => {
     setSubmitting(true);
     setError("");
     try {
+      // Backend CreateOrderRequest requires:
+      // - userId (optional, taken from auth)
+      // - courseIds (list of course IDs)
+      // - totalAmount (optional, calculated from cart if not provided)
+      // - couponCode (optional)
+
+      const courseIds = cart
+        .map(item => Number(item.id || item.courseId))
+        .filter(id => !isNaN(id) && id > 0);
+      // NOTE: Do NOT pass couponCode here. The order service's coupon validation
+      // calls coupon-service internally and fails with 'Course not found' when
+      // the coupon service's course DB is out of sync. Coupon discount is already
+      // applied at the cart level and reflected in totalAmount.
       const payload = {
-        shippingAddress: `${formData.shippingAddress}, ${formData.city}, ${formData.postalCode}`,
-        paymentMethod: formData.paymentMethod,
-        notes: formData.notes,
+        courseIds,
+        totalAmount,
       };
 
-      try {
-        await axiosInstance.post("/api/v1/cart/checkout", payload);
-      } catch (checkoutError) {
-        await axiosInstance.post("/api/v1/orders/create", payload);
-      }
+      // Call the correct order creation endpoint
+      const response = await orderApi.createOrder(payload);
+      const orderData = response?.data || response;
 
-      setSuccess(true);
-      setTimeout(() => navigate("/student/orders"), 1400);
+      if (orderData) {
+        setSuccess(true);
+        setTimeout(() => navigate("/student/orders"), 1400);
+      } else {
+        throw new Error("Order creation failed");
+      }
     } catch (err) {
+      console.error("[Checkout] Order creation failed", err);
       setError(err.response?.data?.message || err.message || "Order failed. Please try again.");
     } finally {
       setSubmitting(false);
@@ -148,7 +152,7 @@ const Checkout = () => {
                       <p className="font-medium text-slate-800">{item.title}</p>
                       <p className="text-xs text-slate-500">Qty: {item.quantity}</p>
                     </div>
-                    <p className="font-semibold text-slate-900">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="font-semibold text-slate-900">₹{(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -209,7 +213,7 @@ const Checkout = () => {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${totalAmount.toFixed(2)}</span>
+                  <span>₹{totalAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
@@ -217,7 +221,7 @@ const Checkout = () => {
                 </div>
                 <div className="border-t pt-2 mt-2 flex justify-between font-bold text-lg">
                   <span>Grand Total</span>
-                  <span>${totalAmount.toFixed(2)}</span>
+                  <span>₹{totalAmount.toFixed(2)}</span>
                 </div>
               </div>
               <button

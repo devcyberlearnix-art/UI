@@ -2,15 +2,19 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mail, Lock, LogIn, AlertCircle, KeyRound, RefreshCw, Eye, EyeOff } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import AuthShell from "../components/ui/AuthShell";
 import { authApi } from "../api/authApi";
+import { getDashboardPath } from "../context/AuthContext";
+import { parseApiError } from "../utils/apiErrorParser";
+import { validateEmail as isValidEmail } from "../utils/validation";
 
 const Login = () => {
   const [loginMethod, setLoginMethod] = useState("password");
-  const [email, setEmail] = useState("");
+  const location = useLocation();
+  const [email, setEmail] = useState(location.state?.prefillEmail || "");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
@@ -19,22 +23,16 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [otpResending, setOtpResending] = useState(false);
   const [error, setError] = useState("");
+  const [unverifiedSession, setUnverifiedSession] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login, isAuthenticated, loading: authLoading } = useAuth();
   const canResend = cooldownSeconds === 0;
 
-  const getRedirectByRole = (roleValue) => {
-    const role = String(roleValue || "").toLowerCase();
-    if (role.includes("admin") || role.includes("super") || role.includes("sub")) return "/admin/dashboard";
-    if (role.includes("instructor")) return "/instructor/dashboard";
-    return "/student/dashboard";
-  };
-
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
       const storedUser = JSON.parse(localStorage.getItem("lms_user") || "{}");
-      navigate(getRedirectByRole(storedUser?.role || storedUser?.role1 || storedUser?.userRole), { replace: true });
+      navigate(getDashboardPath(storedUser?.role || storedUser?.role1 || storedUser?.userRole), { replace: true });
     }
   }, [isAuthenticated, navigate, authLoading]);
 
@@ -50,7 +48,7 @@ const Login = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-orange-500"></div>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-[#1455d9]"></div>
           <p className="text-slate-600">Loading...</p>
         </div>
       </div>
@@ -58,9 +56,9 @@ const Login = () => {
   }
 
   const validateEmail = () => {
-    if (!email || email.trim() === "") {
-      setError("Email is required");
-      toast.error("Email is required");
+    if (!email || !isValidEmail(email)) {
+      setError("Enter a valid email address");
+      toast.error("Enter a valid email address");
       return false;
     }
     return true;
@@ -80,18 +78,38 @@ const Login = () => {
     setLoading(true);
     
     try {
-      const result = await login(email.trim(), password.trim());
+      const result = await login(email.trim(), password);
       
       if (result.success) {
-        toast.success("Login successful!");
-        navigate(getRedirectByRole(result.user?.role || result.user?.role1 || result.user?.userRole), { replace: true });
+        if (result.message) toast.success(result.message);
+        navigate(getDashboardPath(result.user?.role || result.user?.role1 || result.user?.userRole), { replace: true });
       } else {
-        setError(result.error || "Login failed");
-        toast.error(result.error || "Login failed");
+        const isUnverified = result.originalError?.response?.data?.message?.toLowerCase().includes("not verified") || 
+                             result.originalError?.response?.data?.message?.toLowerCase().includes("verify your email") || 
+                             result.error?.toLowerCase().includes("not verified") || 
+                             result.error?.toLowerCase().includes("unverified") || 
+                             result.error?.toLowerCase().includes("verify your email");
+                             
+        const errorOtpSessionId = result.originalError?.response?.data?.data?.otpSessionId || 
+                                  result.originalError?.response?.data?.otpSessionId;
+
+        if (result.error) {
+          setError(result.error);
+          toast.error(result.error);
+        }
+        
+        if (isUnverified && errorOtpSessionId) {
+          setUnverifiedSession(errorOtpSessionId);
+        } else {
+          setUnverifiedSession("");
+        }
       }
     } catch (err) {
-      setError("An unexpected error occurred");
-      toast.error("An unexpected error occurred");
+      const parsed = parseApiError(err, "");
+      if (parsed.message) {
+        setError(parsed.message);
+        toast.error(parsed.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -107,11 +125,13 @@ const Login = () => {
       setOtpSessionId(res.otpSessionId || "");
       setCooldownSeconds(Number(res.cooldownSeconds || 30));
       setOtpSent(true);
-      toast.success(res.message || "OTP sent to your email");
+      if (res.message) toast.success(res.message);
     } catch (err) {
-      const message = err.response?.data?.message || "Failed to send OTP";
-      setError(message);
-      toast.error(message);
+      const message = err.response?.data?.message || err.response?.data?.error || "";
+      if (message) {
+        setError(message);
+        toast.error(message);
+      }
     } finally {
       setLoading(false);
     }
@@ -127,11 +147,9 @@ const Login = () => {
       toast.error("OTP is required");
       return;
     }
-    if (!otpSessionId) {
-      const message = "OTP session expired. Please request OTP again.";
-      setError(message);
-      toast.error(message);
-      return;
+      if (!otpSessionId) {
+        setError("");
+        return;
     }
 
     setLoading(true);
@@ -176,11 +194,13 @@ const Login = () => {
       localStorage.setItem("lms_user", JSON.stringify(userData));
 
       toast.success(response.message || "Login successful!");
-      navigate(getRedirectByRole(userData.role), { replace: true });
+      navigate(getDashboardPath(userData.role), { replace: true });
     } catch (err) {
-      const message = err.response?.data?.message || err.message || "Invalid OTP";
-      setError(message);
-      toast.error(message);
+      const message = err.response?.data?.message || err.response?.data?.error || err.message || "";
+      if (message) {
+        setError(message);
+        toast.error(message);
+      }
     } finally {
       setLoading(false);
     }
@@ -196,46 +216,41 @@ const Login = () => {
       const res = await authApi.resendOtp({ flow: "login", email: email.trim() });
       setOtpSessionId(res.otpSessionId || "");
       setCooldownSeconds(Number(res.cooldownSeconds || 30));
-      toast.success(res.message || "OTP resent successfully");
+      if (res.message) toast.success(res.message);
     } catch (err) {
-      const message = err.response?.data?.message || "Failed to resend OTP";
-      setError(message);
-      toast.error(message);
+      const message = err.response?.data?.message || err.response?.data?.error || "";
+      if (message) {
+        setError(message);
+        toast.error(message);
+      }
     } finally {
       setOtpResending(false);
     }
   };
 
   return (
-    <AuthShell
-      title="Welcome Back"
-      subtitle="A unified, modern LMS experience with smooth navigation, polished transitions, and a premium learning interface."
-      eyebrow="LearnMaster Access"
-      highlights={[
-        { value: "Live", label: "Progress" },
-        { value: "Fast", label: "Onboarding" },
-        { value: "Secure", label: "Authentication" },
-      ]}
-    >
+    <AuthShell variant="signup" showTerms={false} showCardBrand wide>
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <div className="mb-8 text-center">
-          <div className="inline-flex rounded-2xl bg-gradient-to-r from-orange-500 to-cyan-600 p-3 text-white shadow-lg">
+          <div className="cyber-login-icon">
             <LogIn size={30} />
           </div>
-          <h1 className="mt-3 text-2xl font-bold text-slate-900">Sign In</h1>
+          <h1 className="mt-3 text-2xl font-bold text-[#10284e]">Sign In</h1>
           <p className="mt-1 text-sm text-slate-500">Enter your account credentials to continue</p>
         </div>
 
-        <div className="mb-6 grid grid-cols-2 rounded-xl border border-slate-200 bg-slate-100 p-1">
+        <div className="cyber-login-tabs mb-6 grid grid-cols-2 rounded-xl border border-slate-200 bg-slate-100 p-1">
           <button
             type="button"
             onClick={() => {
               setLoginMethod("password");
               setError("");
               setOtpSent(false);
+              setOtp("");
+              setOtpSessionId("");
             }}
             className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
-              loginMethod === "password" ? "bg-white text-orange-600 shadow" : "text-slate-600"
+              loginMethod === "password" ? "bg-[#1455d9] text-white shadow" : "text-slate-600 hover:text-[#10284e]"
             }`}
           >
             Password
@@ -245,9 +260,10 @@ const Login = () => {
             onClick={() => {
               setLoginMethod("otp");
               setError("");
+              setPassword("");
             }}
-            className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
-              loginMethod === "otp" ? "bg-white text-orange-600 shadow" : "text-slate-600"
+              className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
+                loginMethod === "otp" ? "bg-[#1455d9] text-white shadow" : "text-slate-600 hover:text-[#10284e]"
             }`}
           >
             OTP
@@ -255,9 +271,27 @@ const Login = () => {
         </div>
 
         {error && (
-          <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-red-700">
-            <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
-            <span className="text-sm">{error}</span>
+          <div className="mb-4 flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-red-700">
+            <div className="flex items-start gap-2">
+              <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
+              <span className="text-sm">{error}</span>
+            </div>
+            {unverifiedSession && (
+              <button
+                type="button"
+                onClick={() => navigate("/otp-verify", {
+                  state: {
+                    email,
+                    flow: "register",
+                    otpSessionId: unverifiedSession,
+                    cooldownSeconds: 30,
+                  }
+                })}
+                className="mt-2 self-start text-sm font-semibold text-[#1455d9] hover:text-[#0d47bc]"
+              >
+                Verify Email Now &rarr;
+              </button>
+            )}
           </div>
         )}
 
@@ -272,6 +306,8 @@ const Login = () => {
                   placeholder="Enter your email"
                   className="lms-input pl-10"
                   value={email}
+                  autoComplete="email"
+                  aria-label="Email address"
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
                 />
@@ -287,6 +323,8 @@ const Login = () => {
                   placeholder="Enter your password"
                   className="lms-input pl-10 pr-10"
                   value={password}
+                  autoComplete="current-password"
+                  aria-label="Password"
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={loading}
                 />
@@ -301,7 +339,7 @@ const Login = () => {
               </div>
             </div>
 
-            <button type="submit" disabled={loading} className="lms-btn-primary">
+            <button type="submit" disabled={loading || !isValidEmail(email) || !password.trim()} className="lms-btn-primary">
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
                   <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
@@ -330,7 +368,7 @@ const Login = () => {
             </div>
 
             {!otpSent ? (
-              <button type="button" onClick={handleSendOtp} disabled={loading} className="lms-btn-primary">
+              <button type="button" onClick={handleSendOtp} disabled={loading || !isValidEmail(email)} className="lms-btn-primary">
                 {loading ? "Sending OTP..." : "Send OTP"}
               </button>
             ) : (
@@ -351,7 +389,7 @@ const Login = () => {
                   </div>
                 </div>
 
-                <button type="submit" disabled={loading} className="lms-btn-primary">
+                <button type="submit" disabled={loading || otp.length !== 6} className="lms-btn-primary">
                   {loading ? "Verifying..." : "Verify and Login"}
                 </button>
 
@@ -359,7 +397,7 @@ const Login = () => {
                   type="button"
                   onClick={handleResendOtp}
                   disabled={otpResending || !canResend}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-600 disabled:opacity-60"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#1455d9] hover:text-[#1455d9] disabled:opacity-60"
                 >
                   <RefreshCw size={16} className={otpResending ? "animate-spin" : ""} />
                   {otpResending ? "Resending..." : canResend ? "Resend OTP" : `Resend in ${cooldownSeconds}s`}
@@ -373,7 +411,7 @@ const Login = () => {
           <Link to="/register" className="lms-link block text-sm">
             Don't have an account? Register
           </Link>
-          <Link to="/forgot-password" className="block text-sm text-slate-500 transition hover:text-orange-600">
+           <Link to="/forgot-password" className="block text-sm text-slate-500 transition hover:text-[#1455d9]">
             Forgot Password?
           </Link>
         </div>

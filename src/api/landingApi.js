@@ -1,5 +1,5 @@
 // src/api/landingApi.js
-import { buildApiUrl } from '../config/api';
+import axiosInstance from './axiosInstance';
 
 const normalizeCourse = (course, index) => {
   const title = course.title || course.name || `Course ${index + 1}`;
@@ -24,9 +24,8 @@ const normalizeCourse = (course, index) => {
 };
 
 const fetchJson = async (path) => {
-  const response = await fetch(buildApiUrl(path));
-  if (!response.ok) throw new Error(`Failed request: ${path}`);
-  return response.json();
+  const response = await axiosInstance.get(path);
+  return response.data;
 };
 
 const tryFetch = async (paths) => {
@@ -38,61 +37,50 @@ const tryFetch = async (paths) => {
 
 export const landingApi = {
   getLandingPageData: async () => {
-    const [landingPayload, coursesPayload, statsPayload] = await Promise.all([
-      tryFetch(['/api/v1/public/landing', '/api/v1/landing', '/landing']).catch(() => ({})),
-      tryFetch(['/api/v1/courses/featured?limit=6', '/api/v1/courses']),
-      tryFetch(['/api/v1/courses/stats', '/api/v1/public/stats', '/api/v1/stats', '/stats']).catch(() => ({})),
+    // Only use endpoints that are likely to exist on the backend
+    const [coursesPayload] = await Promise.all([
+      tryFetch(['/api/v1/courses/featured?limit=6', '/api/v1/courses']).catch(() => ({ courses: [] })),
     ]);
 
-    const slides = landingPayload?.slides || landingPayload?.heroSlides || landingPayload?.data?.slides || [];
-    const features = landingPayload?.features || landingPayload?.highlights || landingPayload?.data?.features || [];
-    const testimonials = landingPayload?.testimonials || landingPayload?.reviews || landingPayload?.data?.testimonials || [];
-    const courses = (coursesPayload?.courses || coursesPayload?.data || coursesPayload || []).map(normalizeCourse);
+    // Landing page data - if not available, use empty defaults
+    const slides = [];
+    const features = [];
+    const testimonials = [];
 
-    const landingCategories = landingPayload?.categories || landingPayload?.courseCategories || landingPayload?.data?.categories || [];
-    const categories = landingCategories.length
-      ? landingCategories
-      : [...new Set(courses.map(c => c.category).filter(Boolean))].map(name => ({ name, subcategories: [] }));
+    const coursesArray = coursesPayload?.courses || coursesPayload?.data || coursesPayload?.content || coursesPayload?.items || coursesPayload?.results || coursesPayload;
+    const courses = (Array.isArray(coursesArray) ? coursesArray : []).map(normalizeCourse);
 
-    const statsSource = statsPayload?.stats || statsPayload?.data || statsPayload || {};
+    // Derive categories from courses if API doesn't provide them
+    const categories = [...new Set(courses.map(c => c.category).filter(Boolean))].map(name => ({ name, subcategories: [] }));
+
+    // Stats - use defaults if not available from backend
     const stats = {
-      students: Number(statsSource.students || statsSource.totalStudents || 0),
-      courses: Number(statsSource.courses || statsSource.totalCourses || courses.length),
-      instructors: Number(statsSource.instructors || statsSource.totalInstructors || 0),
-      satisfaction: Number(statsSource.satisfaction || statsSource.successRate || 0),
+      students: courses.reduce((sum, c) => sum + (c.students || 0), 0),
+      courses: courses.length,
+      instructors: [...new Set(courses.map(c => c.instructor).filter(Boolean))].length,
+      satisfaction: courses.length > 0 
+        ? (courses.reduce((sum, c) => sum + (c.rating || 0), 0) / courses.length).toFixed(1) 
+        : 0,
     };
 
     return { slides, features, testimonials, categories, courses, stats };
   },
 
   trackCourseImpression: async (courseId, source = 'HOME') => {
-    const response = await fetch(buildApiUrl(`/api/v1/courses/${courseId}/impressions?source=${source}`), { method: 'POST' });
-    if (!response.ok) throw new Error(`Failed to track course impression: ${courseId}`);
+    await axiosInstance.post(`/api/v1/courses/${courseId}/impressions?source=${source}`);
   },
 
   getTrendingCourses: async (page = 0, size = 10, category = '', level = '') => {
-    const requestUrl = new URL(buildApiUrl('/api/v1/courses/trending'));
-    requestUrl.searchParams.set('page', String(page));
-    requestUrl.searchParams.set('size', String(size));
-    requestUrl.searchParams.set('limit', String(size));
-    if (category && category !== 'All') requestUrl.searchParams.set('category', category);
-    if (level && level !== 'All') requestUrl.searchParams.set('level', level);
+    const params = {
+      page: String(page),
+      size: String(size),
+      limit: String(size),
+    };
+    if (category && category !== 'All') params.category = category;
+    if (level && level !== 'All') params.level = level;
 
-    const response = await fetch(requestUrl.toString(), {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch trending courses (${response.status})`);
-    }
-
-    const payload = await response.json();
+    const response = await axiosInstance.get('/api/v1/courses/trending', { params });
+    const payload = response.data;
     const data = payload?.data || payload;
     const rawCourses = data?.courses || data?.content || data?.items || data?.results || (Array.isArray(data) ? data : []);
     const items = Array.isArray(rawCourses) ? rawCourses.map(normalizeCourse) : [];

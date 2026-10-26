@@ -7,6 +7,7 @@ Trash2,
 Eye,
 Send
 } from "lucide-react";
+import Portal from "../../components/ui/Portal";
 
 const Notifications = () => {
 
@@ -171,7 +172,6 @@ Send and manage notifications
 
 </div>
 
-
 <button
 
 onClick={()=>setShowModal(true)}
@@ -185,9 +185,7 @@ className="bg-orange-500 text-white px-5 py-3 rounded-xl flex items-center gap-2
 Create Notification
 
 </button>
-
 </div>
-
 
 
 <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
@@ -241,7 +239,6 @@ n=>n.audience==="Instructors"
 </div>
 
 
-
 <div className="bg-white p-6 rounded-xl shadow">
 
 <div className="flex justify-between mb-6">
@@ -262,7 +259,6 @@ setSearch(e.target.value)
 }
 
 placeholder="Search Notifications"
-
 className="border rounded-xl pl-10 px-4 py-2"
 
 />
@@ -270,7 +266,6 @@ className="border rounded-xl pl-10 px-4 py-2"
 </div>
 
 </div>
-
 
 
 <div className="space-y-4">
@@ -316,7 +311,6 @@ className="border rounded-xl p-4 flex justify-between items-center hover:shadow"
 
 </div>
 
-
 <div className="flex gap-3">
 
 <button
@@ -357,7 +351,7 @@ className="text-red-500"
 
 
 {showModal && (
-
+<Portal>
 <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
 
 <div className="bg-white w-[450px] rounded-xl p-6">
@@ -371,9 +365,7 @@ Create Notification
 <input
 
 placeholder="Title"
-
 value={formData.title}
-
 onChange={(e)=>
 setFormData({
 ...formData,
@@ -389,9 +381,7 @@ className="border p-3 w-full rounded mb-3"
 <textarea
 
 placeholder="Message"
-
 value={formData.message}
-
 onChange={(e)=>
 setFormData({
 ...formData,
@@ -407,7 +397,6 @@ className="border p-3 w-full rounded mb-3"
 <select
 
 value={formData.audience}
-
 onChange={(e)=>
 setFormData({
 ...formData,
@@ -443,13 +432,12 @@ Send Notification
 </div>
 
 </div>
-
+</Portal>
 )}
 
 
-
 {selectedNotification && (
-
+<Portal>
 <div className="fixed inset-0 bg-black/40 flex justify-center items-center">
 
 <div className="bg-white p-6 rounded-xl w-[400px]">
@@ -481,7 +469,7 @@ Close
 </div>
 
 </div>
-
+</Portal>
 )}
 
 </div>

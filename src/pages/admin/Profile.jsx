@@ -1,11 +1,13 @@
 // src/pages/admin/AdminProfile.jsx
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { User, Mail, Phone, Save, LogOut, Loader2, AlertCircle, MapPin, Globe, Image, Languages, Camera } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { adminApi } from "../../api/adminApi";
 import authApi from "../../api/authApi";
 import toast from "react-hot-toast";
+import ProfilePhotoModal from "../../components/ProfilePhotoModal";
+import { normalizePhotoUrl } from "../../config/api";
 
 const AdminProfile = () => {
   const { logout } = useAuth();
@@ -16,7 +18,7 @@ const AdminProfile = () => {
   const [profile, setProfile] = useState(null);
   const [temp, setTemp] = useState(null);
   const [error, setError] = useState("");
-  const fileInputRef = useRef(null);
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
 
   // ✅ Fetch profile data from API only
   const fetchProfile = async () => {
@@ -222,14 +224,11 @@ const AdminProfile = () => {
     }
   };
 
-  const handlePhotoUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
+  const handlePhotoUpload = async (file) => {
     // Validate file type and size
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      toast.error('Please select a valid image file (JPEG, PNG, GIF, WEBP)');
+      toast.error('Please select a valid image file (JPEG, PNG, WEBP)');
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
@@ -246,25 +245,57 @@ const AdminProfile = () => {
       console.log('[AdminProfile] Photo upload response:', response);
 
       const newPhotoUrl =
+        response?.data?.data?.profilePhoto ||
         response?.data?.profilePhoto ||
         response?.profilePhoto ||
         response?.data?.photoUrl ||
         response?.data?.url;
 
       if (newPhotoUrl) {
-        setTemp({...temp, profilePhoto: newPhotoUrl});
+        const normalizedUrl = normalizePhotoUrl(newPhotoUrl);
+        setTemp({...temp, profilePhoto: normalizedUrl});
         toast.success('Profile photo uploaded successfully!');
+
+        // Dispatch event to update other components
+        window.dispatchEvent(new CustomEvent('profilePhotoChanged', { detail: { profilePhoto: normalizedUrl } }));
+
+        setTimeout(() => {
+          fetchProfile();
+        }, 500);
       } else {
         toast.error('Failed to get photo URL from response');
       }
     } catch (error) {
       console.error('[AdminProfile] Photo upload error:', error);
       toast.error(error.response?.data?.message || 'Failed to upload photo');
+      throw error; // Re-throw to let modal handle error state
     } finally {
       setUploadingPhoto(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    try {
+      await authApi.removeProfilePhoto();
+
+      // Update local state
+      const normalizedUrl = normalizePhotoUrl(null);
+      setTemp({...temp, profilePhoto: normalizedUrl});
+      setProfile({...profile, profilePhoto: normalizedUrl});
+      setUnsavedChanges(false);
+
+      toast.success('Profile photo removed successfully!');
+
+      // Dispatch event to update other components
+      window.dispatchEvent(new CustomEvent('profilePhotoRemoved'));
+
+      setTimeout(() => {
+        fetchProfile();
+      }, 500);
+    } catch (error) {
+      console.error('[AdminProfile] Remove photo error:', error);
+      toast.error(error.response?.data?.message || 'Failed to remove photo');
+      throw error;
     }
   };
 
@@ -303,14 +334,6 @@ const AdminProfile = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-2xl mx-auto space-y-6">
-      {/* Hidden file input for photo upload */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/gif,image/webp"
-        onChange={handlePhotoUpload}
-        className="hidden"
-      />
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Admin Profile</h1>
@@ -346,19 +369,35 @@ const AdminProfile = () => {
         {/* Profile Header */}
         <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-8">
           <div className="flex items-center gap-4">
-            {profile.profilePhoto ? (
-              <img 
-                src={profile.profilePhoto} 
-                alt="Profile" 
-                className="w-20 h-20 rounded-full object-cover border-2 border-white/30 shadow-lg"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextElementSibling.style.display = 'flex';
-                }}
-              />
-            ) : null}
-            <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-3xl font-bold text-white shadow-lg" style={{display: profile.profilePhoto ? 'none' : 'flex'}}>
-              {profile.name?.charAt(0)?.toUpperCase() || "?"}
+            <div className="relative inline-block">
+              {profile.profilePhoto ? (
+                <img
+                  src={profile.profilePhoto}
+                  alt="Profile"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-white/30 shadow-lg"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextElementSibling.style.display = 'flex';
+                  }}
+                />
+              ) : null}
+              <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-3xl font-bold text-white shadow-lg" style={{display: profile.profilePhoto ? 'none' : 'flex'}}>
+                {profile.name?.charAt(0)?.toUpperCase() || "?"}
+              </div>
+              {/* Camera Icon Button */}
+              <button
+                onClick={() => setIsPhotoModalOpen(true)}
+                disabled={uploadingPhoto}
+                className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full shadow-lg border-2 border-white flex items-center justify-center text-gray-600 hover:text-[#2563EB] hover:scale-110 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Change profile photo"
+                title="Change profile photo"
+              >
+                {uploadingPhoto ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Camera className="w-4 h-4" />
+                )}
+              </button>
             </div>
             <div className="text-white">
               <h2 className="text-2xl font-bold">{profile.firstName && profile.lastName ? `${profile.firstName} ${profile.lastName}` : profile.name || "Admin"}</h2>
@@ -484,35 +523,6 @@ const AdminProfile = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Profile Photo
-                </label>
-                <div className="flex items-center gap-4">
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploadingPhoto}
-                    className="px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-orange-50 transition flex items-center gap-2 disabled:opacity-50"
-                  >
-                    <Camera size={18} className="text-orange-500" />
-                    {uploadingPhoto ? 'Uploading...' : 'Upload Photo'}
-                  </button>
-                  {uploadingPhoto && <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />}
-                </div>
-                {temp.profilePhoto && (
-                  <div className="mt-2">
-                    <img 
-                      src={temp.profilePhoto} 
-                      alt="Preview" 
-                      className="w-20 h-20 rounded-full object-cover border-2 border-orange-200"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
                   City
                 </label>
                 <input
@@ -580,6 +590,15 @@ const AdminProfile = () => {
         )}
         </div>
       </div>
+
+      {/* Profile Photo Modal */}
+      <ProfilePhotoModal
+        isOpen={isPhotoModalOpen}
+        onClose={() => setIsPhotoModalOpen(false)}
+        onUploadPhoto={handlePhotoUpload}
+        onRemovePhoto={handleRemovePhoto}
+        currentPhotoUrl={profile?.profilePhoto}
+      />
     </motion.div>
   );
 };

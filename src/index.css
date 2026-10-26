@@ -13,11 +13,32 @@
 
   body {
     @apply min-h-screen font-sans antialiased text-slate-900;
-    background: radial-gradient(circle at 15% 20%, rgba(251, 191, 36, 0.14), transparent 40%),
-      radial-gradient(circle at 85% 80%, rgba(14, 116, 144, 0.12), transparent 40%),
-      linear-gradient(145deg, rgb(248 250 252) 0%, rgb(241 245 249) 100%);
+    background: #FFFFFF;
     margin: 0;
     padding: 0;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
   }
 }
 
@@ -26,6 +47,201 @@
     background: radial-gradient(circle at 12% 18%, rgba(251, 191, 36, 0.18), transparent 38%),
       radial-gradient(circle at 86% 84%, rgba(8, 145, 178, 0.16), transparent 42%),
       linear-gradient(140deg, #f8fafc 0%, #f1f5f9 48%, #fff7ed 100%);
+  }
+
+  .cyber-auth-page { @apply min-h-screen grid lg:grid-cols-[minmax(390px,45%)_1fr] bg-[#f7f5f1] text-slate-900; }
+  .cyber-auth-visual { @apply relative hidden min-h-screen overflow-hidden bg-[#f7f5f1] px-10 py-8 lg:block xl:px-16; }
+  .cyber-auth-visual::after { content: ""; @apply absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#f7f5f1] to-transparent; pointer-events: none; }
+  .cyber-brand { @apply relative z-10 flex items-center gap-2 text-[#10284e]; }
+  .cyber-brand strong { @apply block text-[18px] font-extrabold tracking-tight; }
+  .cyber-brand small { @apply block text-[7px] font-bold tracking-[0.2em] text-slate-500; }
+  .cyber-brand-mark { @apply grid h-8 w-8 place-items-center rounded-full bg-[#1455d9] text-white shadow-md; }
+  .cyber-visual-copy { @apply relative z-10 mt-16 max-w-[360px]; }
+  .cyber-script { @apply mb-3 -rotate-3 font-serif text-sm italic text-[#10284e]; }
+  .cyber-visual-copy h1 { @apply font-serif text-[clamp(3.4rem,6vw,5.4rem)] font-bold leading-[.86] tracking-[-.06em] text-[#10284e]; }
+  .cyber-visual-copy h1 em { @apply not-italic text-[#1455d9]; }
+  .cyber-visual-copy > p:last-of-type { @apply mt-6 max-w-[280px] text-sm leading-relaxed text-slate-500; }
+  .cyber-benefits { @apply mt-7 grid gap-3; }
+  .cyber-benefit { @apply flex items-center gap-3 text-[#1455d9]; }
+  .cyber-benefit span { @apply flex flex-col; }
+  .cyber-benefit b { @apply text-sm text-[#10284e]; }
+  .cyber-benefit small { @apply text-[11px] text-slate-500; }
+  .cyber-illustration { @apply absolute bottom-16 right-4 h-[55%] w-[47%] max-w-[410px] rounded-tl-[45%] bg-[#dbe9ff]/70; }
+  .cyber-illustration img { @apply absolute bottom-10 left-1/2 w-56 -translate-x-1/2 opacity-95; }
+  .cyber-glow { @apply absolute bottom-0 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-[#1455d9]/20 blur-3xl; }
+  .cyber-note, .cyber-sticker { @apply absolute z-10 -rotate-6 bg-[#fffdf4] px-4 py-3 font-serif text-sm text-[#10284e] shadow-lg; }
+  .cyber-note { @apply left-[-30px] top-10; }
+  .cyber-sticker { @apply bottom-20 right-[-28px] rotate-6 text-center font-semibold leading-tight; }
+  .cyber-visual-footer { @apply absolute bottom-8 left-10 z-20 flex items-center gap-2 text-xs text-slate-500 xl:left-16; }
+  .cyber-auth-content { @apply flex min-h-screen flex-col items-center justify-start overflow-y-auto px-5 py-7 sm:px-10 lg:py-8; }
+  .cyber-mobile-brand { @apply mb-5 lg:hidden; }
+  .cyber-auth-card { @apply w-full max-w-[430px] rounded-[26px] border border-slate-200 bg-white px-7 py-8 shadow-[0_18px_55px_rgba(16,40,78,.10)] sm:px-9; }
+  .cyber-progress { @apply mb-9 flex items-start justify-center; }
+  .cyber-step { @apply flex min-w-[76px] flex-col items-center gap-1 text-[10px] font-medium text-slate-400; }
+  .cyber-step span { @apply grid h-6 w-6 place-items-center rounded-full border border-slate-300 bg-white text-xs; }
+  .cyber-step.active { @apply text-[#10284e]; }
+  .cyber-step.active span { @apply border-[#1455d9] bg-[#1455d9] text-white; }
+  .cyber-progress-line { @apply mt-3 h-px w-12 bg-slate-200; }
+  .cyber-progress-line.complete { @apply bg-[#1455d9]; }
+  .cyber-auth-terms { @apply mt-7 text-center text-[10px] leading-relaxed text-slate-400; }
+  .cyber-auth-terms a { @apply font-semibold text-[#1455d9]; }
+  .cyber-back-home { @apply mt-5 inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-[#1455d9]; }
+  .cyber-auth-card .lms-input { @apply rounded-lg border-slate-200 py-3 text-sm shadow-none; }
+  .cyber-auth-card .lms-btn-primary { @apply rounded-lg bg-[#1455d9] py-3 text-sm shadow-[0_9px_20px_rgba(20,85,217,.22)]; background-image: none; }
+  .cyber-auth-card .lms-btn-primary:hover { @apply bg-[#0d47bc]; }
+  .cyber-card-heading { @apply mb-7; }
+  .cyber-card-icon { @apply mb-4 grid h-10 w-10 place-items-center rounded-xl bg-[#edf3ff] text-[#1455d9]; }
+  .cyber-card-heading h1 { @apply text-[26px] font-bold tracking-[-.04em] text-[#10284e]; }
+  .cyber-card-heading p { @apply mt-2 text-xs leading-relaxed text-slate-500; }
+  .cyber-secure-note { @apply pt-1 text-center text-[10px] text-slate-400; }
+  .cyber-or { @apply my-6 flex items-center gap-3 text-[9px] font-semibold tracking-[.12em] text-slate-400; }
+  .cyber-or::before, .cyber-or::after { content: ""; @apply h-px flex-1 bg-slate-200; }
+  .cyber-social-row { @apply grid grid-cols-2 gap-3; }
+  .cyber-social-row button { @apply rounded-lg bg-slate-50 px-3 py-3 text-xs font-semibold text-slate-600; }
+  .cyber-otp-boxes { @apply mb-6 flex justify-between gap-2; }
+  .cyber-otp-boxes input { @apply h-12 w-11 rounded-lg border border-slate-200 bg-white text-center text-lg font-semibold text-[#10284e] outline-none transition focus:border-[#1455d9] focus:ring-2 focus:ring-[#dbe9ff]; }
+  .cyber-success-state { @apply flex flex-col items-center py-8 text-center; }
+  .cyber-success-state h1 { @apply mt-5 text-2xl font-bold tracking-[-.04em] text-[#10284e]; }
+  .cyber-success-state p { @apply mt-2 text-xs leading-relaxed text-slate-500; }
+  .cyber-success-icon { @apply grid h-20 w-20 place-items-center rounded-full bg-emerald-100 text-emerald-500; }
+  .cyber-spinner { @apply h-14 w-14 animate-spin rounded-full border-[6px] border-[#dbe9ff] border-t-[#1455d9]; }
+  .cyber-expiry-note { @apply mt-7 border-t border-slate-100 pt-5 text-center text-[10px] leading-relaxed text-slate-400; }
+  .cyber-expiry-note svg { @apply mx-auto mb-1 text-slate-500; }
+
+  /* Final CyberLearnix reference treatment */
+  .cyber-auth-page { @apply bg-[#f5f8fd]; }
+  .cyber-auth-visual { @apply bg-[#03162f] text-white; background-image: radial-gradient(circle at 8% 78%, rgba(26,126,255,.22), transparent 26%), radial-gradient(circle at 92% 92%, rgba(20,85,217,.28), transparent 30%), linear-gradient(145deg, #061d3c 0%, #03162f 68%, #06265a 100%); }
+  .cyber-auth-visual::after { display: none; }
+  .cyber-auth-visual .cyber-brand, .cyber-auth-visual .cyber-visual-copy h1 { @apply text-white; }
+  .cyber-visual-copy h1 { font-family: inherit; font-size: clamp(2.2rem, 4vw, 3.6rem); line-height: 1.12; letter-spacing: -.04em; }
+  .cyber-visual-copy h1 em, .cyber-benefit { @apply text-[#3598ff]; }
+  .cyber-visual-copy > p:last-of-type, .cyber-benefit span, .cyber-visual-footer { @apply text-[#d1dff0]; }
+  .cyber-illustration { @apply pointer-events-none absolute bottom-0 left-0 z-0 h-[235px] w-full overflow-hidden bg-transparent; }
+  .cyber-illustration img { @apply absolute bottom-0 left-1/2 h-full w-[min(620px,105%)] -translate-x-1/2 object-contain object-bottom; }
+  .cyber-sticker { display: none; }
+  .cyber-auth-page-centered { @apply bg-[#f7faff]; }
+  .cyber-auth-page-centered .cyber-auth-content { @apply lg:col-span-2; }
+  .cyber-auth-card { @apply rounded-xl shadow-[0_8px_30px_rgba(16,40,78,.05)]; }
+  .cyber-card-brand { @apply mb-8 flex items-center justify-center gap-2 text-[#10284e]; }
+  .cyber-card-brand strong { @apply text-lg font-extrabold tracking-tight; }
+  .cyber-card-heading h1 { @apply text-[22px] font-bold tracking-[-.03em] text-[#10284e]; }
+  .cyber-centered-heading { @apply text-center; }
+  .cyber-centered-heading .cyber-card-icon { @apply mx-auto rounded-full; }
+  .cyber-centered-heading p strong { @apply text-[#10284e]; }
+  .cyber-name-grid { @apply grid grid-cols-1 gap-3 sm:grid-cols-2; }
+  .cyber-field { @apply mb-3; }
+  .cyber-field label { @apply mb-1 block text-[11px] font-bold text-[#10284e]; }
+  .cyber-field label span { @apply text-rose-500; }
+  .cyber-field-control { @apply relative flex items-center; }
+  .cyber-field-control > svg { @apply pointer-events-none absolute left-3 text-slate-400; }
+  .cyber-field-control input { @apply w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-9 text-xs text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#1455d9] focus:ring-2 focus:ring-[#dbe9ff] disabled:bg-slate-50; }
+  .cyber-field-control button { @apply absolute right-2.5 text-slate-400 hover:text-[#1455d9]; }
+  .cyber-field-error { @apply mt-1 text-[10px] font-medium text-rose-600; }
+  .cyber-form-error { @apply mb-3 flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 p-2.5 text-xs text-rose-700; }
+  .cyber-strength { @apply -mt-1 mb-3; }
+  .cyber-password-help { @apply mb-3 rounded-lg border border-[#e3ebf7] bg-[#f5f8fd] px-3 py-2.5 text-[10px] text-slate-600; }
+  .cyber-password-help > strong { @apply mb-1.5 block text-[11px] text-[#10284e]; }
+  .cyber-password-rules { @apply grid grid-cols-1 gap-1 sm:grid-cols-2; }
+  .cyber-password-rules span { @apply inline-flex items-center gap-1.5 leading-tight; }
+  .cyber-password-rules span svg { @apply shrink-0 text-slate-400; }
+  .cyber-password-rules span.met { @apply text-emerald-700; }
+  .cyber-password-rules span.met svg { @apply rounded-full bg-emerald-500 p-0.5 text-white; }
+  .cyber-strength { @apply mt-2; }
+  .cyber-strength > div { @apply mt-1 grid grid-cols-5 gap-1; }
+  .cyber-strength span { @apply h-1 rounded-full bg-slate-200; }
+  .cyber-strength span.filled { @apply bg-[#1455d9]; }
+  .cyber-strength small { @apply block text-[10px] text-slate-500; }
+  .cyber-strength small b { @apply text-[#1455d9]; }
+  .cyber-confirm-feedback { @apply -mt-2 mb-3 flex items-center gap-1 text-[11px] font-medium; }
+  .cyber-confirm-feedback.match { @apply text-emerald-600; }
+  .cyber-confirm-feedback.mismatch { @apply text-rose-600; }
+  .cyber-auth-button { @apply inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1455d9] px-4 py-3 text-xs font-bold text-white shadow-[0_9px_20px_rgba(20,85,217,.22)] transition hover:bg-[#0d47bc] disabled:cursor-not-allowed disabled:opacity-60; }
+  .cyber-auth-switch { @apply mt-5 text-center text-[11px] text-slate-500; }
+  .cyber-auth-switch a, .cyber-resend-copy button, .cyber-change-email { @apply font-bold text-[#1455d9] hover:text-[#0d47bc]; }
+  .cyber-otp-boxes { @apply mb-5 flex justify-center gap-2; }
+  .cyber-otp-boxes input { @apply h-12 w-11 rounded-lg border border-slate-200 bg-white text-center text-lg font-semibold text-[#10284e] outline-none transition focus:border-[#1455d9] focus:ring-2 focus:ring-[#dbe9ff] disabled:bg-slate-50 sm:h-14 sm:w-12; }
+  .cyber-otp-boxes input.filled { @apply border-slate-300 bg-[#fbfdff]; }
+  .cyber-resend-copy { @apply mt-5 text-center text-[11px] text-slate-500; }
+  .cyber-resend-copy button { @apply disabled:cursor-not-allowed disabled:text-slate-400; }
+  .cyber-change-email { @apply mx-auto mt-6 flex items-center gap-1 text-[11px]; }
+  .cyber-invalid-state { @apply flex flex-col items-center text-center; }
+  .cyber-invalid-state > div { @apply grid h-16 w-16 place-items-center rounded-full bg-rose-100 text-rose-500; }
+  .cyber-invalid-state h2 { @apply mt-4 text-xl font-bold text-[#10284e]; }
+  .cyber-invalid-state p { @apply mb-5 mt-2 text-xs leading-relaxed text-slate-500; }
+  .cyber-success-state .cyber-spinner { @apply mt-6 block h-6 w-6 rounded-full border-2 border-[#dbe9ff] border-t-[#1455d9]; }
+  .cyber-secure-note { @apply flex items-center justify-center gap-1; }
+
+  @media (max-width: 639px) {
+    .cyber-auth-card { @apply rounded-xl px-5 py-6; }
+    .cyber-otp-boxes { @apply gap-1.5; }
+    .cyber-otp-boxes input { @apply h-11 w-10; }
+  }
+
+  /* CyberLearnix auth controls */
+  .cyber-auth-page-centered { @apply bg-[#f7faff]; }
+  .cyber-auth-page-centered .cyber-auth-content { @apply lg:col-span-2; }
+  .cyber-auth-card-signup { @apply max-w-[430px]; }
+  .cyber-auth-card-wide { @apply max-w-[600px]; }
+  .cyber-auth-content:has(.cyber-auth-card-wide) { @apply gap-3; }
+  .cyber-login-icon { @apply mx-auto inline-flex rounded-full bg-[#edf3ff] p-3 text-[#1455d9]; }
+  .cyber-login-tabs button:focus-visible, .cyber-auth-card button:focus-visible, .cyber-auth-card a:focus-visible { @apply outline-none ring-2 ring-[#1455d9] ring-offset-2; }
+  .cyber-auth-card .lms-input:focus { @apply border-[#1455d9] ring-2 ring-[#dbe9ff]; }
+  .cyber-auth-card .lms-btn-primary { @apply disabled:bg-slate-300 disabled:text-slate-500 disabled:opacity-100; }
+  .cyber-auth-card .lms-link { @apply text-[#1455d9] hover:text-[#0d47bc]; }
+  .cyber-auth-card-otp { @apply max-w-[700px] rounded-2xl; }
+  .cyber-card-heading h1 { @apply text-[22px] font-bold tracking-[-.03em] text-[#10284e]; }
+  .cyber-centered-heading { @apply text-center; }
+  .cyber-centered-heading .cyber-card-icon { @apply mx-auto rounded-full; }
+  .cyber-centered-heading p strong { @apply text-[#10284e]; }
+  .cyber-name-grid { @apply grid grid-cols-1 gap-3 sm:grid-cols-2; }
+  .cyber-field { @apply mb-3; }
+  .cyber-field label { @apply mb-1 block text-[11px] font-bold text-[#10284e]; }
+  .cyber-field label span { @apply text-rose-500; }
+  .cyber-field-control { @apply relative flex items-center; }
+  .cyber-field-control > svg { @apply pointer-events-none absolute left-3 text-slate-400; }
+  .cyber-field-control input { @apply w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-9 text-xs text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#1455d9] focus:ring-2 focus:ring-[#dbe9ff] disabled:bg-slate-50; }
+  .cyber-field-control button { @apply absolute right-2.5 text-slate-400 hover:text-[#1455d9]; }
+  .cyber-field-error { @apply mt-1 text-[10px] font-medium text-rose-600; }
+  .cyber-form-error { @apply mb-3 flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 p-2.5 text-xs text-rose-700; }
+  .cyber-strength { @apply -mt-1 mb-3; }
+  .cyber-strength > div { @apply grid grid-cols-5 gap-1; }
+  .cyber-strength span { @apply h-1 rounded-full bg-slate-200; }
+  .cyber-strength span.filled { @apply bg-[#1455d9]; }
+  .cyber-strength small { @apply mt-1 block text-[10px] text-slate-400; }
+  .cyber-auth-button { @apply inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1455d9] px-4 py-3 text-xs font-bold text-white shadow-[0_9px_20px_rgba(20,85,217,.22)] transition hover:bg-[#0d47bc] disabled:cursor-not-allowed disabled:opacity-60; }
+  .cyber-auth-switch { @apply mt-5 text-center text-[11px] text-slate-500; }
+  .cyber-auth-switch a, .cyber-resend-copy button, .cyber-change-email { @apply font-bold text-[#1455d9] hover:text-[#0d47bc]; }
+  .cyber-otp-boxes { @apply mb-5 flex justify-center gap-2; }
+  .cyber-otp-boxes input { @apply h-12 w-11 rounded-lg border border-slate-200 bg-white text-center text-lg font-semibold text-[#10284e] outline-none transition focus:border-[#1455d9] focus:ring-2 focus:ring-[#dbe9ff] disabled:bg-slate-50 sm:h-14 sm:w-12; }
+  .cyber-resend-copy { @apply mt-5 text-center text-[11px] text-slate-500; }
+  .cyber-resend-copy button { @apply disabled:cursor-not-allowed disabled:text-slate-400; }
+  .cyber-change-email { @apply mx-auto mt-6 flex items-center gap-1 text-[11px]; }
+  .cyber-invalid-state { @apply flex flex-col items-center text-center; }
+  .cyber-invalid-state > div { @apply grid h-16 w-16 place-items-center rounded-full bg-rose-100 text-rose-500; }
+  .cyber-invalid-state h2 { @apply mt-4 text-xl font-bold text-[#10284e]; }
+  .cyber-invalid-state p { @apply mb-5 mt-2 text-xs leading-relaxed text-slate-500; }
+  .cyber-invalid-state .cyber-auth-button { @apply mb-0; }
+  .cyber-invalid-resend { @apply mt-4 text-[11px] font-bold text-[#1455d9] disabled:cursor-not-allowed disabled:text-slate-400; }
+  .cyber-success-state .cyber-spinner { @apply mt-6 block h-6 w-6 rounded-full border-2 border-[#dbe9ff] border-t-[#1455d9]; }
+  .cyber-secure-note { @apply flex items-center justify-center gap-1; }
+
+  @media (max-width: 639px) {
+    .cyber-auth-card { @apply rounded-xl px-5 py-6; }
+    .cyber-otp-boxes { @apply gap-1.5; }
+    .cyber-otp-boxes input { @apply h-11 w-10; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cyber-auth-page *, .cyber-auth-page *::before, .cyber-auth-page *::after {
+      animation-duration: .01ms !important;
+      transition-duration: .01ms !important;
+    }
+    /* Global reduced motion for all animations */
+    * {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
   }
 
   .lms-grid-mask {
@@ -102,6 +318,116 @@
   .input-field {
     @apply w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 
            focus:border-transparent outline-none transition-all duration-200;
+  }
+
+  /* Asivo Header Styles */
+  .asivo-header {
+    @apply fixed top-0 left-0 right-0 z-50 bg-white border-b border-asivo-border transition-all duration-300;
+  }
+
+  .asivo-header.scrolled {
+    @apply bg-white/95 backdrop-blur-md shadow-sm;
+  }
+
+  .asivo-header-inner {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between;
+  }
+
+  .asivo-logo-link {
+    @apply flex items-center gap-2 transition-transform hover:scale-105;
+  }
+
+  .asivo-logo-link img {
+    @apply h-10 w-auto;
+  }
+
+  .asivo-desktop-nav {
+    @apply hidden md:flex items-center gap-8;
+  }
+
+  .asivo-desktop-nav a {
+    @apply text-asivo-dark hover:text-asivo-primary font-medium transition-colors;
+  }
+
+  .asivo-desktop-nav a.active {
+    @apply text-asivo-primary font-semibold;
+  }
+
+  .asivo-header-actions {
+    @apply flex items-center gap-4;
+  }
+
+  .asivo-search {
+    @apply hidden lg:flex items-center gap-2 bg-asivo-bg-soft border border-asivo-border rounded-full px-4 py-2 transition-all focus-within:border-asivo-primary focus-within:ring-2 focus-within:ring-asivo-primary/20;
+  }
+
+  .asivo-search input {
+    @apply bg-transparent border-none outline-none text-sm text-asivo-dark placeholder:text-asivo-secondary w-40;
+  }
+
+  .asivo-signin {
+    @apply text-asivo-dark hover:text-asivo-primary font-medium transition-colors;
+  }
+
+  .asivo-header-cta {
+    @apply bg-asivo-primary text-white px-5 py-2 rounded-full font-semibold hover:bg-asivo-primary/90 transition-all shadow-md hover:shadow-lg;
+  }
+
+  .asivo-dashboard-link {
+    @apply text-asivo-dark hover:text-asivo-primary font-medium transition-colors;
+  }
+
+  .asivo-header-logout {
+    @apply text-asivo-secondary hover:text-asivo-dark font-medium transition-colors;
+  }
+
+  .asivo-mobile-toggle {
+    @apply lg:hidden p-2 text-asivo-dark hover:text-asivo-primary transition-colors;
+  }
+
+  .asivo-mobile-nav {
+    @apply lg:hidden fixed top-16 left-0 right-0 bg-white border-b border-asivo-border p-4 flex flex-col gap-4 shadow-lg;
+  }
+
+  .asivo-mobile-nav a {
+    @apply text-asivo-dark hover:text-asivo-primary font-medium py-2 transition-colors;
+  }
+
+  /* Asivo Footer Styles */
+  .asivo-footer {
+    @apply bg-asivo-navy text-white pt-16 pb-8;
+  }
+
+  .asivo-footer-grid {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12;
+  }
+
+  .asivo-footer-logo {
+    @apply inline-block mb-4;
+  }
+
+  .asivo-footer-logo img {
+    @apply h-10 w-auto;
+  }
+
+  .asivo-footer-tagline {
+    @apply text-asivo-cyan font-semibold mb-3;
+  }
+
+  .asivo-footer-description {
+    @apply text-asivo-secondary text-sm leading-relaxed;
+  }
+
+  .asivo-footer h3 {
+    @apply text-white font-semibold mb-4 text-lg;
+  }
+
+  .asivo-footer a {
+    @apply block text-asivo-secondary hover:text-white text-sm py-2 transition-colors;
+  }
+
+  .asivo-footer-bottom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-asivo-secondary;
   }
 }
 

@@ -5,8 +5,9 @@ import {
   User, BookOpen, GraduationCap, ShoppingBag, Heart, Bell, MessageCircle,
   Calendar, Settings, UserCircle, HelpCircle, CreditCard, Shield, LogOut,
   Moon, Sun, Star, Download, Award, Users, TrendingUp, DollarSign, PlusCircle,
-  BarChart3, Share2, MessageSquare, Sparkles, Eye, AlertCircle, X, Camera
+  BarChart3, Share2, MessageSquare, Eye, AlertCircle, X, Camera
 } from "lucide-react";
+import Portal from "../components/ui/Portal";
 
 const ProfileDropdown = ({ user, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,7 +46,7 @@ const ProfileDropdown = ({ user, onLogout }) => {
     email: user?.email || "",
     bio: user?.bio || "Lifelong learner",
     skills: user?.skills || "React, Python",
-    avatar: user?.avatar || "",
+    avatar: user?.profilePhoto || user?.avatar || "",
   });
 
   // Sync editForm when user changes
@@ -56,7 +57,7 @@ const ProfileDropdown = ({ user, onLogout }) => {
         email: user.email || "",
         bio: user.bio || "Lifelong learner",
         skills: user.skills || "React, Python",
-        avatar: user.avatar || "",
+        avatar: user.profilePhoto || user.avatar || "",
       });
     }
   }, [user]);
@@ -128,11 +129,17 @@ const ProfileDropdown = ({ user, onLogout }) => {
     <div className="relative" ref={dropdownRef}>
       <button onClick={() => setIsOpen(!isOpen)} className="flex items-center gap-2 focus:outline-none">
         <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
-          {editForm.avatar ? (
-            <img src={editForm.avatar} className="w-full h-full rounded-full object-cover" />
-          ) : (
-            <User size={16} className="text-orange-600" />
-          )}
+          <img
+            src={editForm.avatar || ''}
+            alt="Profile"
+            className="w-full h-full rounded-full object-cover"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextElementSibling.style.display = 'flex';
+            }}
+            style={{display: editForm.avatar ? 'block' : 'none'}}
+          />
+          <User size={16} className="text-orange-600" style={{display: editForm.avatar ? 'none' : 'flex'}} />
         </div>
         <span className="text-sm font-medium hidden md:inline">{editForm.name || "User"}</span>
       </button>
@@ -150,11 +157,17 @@ const ProfileDropdown = ({ user, onLogout }) => {
               <div className="p-4 border-b dark:border-gray-700">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
-                    {editForm.avatar ? (
-                      <img src={editForm.avatar} className="w-full h-full rounded-full object-cover" />
-                    ) : (
-                      <User size={24} className="text-orange-600" />
-                    )}
+                    <img
+                      src={editForm.avatar || ''}
+                      alt="Profile"
+                      className="w-full h-full rounded-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextElementSibling.style.display = 'flex';
+                      }}
+                      style={{display: editForm.avatar ? 'block' : 'none'}}
+                    />
+                    <User size={24} className="text-orange-600" style={{display: editForm.avatar ? 'none' : 'flex'}} />
                   </div>
                   <div>
                     <h3 className="font-semibold">{editForm.name}</h3>
@@ -212,7 +225,7 @@ const ProfileDropdown = ({ user, onLogout }) => {
                   <MenuItem onClick={comingSoon} icon={Shield}>Two-Factor Auth</MenuItem>
                 </MenuItemSection>
 
-                <MenuItemSection title="Premium Features" icon={Sparkles}>
+                <MenuItemSection title="Premium Features" icon={Star}>
                   <MenuItem onClick={comingSoon} icon={Eye}>Recently Viewed</MenuItem>
                   <MenuItem onClick={comingSoon} icon={Download}>Downloads</MenuItem>
                   <MenuItem onClick={comingSoon} icon={Award}>Badges</MenuItem>
@@ -239,70 +252,88 @@ const ProfileDropdown = ({ user, onLogout }) => {
       </AnimatePresence>
 
       {/* Modals */}
-      {showEditProfile && (
-        <Modal onClose={() => setShowEditProfile(false)} title="Edit Profile">
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-orange-100 flex items-center justify-center overflow-hidden">
-                  {editForm.avatar ? <img src={editForm.avatar} className="w-full h-full object-cover" /> : <User size={32} className="text-orange-600" />}
+      <AnimatePresence>
+        {showEditProfile && (
+          <Modal onClose={() => setShowEditProfile(false)} title="Edit Profile">
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="w-20 h-20 rounded-full bg-orange-100 flex items-center justify-center overflow-hidden">
+                    <img
+                      src={editForm.avatar || ''}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextElementSibling.style.display = 'flex';
+                      }}
+                      style={{display: editForm.avatar ? 'block' : 'none'}}
+                    />
+                    <User size={32} className="text-orange-600" style={{display: editForm.avatar ? 'none' : 'flex'}} />
+                  </div>
+                  <label className="absolute bottom-0 right-0 bg-orange-600 rounded-full p-1 cursor-pointer">
+                    <Camera size={14} className="text-white" />
+                    <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                  </label>
                 </div>
-                <label className="absolute bottom-0 right-0 bg-orange-600 rounded-full p-1 cursor-pointer">
-                  <Camera size={14} className="text-white" />
-                  <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-                </label>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium">Full Name</label>
+                  <input type="text" value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} className="w-full border rounded-lg p-2" />
+                </div>
               </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium">Full Name</label>
-                <input type="text" value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} className="w-full border rounded-lg p-2" />
-              </div>
+              <div><label className="block text-sm font-medium">Email</label><input type="email" value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} className="w-full border rounded-lg p-2" /></div>
+              <div><label className="block text-sm font-medium">Bio</label><textarea rows="2" value={editForm.bio} onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })} className="w-full border rounded-lg p-2" /></div>
+              <div><label className="block text-sm font-medium">Skills</label><input type="text" value={editForm.skills} onChange={(e) => setEditForm({ ...editForm, skills: e.target.value })} className="w-full border rounded-lg p-2" /></div>
+              <div className="flex gap-2"><button onClick={saveProfile} className="flex-1 bg-orange-600 text-white py-2 rounded-lg">Save</button><button onClick={() => setShowEditProfile(false)} className="flex-1 border rounded-lg py-2">Cancel</button></div>
             </div>
-            <div><label className="block text-sm font-medium">Email</label><input type="email" value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} className="w-full border rounded-lg p-2" /></div>
-            <div><label className="block text-sm font-medium">Bio</label><textarea rows="2" value={editForm.bio} onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })} className="w-full border rounded-lg p-2" /></div>
-            <div><label className="block text-sm font-medium">Skills</label><input type="text" value={editForm.skills} onChange={(e) => setEditForm({ ...editForm, skills: e.target.value })} className="w-full border rounded-lg p-2" /></div>
-            <div className="flex gap-2"><button onClick={saveProfile} className="flex-1 bg-orange-600 text-white py-2 rounded-lg">Save</button><button onClick={() => setShowEditProfile(false)} className="flex-1 border rounded-lg py-2">Cancel</button></div>
-          </div>
-        </Modal>
-      )}
+          </Modal>
+        )}
+      </AnimatePresence>
 
-      {showNotifications && (
-        <Modal onClose={() => setShowNotifications(false)} title="Notifications">
-          <div className="space-y-2 max-h-96 overflow-y-auto">
-            {notifications.map(n => (
-              <div key={n.id} className={`p-3 rounded-lg border cursor-pointer ${n.read ? "bg-white" : "bg-orange-50"}`} onClick={() => markNotifRead(n.id)}>
-                <p className="font-medium">{n.title}</p>
-                <p className="text-sm text-gray-500">{n.message}</p>
-                <p className="text-xs text-gray-400">{n.date}</p>
-              </div>
-            ))}
-          </div>
-        </Modal>
-      )}
+      <AnimatePresence>
+        {showNotifications && (
+          <Modal onClose={() => setShowNotifications(false)} title="Notifications">
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {notifications.map(n => (
+                <div key={n.id} className={`p-3 rounded-lg border cursor-pointer ${n.read ? "bg-white" : "bg-orange-50"}`} onClick={() => markNotifRead(n.id)}>
+                  <p className="font-medium">{n.title}</p>
+                  <p className="text-sm text-gray-500">{n.message}</p>
+                  <p className="text-xs text-gray-400">{n.date}</p>
+                </div>
+              ))}
+            </div>
+          </Modal>
+        )}
+      </AnimatePresence>
 
-      {showMessages && (
-        <Modal onClose={() => setShowMessages(false)} title="Messages">
-          <div className="space-y-2 max-h-96 overflow-y-auto">
-            {messages.map(m => (
-              <div key={m.id} className={`p-3 rounded-lg border cursor-pointer ${m.read ? "bg-white" : "bg-blue-50"}`} onClick={() => markMsgRead(m.id)}>
-                <p className="font-medium">{m.from}</p>
-                <p className="text-sm text-gray-500">{m.message}</p>
-                <p className="text-xs text-gray-400">{m.time}</p>
-              </div>
-            ))}
-          </div>
-        </Modal>
-      )}
+      <AnimatePresence>
+        {showMessages && (
+          <Modal onClose={() => setShowMessages(false)} title="Messages">
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {messages.map(m => (
+                <div key={m.id} className={`p-3 rounded-lg border cursor-pointer ${m.read ? "bg-white" : "bg-blue-50"}`} onClick={() => markMsgRead(m.id)}>
+                  <p className="font-medium">{m.from}</p>
+                  <p className="text-sm text-gray-500">{m.message}</p>
+                  <p className="text-xs text-gray-400">{m.time}</p>
+                </div>
+              ))}
+            </div>
+          </Modal>
+        )}
+      </AnimatePresence>
 
-      {showSettings && (
-        <Modal onClose={() => setShowSettings(false)} title="Settings">
-          <div className="space-y-3">
-            <div className="flex justify-between"><span>Email Notifications</span><input type="checkbox" /></div>
-            <div className="flex justify-between"><span>Push Notifications</span><input type="checkbox" /></div>
-            <div className="flex justify-between"><span>Language</span><select className="border rounded p-1"><option>English</option></select></div>
-            <button onClick={toggleDarkMode} className="w-full bg-gray-100 py-2 rounded-lg">Toggle Dark Mode</button>
-          </div>
-        </Modal>
-      )}
+      <AnimatePresence>
+        {showSettings && (
+          <Modal onClose={() => setShowSettings(false)} title="Settings">
+            <div className="space-y-3">
+              <div className="flex justify-between"><span>Email Notifications</span><input type="checkbox" /></div>
+              <div className="flex justify-between"><span>Push Notifications</span><input type="checkbox" /></div>
+              <div className="flex justify-between"><span>Language</span><select className="border rounded p-1"><option>English</option></select></div>
+              <button onClick={toggleDarkMode} className="w-full bg-gray-100 py-2 rounded-lg">Toggle Dark Mode</button>
+            </div>
+          </Modal>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -324,12 +355,27 @@ const MenuItem = ({ onClick, icon: Icon, children }) => (
 );
 
 const Modal = ({ children, title, onClose }) => (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-    <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full" onClick={(e) => e.stopPropagation()}>
-      <div className="flex justify-between items-center p-4 border-b"><h2 className="text-xl font-semibold">{title}</h2><button onClick={onClose}><X size={20} /></button></div>
-      <div className="p-4">{children}</div>
-    </div>
-  </div>
+  <Portal>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center p-4 border-b"><h2 className="text-xl font-semibold">{title}</h2><button onClick={onClose}><X size={20} /></button></div>
+        <div className="p-4">{children}</div>
+      </motion.div>
+    </motion.div>
+  </Portal>
 );
 
 export default ProfileDropdown;

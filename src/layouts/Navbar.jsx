@@ -11,7 +11,8 @@ import {
   LogOut,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import logoImage from "../assets/learnmaster-logo.png";
+import logoImage from "../assets/cyberlearnix-education.svg";
+import { cartApi } from "../api/cartApi";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -40,6 +41,10 @@ const Navbar = () => {
 
     updateUser();
     updateCartCount();
+
+    if (localStorage.getItem("lms_token") || localStorage.getItem("access_token")) {
+      cartApi.getCart().catch(() => {});
+    }
 
     // Storage events (from other tabs)
     const handleStorage = (e) => {
@@ -85,8 +90,8 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <img src={logoImage} alt="LearnMaster" className="h-14 w-auto" />
-            <span className="text-xl font-bold text-slate-800">LearnMaster</span>
+            <img src="/assets/asivo-logo-md.png" alt="Asivo" className="h-14 w-auto" />
+            <span className="text-xl font-bold text-slate-800">Asivo</span>
           </Link>
 
           {/* Desktop Menu Items */}

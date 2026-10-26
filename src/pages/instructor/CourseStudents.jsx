@@ -8,6 +8,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { instructorApi } from "../../api/instructorApi";
 import { courseApi } from "../../api/courseApi";
+import Portal from "../../components/ui/Portal";
 
 const CourseStudents = () => {
   const { courseId } = useParams();
@@ -281,8 +282,9 @@ const CourseStudents = () => {
       {/* Student Detail Modal */}
       <AnimatePresence>
         {selectedStudent && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <motion.div
+          <Portal>
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -350,6 +352,7 @@ const CourseStudents = () => {
               )}
             </motion.div>
           </div>
+        </Portal>
         )}
       </AnimatePresence>
     </div>

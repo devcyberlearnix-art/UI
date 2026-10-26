@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus, Edit, Trash2, BookOpen, Users, Star,
   AlertCircle, Loader2, RefreshCw, DollarSign, Eye,
-  Sparkles, CheckCircle, ChevronUp, Tag, FileText
+  CheckCircle, ChevronUp, Tag, FileText, ClipboardList
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { instructorApi } from "../../api/instructorApi";
@@ -210,7 +210,7 @@ const MyCourses = () => {
           >
             <div className="flex items-center justify-between border-b border-gray-100 pb-4">
               <div className="flex items-center gap-2 text-orange-600 font-bold text-lg">
-                <Sparkles size={20} />
+                <Star size={20} />
                 <span>Create & Publish Course</span>
               </div>
               {createSuccess && (
@@ -425,6 +425,13 @@ const MyCourses = () => {
                         title="View Students"
                       >
                         <Eye size={16} />
+                      </button>
+                      <button
+                        onClick={() => navigate(`/instructor/courses/${course.id}/assignments`)}
+                        className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition"
+                        title="Manage Assignments"
+                      >
+                        <ClipboardList size={16} />
                       </button>
                     </div>
                     <Link

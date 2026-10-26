@@ -3,14 +3,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, X, Loader2, AlertCircle, RefreshCw, DollarSign, CreditCard, CheckCircle, XCircle } from "lucide-react";
 import { adminApi } from "../../api/adminApi";
 import toast from "react-hot-toast";
+import Portal from "../../components/ui/Portal";
 
 const Modal = ({ title, children, onClose }) => (
-  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-    <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-white rounded-2xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
-      <div className="flex justify-between items-center mb-4"><h2 className="text-xl font-bold">{title}</h2><button onClick={onClose}><X size={20} /></button></div>
-      {children}
+  <Portal>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-white rounded-2xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+        <div className="flex justify-between items-center mb-4"><h2 className="text-xl font-bold">{title}</h2><button onClick={onClose}><X size={20} /></button></div>
+        {children}
+      </motion.div>
     </motion.div>
-  </motion.div>
+  </Portal>
 );
 
 const Payments = () => {

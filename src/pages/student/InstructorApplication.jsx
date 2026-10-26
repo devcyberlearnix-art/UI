@@ -9,6 +9,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { instructorApi } from "../../api/instructorApi";
 import toast from "react-hot-toast";
+import Portal from "../../components/ui/Portal";
 
 // ─── Document field config ────────────────────────────────────────────────────
 const DOCUMENT_FIELDS = [
@@ -446,8 +447,9 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
 
   // ─── Confirmation modal ────────────────────────────────────────────────────
   const ConfirmModal = () => (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 animate-[fadeInUp_0.3s_ease]">
+    <Portal>
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 animate-[fadeInUp_0.3s_ease]">
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-200">
             <Award className="w-8 h-8 text-white" />
@@ -472,6 +474,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         </div>
       </div>
     </div>
+    </Portal>
   );
 
   return (

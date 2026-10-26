@@ -1,0 +1,152 @@
+{
+  "timestamp": "2026-10-16T17:23:45.151Z",
+  "total": 24,
+  "passed": 24,
+  "failed": 0,
+  "results": [
+    {
+      "category": "Cart Operations",
+      "testName": "Add Course to Cart",
+      "passed": true,
+      "details": "Status: 201"
+    },
+    {
+      "category": "Coupon Lifecycle",
+      "testName": "Apply Valid Coupon (WELCOME50)",
+      "passed": true,
+      "details": "Status: 200, Discount: 799.9"
+    },
+    {
+      "category": "Coupon Lifecycle",
+      "testName": "Remove Coupon from Cart",
+      "passed": true,
+      "details": "Status: 200, Cleared Discount: 0"
+    },
+    {
+      "category": "Price Protection",
+      "testName": "Reject Client Price Manipulation",
+      "passed": true,
+      "details": "Status: 400, Msg: Order total mismatch: client total (100.0) does not match verified order price (7199.1)"
+    },
+    {
+      "category": "Order Creation",
+      "testName": "Create Valid Discounted Order",
+      "passed": true,
+      "details": "Status: 200, OrderId: 98491d2a-ea62-441d-8d25-15c6f48fb108, Total: 7199.1"
+    },
+    {
+      "category": "Database Persistence",
+      "testName": "Order & Items Persisted in PostgreSQL",
+      "passed": true,
+      "details": "DB Status & Price Verified in lms_order_db"
+    },
+    {
+      "category": "Order Retrieval",
+      "testName": "Owner Can Retrieve Order Details",
+      "passed": true,
+      "details": "Status: 200"
+    },
+    {
+      "category": "Order History",
+      "testName": "Order Appears in Owner Order History",
+      "passed": true,
+      "details": "History Count: 1, Found: true"
+    },
+    {
+      "category": "Data Isolation",
+      "testName": "Student B Cannot Access Student A Order Details",
+      "passed": true,
+      "details": "Status: 404 (Not Found / Isolated)"
+    },
+    {
+      "category": "Data Isolation",
+      "testName": "Student B Cannot Cancel Student A Order",
+      "passed": true,
+      "details": "Status: 404"
+    },
+    {
+      "category": "Data Isolation",
+      "testName": "Student A Order Does Not Appear in Student B History",
+      "passed": true,
+      "details": "Student B History items: 0, Contains A: false"
+    },
+    {
+      "category": "Error Handling",
+      "testName": "Nonexistent Course Returns HTTP 400 Bad Request",
+      "passed": true,
+      "details": "Status: 400, Msg: Course not found with id: 999999"
+    },
+    {
+      "category": "Cart Preservation",
+      "testName": "Cart Preserved on Validation Failure",
+      "passed": true,
+      "details": "Cart courses count: 1"
+    },
+    {
+      "category": "Role Boundaries",
+      "testName": "Student Blocked from Admin Orders (/orders/admin)",
+      "passed": true,
+      "details": "Status: 403"
+    },
+    {
+      "category": "Role Boundaries",
+      "testName": "Student Blocked from Admin Users (/admin/users)",
+      "passed": true,
+      "details": "Status: 403"
+    },
+    {
+      "category": "Role Boundaries",
+      "testName": "Student Blocked from Admin Instructors (/admin/instructors)",
+      "passed": true,
+      "details": "Status: 403"
+    },
+    {
+      "category": "Role Boundaries",
+      "testName": "Student Blocked from Instructor Self (/instructors/me)",
+      "passed": true,
+      "details": "Status: 403"
+    },
+    {
+      "category": "Role Boundaries",
+      "testName": "Student Blocked from Creating Assignments",
+      "passed": true,
+      "details": "Status: 403"
+    },
+    {
+      "category": "Role Boundaries",
+      "testName": "Student Blocked from Directly Modifying Order Status to PAID",
+      "passed": true,
+      "details": "Status: 403"
+    },
+    {
+      "category": "Role Boundaries",
+      "testName": "Instructor Blocked from Admin Users",
+      "passed": true,
+      "details": "Status: 403"
+    },
+    {
+      "category": "Course Ownership",
+      "testName": "Instructor Blocked from Modifying Unowned Course",
+      "passed": true,
+      "details": "Status: 400, Msg: Instructor does not own this course"
+    },
+    {
+      "category": "Admin Authorization",
+      "testName": "Admin Accesses Admin Users Endpoint",
+      "passed": true,
+      "details": "Status: 200"
+    },
+    {
+      "category": "Admin Authorization",
+      "testName": "Admin Accesses Admin Instructors Endpoint",
+      "passed": true,
+      "details": "Status: 200"
+    },
+    {
+      "category": "Admin Authorization",
+      "testName": "Admin Accesses Admin Banners Endpoint",
+      "passed": true,
+      "details": "Status: 200"
+    }
+  ]
+}

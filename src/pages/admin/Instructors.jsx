@@ -5,6 +5,7 @@ import { CheckCircle, XCircle, Trash2, Loader2, AlertCircle, User, Mail, BookOpe
 import { adminApi } from "../../api/adminApi";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
+import Portal from "../../components/ui/Portal";
 
 const Instructors = () => {
   const { user } = useAuth();
@@ -335,8 +336,9 @@ const Instructors = () => {
 
       {/* Instructor Details Modal */}
       {showModal && selectedInstructor && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+        <Portal>
+          <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
+            <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
               <button
                 onClick={() => setShowModal(false)}
@@ -432,6 +434,7 @@ const Instructors = () => {
             </div>
           </div>
         </div>
+        </Portal>
       )}
     </motion.div>
   );

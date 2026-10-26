@@ -6,6 +6,12 @@ import { Link } from "react-router-dom";
 const InstructorNavbar = ({ setSidebarOpen, sidebarOpen }) => {
   const { user } = useAuth();
 
+  const getUserInitials = () => {
+    if (!user) return 'I';
+    const name = user?.name || user?.firstName || user?.displayName || 'Instructor';
+    return name.charAt(0).toUpperCase();
+  };
+
   return (
     <div className="sticky top-0 bg-white border-b px-6 py-3 flex justify-between items-center z-30 shadow-sm">
       <div className="flex items-center gap-4">
@@ -50,8 +56,20 @@ const InstructorNavbar = ({ setSidebarOpen, sidebarOpen }) => {
             <p className="text-sm font-bold text-gray-900">{user?.name || "Instructor"}</p>
             <p className="text-xs text-indigo-600 font-medium">Instructor Panel</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <User size={20} className="text-indigo-600" />
+          <div className="relative">
+            <img
+              src={user?.profilePhoto || ''}
+              alt="Profile"
+              className="w-10 h-10 rounded-xl object-cover"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextElementSibling.style.display = 'flex';
+              }}
+              style={{display: user?.profilePhoto ? 'block' : 'none'}}
+            />
+            <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center" style={{display: user?.profilePhoto ? 'none' : 'flex'}}>
+              <User size={20} className="text-indigo-600" />
+            </div>
           </div>
         </div>
       </div>

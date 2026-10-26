@@ -2,6 +2,25 @@ import axiosInstance from "./axiosInstance";
 
 export const instructorApi = {
 
+  // ======================== PROFILE ========================
+
+  // GET /api/v1/instructors/me
+  // Returns the current instructor's profile
+  getProfile: async () => {
+    try {
+      const response = await axiosInstance.get("/api/v1/instructors/me");
+      return response.data;
+    } catch (err) {
+      console.warn('[instructorApi] GET /api/v1/instructors/me failed, trying fallback endpoints...');
+      try {
+        const fallback1 = await axiosInstance.get("/api/v1/users/me");
+        return fallback1.data;
+      } catch (err1) {
+        throw err;
+      }
+    }
+  },
+
   // ======================== COURSE MANAGEMENT ========================
 
   // POST /api/v1/instructors/{instructorId}/courses
@@ -237,6 +256,60 @@ export const instructorApi = {
       { response: message }
     );
     return response.data;
+  },
+
+  // ======================== DASHBOARD ========================
+
+  /**
+   * GET /api/v1/instructors/{id}/dashboard
+   * Get instructor dashboard
+   */
+  getDashboard: async (instructorId) => {
+    const id = instructorId || "me";
+    try {
+      const response = await axiosInstance.get(`/api/v1/instructors/${id}/dashboard`);
+      return response.data;
+    } catch (err) {
+      console.warn(`[instructorApi] GET /api/v1/instructors/${id}/dashboard failed`);
+      throw err;
+    }
+  },
+
+  // ======================== GRADES ========================
+
+  /**
+   * POST /api/v1/instructors/{id}/courses/{courseId}/grades
+   * Assign/update grade
+   */
+  assignGrade: async (instructorId, courseId, gradeData) => {
+    const id = instructorId || "me";
+    try {
+      const response = await axiosInstance.post(
+        `/api/v1/instructors/${id}/courses/${courseId}/grades`,
+        gradeData
+      );
+      return response.data;
+    } catch (err) {
+      console.warn(`[instructorApi] POST /api/v1/instructors/${id}/courses/${courseId}/grades failed`);
+      throw err;
+    }
+  },
+
+  /**
+   * GET /api/v1/instructors/{id}/courses/{courseId}/grades
+   * Get grades by course
+   */
+  getCourseGrades: async (instructorId, courseId) => {
+    const id = instructorId || "me";
+    try {
+      const response = await axiosInstance.get(
+        `/api/v1/instructors/${id}/courses/${courseId}/grades`
+      );
+      return response.data;
+    } catch (err) {
+      console.warn(`[instructorApi] GET /api/v1/instructors/${id}/courses/${courseId}/grades failed`);
+      throw err;
+    }
   },
 };
 

@@ -7,9 +7,6 @@ import axiosInstance from "./axiosInstance";
 export const authApi = {
   login: async (email, password) => {
     try {
-      console.log('[Auth] Login attempt for:', email);
-      console.log('[Auth] Password length:', password?.length || 0);
-      
       const emailStr = typeof email === 'string' ? email : String(email || '');
       const passwordStr = typeof password === 'string' ? password : String(password || '');
       
@@ -18,25 +15,9 @@ export const authApi = {
         password: passwordStr
       };
       
-      console.log('[Auth] Request data:', JSON.stringify(requestData, null, 2));
-      
       const response = await axiosInstance.post('/api/v1/auth/login', requestData);
-      
-      console.log('[Auth] Response status:', response.status);
-      console.log('[Auth] Response data:', response.data);
-      
       return response.data;
     } catch (error) {
-      console.error('[Auth] Login error:', error);
-      
-      if (error.response) {
-        console.error('[Auth] Error status:', error.response.status);
-        console.error('[Auth] Error data:', error.response.data);
-        console.error('[Auth] Error headers:', error.response.headers);
-      } else if (error.request) {
-        console.error('[Auth] No response received:', error.request);
-      }
-      
       throw error;
     }
   },
@@ -49,6 +30,26 @@ export const authApi = {
     } catch (error) {
       console.error('[Auth] Logout error:', error);
       return { success: false };
+    }
+  },
+
+  refreshAccessToken: async () => {
+    try {
+      const refreshToken = localStorage.getItem("refresh_token");
+      if (!refreshToken) {
+        throw new Error("No refresh token available");
+      }
+      // Backend expects refresh token in Authorization header, not request body
+      // According to AUTHENTICATION_AND_AUTHORIZATION.md: "Headers: Authorization: Bearer <refresh_token>"
+      const response = await axiosInstance.post('/api/v1/auth/refresh', {}, {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Refresh token error:', error);
+      throw error;
     }
   },
 
@@ -218,7 +219,6 @@ export const authApi = {
       const response = await axiosInstance.post('/api/v1/auth/register', payload);
       return response.data;
     } catch (error) {
-      console.error('[Auth] Register error:', error);
       throw error;
     }
   },
@@ -239,15 +239,48 @@ export const authApi = {
   uploadProfilePhoto: async (file) => {
     try {
       const formData = new FormData();
-      formData.append('profilePhoto', file);
-      const response = await axiosInstance.post('/api/v1/auth/upload/profile-photo', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      formData.append('file', file);
+      // Don't set Content-Type header; let Axios/browser set it with correct boundary
+      const response = await axiosInstance.put('/api/v1/users/me/photo', formData);
       return response.data;
     } catch (error) {
       console.error('[Auth] Upload profile photo error:', error);
+      throw error;
+    }
+  },
+
+  removeProfilePhoto: async () => {
+    try {
+      const response = await axiosInstance.delete('/api/v1/users/me/photo');
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Remove profile photo error:', error);
+      throw error;
+    }
+  },
+
+  uploadCoverPhoto: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await axiosInstance.put('/api/v1/users/me/cover-photo', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Upload cover photo error:', error);
+      throw error;
+    }
+  },
+
+  removeCoverPhoto: async () => {
+    try {
+      const response = await axiosInstance.delete('/api/v1/users/me/cover-photo');
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Remove cover photo error:', error);
       throw error;
     }
   },
@@ -262,6 +295,139 @@ export const authApi = {
       return response.data;
     } catch (error) {
       console.error('[Auth] Verify reset OTP and password error:', error);
+      throw error;
+    }
+  },
+
+  // Get user profile (for students/general users)
+  getUserProfile: async () => {
+    try {
+      const response = await axiosInstance.get('/api/v1/users/me');
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Get user profile error:', error);
+      throw error;
+    }
+  },
+
+  // Update user profile (for students/general users)
+  updateUserProfile: async (profileData) => {
+    try {
+      const response = await axiosInstance.put('/api/v1/users/me', profileData);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Update user profile error:', error);
+      throw error;
+    }
+  },
+
+  // ======================== SESSION MANAGEMENT ========================
+  // List all active sessions for current user
+  listSessions: async () => {
+    try {
+      const response = await axiosInstance.get('/api/v1/users/me/sessions');
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] List sessions error:', error);
+      throw error;
+    }
+  },
+
+  // Logout from specific device/session
+  logoutDevice: async (sessionId) => {
+    try {
+      const response = await axiosInstance.delete(`/api/v1/users/me/sessions/${sessionId}`);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Logout device error:', error);
+      throw error;
+    }
+  },
+
+  // Logout from all devices/sessions
+  logoutAllSessions: async () => {
+    try {
+      const response = await axiosInstance.delete('/api/v1/users/me/sessions');
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Logout all sessions error:', error);
+      throw error;
+    }
+  },
+
+  // ======================== EMAIL CHANGE ========================
+  // Email change is a 3-step flow:
+  // 1. Initiate email change (re-auth + send OTPs to old and new email)
+  // 2. Verify old email OTP
+  // 3. Verify new email OTP (completes change, invalidates sessions)
+  
+  // Step 1: Initiate email change
+  requestEmailChange: async (newEmail, password = null, reAuthOtpSessionId = null) => {
+    try {
+      const payload = { newEmail };
+      if (password) {
+        payload.password = password;
+      }
+      if (reAuthOtpSessionId) {
+        payload.reAuthOtpSessionId = reAuthOtpSessionId;
+      }
+      const response = await axiosInstance.post('/api/v1/users/email/change-request', payload);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Request email change error:', error);
+      throw error;
+    }
+  },
+
+  // Step 2: Verify old email OTP
+  verifyOldEmail: async (sessionId, otp) => {
+    try {
+      const response = await axiosInstance.post('/api/v1/users/email/verify-old', {
+        sessionId,
+        otp
+      });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Verify old email error:', error);
+      throw error;
+    }
+  },
+
+  // Step 3: Verify new email OTP (completes change)
+  verifyNewEmail: async (sessionId, otp) => {
+    try {
+      const response = await axiosInstance.post('/api/v1/users/email/verify-new', {
+        sessionId,
+        otp
+      });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Verify new email error:', error);
+      throw error;
+    }
+  },
+
+  // Resend OTP for email change
+  resendEmailChangeOtp: async (sessionId, target = 'ALL') => {
+    try {
+      const response = await axiosInstance.post('/api/v1/users/email/resend-otp', {
+        sessionId,
+        target // 'OLD', 'NEW', or 'ALL'
+      });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Resend email change OTP error:', error);
+      throw error;
+    }
+  },
+
+  // Get email change session status
+  getEmailChangeSession: async (sessionId) => {
+    try {
+      const response = await axiosInstance.get(`/api/v1/users/email/change-request/${sessionId}`);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Get email change session error:', error);
       throw error;
     }
   },

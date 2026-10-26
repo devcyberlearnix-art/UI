@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -14,580 +14,670 @@ import {
   CheckCircle2,
   RefreshCw,
   Heart,
-  ShoppingCart,
   Award,
-  Sparkles,
   ChevronDown,
   ChevronRight,
   ShieldCheck,
   Share2,
   Check,
   Lock,
-  Download,
-  Smartphone,
-  Globe,
-  HelpCircle,
+  Video,
+  Volume2,
+  VolumeX,
+  Maximize2,
+  Play,
+  Pause,
+  Settings,
+  MonitorUp,
+  Target,
+  TrendingUp,
+  X,
+  ClipboardList,
+  Radio,
+  MessageSquare,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { courseApi } from "../../api/courseApi";
-
-const CATEGORY_COLORS = {
-  Programming: "bg-indigo-600 text-white",
-  "Web Development": "bg-cyan-600 text-white",
-  "Data Science": "bg-emerald-600 text-white",
-  "Cloud & DevOps": "bg-blue-600 text-white",
-  "Artificial Intelligence": "bg-purple-600 text-white",
-  Design: "bg-rose-600 text-white",
-  Business: "bg-amber-600 text-white",
-};
+import { wishlistApi } from "../../api/wishlistApi";
+import { useAuth } from "../../context/AuthContext";
 
 const StudentCourseDetail = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [course, setCourse] = useState(null);
+  const [curriculum, setCurriculum] = useState(null);
+  const [courseProgress, setCourseProgress] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("curriculum");
-  const [expandedModules, setExpandedModules] = useState({ 0: true, 1: true });
-
-  // Wishlist state
+  const [expandedSections, setExpandedSections] = useState({});
   const [isWishlisted, setIsWishlisted] = useState(false);
+  
+  // Video player state
+  const [currentLecture, setCurrentLecture] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const videoRef = useRef(null);
 
-  useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem("student_wishlist") || "[]");
-      setIsWishlisted(saved.some((id) => String(id) === String(courseId)));
-    } catch {
-      setIsWishlisted(false);
-    }
-  }, [courseId]);
-
-  const toggleWishlist = () => {
-    try {
-      const saved = JSON.parse(localStorage.getItem("student_wishlist") || "[]");
-      let updated;
-      if (isWishlisted) {
-        updated = saved.filter((id) => String(id) !== String(courseId));
-        setIsWishlisted(false);
-        toast.success("Removed from your saved courses", { icon: "🤍" });
-      } else {
-        updated = [...saved, String(courseId)];
-        setIsWishlisted(true);
-        toast.success(`Saved to your wishlist`, { icon: "❤️" });
-      }
-      localStorage.setItem("student_wishlist", JSON.stringify(updated));
-    } catch (err) {
-      console.warn("Could not save wishlist", err);
-    }
-  };
-
-  const fetchCourse = async () => {
+  // Fetch course data
+  const fetchCourseData = useCallback(async () => {
     if (!courseId) return;
     setLoading(true);
     setError("");
 
     try {
-      // Calls GET /api/v1/courses/{courseId} with cookies and credentials
-      const res = await courseApi.getCourseById(courseId);
-      const data = res?.data || res;
-
+      // Get course details
+      const courseData = await courseApi.getCourseById(courseId);
+      const data = courseData?.data || courseData;
+      
       if (!data) throw new Error("No course details returned from server");
 
       const normalized = {
         id: data.id || data.courseId || courseId,
-        title: data.title || data.courseName || data.name || "Modern Engineering Specialization",
+        title: data.title || data.courseName || data.name || "Course",
         category: data.category || data.categoryName || "Programming",
         level: data.level || data.difficultyLevel || "Beginner",
-        price: data.price != null ? Number(data.price) : (data.amount != null ? Number(data.amount) : 499),
-        originalPrice: data.originalPrice || (data.price ? Math.round(Number(data.price) * 1.6) : 899),
+        price: data.price != null ? Number(data.price) : 0,
+        originalPrice: data.originalPrice || (data.price ? Math.round(Number(data.price) * 1.6) : 0),
         rating: Number(data.rating || data.avgRating || 4.8),
-        ratingCount: Number(data.ratingCount || data.reviewsCount || 342),
-        students: Number(data.students || data.enrolledCount || data.enrolledStudents || 184),
-        duration: data.duration || data.estimatedDuration || "14 hours on-demand video",
+        ratingCount: Number(data.ratingCount || data.reviewsCount || 0),
+        students: Number(data.students || data.enrolledCount || 0),
+        duration: data.duration || data.estimatedDuration || "Self-paced",
         language: data.language || "English",
-        lastUpdated: data.lastUpdated || data.updatedAt ? new Date(data.lastUpdated || data.updatedAt).toLocaleDateString() : "September 2026",
-        instructor:
-          data.instructor?.name ||
-          data.instructorName ||
-          (typeof data.instructor === "string" ? data.instructor : "LearnMaster Faculty"),
-        instructorRole: data.instructor?.role || data.instructor?.title || "Senior Software Architect & Mentor",
-        instructorBio:
-          data.instructor?.bio ||
-          "Passionate educator and industry practitioner with over a decade of real-world software engineering experience. Dedicated to empowering developers with hands-on, production-grade skills.",
-        image:
-          data.image ||
-          data.thumbnail ||
-          data.coverImage ||
-          data.banner ||
-          "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1000&auto=format&fit=crop&q=80",
-        description:
-          data.description ||
-          data.summary ||
-          "Master in-demand industry paradigms through comprehensive modules, real-world capstone exercises, and production-tested patterns. Structured from ground-level foundations up to advanced scalable architecture.",
-        objectives: data.objectives || data.learningOutcomes || data.whatYouWillLearn || [
-          "Build production-grade applications using clean architecture and modern patterns",
-          "Master core data structures, algorithms, and modular design principles",
-          "Implement robust error handling, testing suites, and performance optimizations",
-          "Deploy scalable applications to modern cloud infrastructure with zero downtime",
-          "Earn a verified industry credential endorsed by LearnMaster",
-        ],
-        requirements: data.requirements || data.prerequisites || [
-          "A modern laptop or PC with internet connectivity",
-          "Basic familiarity with programming concepts and terminal usage",
-          "No advanced prior knowledge required; all core concepts are taught from scratch",
-        ],
-        modules: data.modules || data.chapters || (data.lessons ? [{ id: 1, title: "Course Syllabus", lessons: data.lessons }] : [
-          {
-            id: 1,
-            title: "Module 1: Foundations, Tooling & Environment Setup",
-            duration: "2h 35m",
-            lessons: [
-              { id: "l1", title: "Course Introduction & Learning Roadmap", duration: "10:15", isFree: true },
-              { id: "l2", title: "Configuring the Developer Workspace & CLI", duration: "18:40", isFree: true },
-              { id: "l3", title: "Core Architecture & Data Flow Overview", duration: "32:10", isFree: false },
-              { id: "l4", title: "Hands-on Exercise: Project Initialization", duration: "25:00", isFree: false },
-            ],
-          },
-          {
-            id: 2,
-            title: "Module 2: Core Engineering Patterns & Component Design",
-            duration: "4h 20m",
-            lessons: [
-              { id: "l5", title: "Clean Code Principles & Interface Contracts", duration: "35:10", isFree: false },
-              { id: "l6", title: "Building Reusable & Modular Components", duration: "48:30", isFree: false },
-              { id: "l7", title: "State Management & Efficient Data Mutations", duration: "42:15", isFree: false },
-              { id: "l8", title: "Performance Profiling & Optimization", duration: "38:40", isFree: false },
-            ],
-          },
-          {
-            id: 3,
-            title: "Module 3: Security, API Integrations & Resiliency",
-            duration: "3h 45m",
-            lessons: [
-              { id: "l9", title: "Secure Authentication, JWT & Session Management", duration: "44:10", isFree: false },
-              { id: "l10", title: "Robust Error Handling & Boundary Strategies", duration: "32:50", isFree: false },
-              { id: "l11", title: "Connecting REST & Real-time Endpoints", duration: "40:20", isFree: false },
-            ],
-          },
-          {
-            id: 4,
-            title: "Module 4: Testing, Deployment & Capstone Project",
-            duration: "3h 30m",
-            lessons: [
-              { id: "l12", title: "Automated Unit & Integration Testing", duration: "36:15", isFree: false },
-              { id: "l13", title: "Continuous Delivery & Cloud Deployment", duration: "42:00", isFree: false },
-              { id: "l14", title: "Capstone Submission & Certificate Assessment", duration: "25:30", isFree: false },
-            ],
-          },
-        ]),
+        instructor: data.instructor?.name || data.instructorName || "Instructor",
+        instructorRole: data.instructor?.role || "Senior Instructor",
+        instructorBio: data.instructor?.bio || "Experienced instructor",
+        image: data.image || data.thumbnail || data.coverImage || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1000&auto=format&fit=crop&q=80",
+        description: data.description || data.summary || "Course description",
       };
 
       setCourse(normalized);
+
+      // Get curriculum
+      try {
+        const curriculumData = await courseApi.getCourseCurriculum(courseId);
+        if (curriculumData?.data) {
+          setCurriculum(curriculumData.data);
+          // Auto-expand first section
+          if (curriculumData.data.sections?.length > 0) {
+            setExpandedSections({ [curriculumData.data.sections[0].id]: true });
+            // Set first lecture as current
+            if (curriculumData.data.sections[0].lectures?.length > 0) {
+              setCurrentLecture(curriculumData.data.sections[0].lectures[0]);
+            }
+          }
+        }
+      } catch (curriculumErr) {
+        console.warn("[StudentCourseDetail] Curriculum fetch failed", curriculumErr);
+      }
+
+      // Get course progress
+      try {
+        const progressData = await courseApi.getCourseProgress(courseId);
+        if (progressData?.data) {
+          setCourseProgress(progressData.data);
+        }
+      } catch (progressErr) {
+        console.warn("[StudentCourseDetail] Progress fetch failed", progressErr);
+      }
+
+      // Check wishlist
+      try {
+        const wishlistData = await wishlistApi.checkWishlist(courseId);
+        setIsWishlisted(wishlistData?.data?.isInWishlist || false);
+      } catch (wishlistErr) {
+        console.warn("[StudentCourseDetail] Wishlist check failed", wishlistErr);
+      }
     } catch (err) {
       console.error("[StudentCourseDetail] API error:", err);
-      setError(err.response?.data?.message || err.message || "Failed to load course details from API.");
+      setError(err.response?.data?.message || err.message || "Failed to load course details.");
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchCourse();
   }, [courseId]);
 
-  const toggleModule = (index) => {
-    setExpandedModules((prev) => ({
+  useEffect(() => {
+    fetchCourseData();
+  }, [fetchCourseData]);
+
+  const toggleSection = (sectionId) => {
+    setExpandedSections((prev) => ({
       ...prev,
-      [index]: !prev[index],
+      [sectionId]: !prev[sectionId],
     }));
   };
 
-  const handleShare = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      toast.success("Course URL copied to clipboard!");
+  const toggleWishlist = async () => {
+    if (!user) {
+      toast.error("Please login to save courses");
+      navigate("/login");
+      return;
     }
+
+    try {
+      if (isWishlisted) {
+        await wishlistApi.removeFromWishlist(courseId);
+        setIsWishlisted(false);
+        toast.success("Removed from wishlist");
+      } else {
+        await wishlistApi.addToWishlist({
+          courseId: parseInt(courseId),
+          instructorId: course?.instructorId,
+        });
+        setIsWishlisted(true);
+        toast.success("Added to wishlist");
+      }
+    } catch (err) {
+      toast.error("Failed to update wishlist");
+    }
+  };
+
+  const selectLecture = async (lecture) => {
+    setCurrentLecture(lecture);
+    try {
+      await courseApi.startLecture(lecture.id);
+      setIsPlaying(true);
+    } catch (err) {
+      console.warn("Failed to start lecture progress", err);
+    }
+  };
+
+  const handlePlayPause = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        videoRef.current.play();
+        setIsPlaying(true);
+      }
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      const current = videoRef.current.currentTime;
+      setCurrentTime(current);
+      
+      // Update progress every 5 seconds
+      if (current % 5 < 1 && duration > 0) {
+        const progressPercentage = Math.round((current / duration) * 100);
+        if (currentLecture) {
+          courseApi.updateLectureProgress(currentLecture.id, progressPercentage).catch(err => {
+            console.warn("Failed to update progress", err);
+          });
+        }
+      }
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (videoRef.current) {
+      setDuration(videoRef.current.duration);
+    }
+  };
+
+  const handleLectureComplete = async () => {
+    if (currentLecture) {
+      try {
+        await courseApi.completeLecture(currentLecture.id);
+        toast.success("Lecture completed!");
+        // Refresh progress
+        const progressData = await courseApi.getCourseProgress(courseId);
+        if (progressData?.data) {
+          setCourseProgress(progressData.data);
+        }
+      } catch (err) {
+        console.warn("Failed to complete lecture", err);
+      }
+    }
+  };
+
+  const handleSeek = (e) => {
+    if (videoRef.current) {
+      const time = parseFloat(e.target.value);
+      videoRef.current.currentTime = time;
+      setCurrentTime(time);
+    }
+  };
+
+  const handleSpeedChange = (speed) => {
+    setPlaybackSpeed(speed);
+    if (videoRef.current) {
+      videoRef.current.playbackRate = speed;
+    }
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 space-y-4 font-sans">
-        <Loader2 size={38} className="animate-spin text-orange-500" />
-        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest font-mono">
-          Loading Course Curriculum from API...
-        </p>
-      </div>
-    );
-  }
-
-  if (error || !course) {
-    return (
-      <div className="max-w-4xl mx-auto py-12 font-sans space-y-4">
-        <button
-          onClick={() => navigate("/student/dashboard")}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-orange-600 transition"
-        >
-          <ArrowLeft size={14} /> Back to Dashboard
-        </button>
-
-        <div className="rounded-3xl border border-red-200 bg-red-50 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
-          <div className="flex items-center gap-3">
-            <AlertCircle size={28} className="text-red-500 shrink-0" />
-            <div>
-              <h3 className="text-sm font-bold text-red-900">Unable to load course #{courseId}</h3>
-              <p className="text-xs text-red-700 mt-0.5">{error || "Course not found or unavailable."}</p>
-            </div>
-          </div>
-          <button
-            onClick={fetchCourse}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-800 text-xs font-bold transition self-start sm:self-auto"
-          >
-            <RefreshCw size={13} /> Retry API
-          </button>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="text-center space-y-4">
+          <Loader2 className="animate-spin text-orange-500 w-12 h-12 mx-auto" />
+          <p className="text-sm text-slate-600">Loading course...</p>
         </div>
       </div>
     );
   }
 
-  const catColor = CATEGORY_COLORS[course.category] || "bg-indigo-600 text-white";
-  const totalLessons = course.modules?.reduce((acc, m) => acc + (m.lessons?.length || 0), 0) || 0;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2 }}
-      className="w-full space-y-6 font-sans pb-20"
-    >
-      {/* ── BREADCRUMB NAVIGATION ───────────────────────────────────────── */}
-      <div className="flex items-center justify-between text-xs">
-        <div className="flex items-center gap-2 text-slate-500">
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="text-center space-y-4 max-w-md p-8">
+          <AlertCircle className="text-red-500 w-16 h-16 mx-auto" />
+          <h2 className="text-xl font-bold text-slate-900">Error Loading Course</h2>
+          <p className="text-slate-500">{error}</p>
           <button
             onClick={() => navigate("/student/dashboard")}
-            className="font-bold text-slate-700 hover:text-orange-600 flex items-center gap-1.5 transition"
+            className="px-6 py-2 rounded-xl bg-orange-500 text-white font-semibold hover:bg-orange-600 transition"
           >
-            <ArrowLeft size={14} /> Dashboard
-          </button>
-          <span className="text-slate-300">/</span>
-          <span className="text-slate-400">Courses</span>
-          <span className="text-slate-300">/</span>
-          <span className="font-semibold text-slate-800 truncate max-w-xs">{course.title}</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleShare}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition shadow-2xs"
-          >
-            <Share2 size={13} /> Share
-          </button>
-          <button
-            onClick={toggleWishlist}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition shadow-2xs"
-          >
-            <Heart size={13} className={isWishlisted ? "fill-rose-500 text-rose-500" : ""} />
-            <span>{isWishlisted ? "Wishlisted" : "Wishlist"}</span>
+            Back to Dashboard
           </button>
         </div>
       </div>
+    );
+  }
 
-      {/* ── HERO BANNER: RICH CINEMATIC PRESENTATION ────────────────────── */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 sm:p-8 text-white shadow-xl border border-indigo-900/40">
-        <div className="absolute -top-16 -right-16 h-60 w-60 rounded-full bg-gradient-to-br from-orange-500/25 to-amber-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-16 left-1/4 h-60 w-60 rounded-full bg-gradient-to-tr from-indigo-500/30 to-purple-500/15 blur-3xl pointer-events-none" />
+  const progressPercentage = courseProgress?.progressPercentage || 0;
+  const completedLectures = courseProgress?.completedLectures || 0;
+  const totalLectures = curriculum?.totalLectures || 0;
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          {/* Main Info Header */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold shadow-sm ${catColor}`}>
-                {course.category}
-              </span>
-              <span className="px-2.5 py-0.5 rounded-lg bg-white/10 backdrop-blur-md text-[10px] font-semibold text-white border border-white/15">
-                {course.level} Level
-              </span>
-              <span className="px-2.5 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-400/30 flex items-center gap-1">
-                <CheckCircle2 size={11} /> Verified Curriculum
-              </span>
-            </div>
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans">
+      {/* Header */}
+      <div className="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => navigate("/student/dashboard")}
+              className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition"
+            >
+              <ArrowLeft size={18} />
+              <span className="font-medium">Back to Dashboard</span>
+            </button>
 
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight text-white">
-              {course.title}
-            </h1>
-
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
-              {course.description}
-            </p>
-
-            {/* Quick Metrics Bar */}
-            <div className="flex flex-wrap items-center gap-4 pt-2 text-xs text-slate-300 font-mono">
-              <span className="flex items-center gap-1.5 font-bold text-amber-400 bg-amber-400/15 px-2 py-0.5 rounded-md border border-amber-400/25">
-                <Star size={13} className="fill-amber-400 text-amber-400" /> {course.rating} ({course.ratingCount} ratings)
-              </span>
-              <span className="flex items-center gap-1">
-                <Users size={13} className="text-slate-400" /> {course.students} Learners Enrolled
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock size={13} className="text-slate-400" /> {course.duration}
-              </span>
-              <span className="flex items-center gap-1">
-                <Globe size={13} className="text-slate-400" /> {course.language}
-              </span>
-              <span className="flex items-center gap-1 text-emerald-300 font-bold">
-                <Award size={13} /> Certificate Included
-              </span>
-            </div>
-
-            {/* Instructor credit */}
-            <div className="pt-3 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-orange-500 via-amber-500 to-orange-600 text-white flex items-center justify-center font-black text-sm shadow-md ring-2 ring-white/20">
-                {course.instructor.charAt(0)}
-              </div>
-              <div className="text-xs">
-                <p className="font-bold text-white leading-tight">Instructed by {course.instructor}</p>
-                <p className="text-[11px] text-slate-400">{course.instructorRole}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Floating Purchase Card */}
-          <div className="rounded-3xl border border-white/20 bg-white/10 backdrop-blur-xl p-5 text-white shadow-2xl space-y-4">
-            <div className="relative h-44 w-full rounded-2xl overflow-hidden bg-slate-800 shadow-md group">
-              <img src={course.image} alt={course.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-slate-950/40 flex items-center justify-center">
-                <div className="h-12 w-12 rounded-full bg-white/90 text-slate-900 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                  <PlayCircle size={26} className="text-orange-600 ml-0.5" />
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <div className="text-sm font-bold text-slate-900">
+                  {progressPercentage}% Complete
+                </div>
+                <div className="text-xs text-slate-500">
+                  {completedLectures}/{totalLectures} lessons
                 </div>
               </div>
-              <span className="absolute bottom-2 left-2 rounded bg-slate-900/80 backdrop-blur-xs px-2 py-0.5 text-[9px] font-mono font-semibold text-white">
-                Course Preview Video
-              </span>
-            </div>
-
-            <div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black font-mono text-white">
-                  {course.price > 0 ? `₹${course.price}` : "Free"}
-                </span>
-                {course.originalPrice > course.price && (
-                  <span className="text-sm line-through text-slate-400 font-mono">
-                    ₹{course.originalPrice}
-                  </span>
-                )}
-                {course.price > 0 && (
-                  <span className="text-[10px] font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-400/30">
-                    SAVE 40%
-                  </span>
-                )}
-              </div>
-              <p className="text-[11px] text-slate-300 mt-1">Full lifetime access with verified credential</p>
-            </div>
-
-            <div className="space-y-2">
-              <button
-                onClick={() => navigate("/cart")}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-xs shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 active:scale-95 transition-all"
-              >
-                <ShoppingCart size={15} /> Enroll Now
-              </button>
               <button
                 onClick={toggleWishlist}
-                className="w-full py-2.5 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-white font-bold text-xs flex items-center justify-center gap-2 transition"
+                className={`p-2 rounded-xl border transition ${
+                  isWishlisted
+                    ? "border-rose-200 bg-rose-50 text-rose-600"
+                    : "border-slate-200 hover:border-rose-300 text-slate-600 hover:text-rose-600"
+                }`}
               >
-                <Heart size={14} className={isWishlisted ? "fill-rose-500 text-rose-500" : ""} />
-                <span>{isWishlisted ? "Saved in Wishlist" : "Add to Wishlist"}</span>
+                <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
               </button>
             </div>
-
-            <div className="pt-3 border-t border-white/10 space-y-2 text-xs text-slate-300">
-              <div className="flex items-center gap-2">
-                <ShieldCheck size={14} className="text-emerald-400" />
-                <span>30-Day Money-Back Guarantee</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Award size={14} className="text-indigo-400" />
-                <span>LearnMaster Verified Certificate</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Smartphone size={14} className="text-cyan-400" />
-                <span>Access on Mobile and Desktop</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
-      {/* ── COURSE SECTIONS: TABS NAVIGATION ────────────────────────────── */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
-        {[
-          { id: "curriculum", label: `Syllabus & Modules (${totalLessons} Lessons)` },
-          { id: "outcomes", label: "What You'll Learn" },
-          { id: "instructor", label: "Instructor Profile" },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              activeTab === tab.id
-                ? "bg-slate-900 text-white shadow-xs"
-                : "text-slate-600 hover:text-orange-600 hover:bg-orange-50"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Main Content Area */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Video Player */}
+            <div className="bg-black rounded-2xl overflow-hidden shadow-xl">
+              <div className="relative aspect-video bg-slate-900">
+                {currentLecture?.videoUrl ? (
+                  <video
+                    ref={videoRef}
+                    src={currentLecture.videoUrl}
+                    className="w-full h-full"
+                    onTimeUpdate={handleTimeUpdate}
+                    onLoadedMetadata={handleLoadedMetadata}
+                    onEnded={handleLectureComplete}
+                    controls={false}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-slate-800">
+                    <div className="text-center">
+                      <Video size={48} className="text-slate-600 mx-auto mb-4" />
+                      <p className="text-slate-400">Select a lecture to start learning</p>
+                    </div>
+                  </div>
+                )}
 
-      {/* ── TAB 1: CURRICULUM ACCORDION ─────────────────────────────────── */}
-      {activeTab === "curriculum" && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-sm sm:text-base font-bold text-slate-900">Course Syllabus & Curriculum</h2>
-              <p className="text-xs text-slate-500 mt-0.5">
-                {course.modules?.length || 0} Modules • {totalLessons} Lessons • {course.duration}
-              </p>
-            </div>
-            <button
-              onClick={() => {
-                const allOpen = Object.keys(expandedModules).length === course.modules?.length;
-                if (allOpen) {
-                  setExpandedModules({});
-                } else {
-                  const newObj = {};
-                  course.modules?.forEach((_, i) => (newObj[i] = true));
-                  setExpandedModules(newObj);
-                }
-              }}
-              className="text-xs font-bold text-orange-600 hover:text-orange-700"
-            >
-              Toggle All Modules
-            </button>
-          </div>
+                {/* Custom Video Controls */}
+                {currentLecture && (
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-4">
+                    {/* Progress Bar */}
+                    <div className="mb-3">
+                      <input
+                        type="range"
+                        min="0"
+                        max={duration || 100}
+                        value={currentTime}
+                        onChange={handleSeek}
+                        className="w-full h-1 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-orange-500"
+                      />
+                    </div>
 
-          <div className="space-y-3">
-            {course.modules?.map((mod, idx) => {
-              const isOpen = !!expandedModules[idx];
-              return (
-                <div
-                  key={mod.id || idx}
-                  className="rounded-2xl border border-slate-200/90 bg-white overflow-hidden shadow-2xs transition-all"
-                >
-                  <button
-                    type="button"
-                    onClick={() => toggleModule(idx)}
-                    className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50 transition"
-                  >
-                    <div className="flex items-center gap-3.5">
-                      <div className="h-8 w-8 rounded-xl bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-xs font-mono">
-                        {idx + 1}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={handlePlayPause}
+                          className="p-2 rounded-full bg-white text-slate-900 hover:bg-slate-100 transition"
+                        >
+                          {isPlaying ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}
+                        </button>
+                        <button
+                          onClick={() => setIsMuted(!isMuted)}
+                          className="p-2 rounded-full bg-white/20 text-white hover:bg-white/30 transition"
+                        >
+                          {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                        </button>
+                        <span className="text-white text-sm font-mono">
+                          {formatTime(currentTime)} / {formatTime(duration)}
+                        </span>
                       </div>
-                      <div>
-                        <h3 className="text-xs sm:text-sm font-bold text-slate-900">{mod.title}</h3>
-                        <p className="text-[11px] text-slate-400 font-mono mt-0.5">
-                          {mod.lessons?.length || 0} lessons • {mod.duration || "Self-paced"}
-                        </p>
+
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={playbackSpeed}
+                          onChange={(e) => handleSpeedChange(parseFloat(e.target.value))}
+                          className="bg-white/20 text-white text-xs rounded-lg px-2 py-1 border-0 outline-none cursor-pointer"
+                        >
+                          <option value={0.5}>0.5x</option>
+                          <option value={0.75}>0.75x</option>
+                          <option value={1}>1x</option>
+                          <option value={1.25}>1.25x</option>
+                          <option value={1.5}>1.5x</option>
+                          <option value={2}>2x</option>
+                        </select>
+                        <button
+                          onClick={handleLectureComplete}
+                          className="px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-bold hover:bg-emerald-600 transition flex items-center gap-1"
+                        >
+                          <Check size={14} /> Complete
+                        </button>
                       </div>
                     </div>
-                    <ChevronDown
-                      size={16}
-                      className={`text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-                    />
-                  </button>
+                  </div>
+                )}
+              </div>
 
-                  <AnimatePresence>
-                    {isOpen && mod.lessons && mod.lessons.length > 0 && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="border-t border-slate-100 bg-slate-50/50 p-2 divide-y divide-slate-100"
-                      >
-                        {mod.lessons.map((lesson, lIdx) => (
-                          <div
-                            key={lesson.id || lIdx}
-                            className="p-3 flex items-center justify-between hover:bg-white rounded-xl transition"
-                          >
-                            <div className="flex items-center gap-3">
-                              {lesson.isFree ? (
-                                <PlayCircle size={15} className="text-orange-500 shrink-0" />
-                              ) : (
-                                <Lock size={14} className="text-slate-400 shrink-0" />
-                              )}
-                              <span className="text-xs font-semibold text-slate-800">{lesson.title}</span>
-                              {lesson.isFree && (
-                                <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                                  Free Preview
-                                </span>
-                              )}
+              {/* Lecture Info */}
+              {currentLecture && (
+                <div className="bg-white rounded-xl p-4 shadow-sm">
+                  <h3 className="font-bold text-slate-900 mb-1">{currentLecture.title}</h3>
+                  {currentLecture.description && (
+                    <p className="text-sm text-slate-600">{currentLecture.description}</p>
+                  )}
+                </div>
+              )}
+
+              {/* Curriculum */}
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div className="p-4 border-b border-slate-200 flex items-center justify-between">
+                  <h2 className="font-bold text-slate-900 flex items-center gap-2">
+                    <BookOpen size={18} className="text-orange-500" />
+                    Course Curriculum
+                  </h2>
+                  <div className="text-xs text-slate-500">
+                    {curriculum?.totalSections} sections • {curriculum?.totalLectures} lectures
+                  </div>
+                </div>
+
+                <div className="divide-y divide-slate-100">
+                  {curriculum?.sections?.map((section, idx) => {
+                    const isExpanded = expandedSections[section.id];
+                    return (
+                      <div key={section.id}>
+                        <button
+                          onClick={() => toggleSection(section.id)}
+                          className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm">
+                              {idx + 1}
                             </div>
-                            <span className="text-[11px] font-mono text-slate-400">{lesson.duration}</span>
+                            <div className="text-left">
+                              <h3 className="font-semibold text-slate-900 text-sm">{section.title}</h3>
+                              <p className="text-xs text-slate-500">
+                                {section.lectures?.length || 0} lectures
+                              </p>
+                            </div>
                           </div>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                          <ChevronDown
+                            size={18}
+                            className={`text-slate-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                          />
+                        </button>
+
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0 }}
+                              animate={{ height: 'auto' }}
+                              exit={{ height: 0 }}
+                              className="overflow-hidden bg-slate-50"
+                            >
+                              <div className="p-2 space-y-1">
+                                {section.lectures?.map((lecture) => {
+                                  const isCurrent = currentLecture?.id === lecture.id;
+                                  const isCompleted = lecture.status === 'COMPLETED';
+                                  return (
+                                    <button
+                                      key={lecture.id}
+                                      onClick={() => selectLecture(lecture)}
+                                      className={`w-full p-3 rounded-lg flex items-center gap-3 transition ${
+                                        isCurrent
+                                          ? 'bg-orange-50 border-orange-300'
+                                          : 'hover:bg-white border-transparent'
+                                      }`}
+                                    >
+                                      {isCompleted ? (
+                                        <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+                                      ) : isCurrent ? (
+                                        <PlayCircle size={16} className="text-orange-500 shrink-0" />
+                                      ) : (
+                                        <Video size={16} className="text-slate-400 shrink-0" />
+                                      )}
+                                      <div className="flex-1 text-left">
+                                        <p className="text-sm font-medium text-slate-900 line-clamp-1">
+                                          {lecture.title}
+                                        </p>
+                                        <p className="text-xs text-slate-500">
+                                          {lecture.duration ? `${Math.floor(lecture.duration / 60)}m` : ''} {lecture.previewEnabled && (
+                                            <span className="text-emerald-600 font-medium">• Preview</span>
+                                          )}
+                                        </p>
+                                      </div>
+                                      {isCurrent && (
+                                        <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                                      )}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
+              </div>
+            </div>
+
+            {/* Course Info */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+              <h2 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <Target size={18} className="text-orange-500" />
+                What You'll Learn
+              </h2>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3 text-sm text-slate-700">
+                  <CheckCircle2 size={16} className="text-emerald-600 shrink-0 mt-0.5" />
+                  <span>Master the fundamentals and advanced concepts</span>
+                </div>
+                <div className="flex items-start gap-3 text-sm text-slate-700">
+                  <CheckCircle2 size={16} className="text-emerald-600 shrink-0 mt-0.5" />
+                  <span>Build real-world projects and portfolio pieces</span>
+                </div>
+                <div className="flex items-start gap-3 text-sm text-slate-700">
+                  <CheckCircle2 size={16} className="text-emerald-600 shrink-0 mt-0.5" />
+                  <span>Earn a verified certificate upon completion</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Course Info Card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+              <div className="space-y-4">
+                <div>
+                  <h2 className="font-bold text-slate-900 mb-2">{course.title}</h2>
+                  <p className="text-sm text-slate-600 line-clamp-2">{course.description}</p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 text-amber-500">
+                    <Star size={16} fill="currentColor" />
+                    <span className="font-bold">{course.rating.toFixed(1)}</span>
+                  </div>
+                  <span className="text-sm text-slate-500">({course.ratingCount} reviews)</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <Users size={16} />
+                  <span>{course.students} students enrolled</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <Clock size={16} />
+                  <span>{course.duration}</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <Award size={16} />
+                  <span>Certificate included</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Course Activities & Resources */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+              <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2 text-sm">
+                <BookOpen size={16} className="text-orange-500" />
+                Course Activities
+              </h3>
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  to={`/student/courses/${courseId}/assignments`}
+                  className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-100 hover:border-orange-200 hover:bg-orange-50/50 text-slate-700 hover:text-orange-600 transition text-xs font-semibold"
+                >
+                  <ClipboardList size={15} className="text-orange-500" />
+                  <span>Assignments</span>
+                </Link>
+                <Link
+                  to={`/student/courses/${courseId}/live-classes`}
+                  className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 text-slate-700 hover:text-blue-600 transition text-xs font-semibold"
+                >
+                  <Radio size={15} className="text-blue-500" />
+                  <span>Live Classes</span>
+                </Link>
+                <Link
+                  to={`/student/courses/${courseId}/reviews`}
+                  className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-100 hover:border-amber-200 hover:bg-amber-50/50 text-slate-700 hover:text-amber-600 transition text-xs font-semibold"
+                >
+                  <MessageSquare size={15} className="text-amber-500" />
+                  <span>Reviews</span>
+                </Link>
+                <Link
+                  to={`/student/courses/${courseId}/certificate`}
+                  className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/50 text-slate-700 hover:text-emerald-600 transition text-xs font-semibold"
+                >
+                  <Award size={15} className="text-emerald-500" />
+                  <span>Certificate</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Progress Card */}
+            {courseProgress && (
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                  <TrendingUp size={18} className="text-emerald-500" />
+                  Your Progress
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="text-slate-600">Overall Progress</span>
+                      <span className="font-bold text-slate-900">{progressPercentage}%</span>
+                    </div>
+                    <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-emerald-500 to-green-500 rounded-full transition-all duration-500"
+                        style={{ width: `${progressPercentage}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 text-center">
+                    <div className="p-3 rounded-xl bg-slate-50">
+                      <div className="text-2xl font-bold text-slate-900">{completedLectures}</div>
+                      <div className="text-xs text-slate-500">Completed</div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-slate-50">
+                      <div className="text-2xl font-bold text-slate-900">{totalLectures - completedLectures}</div>
+                      <div className="text-xs text-slate-500">Remaining</div>
+                    </div>
+                  </div>
+
+                  {courseProgress.estimatedCompletionDate && (
+                    <div className="text-xs text-slate-500 text-center">
+                      Est. completion: {new Date(courseProgress.estimatedCompletionDate).toLocaleDateString()}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Instructor Card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+              <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <MonitorUp size={18} className="text-indigo-500" />
+                Instructor
+              </h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center font-bold text-lg">
+                    {course.instructor?.charAt(0) || 'I'}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900">{course.instructor}</p>
+                    <p className="text-xs text-slate-500">{course.instructorRole}</p>
+                  </div>
+                </div>
+                <p className="text-sm text-slate-600">{course.instructorBio}</p>
+              </div>
+            </div>
           </div>
         </div>
-      )}
-
-      {/* ── TAB 2: WHAT YOU'LL LEARN & REQUIREMENTS ─────────────────────── */}
-      {activeTab === "outcomes" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 space-y-4 shadow-2xs">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Sparkles size={16} className="text-orange-500" /> What You'll Learn
-            </h3>
-            <div className="space-y-2.5">
-              {course.objectives.map((obj, i) => (
-                <div key={i} className="flex items-start gap-2.5 text-xs text-slate-700">
-                  <CheckCircle2 size={15} className="text-emerald-600 shrink-0 mt-0.5" />
-                  <span className="leading-relaxed font-medium">{obj}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 space-y-4 shadow-2xs">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <FileText size={16} className="text-indigo-500" /> Course Requirements
-            </h3>
-            <div className="space-y-2.5">
-              {course.requirements.map((req, i) => (
-                <div key={i} className="flex items-start gap-2.5 text-xs text-slate-700">
-                  <span className="h-2 w-2 rounded-full bg-indigo-500 shrink-0 mt-1.5" />
-                  <span className="leading-relaxed font-medium">{req}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── TAB 3: INSTRUCTOR PROFILE ───────────────────────────────────── */}
-      {activeTab === "instructor" && (
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-2xs space-y-5">
-          <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-2xl bg-gradient-to-tr from-orange-500 via-amber-500 to-orange-600 text-white flex items-center justify-center font-black text-2xl shadow-md shadow-orange-500/20 ring-2 ring-white">
-              {course.instructor.charAt(0)}
-            </div>
-            <div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-900">{course.instructor}</h3>
-              <p className="text-xs text-orange-600 font-semibold">{course.instructorRole}</p>
-              <p className="text-[11px] text-slate-400 font-mono mt-0.5">Faculty • LearnMaster Engineering Platform</p>
-            </div>
-          </div>
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
-            {course.instructorBio}
-          </p>
-        </div>
-      )}
-    </motion.div>
+      </div>
+    </div>
   );
 };
 

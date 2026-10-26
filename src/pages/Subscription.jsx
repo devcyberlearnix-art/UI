@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle, Shield, Sparkles } from "lucide-react";
+import { CheckCircle, Shield, Star } from "lucide-react";
 
 const Subscription = () => {
   const navigate = useNavigate();
@@ -93,7 +93,7 @@ const Subscription = () => {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-purple-100 mb-4">
-            <Sparkles className="w-8 h-8 text-purple-600" />
+            <Star className="w-8 h-8 text-purple-600" />
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Choose Your Plan</h1>
           <p className="text-gray-600 max-w-2xl mx-auto">

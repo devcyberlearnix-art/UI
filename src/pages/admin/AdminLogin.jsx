@@ -219,7 +219,7 @@ const AdminLogin = () => {
     <AuthShell
       title="Admin Control Access"
       subtitle="Secure gateway for operations, analytics, and platform orchestration with frictionless authentication."
-      eyebrow="LearnMaster Operations"
+      eyebrow="Asivo Operations"
       highlights={[
         { value: "SOC", label: "Secure" },
         { value: "OTP", label: "Enabled" },

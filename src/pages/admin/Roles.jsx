@@ -24,6 +24,7 @@ import {
 import { adminApi } from "../../api/adminApi";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
+import Portal from "../../components/ui/Portal";
 
 const Roles = () => {
   const { user } = useAuth();
@@ -454,12 +455,13 @@ const Roles = () => {
       {/* Create/Edit Modal */}
       <AnimatePresence>
         {showModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto"
-          >
+          <Portal>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto"
+            >
             <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
@@ -609,6 +611,7 @@ const Roles = () => {
               </div>
             </motion.div>
           </motion.div>
+        </Portal>
         )}
       </AnimatePresence>
     </motion.div>

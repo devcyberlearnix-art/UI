@@ -1,0 +1,24 @@
+<svg width="620" height="280" viewBox="0 0 620 280" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Laptop, graduation cap, books and plants">
+  <path d="M0 257C105 214 182 244 274 222C386 194 459 214 620 168V280H0V257Z" fill="#0B3B83" fill-opacity=".62"/>
+  <path d="M0 273C123 237 201 267 302 248C411 228 505 236 620 205V280H0V273Z" fill="#1464D8" fill-opacity=".55"/>
+  <path d="M107 101L276 86C285 85 293 92 294 101L306 226H119L107 101Z" fill="#102B55" stroke="#BFD8FF" stroke-width="7"/>
+  <path d="M84 226H326L345 239H64L84 226Z" fill="#8EB7EC"/>
+  <path d="M123 111L270 99L281 211H134L123 111Z" fill="#071A37"/>
+  <path d="M202 150C213 131 239 133 247 153C238 163 226 169 210 168C201 164 198 157 202 150Z" fill="#1677FF"/>
+  <path d="M222 137L215 181M205 158L239 158" stroke="#D9EDFF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M296 217H430L455 230H273L296 217Z" fill="#1F78EC"/>
+  <path d="M307 211H440L450 219H290L307 211Z" fill="#DDEBFF"/>
+  <path d="M333 196H456L468 205H319L333 196Z" fill="#2F8AFF"/>
+  <path d="M346 181H447L461 190H333L346 181Z" fill="#EDF5FF"/>
+  <path d="M291 70L382 37L484 72L390 107L291 70Z" fill="#1677FF"/>
+  <path d="M388 106V142" stroke="#F5C542" stroke-width="4"/>
+  <path d="M382 37L484 72L390 107L291 70L382 37Z" stroke="#77B5FF" stroke-width="2"/>
+  <path d="M475 73V113" stroke="#F5C542" stroke-width="4"/>
+  <path d="M465 113C472 104 482 104 489 113C486 126 468 126 465 113Z" fill="#F5C542"/>
+  <path d="M62 251C62 228 75 211 93 205C105 221 105 241 93 257L62 251Z" fill="#21C4B8"/>
+  <path d="M93 257C91 232 103 215 120 207C130 228 119 247 93 257Z" fill="#35D6A0"/>
+  <path d="M64 250H117L108 274H74L64 250Z" fill="#F5F8FD"/>
+  <path d="M492 251C486 226 495 204 516 192C529 213 522 236 492 251Z" fill="#20C996"/>
+  <path d="M514 238C528 213 548 205 565 208C560 232 542 244 514 238Z" fill="#42D9A8"/>
+  <path d="M491 247H555L545 276H503L491 247Z" fill="#F5F8FD"/>
+</svg>

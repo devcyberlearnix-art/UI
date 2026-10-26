@@ -5,6 +5,12 @@ import { useAuth } from "../../context/AuthContext";
 const StudentNavbar = ({ setSidebarOpen, sidebarOpen }) => {
   const { user } = useAuth();
 
+  const getUserInitials = () => {
+    if (!user) return 'S';
+    const name = user?.name || user?.firstName || user?.displayName || 'Student';
+    return name.charAt(0).toUpperCase();
+  };
+
   return (
     <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b px-6 py-3 flex justify-between items-center z-30">
       <div className="flex items-center gap-4">
@@ -39,8 +45,20 @@ const StudentNavbar = ({ setSidebarOpen, sidebarOpen }) => {
             <p className="text-sm font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">{user?.name || "Student"}</p>
             <p className="text-xs text-gray-500">Student Account</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-100">
-            <User size={20} className="text-white" />
+          <div className="relative">
+            <img
+              src={user?.profilePhoto || ''}
+              alt="Profile"
+              className="w-10 h-10 rounded-xl object-cover shadow-lg shadow-indigo-100"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextElementSibling.style.display = 'flex';
+              }}
+              style={{display: user?.profilePhoto ? 'block' : 'none'}}
+            />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-100" style={{display: user?.profilePhoto ? 'none' : 'flex'}}>
+              <User size={20} className="text-white" />
+            </div>
           </div>
         </div>
       </div>

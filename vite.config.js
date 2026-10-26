@@ -3,17 +3,28 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'motion-vendor': ['framer-motion'],
+          'charts': ['recharts'],
+          'icons': ['lucide-react', 'react-icons'],
+          'forms': ['react-hook-form'],
+          'utils': ['jwt-decode', 'js-yaml']
+        }
+      }
+    }
+  },
   server: {
     port: 5173,
-    open: true, // Automatically opens the CORRECT port in your browser
+    open: true,
     proxy: {
-      '/ngrok-api': {
-        target: 'https://matted-ascent-specimen.ngrok-free.dev',
+      '/api': {
+        target: 'http://localhost:8080',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/ngrok-api/, ''),
-        headers: {
-          'ngrok-skip-browser-warning': 'true'
-        }
+        secure: false
       }
     }
   }

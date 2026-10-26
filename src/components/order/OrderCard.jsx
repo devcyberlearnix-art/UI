@@ -31,7 +31,7 @@ const OrderCard = ({ order, onCancel }) => {
       <div className="p-4">
         <div className="flex justify-between items-start">
           <div>
-            <p className="text-sm text-gray-500">Order #{String(order.id || "").slice(-8)}</p>
+            <p className="text-sm text-gray-500">Order #{String(order.orderId || order.id || "").slice(-8)}</p>
             <p className="font-medium">{new Date(order.createdAt || Date.now()).toLocaleDateString()}</p>
           </div>
           <div className="flex items-center gap-3">
@@ -53,7 +53,7 @@ const OrderCard = ({ order, onCancel }) => {
           </div>
         </div>
         <div className="mt-2 flex justify-between">
-          <span className="text-gray-700">Total: ${Number(order.totalAmount || 0).toFixed(2)}</span>
+          <span className="text-gray-700">Total: ₹{Number(order.totalAmount || 0).toFixed(2)}</span>
           <span className="text-gray-500 text-sm">{items.length} item(s)</span>
         </div>
       </div>
@@ -70,7 +70,7 @@ const OrderCard = ({ order, onCancel }) => {
             {items.map((item, idx) => (
               <div key={idx} className="flex justify-between text-sm">
                 <span>{item.title || item.name || "Course"} x{item.quantity || 1}</span>
-                <span>${(Number(item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+                <span>₹{(Number(item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
               </div>
             ))}
             <div className="border-t pt-2 mt-2">

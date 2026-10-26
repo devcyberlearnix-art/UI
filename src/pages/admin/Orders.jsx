@@ -11,6 +11,7 @@ RefreshCw
 } from "lucide-react";
 import { adminApi } from "../../api/adminApi";
 import toast from "react-hot-toast";
+import Portal from "../../components/ui/Portal";
 
 const Orders=()=>{
 const [orders,setOrders]=useState([]);
@@ -509,6 +510,7 @@ title="Delete Order"
 
 {/* Order Details Modal */}
 {showModal && selectedOrder && (
+<Portal>
 <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
 <div className="bg-white rounded-xl p-6 w-[500px] max-h-[80vh] overflow-y-auto">
 <div className="flex justify-between items-center mb-4">
@@ -559,6 +561,7 @@ selectedOrder.payment === "Paid" ? "bg-green-100 text-green-700" : "bg-orange-10
 </div>
 </div>
 </div>
+</Portal>
 )}
 
 </div>

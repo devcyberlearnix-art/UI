@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { 
   Users, BookOpen, ShoppingCart, TrendingUp, 
-  Clock, Calendar, Sparkles, GraduationCap, 
+  Clock, Calendar, Star, GraduationCap, 
   Shield, BarChart3, UserCheck, DollarSign,
   Award, Bell, MessageSquare, Settings, Loader2
 } from "lucide-react";

@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle, Mail, Sparkles } from "lucide-react";
+import { CheckCircle, Mail, Star } from "lucide-react";
 import toast from "react-hot-toast";
 
 const RegistrationSuccess = () => {
@@ -89,7 +89,7 @@ const RegistrationSuccess = () => {
         </button>
         
         <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-center gap-2 text-xs text-gray-400">
-          <Sparkles size={12} />
+          <Star size={12} />
           <span>Secure • 256-bit encrypted</span>
         </div>
       </motion.div>

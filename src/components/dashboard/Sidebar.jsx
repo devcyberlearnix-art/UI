@@ -7,12 +7,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Crown,
-  TrendingUp,
   GraduationCap,
   ArrowRight,
   ShieldCheck,
-  CheckCircle2,
-  Sparkles,
+  Star,
   Zap,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -29,10 +27,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   // Real-time wishlist count
   const [wishlistCount, setWishlistCount] = useState(0);
 
+  // User-specific localStorage key
+  const getStorageKey = () => {
+    const userId = user?.id || user?.userId || user?.email || "guest";
+    return `wishlist_${userId}`;
+  };
+
   useEffect(() => {
     const updateWishlistCount = () => {
       try {
-        const saved = JSON.parse(localStorage.getItem('student_wishlist') || '[]');
+        const key = getStorageKey();
+        const saved = JSON.parse(localStorage.getItem(key) || '[]');
         setWishlistCount(Array.isArray(saved) ? saved.length : 0);
       } catch {
         setWishlistCount(0);
@@ -41,7 +46,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     updateWishlistCount();
     window.addEventListener('storage', updateWishlistCount);
     return () => window.removeEventListener('storage', updateWishlistCount);
-  }, [currentPath]);
+  }, [currentPath, user]);
 
   const userRole = user?.role || user?.role1 || user?.userRole || '';
   const roleKey = getDashboardRole(currentPath, userRole);
@@ -109,7 +114,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           return {
             ...section,
             items: section.items.filter(
-              (item) => item.path !== '/admin/roles' && item.path !== '/admin/settings'
+              (item) => item.path !== '/admin/roles'
             ),
           };
         }
@@ -123,14 +128,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     <motion.aside
       animate={{ width: sidebarOpen ? 256 : 68 }}
       transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-      className="bg-white text-slate-800 flex flex-col h-screen sticky top-0 overflow-hidden shadow-sm z-40 border-r border-slate-200/90 shrink-0 font-sans select-none"
+      className="bg-[#0B1220] text-white flex flex-col h-screen sticky top-0 overflow-hidden shadow-sm z-40 border-r border-slate-800/50 shrink-0 font-sans select-none"
     >
       {/* ── BRAND HEADER ──────────────────────────────────────────────── */}
-      <div className="h-14 px-3.5 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white">
+      <div className="h-16 px-3.5 border-b border-slate-800/50 flex flex-col justify-center shrink-0 bg-[#0B1220]">
         <div className={`flex items-center gap-2.5 min-w-0 ${!sidebarOpen && 'justify-center w-full'}`}>
-          <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-slate-950 via-slate-900 to-indigo-950 text-white flex items-center justify-center font-bold text-xs tracking-tight shrink-0 shadow-xs border border-slate-800">
-            <span className="bg-gradient-to-r from-orange-400 to-amber-300 bg-clip-text text-transparent font-extrabold">
-              LM
+          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-[#2563EB] to-[#06B6D4] text-white flex items-center justify-center font-bold text-sm tracking-tight shrink-0 shadow-sm shadow-[#2563EB]/20">
+            <span className="font-extrabold">
+              A
             </span>
           </div>
           {sidebarOpen && (
@@ -140,26 +145,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               transition={{ duration: 0.15 }}
               className="min-w-0 truncate"
             >
-              <div className="flex items-center gap-1.5">
-                <h1 className="font-extrabold text-sm text-slate-900 tracking-tight leading-none">
-                  LearnMaster
-                </h1>
-                <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-wider bg-orange-50 text-orange-700 border border-orange-200/60">
-                  {displayRole}
-                </span>
-              </div>
-              <p className="text-[10px] font-mono text-slate-400 tracking-wide mt-0.5">
-                Technical Education
+              <h1 className="font-extrabold text-base text-white tracking-tight leading-none">
+                Asivo
+              </h1>
+              <p className="text-[10px] text-slate-400 tracking-wide mt-0.5">
+                Learn Skills. Build Futures.
               </p>
             </motion.div>
           )}
         </div>
-
         {sidebarOpen && (
           <button
             onClick={toggleSidebar}
             title="Collapse Sidebar"
-            className="h-7 w-7 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors text-slate-400 hover:text-slate-800"
+            className="absolute top-4 right-3.5 h-7 w-7 rounded-lg hover:bg-slate-800/50 flex items-center justify-center transition-colors text-slate-400 hover:text-white"
           >
             <ChevronLeft size={16} />
           </button>
@@ -168,11 +167,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
       {/* ── EXPAND TOGGLE (WHEN COLLAPSED) ──────────────────────────────── */}
       {!sidebarOpen && (
-        <div className="py-2 flex justify-center border-b border-slate-100">
+        <div className="py-2 flex justify-center border-b border-slate-800/50">
           <button
             onClick={toggleSidebar}
             title="Expand Sidebar"
-            className="h-7 w-7 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors text-slate-400 hover:text-slate-800"
+            className="h-7 w-7 rounded-lg hover:bg-slate-800/50 flex items-center justify-center transition-colors text-slate-400 hover:text-white"
           >
             <ChevronRight size={15} />
           </button>
@@ -181,44 +180,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
       {/* ── SCROLLABLE NAVIGATION CONTENT ─────────────────────────────── */}
       <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-4 hide-scrollbar">
-        
-        {/* User Identity Profile Card */}
-        {sidebarOpen ? (
-          <div className="p-2.5 rounded-xl border border-slate-200/90 bg-gradient-to-b from-slate-50/90 to-slate-100/50 flex items-center gap-2.5 shadow-2xs">
-            <div className="relative shrink-0">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-slate-900 to-indigo-900 text-white flex items-center justify-center font-bold text-xs shadow-2xs border border-slate-700">
-                {getUserInitials()}
-              </div>
-              <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between gap-1">
-                <p className="text-xs font-bold text-slate-900 truncate leading-tight">
-                  {displayName}
-                </p>
-              </div>
-              <p className="text-[10px] font-mono text-slate-500 truncate leading-tight mt-0.5">
-                {user?.email || 'learner@learnmaster.edu'}
-              </p>
-            </div>
-          </div>
-        ) : (
-          <div className="flex justify-center py-1">
-            <div className="relative group">
-              <div className="h-8 w-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
-                {getUserInitials()}
-              </div>
-              <span className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white" />
-            </div>
-          </div>
-        )}
 
         {/* Navigation Sections */}
         {filteredMenuItems.map((section, sectionIdx) => (
           <div key={sectionIdx} className="space-y-1">
             {sidebarOpen && section.section && (
-              <div className="px-2 pt-1 pb-0.5">
-                <p className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">
+              <div className="px-2 pt-2 pb-1">
+                <p className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">
                   {section.section}
                 </p>
               </div>
@@ -241,10 +209,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     to={item.path}
                     className={({ isActive: navIsActive }) => {
                       const active = isActive || navIsActive;
-                      return `relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-150 group ${
+                      return `relative flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 group ${
                         active
-                          ? 'bg-slate-900 text-white shadow-xs font-bold'
-                          : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                          ? 'bg-[#2563EB] text-white shadow-md font-bold'
+                          : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
                       } ${!sidebarOpen && 'justify-center px-1.5'}`;
                     }}
                     title={!sidebarOpen ? item.label : ''}
@@ -253,15 +221,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       const active = isActive || navIsActive;
                       return (
                         <>
-                          {/* Active Accent Left Indicator */}
-                          {active && (
-                            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 rounded-r-full bg-gradient-to-b from-orange-400 to-amber-500" />
-                          )}
-
                           <Icon
                             size={16}
                             className={`shrink-0 transition-transform duration-150 group-hover:scale-105 ${
-                              active ? 'text-orange-400' : 'text-slate-400 group-hover:text-slate-700'
+                              active ? 'text-white' : 'text-slate-400 group-hover:text-white'
                             }`}
                           />
 
@@ -274,8 +237,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <span
                               className={`ml-auto px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold ${
                                 active
-                                  ? 'bg-orange-500 text-white'
-                                  : 'bg-orange-100 text-orange-700'
+                                  ? 'bg-white text-[#2563EB]'
+                                  : 'bg-[#06B6D4]/20 text-[#06B6D4]'
                               }`}
                             >
                               {wishlistCount}
@@ -298,33 +261,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         {/* ── STUDENT VALUABLE METRIC WIDGET ──────────────────────────── */}
         {sidebarOpen && isStudent && (
           <div className="pt-2 space-y-2.5">
-            {/* Weekly Learning Target Card */}
-            <div className="p-3 rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-orange-50/30 shadow-2xs space-y-2">
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="font-bold text-slate-800 flex items-center gap-1.5">
-                  <TrendingUp size={13} className="text-orange-600" /> Weekly Goal
-                </span>
-                <span className="font-mono font-extrabold text-slate-900">4 / 6 hrs</span>
-              </div>
-              <div className="h-1.5 w-full rounded-full bg-slate-200/90 overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full w-2/3 transition-all duration-500" />
-              </div>
-              <div className="flex items-center justify-between text-[10px] text-slate-500 pt-0.5 font-mono">
-                <span>67% Completed</span>
-                <span className="text-emerald-700 font-semibold flex items-center gap-0.5">
-                  <CheckCircle2 size={10} /> On Target
-                </span>
-              </div>
-            </div>
-
             {/* Quick Instructor Application Card */}
             <button
               onClick={() => navigate('/student/dashboard')}
-              className="w-full p-2.5 rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white hover:border-orange-500/50 transition-all text-left shadow-2xs group"
+              className="w-full p-2.5 rounded-2xl border border-[#2563EB]/30 bg-gradient-to-r from-[#2563EB]/20 via-[#06B6D4]/10 to-[#2563EB]/20 text-white hover:border-[#06B6D4]/50 transition-all text-left shadow-2xs group"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-6 w-6 rounded-md bg-white/10 flex items-center justify-center text-orange-400">
+                  <div className="h-6 w-6 rounded-md bg-white/10 flex items-center justify-center text-[#06B6D4]">
                     <GraduationCap size={13} />
                   </div>
                   <div>
@@ -334,7 +278,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 </div>
                 <ArrowRight
                   size={12}
-                  className="text-slate-400 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all"
+                  className="text-slate-400 group-hover:text-[#06B6D4] group-hover:translate-x-0.5 transition-all"
                 />
               </div>
             </button>
@@ -342,37 +286,37 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         )}
       </div>
 
-      {/* ── FOOTER: SIGN OUT & TRUST TAG ──────────────────────────────── */}
-      <div className="p-2.5 border-t border-slate-100 bg-white shrink-0 space-y-1.5">
-        {sidebarOpen ? (
-          <>
-            <button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors disabled:opacity-50 group"
-            >
-              <LogOut size={15} className="shrink-0 text-slate-400 group-hover:text-rose-600 transition-colors" />
-              <span className="truncate">
-                {isLoggingOut ? 'Signing out...' : 'Sign Out'}
-              </span>
-            </button>
-            <div className="px-2 pt-1 flex items-center justify-between text-[10px] font-mono text-slate-400 border-t border-slate-50">
-              <span className="flex items-center gap-1 text-slate-500">
-                <ShieldCheck size={11} className="text-emerald-600" /> SOC-2 Audited
-              </span>
-              <span>v2.4.0</span>
+      {/* ── FOOTER: PROMOTIONAL CARD & SIGN OUT ──────────────────────────────── */}
+      <div className="p-2.5 border-t border-slate-800/50 bg-[#0B1220] shrink-0 space-y-2.5">
+        {sidebarOpen && (
+          <div className="p-3 rounded-xl border border-[#2563EB]/30 bg-gradient-to-r from-[#2563EB]/20 via-[#06B6D4]/10 to-[#2563EB]/20 text-white space-y-2.5">
+            <div className="w-full h-16 rounded-lg bg-gradient-to-br from-[#2563EB]/30 to-[#06B6D4]/20 flex items-center justify-center overflow-hidden">
+              <div className="text-center">
+                <GraduationCap size={24} className="text-white/80 mx-auto mb-1" />
+                <p className="text-[9px] font-bold text-white/90">Keep learning.</p>
+                <p className="text-[9px] text-white/70">Build your future.</p>
+              </div>
             </div>
-          </>
-        ) : (
-          <button
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="flex items-center justify-center w-full p-2 rounded-xl text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors disabled:opacity-50"
-            title="Sign Out"
-          >
-            <LogOut size={16} />
-          </button>
+            <button
+              onClick={() => navigate('/student/courses')}
+              className="w-full px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[10px] font-bold transition border border-white/20"
+            >
+              Explore Courses
+            </button>
+          </div>
         )}
+        <button
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-rose-500/20 hover:text-rose-400 transition-colors disabled:opacity-50 group ${!sidebarOpen && 'justify-center'}`}
+        >
+          <LogOut size={15} className="shrink-0 text-slate-400 group-hover:text-rose-400 transition-colors" />
+          {sidebarOpen && (
+            <span className="truncate">
+              {isLoggingOut ? 'Signing out...' : 'Logout'}
+            </span>
+          )}
+        </button>
       </div>
 
       <style>{`

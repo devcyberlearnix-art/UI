@@ -44,7 +44,7 @@ const Navbar = () => {
               <BookOpen className="w-6 h-6 text-white" />
             </div>
           </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">LearnMaster</span>
+          <span className="text-xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">Asivo</span>
         </div>
 
         <div className="hidden md:flex items-center gap-8">

@@ -14,13 +14,15 @@ import {
   HelpCircle,
   Globe,
   Settings,
-  Sparkles,
   Trophy,
   User,
   UserCheck,
   GraduationCap,
   Heart,
   Compass,
+  Target,
+  Map,
+  LogOut,
 } from "lucide-react";
 
 const adminGroups = [
@@ -63,7 +65,7 @@ const adminGroups = [
       { path: "/admin/support", icon: HelpCircle, label: "Support" },
       { path: "/admin/cms", icon: Globe, label: "CMS" },
       { path: "/admin/settings", icon: Settings, label: "Settings" },
-      { path: "/admin/ai-features", icon: Sparkles, label: "AI Features" },
+      { path: "/admin/ai-features", icon: Star, label: "AI Features" },
       { path: "/admin/gamification", icon: Trophy, label: "Gamification" },
       { path: "/admin/profile", icon: User, label: "Profile" },
     ],
@@ -85,20 +87,23 @@ const instructorGroups = [
 
 const studentGroups = [
   {
-    section: "Learning",
+    section: "LEARN & GROW",
     items: [
-      { path: "/student/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-      { path: "/student/courses", icon: Compass, label: "Browse Courses" },
-      { path: "/student/my-learning", icon: BookOpen, label: "My Courses" },
+      { path: "/student/dashboard", icon: LayoutDashboard, label: "Overview" },
+      { path: "/student/courses", icon: Compass, label: "Explore Courses" },
+      { path: "/student/my-learning", icon: BookOpen, label: "My Learning" },
       { path: "/student/wishlist", icon: Heart, label: "Wishlist" },
-      { path: "/student/orders", icon: CreditCard, label: "Order History" },
+      { path: "/cart", icon: ShoppingCart, label: "Cart" },
+      { path: "/student/orders", icon: Award, label: "Certificates" },
     ],
   },
   {
-    section: "Account",
+    section: "ACCOUNT",
     items: [
-      { path: "/cart", icon: ShoppingCart, label: "Shopping Cart" },
-      { path: "/profile", icon: User, label: "My Profile" },
+      { path: "/profile", icon: User, label: "Profile" },
+      { path: "/student/notifications", icon: Bell, label: "Notifications" },
+      { path: "/student/notification-preferences", icon: Settings, label: "Notification Settings" },
+      { path: "/student/dashboard", icon: HelpCircle, label: "Help & Support" },
     ],
   },
 ];

@@ -1,237 +1,167 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { AlertCircle, ArrowLeft, ArrowRight, Check, Mail, RefreshCw } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AlertCircle, ArrowLeft, CheckCircle, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import AuthShell from "../components/ui/AuthShell";
 import { authApi } from "../api/authApi";
 import { useAuth } from "../context/AuthContext";
 
-const getRedirectByRole = (roleValue) => {
-  const role = String(roleValue || "").toLowerCase();
-  if (role.includes("sub")) return "/admin/sub-dashboard";
-  if (role.includes("admin") || role.includes("super")) return "/admin/dashboard";
-  if (role.includes("instructor")) return "/instructor/dashboard";
+const redirectForRole = (role = "student") => {
+  const normalized = String(role).toLowerCase();
+  if (normalized.includes("sub")) return "/admin/sub-dashboard";
+  if (normalized.includes("admin") || normalized.includes("super")) return "/admin/dashboard";
+  if (normalized.includes("instructor")) return "/instructor/dashboard";
   return "/student/dashboard";
 };
 
-function OtpVerify() {
+const readContext = (location) => {
+  const state = location.state || {};
+  if (state.email || state.otpSessionId) return state;
+  try { return JSON.parse(sessionStorage.getItem("asivo_otp_context") || sessionStorage.getItem("cyberlearnix_otp_context") || "{}"); } catch { return {}; }
+};
+
+const OtpVerify = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { syncSession } = useAuth();
-
-  const flow = location.state?.flow || "register";
-  const email = location.state?.email || "";
-
-  const [otp, setOtp] = useState("");
+  const context = readContext(location);
+  const flow = context.flow || "register";
+  const email = context.email || "";
+  const [digits, setDigits] = useState(["", "", "", "", "", ""]);
+  const [otpSessionId, setOtpSessionId] = useState(context.otpSessionId || "");
+  const [cooldown, setCooldown] = useState(Number(context.cooldownSeconds ?? 30));
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-
-  const [otpSessionId, setOtpSessionId] = useState(location.state?.otpSessionId || "");
-  const [cooldown, setCooldown] = useState(Number(location.state?.cooldownSeconds || 30));
-
-  useEffect(() => {
-    if (!email) {
-      navigate(flow === "login" ? "/otp-login" : "/register", { replace: true });
-    }
-  }, [email, flow, navigate]);
+  const [destination, setDestination] = useState("/login");
+  const [error, setError] = useState("");
+  const refs = useRef([]);
 
   useEffect(() => {
-    if (cooldown <= 0) return;
-    const timer = setInterval(() => {
-      setCooldown((prev) => Math.max(prev - 1, 0));
-    }, 1000);
+    if (!email || !otpSessionId) navigate(flow === "login" ? "/otp-login" : "/register", { replace: true });
+  }, [email, flow, navigate, otpSessionId]);
 
-    return () => clearInterval(timer);
+  useEffect(() => {
+    if (cooldown <= 0) return undefined;
+    const timer = window.setInterval(() => setCooldown((value) => Math.max(0, value - 1)), 1000);
+    return () => window.clearInterval(timer);
   }, [cooldown]);
 
-  const canResend = useMemo(() => cooldown === 0, [cooldown]);
-
-  const onVerify = async () => {
-    setError("");
-
-    if (!/^\d{6}$/.test(otp)) {
-      setError("Please enter a valid 6-digit OTP");
+  const setDigit = (index, value) => {
+    const pasted = value.replace(/\D/g, "").slice(0, 6);
+    if (pasted.length > 1) {
+      const next = [...digits];
+      pasted.split("").forEach((digit, offset) => { if (index + offset < 6) next[index + offset] = digit; });
+      setDigits(next);
+      refs.current[Math.min(index + pasted.length, 5)]?.focus();
+      setError("");
       return;
     }
+    const next = [...digits];
+    next[index] = pasted;
+    setDigits(next);
+    setError("");
+    if (pasted && index < 5) refs.current[index + 1]?.focus();
+  };
 
+  const onKeyDown = (event, index) => {
+    if (event.key === "Backspace" && !digits[index] && index > 0) refs.current[index - 1]?.focus();
+    if (event.key === "ArrowLeft" && index > 0) refs.current[index - 1]?.focus();
+    if (event.key === "ArrowRight" && index < 5) refs.current[index + 1]?.focus();
+  };
+
+  const verify = async () => {
+    const otp = digits.join("");
+    setError("");
+    if (otp.length !== 6) { setError("Enter the complete 6-digit code."); return; }
     setLoading(true);
     try {
-      if (flow === "register") {
-        const res = await authApi.verifyEmail({ email, otp, otpSessionId });
+      const response = flow === "register"
+        ? await authApi.verifyEmail({ email, otp, otpSessionId })
+        : await authApi.verifyLoginOtp({ email, otp, otpSessionId });
+      const payload = response?.data && typeof response.data === "object" ? response.data : response;
+      if (response?.success === false || payload?.success === false) throw new Error(payload?.message || response?.message || "");
+      const returnedToken = payload?.authentication?.accessToken || payload?.authentication?.token || payload?.accessToken || payload?.token || payload?.access_token;
+      if (flow === "login" || returnedToken) {
+        const accessToken = payload?.authentication?.accessToken || payload?.authentication?.token || payload?.accessToken || payload?.token || payload?.access_token;
+        if (!accessToken) throw new Error(payload?.message || response?.message || "");
+        const userInfo = payload?.user || {};
+        const user = { id: userInfo.id || userInfo.userId, firstName: userInfo.firstName || "", lastName: userInfo.lastName || "", name: userInfo.name || `${userInfo.firstName || ""} ${userInfo.lastName || ""}`.trim(), email: userInfo.email || email, role: userInfo.role || userInfo.effectiveRole || "student" };
+        syncSession(user, accessToken, payload?.authentication?.refreshToken || payload?.refreshToken || payload?.refresh_token || null);
+        setDestination(redirectForRole(user.role));
         setSuccess(true);
-        toast.success(res.message || "Email verified successfully");
-        setTimeout(() => navigate("/login", { replace: true }), 900);
-        return;
+        window.setTimeout(() => navigate(redirectForRole(user.role), { replace: true }), 800);
+      } else {
+        setSuccess(true);
+        const backendMessage = payload?.message || response?.message;
+        if (backendMessage) toast.success(backendMessage);
+        window.setTimeout(() => navigate("/login", { replace: true, state: { prefillEmail: email } }), 1400);
       }
-
-      if (!otpSessionId) {
-        throw new Error("OTP session expired. Please request a new OTP.");
-      }
-
-      const res = await authApi.verifyLoginOtp({ email, otpSessionId, otp });
-      const tokenData =
-        res.authentication?.accessToken || res.accessToken || res.token || res.access_token;
-      const refreshToken =
-        res.authentication?.refreshToken || res.refreshToken || res.refresh_token || null;
-
-      if (!tokenData) {
-        throw new Error("No access token received");
-      }
-
-      const userInfo = res.user || {};
-      const userData = {
-        id: userInfo.id || userInfo.userId,
-        firstName: userInfo.firstName || "",
-        lastName: userInfo.lastName || "",
-        name: userInfo.firstName
-          ? `${userInfo.firstName} ${userInfo.lastName || ""}`.trim()
-          : userInfo.name || "",
-        email: userInfo.email || email,
-        role: userInfo.role || userInfo.effectiveRole || "student",
-      };
-
-      syncSession(userData, tokenData, refreshToken);
-
-      setSuccess(true);
-      toast.success(res.message || "Login successful");
-      setTimeout(() => {
-        window.location.href = getRedirectByRole(userData.role);
-      }, 600);
-    } catch (err) {
-      const responseData = err.response?.data;
-      const attempts = responseData?.data?.remainingAttempts;
-      const expiry = responseData?.data?.expiresInSeconds;
-      const baseMessage = responseData?.message || err.message || "OTP verification failed";
-      const details = [
-        attempts !== undefined ? `${attempts} attempts left` : "",
-        expiry ? `expires in ${expiry}s` : "",
-      ]
-        .filter(Boolean)
-        .join(" | ");
-
-      const message = details ? `${baseMessage} (${details})` : baseMessage;
-      setError(message);
-      toast.error(baseMessage);
-    } finally {
-      setLoading(false);
-    }
+      try { sessionStorage.removeItem("asivo_otp_context"); } catch { /* Optional persistence. */ }
+    } catch (cause) {
+      const data = cause.response?.data;
+      const base = data?.message || data?.error || cause.message || "";
+      if (!base) return;
+      const details = data?.data?.remainingAttempts !== undefined ? ` ${data.data.remainingAttempts} attempts remaining.` : "";
+      setError(`${base}${details}`);
+      setDigits(["", "", "", "", "", ""]);
+      refs.current[0]?.focus();
+      toast.error(base);
+    } finally { setLoading(false); }
   };
 
-  const onResend = async () => {
-    setError("");
-    if (!canResend) return;
-
-    if (!otpSessionId) {
-      setError("OTP session expired. Please register again.");
-      return;
-    }
-
-    setResending(true);
+  const resend = async () => {
+    if (cooldown > 0 || resending) return;
+    setResending(true); setError("");
     try {
       const response = await authApi.resendOtp({ flow, email, otpSessionId });
-      const res = response.data || response;
-      setOtpSessionId(res.otpSessionId || otpSessionId);
-      setOtp("");
-      setCooldown(Number(res.cooldownSeconds || 30));
-      toast.success(response.message || res.message || "OTP resent");
-    } catch (err) {
-      const responseData = err.response?.data;
-      const retryAfter = Number(responseData?.data?.cooldownSeconds || 0);
-      if (retryAfter > 0) {
-        setCooldown(retryAfter);
-      }
-      const message = responseData?.message || "Failed to resend OTP";
-      setError(message);
-      toast.error(message);
-    } finally {
-      setResending(false);
-    }
+      const payload = response?.data && typeof response.data === "object" ? response.data : response;
+      const nextSession = payload?.otpSessionId || payload?.sessionId || otpSessionId;
+      const nextCooldown = payload?.cooldownSeconds ?? response?.cooldownSeconds ?? 30;
+      setOtpSessionId(nextSession); setCooldown(Number(nextCooldown)); setDigits(["", "", "", "", "", ""]);
+      sessionStorage.setItem("asivo_otp_context", JSON.stringify({ email, flow, otpSessionId: nextSession, cooldownSeconds: nextCooldown }));
+      const backendMessage = payload?.message || response?.message;
+      if (backendMessage) toast.success(backendMessage);
+    } catch (cause) {
+      const data = cause.response?.data;
+      const backendMessage = data?.message || data?.error || "";
+      if (backendMessage) setError(backendMessage);
+    } finally { setResending(false); }
   };
 
+  const changeEmail = () => navigate(flow === "login" ? "/otp-login" : "/register", { replace: true });
+
   return (
-    <AuthShell
-      title={flow === "register" ? "Verify Email" : "Verify Login OTP"}
-      subtitle="Enter the 6-digit code sent to your email address."
-      eyebrow="LearnMaster Verification"
-      highlights={[
-        { value: "6-Digit", label: "OTP" },
-        { value: "Secure", label: "Flow" },
-        { value: "5 Min", label: "Expiry" },
-      ]}
-    >
-      <h1 className="mb-2 text-2xl font-bold text-slate-900">OTP Verification</h1>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm text-slate-500">Code sent to {email || "your email"}</p>
-        {flow === "register" && (
-          <button
-            type="button"
-            onClick={() =>
-              navigate("/register", {
-                state: {
-                  registrationDraft: {
-                    ...location.state?.registrationDraft,
-                    email: "",
-                  },
-                  photoUrl: location.state?.photoUrl,
-                  emailCorrection: { email, otpSessionId },
-                },
-              })
-            }
-            disabled={loading || success}
-            className="inline-flex items-center gap-1 text-sm font-semibold text-orange-600 transition hover:text-orange-700 disabled:opacity-60"
-          >
-            <ArrowLeft size={15} /> Wrong email? Go back
-          </button>
-        )}
-      </div>
-
-      {error && (
-        <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-red-700">
-          <AlertCircle size={18} className="mt-0.5" />
-          <span className="text-sm">{error}</span>
+    <AuthShell variant="otp" showTerms={false} showBackHome={false}>
+      {success ? (
+        <div className="cyber-success-state">
+          <div className="cyber-success-icon"><Check size={42} strokeWidth={3} /></div>
+          <h1>Email verified!</h1>
+          <p>Your account has been successfully activated.<br />{destination === "/login" ? "Please sign in to continue. Redirecting to sign in…" : "Redirecting you to your dashboard…"}</p>
+          <span className="cyber-spinner" aria-label="Redirecting" />
         </div>
+      ) : (
+        <>
+          <div className="cyber-card-heading cyber-centered-heading">
+            <span className="cyber-card-icon"><Mail size={25} /></span>
+            <h1>Verify your email</h1>
+            <p>We’ve sent a 6-digit verification code to<br /><strong>{email}</strong></p>
+          </div>
+          {error ? <div className="cyber-invalid-state" role="alert"><div><AlertCircle size={28} /></div><h2>Invalid OTP</h2><p>{error}</p><button type="button" className="cyber-auth-button" onClick={() => setError("")}>Try again <ArrowRight size={16} /></button><button type="button" className="cyber-invalid-resend" onClick={resend} disabled={resending || cooldown > 0}>{resending ? "Sending..." : cooldown > 0 ? `Resend OTP in 00:${String(cooldown).padStart(2, "0")}` : "Resend OTP"}</button></div> : (
+            <>
+              <div className="cyber-otp-boxes" aria-label="Six digit verification code">
+                {digits.map((digit, index) => <input key={index} className={digit ? "filled" : ""} ref={(element) => { refs.current[index] = element; }} value={digit} maxLength={6} inputMode="numeric" autoComplete={index === 0 ? "one-time-code" : "off"} aria-label={`Digit ${index + 1}`} disabled={loading} onChange={(event) => setDigit(index, event.target.value)} onKeyDown={(event) => onKeyDown(event, index)} />)}
+              </div>
+              <button type="button" className="cyber-auth-button" onClick={verify} disabled={loading || digits.some((digit) => !digit)}>{loading ? "Verifying..." : "Verify & Continue"} <ArrowRight size={16} /></button>
+            </>
+          )}
+          {!error && <p className="cyber-resend-copy">Didn’t receive the code? <button type="button" onClick={resend} disabled={resending || cooldown > 0}>{resending ? "Sending..." : cooldown > 0 ? `Resend OTP in 00:${String(cooldown).padStart(2, "0")}` : "Resend OTP"}</button></p>}
+          <button type="button" className="cyber-change-email" onClick={changeEmail} disabled={loading}><ArrowLeft size={14} /> Change email</button>
+          <div className="cyber-secure-note"><RefreshCw size={13} /> Your code can only be used once.</div>
+        </>
       )}
-
-      {success && (
-        <div className="mb-4 flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-emerald-700">
-          <CheckCircle size={18} className="mt-0.5" />
-          <span className="text-sm">Verified successfully. Redirecting...</span>
-        </div>
-      )}
-
-      <div className="space-y-4">
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">One-Time Password</label>
-          <input
-            type="text"
-            inputMode="numeric"
-            maxLength={6}
-            value={otp}
-            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-            className="lms-input text-center tracking-[0.35em] text-lg"
-            placeholder="000000"
-            disabled={loading || success}
-          />
-        </div>
-
-        <button onClick={onVerify} disabled={loading || success} className="lms-btn-primary">
-          {loading ? "Verifying..." : "Verify OTP"}
-        </button>
-
-        <button
-          type="button"
-          onClick={onResend}
-          disabled={loading || resending || success || !canResend}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-600 disabled:opacity-60"
-        >
-          <RefreshCw size={16} className={resending ? "animate-spin" : ""} />
-          {resending ? "Sending..." : canResend ? "Resend OTP" : `Resend in ${cooldown}s`}
-        </button>
-      </div>
     </AuthShell>
   );
-}
+};
 
 export default OtpVerify;

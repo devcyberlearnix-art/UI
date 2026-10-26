@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   Filter,
-  Sparkles,
   Star,
   BookOpen,
   Clock,
@@ -34,6 +33,7 @@ import {
 import toast from "react-hot-toast";
 import { courseApi } from "../api/courseApi";
 import { useAuth } from "../context/AuthContext";
+import Portal from "../components/ui/Portal";
 
 const CATEGORY_OPTIONS = [
   "All",
@@ -184,7 +184,7 @@ const normalizeCourseItem = (c, index) => {
     instructor:
       c.instructor?.name ||
       c.instructorName ||
-      (typeof c.instructor === "string" ? c.instructor : "LearnMaster Faculty"),
+      (typeof c.instructor === "string" ? c.instructor : "Asivo Faculty"),
     instructorRole: c.instructorRole || c.instructor?.role || "Senior Specialist",
     image:
       c.image ||
@@ -206,6 +206,12 @@ const Courses = () => {
   const location = useLocation();
   const { user } = useAuth();
 
+  // User-specific localStorage key
+  const getStorageKey = () => {
+    const userId = user?.id || user?.userId || user?.email || "guest";
+    return `wishlist_${userId}`;
+  };
+
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -221,13 +227,18 @@ const Courses = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
 
+  // Featured courses state
+  const [featuredCourses, setFeaturedCourses] = useState([]);
+  const [trendingCourses, setTrendingCourses] = useState([]);
+
   // Slide-out Drawer Quick View State
   const [drawerCourse, setDrawerCourse] = useState(null);
 
-  // Wishlist State (persisted in localStorage)
+  // Wishlist State (persisted in localStorage - user-specific)
   const [wishlist, setWishlist] = useState(() => {
     try {
-      const saved = localStorage.getItem("student_wishlist");
+      const key = getStorageKey();
+      const saved = localStorage.getItem(key);
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
@@ -248,33 +259,90 @@ const Courses = () => {
     }
     setWishlist(updated);
     try {
-      localStorage.setItem("student_wishlist", JSON.stringify(updated));
+      const key = getStorageKey();
+      localStorage.setItem(key, JSON.stringify(updated));
       window.dispatchEvent(new Event("storage"));
     } catch (err) {
       console.warn("Could not save wishlist", err);
     }
   };
 
-  // Fetch courses from GET /api/v1/courses
+  // Fetch courses from API - uses trending, featured, or list based on context
   const fetchCourses = useCallback(async () => {
     setLoading(true);
     setError("");
 
     try {
-      // Calls GET /api/v1/courses with credentials and fallback to http://localhost:8080/api/v1/courses
-      const data = await courseApi.getAllCourses();
-
+      // Try multiple API endpoints for best results
       let list = [];
-      if (Array.isArray(data)) {
-        list = data;
-      } else if (Array.isArray(data?.data)) {
-        list = data.data;
-      } else if (Array.isArray(data?.courses)) {
-        list = data.courses;
-      } else if (Array.isArray(data?.content)) {
-        list = data.content;
-      } else if (data?.data && typeof data.data === "object") {
-        list = Object.values(data.data).filter((item) => typeof item === "object");
+
+      // 1. Try trending courses first
+      try {
+        const trendingData = await courseApi.getTrendingCourses({
+          page: 0,
+          size: 20,
+          category: selectedCategory !== "All" ? selectedCategory : "",
+          level: selectedLevel !== "All Levels" ? selectedLevel : ""
+        });
+
+        if (Array.isArray(trendingData?.data?.courses)) {
+          list = trendingData.data.courses;
+        } else if (Array.isArray(trendingData?.data)) {
+          list = trendingData.data;
+        } else if (Array.isArray(trendingData)) {
+          list = trendingData;
+        }
+      } catch (trendingErr) {
+        console.warn("[Courses] Trending API failed, trying featured...", trendingErr);
+      }
+
+      // 2. If trending failed, try featured courses
+      if (list.length === 0) {
+        try {
+          const featuredData = await courseApi.getFeaturedCourses(12);
+          if (Array.isArray(featuredData)) {
+            list = featuredData;
+          } else if (Array.isArray(featuredData?.data)) {
+            list = featuredData.data;
+          }
+        } catch (featuredErr) {
+          console.warn("[Courses] Featured API failed, trying course list...", featuredErr);
+        }
+      }
+
+      // 3. If featured failed, try course list with filters
+      if (list.length === 0) {
+        try {
+          const listData = await courseApi.getCourseList({
+            category: selectedCategory !== "All" ? selectedCategory : undefined,
+            level: selectedLevel !== "All Levels" ? selectedLevel : undefined,
+            page: 0,
+            size: 20
+          });
+
+          if (Array.isArray(listData?.data?.courses)) {
+            list = listData.data.courses;
+          } else if (Array.isArray(listData?.data)) {
+            list = listData.data;
+          } else if (Array.isArray(listData)) {
+            list = listData;
+          }
+        } catch (listErr) {
+          console.warn("[Courses] Course list API failed, trying all courses...", listErr);
+        }
+      }
+
+      // 4. Final fallback to all courses
+      if (list.length === 0) {
+        const allData = await courseApi.getAllCourses({ page: 0, size: 20 });
+
+        if (Array.isArray(allData?.content)) {
+          list = allData.content;
+        } else if (Array.isArray(allData?.data)) {
+          list = allData.data;
+        } else if (Array.isArray(allData)) {
+          list = allData;
+        }
       }
 
       if (list.length > 0) {
@@ -284,17 +352,67 @@ const Courses = () => {
         setCourses(DEFAULT_COURSES);
       }
     } catch (err) {
-      console.warn("[BrowseCourses] GET /api/v1/courses failed, falling back to curated curriculum", err);
+      console.warn("[BrowseCourses] All APIs failed, falling back to curated curriculum", err);
       setError("Connected with offline course cache.");
       setCourses(DEFAULT_COURSES);
     } finally {
       setLoading(false);
     }
+  }, [selectedCategory, selectedLevel]);
+
+  // Fetch featured and trending courses separately
+  const fetchFeaturedCourses = useCallback(async () => {
+    try {
+      const data = await courseApi.getFeaturedCourses(6);
+      let list = [];
+      if (Array.isArray(data)) {
+        list = data;
+      } else if (Array.isArray(data?.data)) {
+        list = data.data;
+      }
+      if (list.length > 0) {
+        setFeaturedCourses(list.map((c, idx) => normalizeCourseItem(c, idx)));
+      }
+    } catch (err) {
+      console.warn("[Courses] Featured courses fetch failed", err);
+    }
+  }, []);
+
+  const fetchTrendingCoursesSection = useCallback(async () => {
+    try {
+      const data = await courseApi.getTrendingCourses({ page: 0, size: 6 });
+      let list = [];
+      if (Array.isArray(data?.data?.courses)) {
+        list = data.data.courses;
+      } else if (Array.isArray(data?.data)) {
+        list = data.data;
+      } else if (Array.isArray(data)) {
+        list = data;
+      }
+      if (list.length > 0) {
+        setTrendingCourses(list.map((c, idx) => normalizeCourseItem(c, idx)));
+      }
+    } catch (err) {
+      console.warn("[Courses] Trending courses fetch failed", err);
+    }
   }, []);
 
   useEffect(() => {
     fetchCourses();
-  }, [fetchCourses]);
+    fetchFeaturedCourses();
+    fetchTrendingCoursesSection();
+  }, [fetchCourses, fetchFeaturedCourses, fetchTrendingCoursesSection]);
+
+  // Reload wishlist when user changes
+  useEffect(() => {
+    const key = getStorageKey();
+    try {
+      const saved = localStorage.getItem(key);
+      setWishlist(saved ? JSON.parse(saved) : []);
+    } catch {
+      setWishlist([]);
+    }
+  }, [user]);
 
   // Filter & Sort Logic
   const filteredAndSortedCourses = useMemo(() => {
@@ -340,7 +458,14 @@ const Courses = () => {
     return filteredAndSortedCourses.slice(start, start + itemsPerPage);
   }, [filteredAndSortedCourses, currentPage]);
 
-  const handleCardClick = (courseId) => {
+  const handleCardClick = async (courseId) => {
+    // Track course impression
+    try {
+      await courseApi.trackCourseImpression(courseId, 'CATALOG');
+    } catch (err) {
+      // Non-critical, don't block navigation
+    }
+
     // Navigate to course detail page
     if (user?.role === "student" || location.pathname.startsWith("/student")) {
       navigate(`/student/courses/${courseId}`);
@@ -350,12 +475,22 @@ const Courses = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2 }}
-      className="w-full space-y-5 font-sans pb-12"
-    >
+    <>
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2 }}
+        className="w-full space-y-5 font-sans pb-12"
+      >
       {/* ── TOP HERO BANNER: CINEMATIC COLOR FILL & CATALOG ROADMAP ──────── */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 p-6 sm:p-8 text-white shadow-xl border border-indigo-900/40">
         {/* Ambient Gradient Glows */}
@@ -418,6 +553,160 @@ const Courses = () => {
           </div>
         </div>
       </div>
+
+      {/* ── FEATURED COURSES CAROUSEL ─────────────────────────────────── */}
+      {featuredCourses.length > 0 && (
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="p-2 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white">
+                <Award size={18} />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold text-slate-900">Featured Courses</h2>
+                <p className="text-xs text-slate-500">Hand-picked by our instructors</p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigate("/courses")}
+              className="text-xs font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1"
+            >
+              View All <ArrowRight size={14} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {featuredCourses.slice(0, 3).map((course, idx) => {
+              const isWish = wishlist.some((id) => String(id) === String(course.id));
+              const catClass = CATEGORY_COLORS[course.category] || "bg-slate-100 text-slate-700 border-slate-200";
+
+              return (
+                <motion.div
+                  key={course.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: idx * 0.1 }}
+                  onClick={() => handleCardClick(course.id)}
+                  className="group relative rounded-xl overflow-hidden bg-slate-50 hover:shadow-lg transition-all cursor-pointer"
+                >
+                  <div className="relative h-36 overflow-hidden">
+                    <img
+                      src={course.image}
+                      alt={course.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
+                    <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold border backdrop-blur-md ${catClass}`}>
+                      {course.category}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => toggleWishlist(course, e)}
+                      className={`absolute top-2 right-2 p-1.5 rounded-lg backdrop-blur-md transition ${
+                        isWish ? "bg-rose-500 text-white" : "bg-black/50 hover:bg-rose-500/80 text-white"
+                      }`}
+                    >
+                      <Heart size={12} fill={isWish ? "currentColor" : "none"} />
+                    </button>
+                  </div>
+
+                  <div className="p-3 space-y-1.5">
+                    <h3 className="text-xs font-bold text-slate-900 group-hover:text-orange-600 transition line-clamp-1">
+                      {course.title}
+                    </h3>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-amber-600 font-mono font-bold text-[10px]">
+                        <Star size={10} fill="currentColor" /> {course.rating.toFixed(1)}
+                      </div>
+                      <span className="text-xs font-extrabold text-slate-900 font-mono">₹{course.price}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── TRENDING COURSES SECTION ─────────────────────────────────── */}
+      {trendingCourses.length > 0 && (
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="p-2 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 text-white">
+                <Zap size={18} />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold text-slate-900">Trending Now</h2>
+                <p className="text-xs text-slate-500">Most popular this week</p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigate("/courses")}
+              className="text-xs font-semibold text-violet-600 hover:text-violet-700 flex items-center gap-1"
+            >
+              View All <ArrowRight size={14} />
+            </button>
+          </div>
+
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2 hide-scrollbar">
+            {trendingCourses.slice(0, 6).map((course, idx) => {
+              const isWish = wishlist.some((id) => String(id) === String(course.id));
+
+              return (
+                <motion.div
+                  key={course.id}
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: idx * 0.05 }}
+                  onClick={() => handleCardClick(course.id)}
+                  className="group flex-shrink-0 w-64 rounded-xl overflow-hidden bg-slate-50 hover:shadow-lg transition-all cursor-pointer border border-slate-200/90"
+                >
+                  <div className="relative h-32 overflow-hidden">
+                    <img
+                      src={course.image}
+                      alt={course.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
+                    <div className="absolute top-2 left-2 flex items-center gap-1.5">
+                      <span className="px-1.5 py-0.5 rounded bg-violet-500 text-white text-[9px] font-bold">
+                        #{idx + 1}
+                      </span>
+                      <span className="px-1.5 py-0.5 rounded bg-black/60 text-white text-[9px] font-bold backdrop-blur-md">
+                        {course.level}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => toggleWishlist(course, e)}
+                      className={`absolute top-2 right-2 p-1 rounded-lg backdrop-blur-md transition ${
+                        isWish ? "bg-rose-500 text-white" : "bg-black/50 hover:bg-rose-500/80 text-white"
+                      }`}
+                    >
+                      <Heart size={11} fill={isWish ? "currentColor" : "none"} />
+                    </button>
+                  </div>
+
+                  <div className="p-3 space-y-1.5">
+                    <h3 className="text-xs font-bold text-slate-900 group-hover:text-violet-600 transition line-clamp-1">
+                      {course.title}
+                    </h3>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-amber-600 font-mono font-bold text-[10px]">
+                        <Star size={10} fill="currentColor" /> {course.rating.toFixed(1)}
+                      </div>
+                      <span className="text-xs font-extrabold text-slate-900 font-mono">₹{course.price}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* ── TOOLBAR: SEARCH, CATEGORY PILLS, FILTERS & VIEW MODE ───────── */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-xs space-y-3.5">
@@ -844,14 +1133,15 @@ const Courses = () => {
       {/* ── QUICK PREVIEW SLIDE-OUT DRAWER ────────────────────────────── */}
       <AnimatePresence>
         {drawerCourse && (
-          <div className="fixed inset-0 z-50 overflow-hidden">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setDrawerCourse(null)}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
-            />
+          <Portal>
+            <div className="fixed inset-0 z-50 overflow-hidden">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setDrawerCourse(null)}
+                className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
+              />
 
             <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
               <motion.div
@@ -952,9 +1242,11 @@ const Courses = () => {
               </motion.div>
             </div>
           </div>
+        </Portal>
         )}
       </AnimatePresence>
     </motion.div>
+    </>
   );
 };
 

@@ -1,10 +1,10 @@
 // src/components/dashboard/TopNav.jsx
-import { Bell, Menu } from "lucide-react";
+import { Bell, Menu, Search, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import RoleSwitcher from "../ui/RoleSwitcher";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { getDashboardRole, tabsByRole } from "../../config/navigation";
 import { authApi } from "../../api/authApi";
 import { setActingRole } from "../../utils/roleSwitch";
@@ -13,6 +13,7 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
   const rawRole = user?.role || user?.role1 || user?.userRole || "";
   const roleKey = getDashboardRole(location.pathname, rawRole);
   const tabRole = roleKey === "super_admin" || roleKey === "sub_admin" ? "admin" : roleKey;
@@ -25,7 +26,7 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
     user?.username ||
     (user?.email ? user.email.split("@")[0] : "Learner");
 
-  const displayEmail = user?.email || "learner@learnmaster.edu";
+  const displayEmail = user?.email || "learner@asivo.edu";
   const displayRole =
     roleKey === "super_admin"
       ? "Super Admin"
@@ -82,7 +83,7 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
   };
 
   return (
-    <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-2xs">
+    <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
       <div className="h-14 flex justify-between items-center px-4 sm:px-6">
         <div className="flex items-center gap-3 min-w-0">
           <button
@@ -100,6 +101,20 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Search Bar */}
+          <div className="hidden md:flex items-center">
+            <div className="relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search for courses, skills, or instructors..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-72 pl-9 pr-4 py-2 text-xs rounded-lg border border-slate-200 bg-slate-50 text-slate-800 placeholder:text-slate-400 outline-none focus:border-[#2563EB] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/10 transition-all"
+              />
+            </div>
+          </div>
+
           {showSwitcher && (
             <RoleSwitcher currentRole={tabRole} onRoleChange={handleRoleChange} />
           )}
@@ -109,13 +124,29 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-orange-600 rounded-full"></span>
           </button>
 
+          <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-500 hover:text-slate-800">
+            <Calendar size={16} />
+          </button>
+
           <div className="flex items-center gap-2.5 pl-3 border-l border-slate-200">
             <div className="text-right hidden sm:block">
               <p className="text-xs font-bold text-slate-900 leading-tight">{displayName}</p>
               <p className="text-[10px] text-slate-400 font-mono leading-tight">{displayRole}</p>
             </div>
-            <div className="h-8 w-8 rounded-lg bg-slate-900 flex items-center justify-center text-white font-bold text-xs shadow-2xs">
-              {getUserInitials()}
+            <div className="relative">
+              <img
+                src={user?.profilePhoto || ''}
+                alt="Profile"
+                className="h-8 w-8 rounded-lg object-cover shadow-2xs"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextElementSibling.style.display = 'flex';
+                }}
+                style={{display: user?.profilePhoto ? 'block' : 'none'}}
+              />
+              <div className="h-8 w-8 rounded-lg bg-slate-900 flex items-center justify-center text-white font-bold text-xs shadow-2xs" style={{display: user?.profilePhoto ? 'none' : 'flex'}}>
+                {getUserInitials()}
+              </div>
             </div>
           </div>
         </div>

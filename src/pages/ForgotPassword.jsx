@@ -14,7 +14,10 @@ import toast from "react-hot-toast";
 import AuthShell from "../components/ui/AuthShell";
 
 // ✅ Your ngrok base URL (can be overridden via .env)
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev";
+// In development, use empty string to leverage Vite proxy
+const API_BASE_URL = import.meta.env.DEV
+  ? ""
+  : (import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev");
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -203,7 +206,7 @@ const ForgotPassword = () => {
     <AuthShell
       title="Account Recovery"
       subtitle="Secure multi-step password reset with verification and instant access restoration."
-      eyebrow="LearnMaster Security"
+      eyebrow="Asivo Security"
       highlights={[
         { value: "3-Step", label: "Recovery" },
         { value: "OTP", label: "Verification" },

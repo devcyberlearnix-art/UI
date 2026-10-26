@@ -49,21 +49,41 @@ export const adminApi = {
   },
 
   // ======================== DASHBOARD REPORTS ========================
+  getUsersReport: async (params = {}) => {
+    const response = await axiosInstance.get('/api/v1/admin/reports/users', { params });
+    return response.data;
+  },
+
+  getOrdersReport: async (params = {}) => {
+    const response = await axiosInstance.get('/api/v1/admin/reports/orders', { params });
+    return response.data;
+  },
+
+  getRevenueReport: async (params = {}) => {
+    const response = await axiosInstance.get('/api/v1/admin/reports/revenue', { params });
+    return response.data;
+  },
+
+  getCoursesReport: async (params = {}) => {
+    const response = await axiosInstance.get('/api/v1/admin/reports/courses', { params });
+    return response.data;
+  },
+
   getDashboardStats: {
-    users: async () => {
-      const response = await axiosInstance.get('/api/v1/admin/reports/users');
+    users: async (params = {}) => {
+      const response = await axiosInstance.get('/api/v1/admin/reports/users', { params });
       return response.data;
     },
-    courses: async () => {
-      const response = await axiosInstance.get('/api/v1/admin/reports/courses');
+    courses: async (params = {}) => {
+      const response = await axiosInstance.get('/api/v1/admin/reports/courses', { params });
       return response.data;
     },
-    revenue: async () => {
-      const response = await axiosInstance.get('/api/v1/admin/reports/revenue');
+    revenue: async (params = {}) => {
+      const response = await axiosInstance.get('/api/v1/admin/reports/revenue', { params });
       return response.data;
     },
-    orders: async () => {
-      const response = await axiosInstance.get('/api/v1/admin/reports/orders');
+    orders: async (params = {}) => {
+      const response = await axiosInstance.get('/api/v1/admin/reports/orders', { params });
       return response.data;
     },
   },

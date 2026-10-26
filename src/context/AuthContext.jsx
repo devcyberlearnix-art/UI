@@ -1,7 +1,11 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authApi } from '../api/authApi';
+import { studentApi } from '../api/studentApi';
+import { instructorApi } from '../api/instructorApi';
 import toast from 'react-hot-toast';
+import { parseApiError } from '../utils/apiErrorParser';
+import { normalizePhotoUrl } from '../config/api';
 
 const AuthContext = createContext(null);
 
@@ -14,6 +18,14 @@ export const normalizeRole = (roleValue = '') => {
   if (role.includes('instructor')) return 'instructor';
   if (role.includes('student')) return 'student';
   return role || 'student';
+};
+
+export const getDashboardPath = (roleValue = '') => {
+  const role = normalizeRole(roleValue);
+  if (role === 'super_admin' || role === 'admin') return '/admin/dashboard';
+  if (role === 'sub_admin') return '/admin/sub-dashboard';
+  if (role === 'instructor') return '/instructor/dashboard';
+  return '/student/dashboard';
 };
 
 export const useAuth = () => {
@@ -66,32 +78,78 @@ export const AuthProvider = ({ children }) => {
     return normalizedUser;
   };
 
+  // Fetch user profile data including photo
+  const fetchUserProfile = async (currentUser) => {
+    try {
+      const role = currentUser?.role || 'student';
+
+      let profileData;
+      if (role === 'admin' || role === 'super_admin' || role === 'sub_admin') {
+        profileData = await authApi.getSubAdminProfile();
+      } else if (role === 'instructor') {
+        profileData = await instructorApi.getProfile();
+      } else {
+        profileData = await authApi.getUserProfile();
+      }
+
+      // Handle different response structures
+      // The API might return: { data: { user: {...} } } or { data: [...] } or directly { user: {...} }
+      let data = profileData?.data?.user || profileData?.data?.admin || profileData?.data?.instructor || profileData?.data || profileData;
+
+      // If data is an array, try to find the user object in it
+      if (Array.isArray(data)) {
+        data = data.find(item => item && (item.email || item.firstName || item.id)) || data[0] || {};
+      }
+
+      const profilePhoto = data?.profilePhoto || data?.photoURL || data?.avatar || data?.profilePhotoUrl || data?.photoUrl || null;
+
+      // Normalize photo URL to work in both development and production
+      const normalizedPhotoUrl = normalizePhotoUrl(profilePhoto);
+
+      // Update user state with profile photo
+      if (data && typeof data === 'object') {
+        const updatedUser = {
+          ...currentUser,
+          ...data,
+          // Handle mobile field name compatibility (backend uses 'mobile', frontend expects 'mobileNumber')
+          mobileNumber: data.mobileNumber || data.mobile || currentUser.mobileNumber || '',
+          profilePhoto: normalizedPhotoUrl,
+        };
+        setUser(updatedUser);
+        localStorage.setItem('lms_user', JSON.stringify(updatedUser));
+      }
+    } catch (error) {
+      console.error('[AuthProvider] Failed to fetch user profile:', error);
+      // Don't throw error - user can still function without profile photo
+    }
+  };
+
   useEffect(() => {
-    const restoreSession = () => {
+    const restoreSession = async () => {
       try {
-        console.log('[AuthProvider] Checking existing session');
-        
         const storedToken = localStorage.getItem('lms_token') || localStorage.getItem('access_token');
         const storedUser = localStorage.getItem('lms_user');
-        
+
         if (storedToken && storedUser) {
           try {
             const parsedUser = JSON.parse(storedUser);
-            setToken(storedToken);
-            setUser({
+            const normalizedUser = {
               ...parsedUser,
               role: normalizeRole(parsedUser?.role),
-            });
-            console.log('[AuthProvider] Session restored successfully');
+            };
+            setToken(storedToken);
+            setUser(normalizedUser);
+
+            // Fetch profile data including photo
+            await fetchUserProfile(normalizedUser);
           } catch (err) {
-            console.error('[AuthProvider] Failed to parse stored user:', err);
             localStorage.removeItem('lms_token');
             localStorage.removeItem('access_token');
             localStorage.removeItem('lms_user');
           }
         }
       } catch (err) {
-        console.error('[AuthProvider] Session restore error:', err);
+        // Storage can be unavailable in privacy-restricted browser contexts.
       } finally {
         setLoading(false);
       }
@@ -100,6 +158,39 @@ export const AuthProvider = ({ children }) => {
     restoreSession();
   }, []);
 
+  // Listen for profile photo changes from other components
+  useEffect(() => {
+    const handleProfilePhotoChange = (event) => {
+      if (user && event.detail) {
+        const updatedUser = {
+          ...user,
+          profilePhoto: event.detail.profilePhoto,
+        };
+        setUser(updatedUser);
+        localStorage.setItem('lms_user', JSON.stringify(updatedUser));
+      }
+    };
+
+    const handleProfilePhotoRemoved = () => {
+      if (user) {
+        const updatedUser = {
+          ...user,
+          profilePhoto: null,
+        };
+        setUser(updatedUser);
+        localStorage.setItem('lms_user', JSON.stringify(updatedUser));
+      }
+    };
+
+    window.addEventListener('profilePhotoChanged', handleProfilePhotoChange);
+    window.addEventListener('profilePhotoRemoved', handleProfilePhotoRemoved);
+
+    return () => {
+      window.removeEventListener('profilePhotoChanged', handleProfilePhotoChange);
+      window.removeEventListener('profilePhotoRemoved', handleProfilePhotoRemoved);
+    };
+  }, [user]);
+
   const login = async (email, password) => {
     try {
       setError(null);
@@ -107,8 +198,6 @@ export const AuthProvider = ({ children }) => {
       
       const emailStr = typeof email === 'string' ? email : String(email || '');
       const passwordStr = typeof password === 'string' ? password : String(password || '');
-      
-      console.log('[AuthProvider] Login attempt for:', emailStr);
       
       if (!emailStr || emailStr.trim() === '') {
         throw new Error('Email is required');
@@ -119,25 +208,29 @@ export const AuthProvider = ({ children }) => {
       
       const response = await authApi.login(emailStr.trim(), passwordStr);
       
-      console.log('[AuthProvider] Login response:', response);
-      
       let tokenData = null;
       let refreshTokenData = null;
       let userData = null;
 
       // ✅ Handle the response structure from /admin/internal/login
       if (response && typeof response === "object") {
+        const payload = response.data && typeof response.data === 'object' ? response.data : response;
         // Check for token in authentication object or directly
-        tokenData = response.authentication?.accessToken || 
-                    response.authentication?.token ||
-                    response.accessToken || 
-                    response.token || 
-                    response.access_token;
+        tokenData = payload.authentication?.accessToken ||
+                    payload.authentication?.token ||
+                    payload.accessToken ||
+                    payload.token ||
+                    payload.access_token;
 
-        refreshTokenData = response.authentication?.refreshToken || response.refreshToken || response.refresh_token || null;
+        refreshTokenData = payload.authentication?.refreshToken || payload.refreshToken || payload.refresh_token || null;
 
         // ✅ Extract user data from response
-        const userInfo = response.user || response;
+        const userInfo = payload.user || payload;
+        const profilePhoto = userInfo.profilePhoto || userInfo.photoURL || userInfo.avatar || userInfo.profilePhotoUrl || userInfo.photoUrl || null;
+
+        // Normalize photo URL to work in both development and production
+        const normalizedPhotoUrl = normalizePhotoUrl(profilePhoto);
+
         userData = {
           id: userInfo.id || userInfo.userId,
           firstName: userInfo.firstName || userInfo.name || '',
@@ -148,55 +241,34 @@ export const AuthProvider = ({ children }) => {
           role: normalizeRole(userInfo.role || userInfo.role1 || userInfo.userRole || userInfo.effectiveRole || 'student'),
           permissions: userInfo.permissions || [],
           assignedService: userInfo.assignedService || '',
+          profilePhoto: normalizedPhotoUrl,
         };
       }
       
       if (!tokenData) {
-        console.error('[AuthProvider] No token found in response:', response);
         throw new Error('No token received from server');
       }
       
-      console.log('[AuthProvider] Token extracted:', tokenData.substring(0, 20) + '...');
-      console.log('[AuthProvider] User data:', userData);
-      
       // ✅ Store in multiple locations
       syncSession(userData, tokenData, refreshTokenData);
-      
+
+      // Only fetch profile if photo is not already in login response
+      if (!userData.profilePhoto) {
+        await fetchUserProfile(userData);
+      }
+
       const userName = userData?.firstName || userData?.name || userData?.fullName || 'Admin';
       toast.success(`Welcome back, ${userName}!`);
-      
+
       return { success: true, user: userData, token: tokenData };
       
     } catch (error) {
-      console.error('[AuthProvider] Login error:', error);
-      
-      let errorMessage = 'Login failed. Please try again.';
-      
-      if (error.response) {
-        const { status, data } = error.response;
-        if (status === 400) {
-          errorMessage = data?.message || 'Invalid request. Please check your credentials.';
-        } else if (status === 401) {
-          errorMessage = 'Invalid email or password. Please try again.';
-        } else if (status === 403) {
-          errorMessage = 'Access denied. You do not have permission.';
-        } else if (status === 404) {
-          errorMessage = 'Server endpoint not found.';
-        } else if (status === 500) {
-          errorMessage = 'Server error. Please try again later.';
-        } else if (data?.message) {
-          errorMessage = data.message;
-        }
-      } else if (error.request) {
-        errorMessage = 'Cannot connect to the server. Please check your internet connection.';
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
+      const { message: errorMessage } = parseApiError(error, 'Login failed. Please check your details and try again.');
       
       setError(errorMessage);
       toast.error(errorMessage);
       
-      return { success: false, error: errorMessage };
+      return { success: false, error: errorMessage, originalError: error };
     } finally {
       setLoading(false);
     }

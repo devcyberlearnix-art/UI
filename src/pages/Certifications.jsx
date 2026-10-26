@@ -7,10 +7,10 @@ import { Award, CheckCircle } from "lucide-react";
 const Certifications = () => {
   const navigate = useNavigate();
   const certifications = [
-    { name: "Full Stack Web Development", provider: "LearnMaster", level: "Advanced" },
-    { name: "Data Science & Machine Learning", provider: "LearnMaster", level: "Intermediate" },
-    { name: "UI/UX Design Masterclass", provider: "LearnMaster", level: "Beginner" },
-    { name: "Cloud Computing with AWS", provider: "LearnMaster", level: "Intermediate" },
+    { name: "Full Stack Web Development", provider: "Asivo", level: "Advanced" },
+    { name: "Data Science & Machine Learning", provider: "Asivo", level: "Intermediate" },
+    { name: "UI/UX Design Masterclass", provider: "Asivo", level: "Beginner" },
+    { name: "Cloud Computing with AWS", provider: "Asivo", level: "Intermediate" },
   ];
 
   return (

@@ -1,15 +1,34 @@
 // src/api/axiosInstance.js
 import axios from "axios";
+import { authApi } from "./authApi";
 
-// Use environment variable or default to localhost
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev";
+// The browser talks to the API Gateway only; never call internal services directly.
+// In development, use empty string to leverage Vite proxy
+// In production, use the environment variable or fallback to ngrok
+const BASE_URL = import.meta.env.DEV
+  ? ""
+  : (import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev").replace(/\/+$/, "");
+
+// Token refresh state management
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
     "Accept": "application/json",
-    // Removed ngrok headers to fix CORS
   },
   timeout: 30000,
   withCredentials: true, // Important for cookies
@@ -18,6 +37,9 @@ const axiosInstance = axios.create({
 // Request interceptor - Log and add token
 axiosInstance.interceptors.request.use(
   (config) => {
+    if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
     // Skip auth header for public endpoints
     const publicEndpoints = [
       '/auth/register',
@@ -28,8 +50,7 @@ axiosInstance.interceptors.request.use(
       '/auth/password/forgot',
       '/auth/password/verify-otp',
       '/auth/password/reset',
-      '/auth/refresh',
-      '/auth/upload/profile-photo'
+      '/auth/refresh'
     ];
 
     const isPublicEndpoint = publicEndpoints.some(endpoint => config.url.includes(endpoint));
@@ -58,13 +79,10 @@ axiosInstance.interceptors.request.use(
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-        console.log(`[API] Added Authorization header for ${config.url}`);
       } else {
-        console.log(`[API] No token found for ${config.url}`);
       }
     }
 
-    console.log(`[API] ${config.method.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => {
@@ -73,22 +91,21 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response interceptor (unchanged)
+// Response interceptor with automatic token refresh
 axiosInstance.interceptors.response.use(
   (response) => {
     console.log(`[API] ${response.config.url} - ${response.status}`);
     return response;
   },
-  (error) => {
+  async (error) => {
     console.error('[API Response Error]', error);
 
     // CORS-specific error handling
     if (!error.response && error.message === 'Network Error') {
-      console.error('[CORS Error] Network Error detected - likely CORS issue');
-      console.error('[CORS Error] Origin:', window.location.origin);
-      console.error('[CORS Error] API URL:', BASE_URL);
-      console.error('[CORS Error] Request URL:', error.config?.url);
-      console.error('[CORS Error] Troubleshooting: Clear browser cache or test in incognito mode');
+      console.error('[Network Error] Network Error detected');
+      console.error('[Network Error] API URL:', BASE_URL);
+      console.error('[Network Error] Request URL:', error.config?.url);
+      console.error('[Network Error] Troubleshooting: Check if backend is running and proxy is configured correctly');
     }
 
     if (error.response) {
@@ -98,7 +115,86 @@ axiosInstance.interceptors.response.use(
         config?.url?.includes('/verify-email') ||
         config?.url?.includes('/register');
 
-      if (status === 401 && !isPublicAuthCall) {
+      const isRefreshEndpoint = config?.url?.includes('/auth/refresh');
+
+      // Attempt token refresh on 401 for protected endpoints
+      if (status === 401 && !isPublicAuthCall && !isRefreshEndpoint) {
+        if (isRefreshing) {
+          // Queue the request if refresh is already in progress
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          }).then((token) => {
+            config.headers.Authorization = `Bearer ${token}`;
+            return axiosInstance(config);
+          }).catch((err) => {
+            return Promise.reject(err);
+          });
+        }
+
+        isRefreshing = true;
+
+        try {
+          // Attempt to refresh the token
+          const refreshResponse = await authApi.refreshAccessToken();
+          
+          // Extract new access token from response
+          const newAccessToken = refreshResponse?.authentication?.accessToken ||
+                                refreshResponse?.accessToken ||
+                                refreshResponse?.data?.authentication?.accessToken ||
+                                refreshResponse?.data?.accessToken;
+
+          if (newAccessToken) {
+            // Update token storage
+            localStorage.setItem('lms_token', newAccessToken);
+            localStorage.setItem('access_token', newAccessToken);
+            sessionStorage.setItem('lms_token', newAccessToken);
+
+            // Update refresh token if rotated by backend
+            const newRefreshToken = refreshResponse?.authentication?.refreshToken ||
+                                     refreshResponse?.refreshToken ||
+                                     refreshResponse?.data?.authentication?.refreshToken ||
+                                     refreshResponse?.data?.refreshToken;
+            if (newRefreshToken) {
+              localStorage.setItem('refresh_token', newRefreshToken);
+            }
+
+            // Process queued requests with new token
+            processQueue(null, newAccessToken);
+
+            // Retry original request with new token
+            config.headers.Authorization = `Bearer ${newAccessToken}`;
+            return axiosInstance(config);
+          } else {
+            throw new Error('No access token in refresh response');
+          }
+        } catch (refreshError) {
+          console.error('[API] Token refresh failed:', refreshError);
+          
+          // Process queued requests with error
+          processQueue(refreshError, null);
+
+          // Clear all tokens and redirect to login
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('lms_token');
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('userData');
+          localStorage.removeItem('lms_user');
+          sessionStorage.removeItem('authToken');
+          sessionStorage.removeItem('lms_token');
+
+          if (!window.location.pathname.includes('/login') &&
+            !window.location.pathname.includes('/register') &&
+            !window.location.pathname.includes('/otp-verify')) {
+            window.location.href = '/login';
+          }
+
+          return Promise.reject(refreshError);
+        } finally {
+          isRefreshing = false;
+        }
+      } else if (status === 401 && !isPublicAuthCall) {
+        // Direct logout for refresh endpoint failures or other 401s
         console.warn('[API] 401 Unauthorized - Clearing tokens');
 
         localStorage.removeItem('authToken');

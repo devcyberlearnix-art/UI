@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, BookOpen, Users, DollarSign, TrendingUp, Award, Clock,
   PlusCircle, Edit, Trash2, Eye, Upload, FileText, Send, MessageCircle,
-  ChevronRight, X, Save, BarChart3, Star, Calendar, Mail, Sparkles
+  ChevronRight, X, Save, BarChart3, Star, Calendar, Mail
 } from "lucide-react";
+import Portal from "../../components/ui/Portal";
 
 // ---------- Mock Data (stored in localStorage) ----------
 const getCourses = () => {
@@ -630,30 +631,32 @@ const InstructorDashboard = () => {
 
 // Reusable Modal with Animation
 const Modal = ({ children, title, onClose }) => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-    onClick={onClose}
-  >
+  <Portal>
     <motion.div
-      variants={modalVariants}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-      className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl"
-      onClick={e => e.stopPropagation()}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      onClick={onClose}
     >
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">{title}</h2>
-        <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={onClose}>
-          <X size={20} />
-        </motion.button>
-      </div>
-      {children}
+      <motion.div
+        variants={modalVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">{title}</h2>
+          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={onClose}>
+            <X size={20} />
+          </motion.button>
+        </div>
+        {children}
+      </motion.div>
     </motion.div>
-  </motion.div>
+  </Portal>
 );
 
 export default InstructorDashboard;

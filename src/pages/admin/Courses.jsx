@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, CheckCircle, XCircle, Trash2, FileText, Loader2, AlertCircle, Plus, Sparkles, RefreshCw, Edit, Users } from "lucide-react";
+import { Eye, CheckCircle, XCircle, Trash2, FileText, Loader2, AlertCircle, Plus, Star, RefreshCw, Edit, Users } from "lucide-react";
 import { adminApi } from "../../api/adminApi";
 import { instructorApi } from "../../api/instructorApi";
 import { courseApi } from "../../api/courseApi";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
+import Portal from "../../components/ui/Portal";
 
 const CATEGORIES = ["Development", "Design", "Business", "Marketing", "Data Science", "Photography", "Music", "Other"];
 const LEVELS = ["Beginner", "Intermediate", "Advanced", "All Levels"];
@@ -518,7 +519,7 @@ const Courses = () => {
                     className="px-2.5 py-1 text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg transition inline-flex items-center gap-1 border border-amber-200"
                     title="Quick Patch Price (PATCH /api/v1/courses/:id)"
                   >
-                    <Sparkles size={13} />
+                    <Star size={13} />
                     <span>Patch</span>
                   </button>
                   <button
@@ -576,8 +577,9 @@ const Courses = () => {
 
       {/* EDIT COURSE MODAL */}
       {showEditModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-6 w-full max-w-xl shadow-2xl border border-gray-100 space-y-4">
+        <Portal>
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-6 w-full max-w-xl shadow-2xl border border-gray-100 space-y-4">
             <div className="flex justify-between items-center border-b border-gray-100 pb-3">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <Edit size={18} className="text-orange-500" /> Edit & Update Course (PUT /api/v1/courses/:id)
@@ -678,15 +680,17 @@ const Courses = () => {
             </form>
           </motion.div>
         </div>
+        </Portal>
       )}
 
       {/* QUICK PATCH PRICE MODAL (PATCH /api/v1/courses/:id) */}
       {showPatchModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl border border-gray-100 space-y-4">
+        <Portal>
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl border border-gray-100 space-y-4">
             <div className="flex justify-between items-center border-b border-gray-100 pb-3">
               <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                <Sparkles size={18} className="text-amber-500" /> Partial Course Update (PATCH API)
+                <Star size={18} className="text-amber-500" /> Partial Course Update (PATCH API)
               </h2>
               <button onClick={() => setShowPatchModal(false)} className="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
             </div>
@@ -723,22 +727,24 @@ const Courses = () => {
                   disabled={patching}
                   className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-xl text-sm font-semibold transition disabled:opacity-60 shadow-md shadow-amber-100"
                 >
-                  {patching ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+                  {patching ? <Loader2 size={16} className="animate-spin" /> : <Star size={16} />}
                   Send Partial PATCH
                 </button>
               </div>
             </form>
           </motion.div>
         </div>
+        </Portal>
       )}
 
       {/* CREATE COURSE MODAL */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-6 w-full max-w-xl shadow-2xl border border-gray-100 space-y-4">
+        <Portal>
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-6 w-full max-w-xl shadow-2xl border border-gray-100 space-y-4">
             <div className="flex justify-between items-center border-b border-gray-100 pb-3">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Sparkles size={18} className="text-orange-500" /> Create New Course
+                <Star size={18} className="text-orange-500" /> Create New Course
               </h2>
               <button onClick={() => setShowCreateModal(false)} className="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
             </div>
@@ -836,12 +842,14 @@ const Courses = () => {
             </form>
           </motion.div>
         </div>
+        </Portal>
       )}
 
       {/* Course Details Modal */}
       {showModal && selectedCourse && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-xl max-h-[85vh] overflow-y-auto">
+        <Portal>
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+            <div className="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-xl max-h-[85vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-gray-100 pb-3">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <FileText size={18} className="text-orange-500" /> Course Content & Details
@@ -926,6 +934,7 @@ const Courses = () => {
             )}
           </div>
         </div>
+        </Portal>
       )}
     </motion.div>
   );

@@ -1,6 +1,6 @@
-// src/context/OrderContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 import { getOrdersByUserId, updateOrderStatus, cancelOrder, refundOrder } from "../services/orderService";
+import { orderApi } from "../api/orderApi";
 import { useSafeAuth } from "./AuthContext"; // ✅ Import the safe version
 
 const OrderContext = createContext();
@@ -17,10 +17,26 @@ export const OrderProvider = ({ children }) => {
     }
     setLoading(true);
     try {
-      const userOrders = await getOrdersByUserId(user.id);
-      setOrders(userOrders);
+      const response = await orderApi.getMyOrders();
+      const rawOrders = response?.data || response || [];
+      const userOrders = Array.isArray(rawOrders) ? rawOrders : (rawOrders.orders || []);
+      const normalized = userOrders.map(o => ({
+        ...o,
+        id: o.orderId || o.id,
+        items: o.items || (o.courseIds || []).map(cid => ({
+          courseId: cid,
+          title: `Course #${cid}`,
+          price: (Number(o.totalAmount || 0) / (o.courseIds?.length || 1)),
+          quantity: 1,
+        })),
+      }));
+      setOrders(normalized);
     } catch (err) {
-      console.error('Failed to load orders:', err);
+      console.warn('Backend order fetch failed, falling back to local storage:', err.message);
+      try {
+        const userOrders = await getOrdersByUserId(user.id);
+        setOrders(userOrders);
+      } catch (e) {}
     } finally {
       setLoading(false);
     }
@@ -28,12 +44,18 @@ export const OrderProvider = ({ children }) => {
 
   const handleCancelOrder = async (orderId) => {
     try {
-      const updated = await cancelOrder(orderId);
-      setOrders(prev => prev.map(o => o.id === orderId ? updated : o));
+      await orderApi.cancelOrder(orderId);
+      await loadUserOrders();
       return true;
     } catch (err) {
-      alert(err.message);
-      return false;
+      try {
+        const updated = await cancelOrder(orderId);
+        setOrders(prev => prev.map(o => o.id === orderId ? updated : o));
+        return true;
+      } catch (e) {
+        alert(err.message || e.message);
+        return false;
+      }
     }
   };
 

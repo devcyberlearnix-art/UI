@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AlertCircle, Mail, Send } from "lucide-react";
+import { AlertCircle, ArrowRight, Mail } from "lucide-react";
 import toast from "react-hot-toast";
 import AuthShell from "../components/ui/AuthShell";
 import { authApi } from "../api/authApi";
@@ -22,7 +22,7 @@ function OtpLogin() {
     setLoading(true);
     try {
       const result = await authApi.requestLoginOtp(email.trim());
-      toast.success(result.message || "OTP sent");
+      if (result.message) toast.success(result.message);
 
       navigate("/otp-verify", {
         state: {
@@ -33,9 +33,11 @@ function OtpLogin() {
         },
       });
     } catch (err) {
-      const message = err.response?.data?.message || "Failed to send OTP";
-      setError(message);
-      toast.error(message);
+      const message = err.response?.data?.message || err.response?.data?.error || "";
+      if (message) {
+        setError(message);
+        toast.error(message);
+      }
     } finally {
       setLoading(false);
     }
@@ -43,17 +45,15 @@ function OtpLogin() {
 
   return (
     <AuthShell
-      title="Passwordless Sign In"
-      subtitle="Request a one-time code and sign in quickly without remembering passwords."
-      eyebrow="LearnMaster OTP"
-      highlights={[
-        { value: "30s", label: "Cooldown" },
-        { value: "6-Digit", label: "OTP" },
-        { value: "Fast", label: "Access" },
-      ]}
+      variant="otp"
+      step={1}
+      showTerms={false}
     >
-      <h1 className="mb-2 text-2xl font-bold text-slate-900">OTP Login</h1>
-      <p className="mb-6 text-sm text-slate-500">Enter your email to receive a one-time code.</p>
+      <div className="cyber-card-heading">
+        <span className="cyber-card-icon"><Mail size={21} /></span>
+        <h1>Sign in with email</h1>
+        <p>Enter your email and we’ll send a secure verification code.</p>
+      </div>
 
       {error && (
         <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-red-700">
@@ -64,7 +64,7 @@ function OtpLogin() {
 
       <div className="space-y-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Email Address</label>
+          <label className="mb-1 block text-xs font-bold text-slate-700">Email address</label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input
@@ -78,8 +78,9 @@ function OtpLogin() {
         </div>
 
         <button onClick={handleSendOtp} disabled={loading} className="lms-btn-primary">
-          {loading ? "Sending OTP..." : "Send OTP"} <Send size={16} />
+          {loading ? "Sending code..." : "Continue with email"} <ArrowRight size={16} />
         </button>
+        <div className="cyber-secure-note">No password required. A secure code will be sent to your inbox.</div>
       </div>
     </AuthShell>
   );

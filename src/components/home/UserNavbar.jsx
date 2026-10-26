@@ -13,7 +13,7 @@ import {
 } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
-import logoImage from '../../assets/learnmaster-logo.png';
+import logoImage from '../../assets/cyberlearnix-education.svg';
 
 const UserNavbar = () => {
   const { user, logout } = useAuth();
@@ -32,8 +32,8 @@ const UserNavbar = () => {
       {/* Left: Logo */}
       <div className="flex items-center gap-8">
         <Link to="/" className="flex items-center gap-3">
-          <img src={logoImage} alt="LearnMaster" className="h-14 w-auto" />
-          <span className="text-xl font-bold text-slate-800 tracking-tight">LearnMaster</span>
+          <img src="/assets/asivo-logo-md.png" alt="Asivo" className="h-14 w-auto" />
+          <span className="text-xl font-bold text-slate-800 tracking-tight">Asivo</span>
         </Link>
         
         {/* Hidden on small screens */}

@@ -24,6 +24,7 @@ import {
 import toast from "react-hot-toast";
 import { wishlistApi } from "../../api/wishlistApi";
 import { courseApi } from "../../api/courseApi";
+import { useAuth } from "../../context/AuthContext";
 
 const CATEGORY_COLORS = {
   Programming: "bg-indigo-500/10 text-indigo-700 border-indigo-200",
@@ -96,7 +97,7 @@ const normalizeWishlistItem = (item, idx) => {
       rating: 4.8,
       students: 320,
       duration: "10 Weeks",
-      instructor: "LearnMaster Faculty",
+      instructor: "Asivo Faculty",
       image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80",
       description: "Comprehensive technical curriculum with real-world case studies and hands-on laboratory exercises.",
     };
@@ -121,7 +122,7 @@ const normalizeWishlistItem = (item, idx) => {
     instructor:
       c.instructor?.name ||
       c.instructorName ||
-      (typeof c.instructor === "string" ? c.instructor : fallback.instructor || "LearnMaster Faculty"),
+      (typeof c.instructor === "string" ? c.instructor : fallback.instructor || "Asivo Faculty"),
     image:
       c.image ||
       c.thumbnail ||
@@ -139,6 +140,7 @@ const normalizeWishlistItem = (item, idx) => {
 
 const Wishlist = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -146,11 +148,18 @@ const Wishlist = () => {
   const [sortBy, setSortBy] = useState("recent");
   const [movingId, setMovingId] = useState(null);
 
-  // Sync to localStorage
+  // User-specific localStorage key
+  const getStorageKey = () => {
+    const userId = user?.id || user?.userId || user?.email || "guest";
+    return `wishlist_${userId}`;
+  };
+
+  // Sync to localStorage (user-specific)
   const syncLocalStorage = (list) => {
     try {
+      const key = getStorageKey();
       const ids = list.map((item) => String(item.id));
-      localStorage.setItem("student_wishlist", JSON.stringify(ids));
+      localStorage.setItem(key, JSON.stringify(ids));
       window.dispatchEvent(new Event("storage"));
     } catch (err) {
       console.warn("Could not sync localStorage wishlist", err);
@@ -175,8 +184,9 @@ const Wishlist = () => {
         setItems(normalized);
         syncLocalStorage(normalized);
       } else {
-        // Check local saved wishlist
-        const savedIds = JSON.parse(localStorage.getItem("student_wishlist") || "[]");
+        // Check user-specific local saved wishlist
+        const key = getStorageKey();
+        const savedIds = JSON.parse(localStorage.getItem(key) || "[]");
         if (savedIds.length > 0) {
           const localList = savedIds.map((id, idx) => normalizeWishlistItem(id, idx));
           setItems(localList);
@@ -186,7 +196,8 @@ const Wishlist = () => {
       }
     } catch (err) {
       console.warn("[Wishlist] GET /api/v1/wishlist failed, reading local cache...", err);
-      const savedIds = JSON.parse(localStorage.getItem("student_wishlist") || "[]");
+      const key = getStorageKey();
+      const savedIds = JSON.parse(localStorage.getItem(key) || "[]");
       if (savedIds.length > 0) {
         const localList = savedIds.map((id, idx) => normalizeWishlistItem(id, idx));
         setItems(localList);
@@ -196,7 +207,7 @@ const Wishlist = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     loadWishlist();

@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, normalizeRole } from '../context/AuthContext';
 import { getActingRole } from '../utils/roleSwitch';
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -24,10 +24,8 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   }
 
   if (allowedRoles.length > 0) {
-    const effectiveRole = String(getActingRole() || user?.role || '').toLowerCase();
-    const hasAllowedRole = allowedRoles.some(role =>
-      effectiveRole.includes(String(role).toLowerCase())
-    );
+    const effectiveRole = normalizeRole(getActingRole() || user?.role || '');
+    const hasAllowedRole = allowedRoles.some(role => effectiveRole === normalizeRole(role));
     if (!hasAllowedRole) {
       return <Navigate to="/" replace />;
     }

@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { adminApi } from "../../api/adminApi";
 import { canApproveInstructors } from "../../utils/permissions";
+import Portal from "../../components/ui/Portal";
 
 const InstructorApplications = () => {
   const { user } = useAuth();
@@ -340,8 +341,9 @@ const InstructorApplications = () => {
 
       {/* Modal for details and rejection reason */}
       {showModal && selectedApp && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <motion.div
+        <Portal>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-96 overflow-y-auto"
@@ -435,6 +437,7 @@ const InstructorApplications = () => {
             </div>
           </motion.div>
         </div>
+        </Portal>
       )}
     </motion.div>
   );
