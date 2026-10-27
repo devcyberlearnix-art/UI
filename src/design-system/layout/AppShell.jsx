@@ -32,6 +32,8 @@ import {
   CheckCircle2,
   AlertCircle,
   Clock,
+  Activity,
+  Radio,
 } from 'lucide-react';
 import { useAuth, normalizeRole } from '../../context/AuthContext';
 import { useOrder } from '../../context/OrderContext';
@@ -143,6 +145,7 @@ export const AppShell = ({ children }) => {
     if (userRole === 'admin' || userRole === 'super_admin' || userRole === 'sub_admin') {
       return [
         { label: 'Command Hub', href: '/admin/dashboard', icon: LayoutDashboard },
+        { label: 'Ops Command Hub', href: '/admin/command-center', icon: Activity },
         { label: 'User Directory', href: '/admin/users', icon: Users },
         { label: 'Course Moderation', href: '/admin/courses', icon: BookOpen },
         { label: 'Instructor Approvals', href: '/admin/instructor-applications', icon: Shield },

@@ -42,6 +42,8 @@ const NotificationPage = withFallback(() => import("./pages/student/Notification
 const StudentAssignments = withFallback(() => import("./pages/student/Assignments"));
 const NotificationPreferences = withFallback(() => import("./pages/student/NotificationPreferences"));
 const BannerManagement = withFallback(() => import("./pages/admin/BannerManagement"));
+const AdminCommandCenter = withFallback(() => import("./pages/admin/AdminCommandCenter"));
+const CertificateVerification = withFallback(() => import("./pages/student/CertificateVerification"));
 
 // Student
 const StudentDashboard = withFallback(() => import("./pages/student/StudentDashboard"));
@@ -111,6 +113,8 @@ function AnimatedRoutes() {
           <Route path="/checkout" element={<CheckoutContainer />} />
           <Route path="/legacy-checkout" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/verify-certificate/:certificateId" element={<CertificateVerification />} />
+          <Route path="/verify-certificate" element={<CertificateVerification />} />
 
           {/* Student */}
           <Route element={<ProtectedRoute allowedRoles={["student"]}><DashboardLayout /></ProtectedRoute>}>
@@ -146,6 +150,8 @@ function AnimatedRoutes() {
           {/* Admin */}
           <Route element={<ProtectedRoute allowedRoles={["admin", "super_admin", "sub_admin"]}><DashboardLayout /></ProtectedRoute>}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/command-center" element={<AdminCommandCenter />} />
+            <Route path="/admin/command-center/:tab" element={<AdminCommandCenter />} />
             <Route path="/admin/sub-dashboard" element={<SubDashboard />} />
             <Route path="/admin/users" element={<ManageUsers />} />
             <Route path="/admin/courses" element={<ManageCourses />} />

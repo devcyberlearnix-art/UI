@@ -43,6 +43,7 @@ import Button from '../../design-system/primitives/Button';
 import Badge from '../../design-system/primitives/Badge';
 import { Skeleton } from '../../design-system/primitives/Skeleton';
 import toast from 'react-hot-toast';
+import LiveDiscussionHub from '../../components/classroom/LiveDiscussionHub';
 
 const SPRING = { type: 'spring', stiffness: 350, damping: 28 };
 
@@ -1159,49 +1160,17 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
               </motion.div>
             )}
 
-            {/* Tab 3: Q&A Forum */}
+            {/* Tab 3: Q&A Forum & Live Discussion Hub */}
             {activeTab === 'qna' && (
               <motion.div
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
+                className="space-y-4"
               >
-                {/* Submit Question Input */}
-                <form onSubmit={handleAddQuestion} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Ask a technical question about this lecture..."
-                    className="flex-1 px-4 py-2.5 rounded-xl bg-ink-950 border border-white/10 text-xs text-white placeholder:text-ink-600 outline-none focus:border-brand-500"
-                  />
-                  <Button type="submit" variant="primary" size="sm" rightIcon={Send}>
-                    Ask
-                  </Button>
-                </form>
-
-                {/* Discussion Thread */}
-                <div className="space-y-3">
-                  {questionsList.map((q) => (
-                    <div
-                      key={q.id}
-                      className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2"
-                    >
-                      <div className="flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-lg bg-brand-600 text-white font-bold flex items-center justify-center text-[10px]">
-                            {q.avatar}
-                          </div>
-                          <span className="font-bold text-white">{q.author}</span>
-                        </div>
-                        <span className="text-[10px] text-ink-500 font-mono">{q.time}</span>
-                      </div>
-                      <p className="text-xs text-ink-300 leading-relaxed pl-8">
-                        {q.content}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                <LiveDiscussionHub
+                  courseId={courseId || '1'}
+                  lectureTitle={activeLecture?.title}
+                />
               </motion.div>
             )}
           </div>
