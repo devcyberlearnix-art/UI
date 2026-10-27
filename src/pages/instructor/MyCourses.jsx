@@ -190,11 +190,11 @@ const MyCourses = () => {
             <RefreshCw size={18} />
           </button>
           <button
-            onClick={() => setShowCreateForm(prev => !prev)}
-            className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white px-5 py-2.5 rounded-xl hover:from-orange-600 hover:to-amber-600 transition-all shadow-lg shadow-orange-100 font-semibold text-sm"
+            onClick={() => navigate('/instructor/create-course')}
+            className="flex items-center gap-2 bg-gradient-to-r from-cyan-600 via-indigo-600 to-brand-600 text-white px-5 py-2.5 rounded-xl hover:opacity-90 transition-all shadow-lg shadow-cyan-950/20 font-semibold text-sm"
           >
-            {showCreateForm ? <ChevronUp size={18} /> : <Plus size={18} />}
-            {showCreateForm ? "Hide Form" : "Create New Course"}
+            <Plus size={18} />
+            Launch Course Studio Matrix
           </button>
         </div>
       </div>

@@ -4,18 +4,42 @@
 
 @layer base {
   :root {
-    --lms-primary: 234 88 12;
-    --lms-primary-soft: 255 237 213;
-    --lms-accent: 8 145 178;
-    --lms-bg: 245 247 250;
-    --lms-text: 15 23 42;
+    --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --color-bg-canvas: #090D16;
+    --color-surface: #0E1424;
+    --color-surface-hover: #141D32;
+    --color-border-subtle: rgba(255, 255, 255, 0.08);
+    --color-border-hover: rgba(255, 255, 255, 0.16);
+    --color-brand: #4F46E5;
+    --color-brand-cyan: #06B6D4;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   body {
-    @apply min-h-screen font-sans antialiased text-slate-900;
-    background: #FFFFFF;
+    @apply min-h-screen font-sans antialiased text-ink-100 bg-[#070A11] selection:bg-brand-500/30 selection:text-white;
     margin: 0;
     padding: 0;
+  }
+
+  /* Custom Sleek Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.24);
   }
 
   .sr-only {
@@ -29,16 +53,42 @@
     white-space: nowrap;
     border-width: 0;
   }
+}
 
-  .sr-only:focus {
-    position: static;
-    width: auto;
-    height: auto;
-    padding: inherit;
-    margin: inherit;
-    overflow: visible;
-    clip: auto;
-    white-space: normal;
+@layer utilities {
+  .bg-glass {
+    background: rgba(14, 20, 36, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .bg-glass-card {
+    background: linear-gradient(135deg, rgba(20, 29, 50, 0.6) 0%, rgba(14, 20, 36, 0.75) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .bg-glass-card:hover {
+    border-color: rgba(99, 102, 241, 0.35);
+  }
+  .text-glow-brand {
+    text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+  }
+  .glow-border {
+    position: relative;
+  }
+  .glow-border::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.6), rgba(6, 182, 212, 0.3), transparent 70%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
   }
 }
 

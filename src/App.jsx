@@ -12,6 +12,7 @@ const withFallback = (importFn) => lazy(() => importFn().catch(() => ({
 })));
 
 // ---- Imports ----
+import LandingDashboard from "./pages/LandingDashboard";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -26,11 +27,13 @@ import CourseDetail from "./pages/CourseDetail";
 import Profile from "./pages/Profile";
 import Cart from "./pages/student/Cart";
 import Wishlist from "./pages/student/Wishlist";
+import CheckoutContainer from "./pages/student/CheckoutContainer";
 import Checkout from "./pages/student/Checkout";
 import Orders from "./pages/student/Orders";
 import StudentCourseDetail from "./pages/student/StudentCourseDetail";
 
 // New pages
+const ClassroomView = withFallback(() => import("./pages/student/ClassroomView"));
 const QuizPage = withFallback(() => import("./pages/student/QuizPage"));
 const CertificatePage = withFallback(() => import("./pages/student/CertificatePage"));
 const LiveClassPage = withFallback(() => import("./pages/student/LiveClassPage"));
@@ -89,7 +92,8 @@ function AnimatedRoutes() {
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<LandingDashboard />} />
+          <Route path="/legacy-landing" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -104,7 +108,8 @@ function AnimatedRoutes() {
           <Route path="/courses/:courseId" element={<CourseDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/wishlist" element={<Wishlist />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/checkout" element={<CheckoutContainer />} />
+          <Route path="/legacy-checkout" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
 
           {/* Student */}
@@ -113,6 +118,9 @@ function AnimatedRoutes() {
             <Route path="/student/my-learning" element={<MyLearning />} />
             <Route path="/student/orders" element={<Orders />} />
             <Route path="/student/courses/:courseId" element={<StudentCourseDetail />} />
+            <Route path="/student/courses/:courseId/classroom" element={<ClassroomView />} />
+            <Route path="/student/courses/:courseId/classroom/quiz/:quizId" element={<ClassroomView />} />
+            <Route path="/classroom/:courseId" element={<ClassroomView />} />
             <Route path="/student/courses/:courseId/quiz/:quizId" element={<QuizPage />} />
             <Route path="/student/courses/:courseId/certificate" element={<CertificatePage />} />
             <Route path="/student/courses/:courseId/live-classes" element={<LiveClassPage />} />
@@ -127,6 +135,8 @@ function AnimatedRoutes() {
           <Route element={<ProtectedRoute allowedRoles={["instructor"]}><DashboardLayout /></ProtectedRoute>}>
             <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
             <Route path="/instructor/create-course" element={<CreateCourse />} />
+            <Route path="/instructor/edit-course/:courseId" element={<CreateCourse />} />
+            <Route path="/instructor/courses/:courseId/edit" element={<CreateCourse />} />
             <Route path="/instructor/my-courses" element={<InstructorCourses />} />
             <Route path="/instructor/analytics" element={<InstructorAnalytics />} />
             <Route path="/instructor/courses/:courseId/assignments" element={<InstructorAssignments />} />

@@ -14,6 +14,7 @@
     "generate:api-client": "node scripts/generate-api-client.mjs"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.105.0",
     "axios": "^1.18.0",
     "framer-motion": "^10.18.0",
     "js-yaml": "^5.2.3",

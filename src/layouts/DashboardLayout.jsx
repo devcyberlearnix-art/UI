@@ -1,39 +1,13 @@
 // src/layouts/DashboardLayout.jsx
-import { useEffect, useRef, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
-import Sidebar from '../components/dashboard/Sidebar';
-import TopNav from '../components/dashboard/TopNav';
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import AppShell from '../design-system/layout/AppShell';
 
-const DashboardLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const location = useLocation();
-  const contentRef = useRef(null);
-
-  useEffect(() => {
-    if (contentRef.current) {
-      contentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [location.pathname]);
-
+export const DashboardLayout = () => {
   return (
-    <div className="flex h-screen bg-slate-50 text-slate-900 font-sans antialiased overflow-hidden">
-      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <TopNav setSidebarOpen={setSidebarOpen} sidebarOpen={sidebarOpen} />
-        <main ref={contentRef} className="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-6" tabIndex={-1} id="main-content">
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 bg-[#2563EB] text-white px-4 py-2 rounded-lg text-sm font-bold"
-          >
-            Skip to main content
-          </a>
-          <div className="w-full max-w-7xl mx-auto">
-            <Outlet />
-          </div>
-        </main>
-      </div>
-    </div>
+    <AppShell>
+      <Outlet />
+    </AppShell>
   );
 };
 
