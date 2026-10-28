@@ -462,9 +462,9 @@ u=>u.role?.toUpperCase()==="STUDENT"
 
 <div className="flex items-center justify-between mb-4">
 
-<div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+<div className="w-12 h-12 bg-[#14141A] border border-[#C5A880]/30 rounded-xl flex items-center justify-center">
 
-<BookOpen className="w-6 h-6 text-purple-600"/>
+<BookOpen className="w-6 h-6 text-[#C5A880]"/>
 
 </div>
 
@@ -472,7 +472,7 @@ u=>u.role?.toUpperCase()==="STUDENT"
 
 </div>
 
-<p className="text-3xl font-bold text-purple-600">
+<p className="text-3xl font-extrabold font-mono text-[#C5A880]">
 
 {
 users.filter(

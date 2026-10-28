@@ -1,0 +1,321 @@
+# ==============================================================================
+# CyberLearnIX / FD_LMS Enterprise Production Topology
+# Docker Compose Orchestration: Presentation Layer + API Gateway + 11 Microservices
+# ==============================================================================
+
+version: '3.8'
+
+networks:
+  cyberlearnix-public:
+    driver: bridge
+  cyberlearnix-internal:
+    driver: bridge
+    internal: false
+  cyberlearnix-data:
+    driver: bridge
+    internal: true
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+services:
+  # ----------------------------------------------------------------------------
+  # Presentation Layer: Nginx React Single Page Application
+  # ----------------------------------------------------------------------------
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cyberlearnix-ui
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - cyberlearnix-public
+      - cyberlearnix-internal
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  # ----------------------------------------------------------------------------
+  # Gateway Tier: Spring Cloud API Gateway (Port 8080)
+  # ----------------------------------------------------------------------------
+  api-gateway:
+    image: cyberlearnix/api-gateway:latest
+    container_name: cyberlearnix-gateway
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVER_PORT=8080
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - USER_SERVICE_URL=http://user-service:8091
+      - ADMIN_SERVICE_URL=http://admin-service:8087
+      - COURSE_SERVICE_URL=http://course-service:8083
+      - INSTRUCTOR_SERVICE_URL=http://instructor-service:8088
+      - CART_SERVICE_URL=http://cart-service:8081
+      - COUPON_SERVICE_URL=http://coupon-service:8082
+      - ORDER_SERVICE_URL=http://order-service:8084
+      - PAYMENT_SERVICE_URL=http://payment-service:8085
+      - REVIEW_SERVICE_URL=http://review-service:8089
+      - NOTIFICATION_SERVICE_URL=http://notification-service:8093
+      - WISHLIST_SERVICE_URL=http://wishlist-service:8090
+    networks:
+      - cyberlearnix-public
+      - cyberlearnix-internal
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    depends_on:
+      - redis
+
+  # ----------------------------------------------------------------------------
+  # Domain Microservices Matrix (11 Resilient Microservices)
+  # ----------------------------------------------------------------------------
+  user-service:
+    image: cyberlearnix/user-service:latest
+    container_name: cyberlearnix-user
+    restart: always
+    environment:
+      - SERVER_PORT=8091
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/lms_user_db
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-cyberlearnix_secret_2026}
+      - SPRING_DATA_REDIS_HOST=redis
+    networks:
+      - cyberlearnix-internal
+      - cyberlearnix-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  admin-service:
+    image: cyberlearnix/admin-service:latest
+    container_name: cyberlearnix-admin
+    restart: always
+    environment:
+      - SERVER_PORT=8087
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/lms_admin_db
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-cyberlearnix_secret_2026}
+    networks:
+      - cyberlearnix-internal
+      - cyberlearnix-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  course-service:
+    image: cyberlearnix/course-service:latest
+    container_name: cyberlearnix-course
+    restart: always
+    environment:
+      - SERVER_PORT=8083
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/lms_course_db
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-cyberlearnix_secret_2026}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - XFETCH_EARLY_BETA=1.0
+    networks:
+      - cyberlearnix-internal
+      - cyberlearnix-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  instructor-service:
+    image: cyberlearnix/instructor-service:latest
+    container_name: cyberlearnix-instructor
+    restart: always
+    environment:
+      - SERVER_PORT=8088
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/lms_instructor_db
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-cyberlearnix_secret_2026}
+    networks:
+      - cyberlearnix-internal
+      - cyberlearnix-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  cart-service:
+    image: cyberlearnix/cart-service:latest
+    container_name: cyberlearnix-cart
+    restart: always
+    environment:
+      - SERVER_PORT=8081
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/lms_cart_db
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-cyberlearnix_secret_2026}
+      - SPRING_DATA_REDIS_HOST=redis
+    networks:
+      - cyberlearnix-internal
+      - cyberlearnix-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  coupon-service:
+    image: cyberlearnix/coupon-service:latest
+    container_name: cyberlearnix-coupon
+    restart: always
+    environment:
+      - SERVER_PORT=8082
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/lms_coupon_db
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-cyberlearnix_secret_2026}
+    networks:
+      - cyberlearnix-internal
+      - cyberlearnix-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  order-service:
+    image: cyberlearnix/order-service:latest
+    container_name: cyberlearnix-order
+    restart: always
+    environment:
+      - SERVER_PORT=8084
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/lms_order_db
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-cyberlearnix_secret_2026}
+    networks:
+      - cyberlearnix-internal
+      - cyberlearnix-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  payment-service:
+    image: cyberlearnix/payment-service:latest
+    container_name: cyberlearnix-payment
+    restart: always
+    environment:
+      - SERVER_PORT=8085
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/lms_payment_db
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-cyberlearnix_secret_2026}
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
+    networks:
+      - cyberlearnix-internal
+      - cyberlearnix-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  review-service:
+    image: cyberlearnix/review-service:latest
+    container_name: cyberlearnix-review
+    restart: always
+    environment:
+      - SERVER_PORT=8089
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/lms_review_db
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-cyberlearnix_secret_2026}
+    networks:
+      - cyberlearnix-internal
+      - cyberlearnix-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  notification-service:
+    image: cyberlearnix/notification-service:latest
+    container_name: cyberlearnix-notification
+    restart: always
+    ports:
+      - "8093:8093"
+    environment:
+      - SERVER_PORT=8093
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/lms_notification_db
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-cyberlearnix_secret_2026}
+      - SPRING_DATA_REDIS_HOST=redis
+    networks:
+      - cyberlearnix-internal
+      - cyberlearnix-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  wishlist-service:
+    image: cyberlearnix/wishlist-service:latest
+    container_name: cyberlearnix-wishlist
+    restart: always
+    environment:
+      - SERVER_PORT=8090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/lms_wishlist_db
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-cyberlearnix_secret_2026}
+    networks:
+      - cyberlearnix-internal
+      - cyberlearnix-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ----------------------------------------------------------------------------
+  # Data Tier: PostgreSQL 16 & Redis 7.2 In-Memory Cluster
+  # ----------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: cyberlearnix-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-cyberlearnix_secret_2026}
+      POSTGRES_MULTIPLE_DATABASES: lms_user_db,lms_admin_db,lms_course_db,lms_instructor_db,lms_cart_db,lms_coupon_db,lms_order_db,lms_payment_db,lms_review_db,lms_notification_db,lms_wishlist_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-multidb.sh:/docker-entrypoint-initdb.d/init-multidb.sh:ro
+    networks:
+      - cyberlearnix-data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: cyberlearnix-redis
+    restart: always
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "512mb", "--maxmemory-policy", "volatile-lru"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - cyberlearnix-internal
+      - cyberlearnix-data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5

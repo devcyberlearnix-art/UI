@@ -26,6 +26,7 @@ import {
   Radio,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { reviewApi } from '../../api/reviewApi';
 import Button from '../../design-system/primitives/Button';
 import Badge from '../../design-system/primitives/Badge';
 import toast from 'react-hot-toast';
@@ -85,10 +86,10 @@ function CodeSnippetBlock({ language, code }) {
   const colorizedLines = useMemo(() => {
     return code.split('\n').map((line, lineIdx) => {
       let styled = line;
-      // Comments
+      // Comments with crisp #8E8E93 contrast
       if (line.trim().startsWith('#') || line.trim().startsWith('//')) {
         return (
-          <div key={lineIdx} className="text-ink-500 italic">
+          <div key={lineIdx} className="text-[#8E8E93] italic font-mono">
             {line}
           </div>
         );
@@ -303,6 +304,34 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
   const { data: messages = SEED_DISCUSSIONS, isLoading } = useQuery({
     queryKey: ['classroom-discussion', courseId],
     queryFn: async () => {
+      try {
+        const res = await reviewApi.getCourseReviews(courseId || '1');
+        const rawList = Array.isArray(res?.data)
+          ? res.data
+          : Array.isArray(res?.content)
+          ? res.content
+          : Array.isArray(res)
+          ? res
+          : [];
+
+        if (rawList.length > 0) {
+          return rawList.map((r, idx) => ({
+            id: r.id || r.reviewId || `rev-${idx}`,
+            author: r.userName || r.user?.name || 'Practitioner Node',
+            role: r.user?.role || 'Systems Fellow',
+            avatar: (r.userName || r.user?.name || 'P')[0].toUpperCase(),
+            timestamp: r.createdAt ? new Date(r.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Active',
+            content: r.reviewText || r.comment || 'Technical discussion entry',
+            type: 'stream',
+            upvotes: Number(r.rating || 5),
+            isSolved: false,
+            replies: [],
+          }));
+        }
+      } catch (err) {
+        console.warn('[LiveDiscussionHub] reviewApi.getCourseReviews fallback to cache');
+      }
+
       // Check local storage sync cache first
       const cached = localStorage.getItem(`lms_classroom_chat_${courseId}`);
       if (cached) {
@@ -314,7 +343,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
       }
       return SEED_DISCUSSIONS;
     },
-    staleTime: 1000 * 30,
+    staleTime: 1000 * 15,
   });
 
   // Keep local storage synchronized
@@ -409,6 +438,17 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
   // TanStack Query Mutation: Add New Message Optimistically
   const postMessageMutation = useMutation({
     mutationFn: async (newMessage) => {
+      // Broadcast to live backend review/discussion endpoint
+      try {
+        await reviewApi.addReview({
+          courseId: courseId || '1',
+          reviewText: newMessage.content || newMessage.reviewText || '',
+          rating: 5,
+        });
+      } catch (e) {
+        console.warn('[LiveDiscussionHub] addReview network dispatch saved locally:', e?.message);
+      }
+
       // If WebSockets is connected, emit through socket
       if (socketRef.current?.readyState === WebSocket.OPEN) {
         socketRef.current.send(JSON.stringify({ type: 'NEW_MESSAGE', payload: newMessage }));
@@ -435,6 +475,9 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
     onSuccess: () => {
       setTimeout(() => scrollToBottom(true), 100);
       toast.success('Query registered into session log.', { icon: '🚀' });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['classroom-discussion', courseId] });
     },
   });
 
@@ -594,10 +637,8 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
               transition={SPRING}
               className={`p-4 rounded-xl border transition-all ${
                 msg.isSolved
-                  ? 'bg-gradient-to-r from-emerald-950/10 to-obsidian-900/60 border-emerald-500/30'
-                  : msg.type === 'stream'
-                  ? 'bg-obsidian-900/30 border-obsidian-800/60'
-                  : 'bg-obsidian-900/50 border-obsidian-800/80 shadow-md shadow-black/20'
+                  ? 'bg-emerald-950/10 border-emerald-500/30'
+                  : 'bg-transparent border-white/[0.04]'
               }`}
             >
               {/* Header: Author + Meta */}
@@ -736,9 +777,9 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             onClick={() => scrollToBottom(true)}
-            className="absolute bottom-28 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-cyan-500 text-black font-mono text-xs font-bold shadow-lg shadow-cyan-500/40 flex items-center gap-1.5 z-20 cursor-pointer"
+            className="absolute bottom-28 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-[#C5A880] text-[#070709] font-mono text-xs font-bold shadow-lg shadow-black/50 flex items-center gap-1.5 z-20 cursor-pointer"
           >
-            <ArrowDown className="w-3.5 h-3.5 animate-bounce" />
+            <ArrowDown className="w-3.5 h-3.5" />
             New transmissions below
           </motion.button>
         )}

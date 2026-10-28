@@ -163,14 +163,14 @@ const LiveClassPage = () => {
               className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition"
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-violet-500 to-purple-500 p-4 text-white">
+              <div className="bg-[#0F0F13] border-b border-white/[0.06] p-4 text-white">
                 <div className="flex items-center justify-between mb-2">
                   <span className={`px-2 py-1 rounded-full text-xs font-bold ${
                     getStatusColor(liveClass.status)
                   }`}>
                     {liveClass.status}
                   </span>
-                  <Video size={18} />
+                  <Video size={18} className="text-[#C5A880]" />
                 </div>
                 <h3 className="font-bold text-lg line-clamp-1">{liveClass.title}</h3>
               </div>
@@ -203,7 +203,7 @@ const LiveClassPage = () => {
                   <button
                     onClick={() => handleJoin(liveClass.id)}
                     disabled={joining === liveClass.id}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-semibold hover:from-violet-600 hover:to-purple-600 transition disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#C5A880] text-[#070709] font-bold hover:bg-[#D4BC98] transition shadow-sm disabled:opacity-50"
                   >
                     {joining === liveClass.id ? (
                       <>

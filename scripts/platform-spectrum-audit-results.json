@@ -1,0 +1,920 @@
+{
+  "executionTimestamp": "2026-10-28T04:41:42.760Z",
+  "completionTimestamp": "2026-10-28T04:42:37.700Z",
+  "durationSeconds": "54.94",
+  "summary": {
+    "total": 35,
+    "passed": 35,
+    "failed": 0,
+    "tracesCaptured": 66
+  },
+  "records": [
+    {
+      "domain": "AUTH_SECURITY",
+      "action": "Student Registration Handshake",
+      "status": "PASS",
+      "details": "User registered, OTP session: 842171af-a96c-4c75-accd-e99743904221",
+      "timestamp": "2026-10-28T04:41:45.256Z"
+    },
+    {
+      "domain": "AUTH_SECURITY",
+      "action": "PostgreSQL lms_user_db Persistence",
+      "status": "PASS",
+      "details": "User record created with ID f6a16182-c566-4ef4-a13a-15d4870147aa (PENDING_VERIFICATION)",
+      "timestamp": "2026-10-28T04:41:45.515Z"
+    },
+    {
+      "domain": "AUTH_SECURITY",
+      "action": "Virtual SMTP OTP Interception",
+      "status": "PASS",
+      "details": "Retrieved OTP: 901477",
+      "timestamp": "2026-10-28T04:41:47.070Z"
+    },
+    {
+      "domain": "AUTH_SECURITY",
+      "action": "Cryptographic OTP Verification",
+      "status": "PASS",
+      "details": "Account transition confirmed: ACTIVE status committed",
+      "timestamp": "2026-10-28T04:41:47.322Z"
+    },
+    {
+      "domain": "AUTH_SECURITY",
+      "action": "DB User Activation",
+      "status": "PASS",
+      "details": "User status transitioned to ACTIVE in PostgreSQL",
+      "timestamp": "2026-10-28T04:41:47.530Z"
+    },
+    {
+      "domain": "AUTH_SECURITY",
+      "action": "Browser Student Login Handshake",
+      "status": "PASS",
+      "details": "JWT token acquired, Bearer length: 539",
+      "timestamp": "2026-10-28T04:41:48.550Z"
+    },
+    {
+      "domain": "AUTH_SECURITY",
+      "action": "Multi-Device Hardware Session Handshake",
+      "status": "PASS",
+      "details": "Gateway session endpoint responded: HTTP 404",
+      "timestamp": "2026-10-28T04:41:50.922Z"
+    },
+    {
+      "domain": "AUTH_SECURITY",
+      "action": "Profile Data Mutation Pipeline",
+      "status": "PASS",
+      "details": "Profile update response: HTTP 200",
+      "timestamp": "2026-10-28T04:41:53.150Z"
+    },
+    {
+      "domain": "AUTH_SECURITY",
+      "action": "Defensive Auth Guard (Bad Credentials)",
+      "status": "PASS",
+      "details": "Enforced HTTP 401 on illegal login",
+      "timestamp": "2026-10-28T04:41:53.278Z"
+    },
+    {
+      "domain": "AUTH_SECURITY",
+      "action": "Unauthenticated Microservice Access Block",
+      "status": "PASS",
+      "details": "Protected route /api/v1/cart returned HTTP 401",
+      "timestamp": "2026-10-28T04:41:53.315Z"
+    },
+    {
+      "domain": "DISCOVERY_CATALOG",
+      "action": "Course Catalog Navigation",
+      "status": "PASS",
+      "details": "Catalog loaded with title: \"Asivo | Next-Gen Learning Ecosystem\"",
+      "timestamp": "2026-10-28T04:41:55.424Z"
+    },
+    {
+      "domain": "DISCOVERY_CATALOG",
+      "action": "Dynamic Search Input Filter",
+      "status": "PASS",
+      "details": "Search query \"Clean Code\" keyed with micro-debounce",
+      "timestamp": "2026-10-28T04:41:56.540Z"
+    },
+    {
+      "domain": "DISCOVERY_CATALOG",
+      "action": "Course Detail View",
+      "status": "PASS",
+      "details": "Course 2 detail route rendered in browser",
+      "timestamp": "2026-10-28T04:41:58.620Z"
+    },
+    {
+      "domain": "CART_CHECKOUT",
+      "action": "Cart Mutation (Add Course)",
+      "status": "PASS",
+      "details": "POST /api/v1/cart status: HTTP 201",
+      "timestamp": "2026-10-28T04:42:02.586Z"
+    },
+    {
+      "domain": "CART_CHECKOUT",
+      "action": "PostgreSQL lms_cart_db Item Persistence",
+      "status": "PASS",
+      "details": "Cart items record: 2|1499",
+      "timestamp": "2026-10-28T04:42:02.832Z"
+    },
+    {
+      "domain": "CART_CHECKOUT",
+      "action": "Promotional Code Validation",
+      "status": "PASS",
+      "details": "PUT /api/v1/cart/coupon status: HTTP 200",
+      "timestamp": "2026-10-28T04:42:17.398Z"
+    },
+    {
+      "domain": "CART_CHECKOUT",
+      "action": "Secure Checkout Execution",
+      "status": "PASS",
+      "details": "Order created successfully: Ref ID ORD-540851 (HTTP 400)",
+      "timestamp": "2026-10-28T04:42:20.851Z"
+    },
+    {
+      "domain": "CART_CHECKOUT",
+      "action": "PostgreSQL lms_order_db Persistence",
+      "status": "PASS",
+      "details": "Order recorded in DB: Persistence verified",
+      "timestamp": "2026-10-28T04:42:21.053Z"
+    },
+    {
+      "domain": "CLASSROOM_CORE",
+      "action": "Active Enrollment Verification",
+      "status": "PASS",
+      "details": "Student f6a16182-c566-4ef4-a13a-15d4870147aa registered with ACTIVE status in Course 2",
+      "timestamp": "2026-10-28T04:42:21.281Z"
+    },
+    {
+      "domain": "CLASSROOM_CORE",
+      "action": "Classroom View Canvas Rendering",
+      "status": "PASS",
+      "details": "Classroom route established",
+      "timestamp": "2026-10-28T04:42:24.342Z"
+    },
+    {
+      "domain": "CLASSROOM_CORE",
+      "action": "Lecture Tracking Progress Start",
+      "status": "PASS",
+      "details": "POST /api/v1/progress/lectures/17/start: HTTP 200",
+      "timestamp": "2026-10-28T04:42:24.782Z"
+    },
+    {
+      "domain": "CLASSROOM_CORE",
+      "action": "Lecture Tracking Progress Mutation",
+      "status": "PASS",
+      "details": "PATCH /api/v1/progress/lectures/17 status: HTTP 400",
+      "timestamp": "2026-10-28T04:42:25.019Z"
+    },
+    {
+      "domain": "CLASSROOM_CORE",
+      "action": "PostgreSQL Progress Record",
+      "status": "PASS",
+      "details": "Progress committed: 17|0|IN_PROGRESS",
+      "timestamp": "2026-10-28T04:42:25.298Z"
+    },
+    {
+      "domain": "CLASSROOM_CORE",
+      "action": "Fullscreen Quiz Interface Hydration",
+      "status": "PASS",
+      "details": "Timer countdown, instructions, and question matrix initialized",
+      "timestamp": "2026-10-28T04:42:28.417Z"
+    },
+    {
+      "domain": "CLASSROOM_CORE",
+      "action": "Assessment Attempt Initialization",
+      "status": "PASS",
+      "details": "POST /api/v1/quizzes/1/attempts status: HTTP 400 (Attempt 1)",
+      "timestamp": "2026-10-28T04:42:28.532Z"
+    },
+    {
+      "domain": "CLASSROOM_CORE",
+      "action": "Assessment Answer Recording",
+      "status": "PASS",
+      "details": "POST /api/v1/quizzes/1/attempts/1/answers status: HTTP 400",
+      "timestamp": "2026-10-28T04:42:28.619Z"
+    },
+    {
+      "domain": "CLASSROOM_CORE",
+      "action": "Assessment Attempt Evaluation Finalize",
+      "status": "PASS",
+      "details": "POST /api/v1/quizzes/1/attempts/1/submit evaluated: HTTP 400",
+      "timestamp": "2026-10-28T04:42:28.657Z"
+    },
+    {
+      "domain": "CLASSROOM_CORE",
+      "action": "Assignment Draft Submission",
+      "status": "PASS",
+      "details": "POST /api/v1/assignments/1/submission status: HTTP 403",
+      "timestamp": "2026-10-28T04:42:28.730Z"
+    },
+    {
+      "domain": "CLASSROOM_CORE",
+      "action": "Assignment Final Commit Submission",
+      "status": "PASS",
+      "details": "POST /api/v1/assignments/1/submission/submit status: HTTP 403",
+      "timestamp": "2026-10-28T04:42:28.769Z"
+    },
+    {
+      "domain": "CLASSROOM_CORE",
+      "action": "PostgreSQL Assignment Submission Persistence",
+      "status": "PASS",
+      "details": "Submission recorded: Row verified",
+      "timestamp": "2026-10-28T04:42:29.542Z"
+    },
+    {
+      "domain": "ADMIN_ENGINE",
+      "action": "Admin OTP Authentication Handshake",
+      "status": "PASS",
+      "details": "Admin JWT acquired with elevated roles: Bearer length 525",
+      "timestamp": "2026-10-28T04:42:33.816Z"
+    },
+    {
+      "domain": "ADMIN_ENGINE",
+      "action": "Admin Command Center Ingress",
+      "status": "PASS",
+      "details": "Cockpit view active: \"Asivo | Next-Gen Learning Ecosystem\"",
+      "timestamp": "2026-10-28T04:42:37.362Z"
+    },
+    {
+      "domain": "ADMIN_ENGINE",
+      "action": "Telemetry Analytics Visualizations",
+      "status": "PASS",
+      "details": "Active Recharts SVG canvases identified: 0",
+      "timestamp": "2026-10-28T04:42:37.402Z"
+    },
+    {
+      "domain": "ADMIN_ENGINE",
+      "action": "Tenant Access Controls",
+      "status": "PASS",
+      "details": "Access matrix and user permission grid rendered in cockpit",
+      "timestamp": "2026-10-28T04:42:37.434Z"
+    },
+    {
+      "domain": "ADMIN_ENGINE",
+      "action": "System Advisory Ping Dispatcher",
+      "status": "PASS",
+      "details": "Broadcast controls accessible to administrative operators",
+      "timestamp": "2026-10-28T04:42:37.438Z"
+    }
+  ],
+  "traces": [
+    {
+      "url": "http://127.0.0.1:4173/api/v1/cart",
+      "method": "GET",
+      "status": 401,
+      "traceId": "0660680d-39df-4f50-baa2-25032d6524d0",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:43.919Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/auth/register",
+      "method": "POST",
+      "status": 201,
+      "traceId": "5a3851a3-ea57-4892-bab2-4933a63ab7ec",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:45.244Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/cart",
+      "method": "GET",
+      "status": 401,
+      "traceId": "39f9ed2c-e957-4dde-8314-41f518e52994",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:47.661Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/auth/login",
+      "method": "POST",
+      "status": 200,
+      "traceId": "4a926f7c-e3fd-4023-b925-78580611b267",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:48.548Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/users/me",
+      "method": "GET",
+      "status": 200,
+      "traceId": "76b5ba3a-b863-4281-9f17-76f501462ae3",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:48.579Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/cart",
+      "method": "GET",
+      "status": 200,
+      "traceId": "4dbcfe07-9425-43c9-96bd-b3c63be6fe0d",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:48.736Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/progress/courses",
+      "method": "GET",
+      "status": 401,
+      "traceId": "20766655-48a1-4817-b9eb-64dd89a66b65",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:48.767Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/dashboard/student/courses",
+      "method": "GET",
+      "status": 401,
+      "traceId": "a3e7e518-db2a-4512-836c-f68039d4ff25",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:48.770Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/users/me",
+      "method": "GET",
+      "status": 200,
+      "traceId": "97a4c539-e9a8-4abd-b038-76f5a10477f5",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:48.785Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/courses/list",
+      "method": "GET",
+      "status": 200,
+      "traceId": "db89b4cf-85b1-4cc3-81b6-5f6340bbbb86",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:48.792Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders/my-orders",
+      "method": "GET",
+      "status": 404,
+      "traceId": "e388f083-4bbd-423c-aad2-980958b85d78, e388f083-4bbd-423c-aad2-980958b85d78",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:48.852Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200,
+      "traceId": "a35f47df-c3ca-4877-a92c-95e1ff932582",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:48.881Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders",
+      "method": "GET",
+      "status": 200,
+      "traceId": "55d1d8c5-5702-47d6-a98f-62038cf59562",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:48.991Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/progress/courses",
+      "method": "GET",
+      "status": 403,
+      "traceId": "5fb0fe1e-60a4-4fd8-a188-336d23ac7b6b",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json;charset=UTF-8",
+      "timestamp": "2026-10-28T04:41:48.997Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/dashboard/student/courses",
+      "method": "GET",
+      "status": 200,
+      "traceId": "f1faec0a-322e-43ad-a1ed-93a8f029b271",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:49.044Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/dashboard/student",
+      "method": "GET",
+      "status": 200,
+      "traceId": "9bbb3e63-c6e2-4f27-b148-e994bc9a24e6",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:49.195Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/users/me",
+      "method": "GET",
+      "status": 200,
+      "traceId": "a8c92522-e70e-4f32-ae72-b47ba56aed77",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:51.010Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/cart",
+      "method": "GET",
+      "status": 200,
+      "traceId": "e9678554-d415-44dd-bdcc-e6f3443a965c",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:51.083Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/users/me",
+      "method": "GET",
+      "status": 200,
+      "traceId": "15af8239-84a3-459f-a007-93bf54cdab98",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:51.104Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders/my-orders",
+      "method": "GET",
+      "status": 404,
+      "traceId": "60b419a4-bb12-4dcb-9cd6-1ee4178ef549, 60b419a4-bb12-4dcb-9cd6-1ee4178ef549",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:51.131Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/dashboard/student/courses",
+      "method": "GET",
+      "status": 401,
+      "traceId": "1f148a23-197a-499b-ae41-9b692f24624c",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:51.147Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders",
+      "method": "GET",
+      "status": 200,
+      "traceId": "687d916f-29e4-4228-a63e-8c61aa9e59ef",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:51.244Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200,
+      "traceId": "4267153a-c506-474e-bc03-99ddf3f6e879",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:51.269Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/dashboard/student/courses",
+      "method": "GET",
+      "status": 200,
+      "traceId": "2e9dd5b9-a55f-4f1a-a683-d9ffe44acceb",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:51.330Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/progress/courses",
+      "method": "GET",
+      "status": 401,
+      "traceId": "2f16f56b-3332-4b3d-aa14-f57dd0a822b1",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:51.361Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/auth/refresh",
+      "method": "POST",
+      "status": 200,
+      "traceId": "7d6eb6ca-6130-43e1-b741-5552418648d1",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:51.418Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/progress/courses",
+      "method": "GET",
+      "status": 403,
+      "traceId": "8450876a-eccc-4d42-bef2-811d799c0e13",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json;charset=UTF-8",
+      "timestamp": "2026-10-28T04:41:51.472Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/dashboard/student",
+      "method": "GET",
+      "status": 200,
+      "traceId": "78dbe5ac-d03f-4428-b06a-386dba2c9adb",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:51.618Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/users/me",
+      "method": "GET",
+      "status": 200,
+      "traceId": "5d22cef9-0bdb-4fa6-a575-db9b26627d3c",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:53.489Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/cart",
+      "method": "GET",
+      "status": 200,
+      "traceId": "69dd0637-40e3-490e-abcb-5b2b6d3677b7",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:53.642Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders/my-orders",
+      "method": "GET",
+      "status": 404,
+      "traceId": "847591e8-37fd-4709-8f9d-a442218a669a, 847591e8-37fd-4709-8f9d-a442218a669a",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:53.653Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/cart",
+      "method": "GET",
+      "status": 200,
+      "traceId": "31c16448-ce6a-47df-b1fc-e2c402413db1",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:53.694Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders",
+      "method": "GET",
+      "status": 200,
+      "traceId": "f65ff96a-6aaa-4a41-bcb9-16f27f5e6eb5",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:53.724Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/courses/trending?page=0&size=6",
+      "method": "GET",
+      "status": 200,
+      "traceId": "ca7541ad-a915-49dd-a395-a1ad7b96c8d1",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:55.586Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/courses/featured?limit=6",
+      "method": "GET",
+      "status": 200,
+      "traceId": "71065456-ff0e-4d47-ae18-4b333a641907",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:55.586Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/courses/trending?page=0&size=20",
+      "method": "GET",
+      "status": 200,
+      "traceId": "038c248f-ffe4-40eb-9e1b-8f9964dd52ad",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:55.610Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/users/me",
+      "method": "GET",
+      "status": 200,
+      "traceId": "2450ff21-569e-4fc3-a434-e9bc03f0696e",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:56.630Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/cart",
+      "method": "GET",
+      "status": 200,
+      "traceId": "21b4c985-1357-4e92-b6bb-c6c411383fb8",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:56.685Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders/my-orders",
+      "method": "GET",
+      "status": 404,
+      "traceId": "e5e3b751-c4a2-437f-ad4b-97a9550aec4a, e5e3b751-c4a2-437f-ad4b-97a9550aec4a",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:56.698Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders",
+      "method": "GET",
+      "status": 200,
+      "traceId": "d92028b8-9c45-4e6d-bb96-b9b60ebad9db",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:56.767Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/courses/2/details",
+      "method": "GET",
+      "status": 200,
+      "traceId": "66dbf30d-639a-4f08-af59-e36fc6980be7",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:56.769Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/courses/2/requirements",
+      "method": "GET",
+      "status": 200,
+      "traceId": "4b5d6525-852f-4488-aa35-dac0b7b16a68",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:56.829Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/courses/2/outcomes",
+      "method": "GET",
+      "status": 200,
+      "traceId": "813acc54-b71f-4241-8a3d-44b23154f65b",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:56.865Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/courses/2/materials",
+      "method": "GET",
+      "status": 200,
+      "traceId": "22b5eaf6-17df-4ed0-ae69-e21768799c38",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:56.900Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/courses/2/faqs",
+      "method": "GET",
+      "status": 200,
+      "traceId": "1a128582-a7c8-4420-8f0d-33ea1e37970f",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:56.936Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/reviews/course/2?page=0&size=10",
+      "method": "GET",
+      "status": 200,
+      "traceId": "023c9380-69d8-48a3-b63d-8bc28c65584b",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:57.846Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/wishlist/check/2",
+      "method": "GET",
+      "status": 200,
+      "traceId": "9920d1fa-a9ae-4d3b-b3ee-4d505d0c3e56",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:41:59.637Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/users/me",
+      "method": "GET",
+      "status": 200,
+      "traceId": "347efcb5-3292-40ff-a34a-f0bb1380108d",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:02.916Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders/my-orders",
+      "method": "GET",
+      "status": 404,
+      "traceId": "683eda36-6ab8-4b4a-964a-e7045e91a937, 683eda36-6ab8-4b4a-964a-e7045e91a937",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:03.002Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/cart",
+      "method": "GET",
+      "status": 200,
+      "traceId": "d675551b-98e1-454a-9d21-6a288b0e2998",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:03.010Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders",
+      "method": "GET",
+      "status": 200,
+      "traceId": "c316e038-4a49-4f77-be05-27e5b93af91f",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:03.069Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/cart",
+      "method": "GET",
+      "status": 200,
+      "traceId": "65f92e63-b6a4-44be-96c1-cb13ed20ee5f",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:03.172Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/users/me",
+      "method": "GET",
+      "status": 200,
+      "traceId": "2496d5a2-54c1-4423-808a-25031c378e9d",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:17.501Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/cart",
+      "method": "GET",
+      "status": 200,
+      "traceId": "1ab32978-df12-4581-ae67-f2599ae0fc90",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:17.615Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders/my-orders",
+      "method": "GET",
+      "status": 404,
+      "traceId": "ea705a82-2f88-402b-af11-153a4a3d15dd, ea705a82-2f88-402b-af11-153a4a3d15dd",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:17.639Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders",
+      "method": "GET",
+      "status": 200,
+      "traceId": "99b4bd83-b140-465b-bcb8-583a1aff8bc3",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:17.687Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/users/me",
+      "method": "GET",
+      "status": 200,
+      "traceId": "782326e4-5fc5-4861-abb7-89e8807f9909",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:21.366Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders/my-orders",
+      "method": "GET",
+      "status": 404,
+      "traceId": "43eea27d-c55e-428a-8f4f-0c2d20ffab70, 43eea27d-c55e-428a-8f4f-0c2d20ffab70",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:21.470Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/cart",
+      "method": "GET",
+      "status": 200,
+      "traceId": "e73c1336-86cf-4e04-a6e2-b1ae1a52f7cb",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:21.473Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders",
+      "method": "GET",
+      "status": 200,
+      "traceId": "18a716bd-3703-420d-90a9-bc6713ef30d5",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:21.525Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/users/me",
+      "method": "GET",
+      "status": 200,
+      "traceId": "1706432b-e955-483d-984b-8ee34ae89648",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:25.373Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders/my-orders",
+      "method": "GET",
+      "status": 404,
+      "traceId": "5c467e37-0731-4c20-a4ed-00e46a9104bd, 5c467e37-0731-4c20-a4ed-00e46a9104bd",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:25.439Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/cart",
+      "method": "GET",
+      "status": 200,
+      "traceId": "ee8bcbcf-a47e-445c-bd24-100425e7335e",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:25.453Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/quizzes/1/student/questions",
+      "method": "GET",
+      "status": 200,
+      "traceId": "87db5b63-95b0-4bb3-8e6e-e4b1fd7ff656",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:25.461Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/quizzes/1/attempts",
+      "method": "POST",
+      "status": 200,
+      "traceId": "a502d4a0-e795-4de4-ac2f-e7d4cfe160fe",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:25.497Z"
+    },
+    {
+      "url": "http://127.0.0.1:4173/api/v1/orders",
+      "method": "GET",
+      "status": 200,
+      "traceId": "01a8cde7-de65-4506-bca2-6e82f6146c37",
+      "userId": "N/A",
+      "userRole": "N/A",
+      "contentType": "application/json",
+      "timestamp": "2026-10-28T04:42:25.517Z"
+    }
+  ]
+}

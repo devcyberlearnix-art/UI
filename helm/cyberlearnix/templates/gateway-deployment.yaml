@@ -1,0 +1,101 @@
+{{- if .Values.gateway.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cyberlearnix.fullname" . }}-gateway
+  labels:
+    {{- include "cyberlearnix.labels" . | nindent 4 }}
+    app.kubernetes.io/component: gateway
+spec:
+  replicas: {{ .Values.gateway.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      {{- include "cyberlearnix.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: gateway
+  template:
+    metadata:
+      labels:
+        {{- include "cyberlearnix.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: gateway
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/component
+                      operator: In
+                      values:
+                        - gateway
+                topologyKey: kubernetes.io/hostname
+      containers:
+        - name: gateway
+          image: "{{ .Values.gateway.image.repository }}:{{ .Values.gateway.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.gateway.port }}
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "cyberlearnix.fullname" . }}-config
+            - secretRef:
+                name: {{ include "cyberlearnix.fullname" . }}-secrets
+          env:
+            - name: SERVER_PORT
+              value: {{ .Values.gateway.port | quote }}
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.gateway.jvmOpts | quote }}
+            - name: USER_SERVICE_URL
+              value: "http://{{ include "cyberlearnix.fullname" . }}-user-service:8091"
+            - name: ADMIN_SERVICE_URL
+              value: "http://{{ include "cyberlearnix.fullname" . }}-admin-service:8087"
+            - name: COURSE_SERVICE_URL
+              value: "http://{{ include "cyberlearnix.fullname" . }}-course-service:8083"
+            - name: INSTRUCTOR_SERVICE_URL
+              value: "http://{{ include "cyberlearnix.fullname" . }}-instructor-service:8088"
+            - name: CART_SERVICE_URL
+              value: "http://{{ include "cyberlearnix.fullname" . }}-cart-service:8081"
+            - name: COUPON_SERVICE_URL
+              value: "http://{{ include "cyberlearnix.fullname" . }}-coupon-service:8082"
+            - name: ORDER_SERVICE_URL
+              value: "http://{{ include "cyberlearnix.fullname" . }}-order-service:8084"
+            - name: PAYMENT_SERVICE_URL
+              value: "http://{{ include "cyberlearnix.fullname" . }}-payment-service:8085"
+            - name: REVIEW_SERVICE_URL
+              value: "http://{{ include "cyberlearnix.fullname" . }}-review-service:8089"
+            - name: NOTIFICATION_SERVICE_URL
+              value: "http://{{ include "cyberlearnix.fullname" . }}-notification-service:8093"
+            - name: WISHLIST_SERVICE_URL
+              value: "http://{{ include "cyberlearnix.fullname" . }}-wishlist-service:8090"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            initialDelaySeconds: 45
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            initialDelaySeconds: 25
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.gateway.resources | nindent 12 }}
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 10"]
+{{- end }}

@@ -20,6 +20,10 @@ export const reviewApi = {
     }
   },
 
+  addReview: async (reviewData) => {
+    return reviewApi.createReview(reviewData);
+  },
+
   /**
    * PUT /api/v1/reviews/{reviewId}
    * Update course review

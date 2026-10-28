@@ -52,26 +52,12 @@ const MyCourses = () => {
     setLoading(true);
     setError("");
     try {
-      let apiList = [];
-      try {
-        const data = await instructorApi.getCourses(instructorId);
-        apiList = Array.isArray(data) ? data : (data?.data || data?.courses || []);
-      } catch (e) {
-        console.warn("[MyCourses] API getCourses failed/mock, using local storage cache");
-      }
+      const data = await instructorApi.getCourses(instructorId);
+      const list = Array.isArray(data)
+        ? data
+        : data?.data?.courses || data?.courses || data?.content || (Array.isArray(data?.data) ? data.data : []);
 
-      const localList = JSON.parse(localStorage.getItem("lms_custom_courses") || "[]");
-
-      const map = new Map();
-      localList.forEach(c => map.set(c.id || c.title, c));
-      apiList.forEach(c => {
-        const key = c.id || c.title;
-        if (!map.has(key)) map.set(key, c);
-      });
-
-      const list = Array.from(map.values());
       setCourses(list);
-      // Auto-open create form if no courses exist
       if (list.length === 0) setShowCreateForm(true);
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to load courses");
@@ -106,20 +92,8 @@ const MyCourses = () => {
         instructorName: user?.name || user?.firstName || storedUser?.name || "Instructor",
       };
 
-      // Try sending to API
-      try {
-        await instructorApi.createCourse(instructorId, payload);
-      } catch (apiErr) {
-        console.warn("[MyCourses] API createCourse failed, stored locally");
-      }
-
-      // Persist in real-time local storage cache
-      const existing = JSON.parse(localStorage.getItem("lms_custom_courses") || "[]");
-      const updatedList = [payload, ...existing.filter(c => c.id !== newId)];
-      localStorage.setItem("lms_custom_courses", JSON.stringify(updatedList));
-
-      // Update state in real-time
-      setCourses(prev => [payload, ...prev]);
+      await instructorApi.createCourse(instructorId, payload);
+      await fetchCourses();
 
       // Reset form
       setForm({
@@ -145,20 +119,11 @@ const MyCourses = () => {
     if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return;
     setDeletingId(courseId);
     try {
-      try {
-        await instructorApi.deleteCourse(instructorId, courseId);
-      } catch (e) {
-        console.warn("[MyCourses] API deleteCourse failed/mock, removing locally anyway");
-      }
-
-      const localList = JSON.parse(localStorage.getItem("lms_custom_courses") || "[]");
-      const filtered = localList.filter(c => c.id !== courseId && c.title !== title);
-      localStorage.setItem("lms_custom_courses", JSON.stringify(filtered));
-
+      await instructorApi.deleteCourse(instructorId, courseId);
       setCourses((prev) => prev.filter((c) => c.id !== courseId && c.title !== title));
       toast.success("Course deleted");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to delete course");
+      toast.error(err.response?.data?.message || "Failed to delete course");
     } finally {
       setDeletingId(null);
     }

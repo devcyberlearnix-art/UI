@@ -66,6 +66,10 @@ export const liveClassApi = {
     }
   },
 
+  getMeetingsByCourse: async (courseId) => {
+    return liveClassApi.getLiveClassesByCourse(courseId);
+  },
+
   /**
    * GET /api/v1/live-classes/section/{sectionId}
    * Get live classes by section

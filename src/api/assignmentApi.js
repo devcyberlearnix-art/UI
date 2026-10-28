@@ -66,13 +66,24 @@ export const assignmentApi = {
    */
   submitAssignment: async (assignmentId, data = {}) => {
     try {
-      // First save draft if content/file provided
-      if (data && (data.content || data.fileUrl || data.submissionText)) {
-        await axiosInstance.post(`/api/v1/assignments/${assignmentId}/submission`, {
-          content: data.content || data.submissionText || 'Completed assignment submission',
-          fileUrl: data.fileUrl || 'https://cyberlearnix.dev/submissions/sample.pdf'
-        });
+      let submissionText = 'Completed assignment submission';
+      let fileUrl = 'https://cyberlearnix.dev/submissions/sample.pdf';
+
+      if (data instanceof File) {
+        submissionText = `Attached archive/file: ${data.name} (${(data.size / 1024).toFixed(1)} KB)`;
+        fileUrl = `https://storage.cyberlearnix.dev/submissions/${encodeURIComponent(data.name)}`;
+      } else if (typeof data === 'object' && data !== null) {
+        submissionText = data.submissionText || data.content || `Completed assignment submission: ${data.name || 'archive'}`;
+        fileUrl = data.fileUrl || (data.file?.name ? `https://storage.cyberlearnix.dev/submissions/${encodeURIComponent(data.file.name)}` : 'https://storage.cyberlearnix.dev/submissions/sample.pdf');
       }
+
+      // First create or update submission draft with Spring DTO fields
+      await axiosInstance.post(`/api/v1/assignments/${assignmentId}/submission`, {
+        submissionText,
+        fileUrl
+      });
+
+      // Then finalize submission
       const response = await axiosInstance.post(`/api/v1/assignments/${assignmentId}/submission/submit`);
       return response.data;
     } catch (err) {

@@ -1,7 +1,13 @@
 // src/pages/Courses.jsx - Browse Courses Catalog
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+
+const SPRING_TRANSITION = {
+  type: 'spring',
+  stiffness: 280,
+  damping: 26,
+};
 import {
   Search,
   Filter,
@@ -34,6 +40,7 @@ import toast from "react-hot-toast";
 import { courseApi } from "../api/courseApi";
 import { useAuth } from "../context/AuthContext";
 import Portal from "../components/ui/Portal";
+import Navbar from "../layouts/Navbar";
 
 const CATEGORY_OPTIONS = [
   "All",
@@ -56,13 +63,13 @@ const SORT_OPTIONS = [
 ];
 
 const CATEGORY_COLORS = {
-  Programming: "bg-indigo-500/10 text-indigo-700 border-indigo-200",
-  "Web Development": "bg-cyan-500/10 text-cyan-700 border-cyan-200",
-  "Data Science": "bg-emerald-500/10 text-emerald-700 border-emerald-200",
-  "Cloud & DevOps": "bg-blue-500/10 text-blue-700 border-blue-200",
-  "Artificial Intelligence": "bg-purple-500/10 text-purple-700 border-purple-200",
-  Design: "bg-rose-500/10 text-rose-700 border-rose-200",
-  Business: "bg-amber-500/10 text-amber-700 border-amber-200",
+  Programming: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30",
+  "Web Development": "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
+  "Data Science": "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+  "Cloud & DevOps": "bg-sky-500/15 text-sky-300 border-sky-500/30",
+  "Artificial Intelligence": "bg-purple-500/15 text-purple-300 border-purple-500/30",
+  Design: "bg-rose-500/15 text-rose-300 border-rose-500/30",
+  Business: "bg-amber-500/15 text-amber-300 border-amber-500/30",
 };
 
 const DEFAULT_COURSES = [
@@ -204,6 +211,7 @@ const normalizeCourseItem = (c, index) => {
 const Courses = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
 
   // User-specific localStorage key
@@ -217,11 +225,52 @@ const Courses = () => {
   const [error, setError] = useState("");
   const [viewMode, setViewMode] = useState("grid"); // 'grid' | 'list'
 
-  // Filter & Search state
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedLevel, setSelectedLevel] = useState("All Levels");
+  // Initialize Filter & Search state from URL parameters
+  const initialCategory = searchParams.get("category") || "All";
+  const initialLevel = searchParams.get("level") || "All Levels";
+  const initialSearch = searchParams.get("search") || searchParams.get("q") || "";
+
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [selectedLevel, setSelectedLevel] = useState(initialLevel);
   const [sortBy, setSortBy] = useState("popular");
+
+  // Synchronized state mutation helpers
+  const updateCategoryFilter = (cat) => {
+    setSelectedCategory(cat);
+    setCurrentPage(1);
+    const newParams = new URLSearchParams(searchParams);
+    if (cat === "All") {
+      newParams.delete("category");
+    } else {
+      newParams.set("category", cat);
+    }
+    setSearchParams(newParams, { replace: true });
+  };
+
+  const updateLevelFilter = (lvl) => {
+    setSelectedLevel(lvl);
+    setCurrentPage(1);
+    const newParams = new URLSearchParams(searchParams);
+    if (lvl === "All Levels") {
+      newParams.delete("level");
+    } else {
+      newParams.set("level", lvl);
+    }
+    setSearchParams(newParams, { replace: true });
+  };
+
+  const updateSearchQuery = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+    const newParams = new URLSearchParams(searchParams);
+    if (!query.trim()) {
+      newParams.delete("search");
+    } else {
+      newParams.set("search", query.trim());
+    }
+    setSearchParams(newParams, { replace: true });
+  };
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -474,6 +523,24 @@ const Courses = () => {
     }
   };
 
+  const isPublicPage = !location.pathname.startsWith("/student");
+  const hasActiveFilters = Boolean(searchQuery.trim() || selectedCategory !== "All" || selectedLevel !== "All Levels");
+
+  const clearAllFilters = () => {
+    setSearchQuery("");
+    setSelectedCategory("All");
+    setSelectedLevel("All Levels");
+    setCurrentPage(1);
+    setSearchParams({}, { replace: true });
+  };
+
+  const RECOMMENDED_DOMAINS = [
+    { title: "Cloud & DevOps", desc: "Kubernetes, distributed topologies, and resilient cloud architectures" },
+    { title: "Web Development", desc: "React 19, Next.js server actions, and micro-frontend design systems" },
+    { title: "Data Science", desc: "Distributed stream analytics, Apache Spark, and real-time processing" },
+    { title: "Artificial Intelligence", desc: "LLM agent orchestration, embeddings, and vector infrastructure" },
+  ];
+
   return (
     <>
       <style>{`
@@ -485,767 +552,845 @@ const Courses = () => {
           scrollbar-width: none;
         }
       `}</style>
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
-        className="w-full space-y-5 font-sans pb-12"
-      >
-      {/* ── TOP HERO BANNER: CINEMATIC COLOR FILL & CATALOG ROADMAP ──────── */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 p-6 sm:p-8 text-white shadow-xl border border-indigo-900/40">
-        {/* Ambient Gradient Glows */}
-        <div className="absolute -top-16 -right-16 h-56 w-56 rounded-full bg-gradient-to-br from-orange-500/25 to-amber-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-16 left-1/3 h-52 w-52 rounded-full bg-gradient-to-tr from-indigo-500/30 to-violet-500/15 blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2.5 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold text-orange-300">
-              <Compass size={13} className="text-orange-400" />
-              <span>Verified Technical Curriculum • 2026 Edition</span>
-            </div>
+      <div className="min-h-screen bg-[#070709] text-[#F5F5F7] selection:bg-[#C5A880]/30 selection:text-white font-sans antialiased">
+        {isPublicPage && <Navbar />}
 
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight">
-              Explore Industry-Leading Courses
-            </h1>
-
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
-              Gain verified credentials in cloud architecture, software engineering, deep learning,
-              and cybersecurity through project-based mastery.
-            </p>
-
-            {/* Quick Metrics Badges */}
-            <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-300 font-mono">
-              <span className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">
-                <BookOpen size={13} className="text-orange-400" />
-                <strong className="text-white">{filteredAndSortedCourses.length}</strong> Available Courses
-              </span>
-              <span className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">
-                <Award size={13} className="text-emerald-400" />
-                Verified Certificates
-              </span>
-              <span className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">
-                <ShieldCheck size={13} className="text-sky-400" />
-                30-Day Guarantee
-              </span>
-            </div>
-          </div>
-
-          {/* Quick Refresh & Role Shortcut */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <button
-              onClick={fetchCourses}
-              disabled={loading}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs backdrop-blur-md transition active:scale-95 disabled:opacity-50"
-            >
-              <RefreshCw size={13} className={loading ? "animate-spin text-orange-400" : ""} />
-              <span>Refresh Catalog</span>
-            </button>
-
-            {user?.role === "student" && (
-              <button
-                onClick={() => navigate("/student/dashboard")}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-xs shadow-md shadow-orange-500/25 transition active:scale-95"
-              >
-                <span>My Dashboard</span>
-                <ChevronRight size={14} />
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ── FEATURED COURSES CAROUSEL ─────────────────────────────────── */}
-      {featuredCourses.length > 0 && (
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 text-white">
-                <Award size={18} />
-              </div>
-              <div>
-                <h2 className="text-sm font-bold text-slate-900">Featured Courses</h2>
-                <p className="text-xs text-slate-500">Hand-picked by our instructors</p>
-              </div>
-            </div>
-            <button
-              onClick={() => navigate("/courses")}
-              className="text-xs font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1"
-            >
-              View All <ArrowRight size={14} />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {featuredCourses.slice(0, 3).map((course, idx) => {
-              const isWish = wishlist.some((id) => String(id) === String(course.id));
-              const catClass = CATEGORY_COLORS[course.category] || "bg-slate-100 text-slate-700 border-slate-200";
-
-              return (
-                <motion.div
-                  key={course.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: idx * 0.1 }}
-                  onClick={() => handleCardClick(course.id)}
-                  className="group relative rounded-xl overflow-hidden bg-slate-50 hover:shadow-lg transition-all cursor-pointer"
-                >
-                  <div className="relative h-36 overflow-hidden">
-                    <img
-                      src={course.image}
-                      alt={course.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
-                    <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold border backdrop-blur-md ${catClass}`}>
-                      {course.category}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={(e) => toggleWishlist(course, e)}
-                      className={`absolute top-2 right-2 p-1.5 rounded-lg backdrop-blur-md transition ${
-                        isWish ? "bg-rose-500 text-white" : "bg-black/50 hover:bg-rose-500/80 text-white"
-                      }`}
-                    >
-                      <Heart size={12} fill={isWish ? "currentColor" : "none"} />
-                    </button>
-                  </div>
-
-                  <div className="p-3 space-y-1.5">
-                    <h3 className="text-xs font-bold text-slate-900 group-hover:text-orange-600 transition line-clamp-1">
-                      {course.title}
-                    </h3>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-amber-600 font-mono font-bold text-[10px]">
-                        <Star size={10} fill="currentColor" /> {course.rating.toFixed(1)}
-                      </div>
-                      <span className="text-xs font-extrabold text-slate-900 font-mono">₹{course.price}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ── TRENDING COURSES SECTION ─────────────────────────────────── */}
-      {trendingCourses.length > 0 && (
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 text-white">
-                <Zap size={18} />
-              </div>
-              <div>
-                <h2 className="text-sm font-bold text-slate-900">Trending Now</h2>
-                <p className="text-xs text-slate-500">Most popular this week</p>
-              </div>
-            </div>
-            <button
-              onClick={() => navigate("/courses")}
-              className="text-xs font-semibold text-violet-600 hover:text-violet-700 flex items-center gap-1"
-            >
-              View All <ArrowRight size={14} />
-            </button>
-          </div>
-
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2 hide-scrollbar">
-            {trendingCourses.slice(0, 6).map((course, idx) => {
-              const isWish = wishlist.some((id) => String(id) === String(course.id));
-
-              return (
-                <motion.div
-                  key={course.id}
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: idx * 0.05 }}
-                  onClick={() => handleCardClick(course.id)}
-                  className="group flex-shrink-0 w-64 rounded-xl overflow-hidden bg-slate-50 hover:shadow-lg transition-all cursor-pointer border border-slate-200/90"
-                >
-                  <div className="relative h-32 overflow-hidden">
-                    <img
-                      src={course.image}
-                      alt={course.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
-                    <div className="absolute top-2 left-2 flex items-center gap-1.5">
-                      <span className="px-1.5 py-0.5 rounded bg-violet-500 text-white text-[9px] font-bold">
-                        #{idx + 1}
-                      </span>
-                      <span className="px-1.5 py-0.5 rounded bg-black/60 text-white text-[9px] font-bold backdrop-blur-md">
-                        {course.level}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={(e) => toggleWishlist(course, e)}
-                      className={`absolute top-2 right-2 p-1 rounded-lg backdrop-blur-md transition ${
-                        isWish ? "bg-rose-500 text-white" : "bg-black/50 hover:bg-rose-500/80 text-white"
-                      }`}
-                    >
-                      <Heart size={11} fill={isWish ? "currentColor" : "none"} />
-                    </button>
-                  </div>
-
-                  <div className="p-3 space-y-1.5">
-                    <h3 className="text-xs font-bold text-slate-900 group-hover:text-violet-600 transition line-clamp-1">
-                      {course.title}
-                    </h3>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-amber-600 font-mono font-bold text-[10px]">
-                        <Star size={10} fill="currentColor" /> {course.rating.toFixed(1)}
-                      </div>
-                      <span className="text-xs font-extrabold text-slate-900 font-mono">₹{course.price}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* ── TOOLBAR: SEARCH, CATEGORY PILLS, FILTERS & VIEW MODE ───────── */}
-      <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-xs space-y-3.5">
-        
-        {/* Top Controls: Search, Sort & View Mode */}
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-          {/* Live Search Input */}
-          <div className="relative flex-1 max-w-md">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search courses by title, topic, or instructor..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="w-full pl-10 pr-9 py-2 rounded-xl border border-slate-200 bg-slate-50/70 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-500/10 transition"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-              >
-                <X size={14} />
-              </button>
-            )}
-          </div>
-
-          {/* Right Controls: Level, Sort By & View Toggle */}
-          <div className="flex flex-wrap items-center gap-2.5">
-            {/* Level Selector */}
-            <div className="relative">
-              <select
-                value={selectedLevel}
-                onChange={(e) => {
-                  setSelectedLevel(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="appearance-none pl-3 pr-8 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 outline-none hover:border-slate-300 focus:border-orange-500 transition cursor-pointer"
-              >
-                {LEVEL_OPTIONS.map((lvl) => (
-                  <option key={lvl} value={lvl}>
-                    {lvl}
-                  </option>
-                ))}
-              </select>
-              <Filter size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-            </div>
-
-            {/* Sort Selector */}
-            <div className="relative">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 outline-none hover:border-slate-300 focus:border-orange-500 transition cursor-pointer"
-              >
-                {SORT_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              <SlidersHorizontal size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-            </div>
-
-            {/* View Mode Grid/List Toggle */}
-            <div className="flex items-center p-1 rounded-xl border border-slate-200 bg-slate-50/70">
-              <button
-                type="button"
-                onClick={() => setViewMode("grid")}
-                title="Grid View"
-                className={`p-1.5 rounded-lg transition ${
-                  viewMode === "grid"
-                    ? "bg-white text-slate-900 shadow-2xs font-bold"
-                    : "text-slate-400 hover:text-slate-600"
-                }`}
-              >
-                <LayoutGrid size={15} />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode("list")}
-                title="List View"
-                className={`p-1.5 rounded-lg transition ${
-                  viewMode === "list"
-                    ? "bg-white text-slate-900 shadow-2xs font-bold"
-                    : "text-slate-400 hover:text-slate-600"
-                }`}
-              >
-                <List size={15} />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Category Pills Bar */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 hide-scrollbar">
-          {CATEGORY_OPTIONS.map((cat) => {
-            const isSel = selectedCategory === cat;
-            return (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => {
-                  setSelectedCategory(cat);
-                  setCurrentPage(1);
-                }}
-                className={`whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                  isSel
-                    ? "bg-slate-900 text-white shadow-xs font-bold"
-                    : "bg-slate-100/80 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900"
-                }`}
-              >
-                {cat}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ── COURSE LISTING GRID / LIST ─────────────────────────────────── */}
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div
-              key={i}
-              className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 animate-pulse shadow-xs"
-            >
-              <div className="h-44 bg-slate-200 rounded-xl" />
-              <div className="h-4 bg-slate-200 rounded w-3/4" />
-              <div className="h-3 bg-slate-100 rounded w-1/2" />
-              <div className="h-8 bg-slate-100 rounded mt-4" />
-            </div>
-          ))}
-        </div>
-      ) : paginatedCourses.length === 0 ? (
-        <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-xs space-y-3">
-          <div className="h-12 w-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mx-auto">
-            <BookOpen size={24} />
-          </div>
-          <h3 className="text-base font-bold text-slate-900">No courses match your criteria</h3>
-          <p className="text-xs text-slate-500 max-w-md mx-auto">
-            Try adjusting your search query, difficulty level, or selecting another category.
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              setSearchQuery("");
-              setSelectedCategory("All");
-              setSelectedLevel("All Levels");
-            }}
-            className="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition"
-          >
-            Clear All Filters
-          </button>
-        </div>
-      ) : viewMode === "grid" ? (
-        /* ── GRID VIEW ── */
-        <motion.div
-          layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
-        >
-          {paginatedCourses.map((course, idx) => {
-            const isWish = wishlist.some((id) => String(id) === String(course.id));
-            const catClass =
-              CATEGORY_COLORS[course.category] || "bg-slate-100 text-slate-700 border-slate-200";
-
-            return (
-              <motion.div
-                key={course.id}
-                layout
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, delay: idx * 0.03 }}
-                whileHover={{ y: -5 }}
-                onClick={() => handleCardClick(course.id)}
-                className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white hover:border-orange-300 hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-200 overflow-hidden cursor-pointer"
-              >
-                <div>
-                  {/* Card Thumbnail & Overlays */}
-                  <div className="relative h-44 w-full overflow-hidden bg-slate-100">
-                    <img
-                      src={course.image}
-                      alt={course.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                      onError={(e) => {
-                        e.target.src =
-                          "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80";
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20" />
-
-                    {/* Category & Level Badges */}
-                    <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border backdrop-blur-md ${catClass}`}>
-                        {course.category}
-                      </span>
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-black/60 text-white backdrop-blur-md">
-                        {course.level}
-                      </span>
-                    </div>
-
-                    {/* Interactive Wishlist & Quick Preview Buttons */}
-                    <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDrawerCourse(course);
-                        }}
-                        title="Quick View"
-                        className="p-1.5 rounded-lg bg-black/50 hover:bg-black/80 text-white backdrop-blur-md transition"
-                      >
-                        <Eye size={13} />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={(e) => toggleWishlist(course, e)}
-                        title={isWish ? "Remove from Saved" : "Save Course"}
-                        className={`p-1.5 rounded-lg backdrop-blur-md transition ${
-                          isWish
-                            ? "bg-rose-500 text-white"
-                            : "bg-black/50 hover:bg-rose-500/80 text-white"
-                        }`}
-                      >
-                        <Heart size={13} fill={isWish ? "currentColor" : "none"} />
-                      </button>
-                    </div>
-
-                    {/* Duration & Lessons Pill */}
-                    <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[11px] text-white font-mono">
-                      <span className="flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-md">
-                        <Clock size={11} className="text-orange-400" /> {course.duration}
-                      </span>
-                      <span className="flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-md">
-                        <BookOpen size={11} className="text-amber-400" /> {course.lessonsCount} Lessons
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Body Content */}
-                  <div className="p-4 space-y-2">
-                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug">
-                      {course.title}
-                    </h3>
-
-                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                      {course.description}
-                    </p>
-
-                    {/* Instructor Info */}
-                    <div className="pt-2 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100">
-                      <div className="flex items-center gap-1.5">
-                        <div className="h-5 w-5 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[9px]">
-                          {course.instructor.charAt(0)}
-                        </div>
-                        <span className="font-semibold text-slate-700 truncate">{course.instructor}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-amber-600 font-mono font-bold text-[11px]">
-                        <Star size={12} fill="currentColor" /> {course.rating.toFixed(1)}
-                      </div>
-                    </div>
-                  </div>
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 pb-16 ${isPublicPage ? 'pt-24 sm:pt-28' : 'pt-4'}`}>
+          {/* ── TOP HERO BANNER: INK & ONYX CURRICULUM ──────── */}
+          <div className="relative overflow-hidden rounded-3xl bg-[#0F0F13] p-6 sm:p-8 text-[#F5F5F7] border border-white/[0.04] shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)]">
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2.5 max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14141A] border border-white/[0.06] text-xs font-semibold text-[#C5A880]">
+                  <Compass size={13} className="text-[#C5A880]" />
+                  <span>Verified Technical Curriculum • 2026 Edition</span>
                 </div>
 
-                {/* Footer: Price & CTA */}
-                <div className="p-4 pt-2 border-t border-slate-100 flex items-center justify-between">
-                  <div>
-                    <span className="text-base font-extrabold text-slate-900 font-mono">
-                      ₹{course.price}
-                    </span>
-                    {course.originalPrice > course.price && (
-                      <span className="text-xs text-slate-400 line-through ml-1.5 font-mono">
-                        ₹{course.originalPrice}
-                      </span>
-                    )}
-                  </div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#F5F5F7] leading-tight">
+                  Explore Industry-Leading Courses
+                </h1>
 
-                  <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-orange-50 text-orange-600 group-hover:bg-gradient-to-r group-hover:from-orange-500 group-hover:to-amber-500 group-hover:text-white text-xs font-bold transition-all shadow-2xs">
-                    <span>View Course</span>
-                    <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+                <p className="text-xs sm:text-sm text-[#A1A1AA] leading-relaxed max-w-xl">
+                  Gain verified credentials in cloud architecture, distributed systems, deep learning,
+                  and cybersecurity through production-grade engineering mastery.
+                </p>
+
+                {/* Quick Metrics Badges */}
+                <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-[#E5E5E7] font-mono">
+                  <span className="flex items-center gap-1.5 bg-[#14141A] border border-white/[0.04] px-2.5 py-1 rounded-lg">
+                    <BookOpen size={13} className="text-[#C5A880]" />
+                    <strong className="text-white">{filteredAndSortedCourses.length}</strong> Available Courses
+                  </span>
+                  <span className="flex items-center gap-1.5 bg-[#14141A] border border-white/[0.04] px-2.5 py-1 rounded-lg">
+                    <Award size={13} className="text-emerald-400" />
+                    Verified Certificates
+                  </span>
+                  <span className="flex items-center gap-1.5 bg-[#14141A] border border-white/[0.04] px-2.5 py-1 rounded-lg">
+                    <ShieldCheck size={13} className="text-sky-400" />
+                    Production SLA
                   </span>
                 </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-      ) : (
-        /* ── LIST VIEW ── */
-        <motion.div layout className="space-y-3">
-          {paginatedCourses.map((course, idx) => {
-            const isWish = wishlist.some((id) => String(id) === String(course.id));
-            const catClass =
-              CATEGORY_COLORS[course.category] || "bg-slate-100 text-slate-700 border-slate-200";
+              </div>
 
-            return (
-              <motion.div
-                key={course.id}
-                layout
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.15, delay: idx * 0.02 }}
-                onClick={() => handleCardClick(course.id)}
-                className="group flex flex-col sm:flex-row items-stretch sm:items-center justify-between rounded-2xl border border-slate-200/90 bg-white p-3.5 sm:p-4 hover:border-orange-300 hover:shadow-md hover:shadow-orange-500/10 transition-all cursor-pointer gap-4"
-              >
-                {/* Thumbnail */}
-                <div className="relative h-32 sm:h-28 sm:w-44 shrink-0 rounded-xl overflow-hidden bg-slate-100">
-                  <img
-                    src={course.image}
-                    alt={course.title}
-                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                  />
-                  <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold border backdrop-blur-md ${catClass}`}>
-                    {course.category}
-                  </span>
-                </div>
+              {/* Quick Refresh & Role Shortcut */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <button
+                  type="button"
+                  onClick={fetchCourses}
+                  disabled={loading}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#14141A] hover:bg-[#1B1B24] border border-white/[0.06] text-[#F5F5F7] font-bold text-xs transition active:scale-95 disabled:opacity-50 cursor-pointer"
+                >
+                  <RefreshCw size={13} className={loading ? "animate-spin text-[#C5A880]" : ""} />
+                  <span>Refresh Catalog</span>
+                </button>
 
-                {/* Details */}
-                <div className="flex-1 min-w-0 space-y-1">
-                  <div className="flex items-center gap-2 text-xs text-slate-500 font-mono">
-                    <span className="font-bold text-slate-700">{course.level}</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <Clock size={11} /> {course.duration}
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1 text-amber-600 font-bold">
-                      <Star size={11} fill="currentColor" /> {course.rating.toFixed(1)}
-                    </span>
-                  </div>
-
-                  <h3 className="text-sm font-bold text-slate-900 group-hover:text-orange-600 transition truncate">
-                    {course.title}
-                  </h3>
-
-                  <p className="text-xs text-slate-500 line-clamp-1">
-                    {course.description}
-                  </p>
-
-                  <p className="text-[11px] text-slate-400">
-                    Instructor: <strong className="text-slate-700 font-semibold">{course.instructor}</strong>
-                  </p>
-                </div>
-
-                {/* Price & CTA */}
-                <div className="sm:border-l sm:border-slate-100 sm:pl-4 flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0">
-                  <div className="text-left sm:text-right">
-                    <div className="text-base font-extrabold text-slate-900 font-mono">₹{course.price}</div>
-                    {course.originalPrice > course.price && (
-                      <div className="text-[11px] text-slate-400 line-through font-mono">₹{course.originalPrice}</div>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={(e) => toggleWishlist(course, e)}
-                      className={`p-2 rounded-xl border border-slate-200 transition ${
-                        isWish ? "bg-rose-50 text-rose-600 border-rose-200" : "hover:bg-slate-100 text-slate-600"
-                      }`}
-                    >
-                      <Heart size={14} fill={isWish ? "currentColor" : "none"} />
-                    </button>
-                    <span className="px-3 py-1.5 rounded-xl bg-orange-600 text-white text-xs font-bold group-hover:bg-orange-700 transition">
-                      Enroll
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-      )}
-
-      {/* ── PAGINATION CONTROLS ───────────────────────────────────────── */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between pt-2 px-2 text-xs text-slate-600">
-          <p className="font-mono">
-            Showing <strong className="text-slate-900">{(currentPage - 1) * itemsPerPage + 1}</strong> to{" "}
-            <strong className="text-slate-900">
-              {Math.min(currentPage * itemsPerPage, filteredAndSortedCourses.length)}
-            </strong>{" "}
-            of <strong className="text-slate-900">{filteredAndSortedCourses.length}</strong> courses
-          </p>
-
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition"
-            >
-              <ChevronLeft size={14} />
-            </button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
-              <button
-                key={pg}
-                onClick={() => setCurrentPage(pg)}
-                className={`h-8 w-8 rounded-xl text-xs font-mono font-bold transition ${
-                  currentPage === pg
-                    ? "bg-slate-900 text-white shadow-xs"
-                    : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                }`}
-              >
-                {pg}
-              </button>
-            ))}
-
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 transition"
-            >
-              <ChevronRight size={14} />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ── QUICK PREVIEW SLIDE-OUT DRAWER ────────────────────────────── */}
-      <AnimatePresence>
-        {drawerCourse && (
-          <Portal>
-            <div className="fixed inset-0 z-50 overflow-hidden">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setDrawerCourse(null)}
-                className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
-              />
-
-            <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-              <motion.div
-                initial={{ x: "100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "100%" }}
-                transition={{ type: "spring", stiffness: 350, damping: 35 }}
-                className="w-screen max-w-md bg-white shadow-2xl flex flex-col justify-between"
-              >
-                <div className="overflow-y-auto p-6 space-y-4">
-                  {/* Drawer Header */}
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-700 font-mono">
-                      {drawerCourse.category}
-                    </span>
-                    <button
-                      onClick={() => setDrawerCourse(null)}
-                      className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-800 transition"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-
-                  {/* Thumbnail */}
-                  <div className="relative h-44 rounded-2xl overflow-hidden bg-slate-900">
-                    <img
-                      src={drawerCourse.image}
-                      alt={drawerCourse.title}
-                      className="h-full w-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
-                    <div className="absolute bottom-3 left-3 text-white font-mono text-xs">
-                      {drawerCourse.level} • {drawerCourse.duration}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h2 className="text-lg font-bold text-slate-900">{drawerCourse.title}</h2>
-                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                      {drawerCourse.description}
-                    </p>
-                  </div>
-
-                  {/* Highlights */}
-                  <div className="space-y-2 pt-2 border-t border-slate-100">
-                    <h4 className="text-xs font-bold text-slate-900 uppercase font-mono tracking-wider">
-                      Included in this course
-                    </h4>
-                    <ul className="space-y-1.5 text-xs text-slate-600">
-                      <li className="flex items-center gap-2">
-                        <CheckCircle2 size={13} className="text-emerald-600" />
-                        <span>{drawerCourse.modulesCount} Comprehensive technical modules</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle2 size={13} className="text-emerald-600" />
-                        <span>Verified certificate on completion</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle2 size={13} className="text-emerald-600" />
-                        <span>Direct faculty mentorship & live Q&A</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle2 size={13} className="text-emerald-600" />
-                        <span>Full lifetime access on desktop & mobile</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  {/* Faculty */}
-                  <div className="p-3 rounded-xl border border-slate-200 bg-slate-50 flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
-                      {drawerCourse.instructor.charAt(0)}
-                    </div>
-                    <div>
-                      <h5 className="text-xs font-bold text-slate-900">{drawerCourse.instructor}</h5>
-                      <p className="text-[11px] text-slate-500">{drawerCourse.instructorRole}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Drawer Footer CTA */}
-                <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
-                  <div>
-                    <span className="text-lg font-extrabold text-slate-900 font-mono">₹{drawerCourse.price}</span>
-                    <span className="text-xs text-slate-400 line-through ml-1.5 font-mono">₹{drawerCourse.originalPrice}</span>
-                  </div>
+                {user?.role === "student" && (
                   <button
-                    onClick={() => {
-                      setDrawerCourse(null);
-                      handleCardClick(drawerCourse.id);
-                    }}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-xs shadow-md shadow-orange-500/25 transition flex items-center gap-2"
+                    type="button"
+                    onClick={() => navigate("/student/dashboard")}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#C5A880] hover:bg-[#D4BC98] text-[#070709] font-bold text-xs shadow-sm transition active:scale-95 cursor-pointer"
                   >
-                    <span>View Full Syllabus</span>
-                    <ArrowRight size={13} />
+                    <span>My Dashboard</span>
+                    <ChevronRight size={14} />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ── FEATURED COURSES CAROUSEL ─────────────────────────────────── */}
+          {featuredCourses.length > 0 && (
+            <div className="rounded-3xl border border-white/[0.04] bg-[#0F0F13] p-5 sm:p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-[#C5A880]">
+                    <Award size={18} />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-[#F5F5F7]">Featured Curriculum</h2>
+                    <p className="text-xs text-[#8E8E93]">Curated by principal architects</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategory("All");
+                    setSelectedLevel("All Levels");
+                    setSearchQuery("");
+                  }}
+                  className="text-xs font-semibold text-[#C5A880] hover:text-[#D4BC98] flex items-center gap-1 transition-colors cursor-pointer"
+                >
+                  View All Tracks <ArrowRight size={14} />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {featuredCourses.slice(0, 3).map((course, idx) => {
+                  const isWish = wishlist.some((id) => String(id) === String(course.id));
+                  const catClass = CATEGORY_COLORS[course.category] || "bg-[#14141A] text-[#E5E5E7] border-white/[0.06]";
+
+                  return (
+                    <motion.div
+                      key={course.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.25, delay: idx * 0.08 }}
+                      onClick={() => handleCardClick(course.id)}
+                      className="group relative rounded-2xl overflow-hidden bg-[#14141A] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all cursor-pointer flex flex-col justify-between"
+                    >
+                      {/* 16:9 Aspect Frame */}
+                      <div className="relative aspect-video w-full overflow-hidden bg-[#070709]">
+                        <img
+                          src={course.image}
+                          alt={course.title}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#070709]/90 via-transparent to-black/20" />
+                        <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-lg text-[10px] font-bold border backdrop-blur-md ${catClass}`}>
+                          {course.category}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={(e) => toggleWishlist(course, e)}
+                          className={`absolute top-2 right-2 p-1.5 rounded-lg backdrop-blur-md transition ${
+                            isWish ? "bg-rose-500 text-white" : "bg-black/50 hover:bg-rose-500/80 text-white"
+                          }`}
+                        >
+                          <Heart size={12} fill={isWish ? "currentColor" : "none"} />
+                        </button>
+                      </div>
+
+                      <div className="p-4 space-y-2">
+                        <h3 className="text-xs font-bold text-[#F5F5F7] group-hover:text-[#C5A880] transition line-clamp-1">
+                          {course.title}
+                        </h3>
+                        <div className="flex items-center justify-between text-xs pt-1 border-t border-white/[0.04]">
+                          <div className="flex items-center gap-1 text-[#C5A880] font-mono font-bold text-[11px]">
+                            <Star size={11} fill="currentColor" /> {course.rating.toFixed(1)}
+                          </div>
+                          <span className="text-xs font-extrabold text-[#F5F5F7] font-mono">₹{course.price}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* ── TRENDING COURSES SECTION ─────────────────────────────────── */}
+          {trendingCourses.length > 0 && (
+            <div className="rounded-3xl border border-white/[0.04] bg-[#0F0F13] p-5 sm:p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-[#C5A880]">
+                    <Zap size={18} />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-[#F5F5F7]">Trending Velocity Tracks</h2>
+                    <p className="text-xs text-[#8E8E93]">High engagement this week</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate("/courses")}
+                  className="text-xs font-semibold text-[#C5A880] hover:text-[#D4BC98] flex items-center gap-1 transition-colors cursor-pointer"
+                >
+                  View All <ArrowRight size={14} />
+                </button>
+              </div>
+
+              <div className="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2 hide-scrollbar">
+                {trendingCourses.slice(0, 6).map((course, idx) => {
+                  const isWish = wishlist.some((id) => String(id) === String(course.id));
+
+                  return (
+                    <motion.div
+                      key={course.id}
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.25, delay: idx * 0.05 }}
+                      onClick={() => handleCardClick(course.id)}
+                      className="group flex-shrink-0 w-64 rounded-2xl overflow-hidden bg-[#14141A] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all cursor-pointer flex flex-col justify-between"
+                    >
+                      <div className="relative aspect-video w-full overflow-hidden bg-[#070709]">
+                        <img
+                          src={course.image}
+                          alt={course.title}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#070709]/90 via-transparent to-transparent" />
+                        <div className="absolute top-2 left-2 flex items-center gap-1.5">
+                          <span className="px-1.5 py-0.5 rounded bg-[#C5A880] text-[#070709] text-[9px] font-bold">
+                            #{idx + 1}
+                          </span>
+                          <span className="px-1.5 py-0.5 rounded bg-black/60 text-white text-[9px] font-bold backdrop-blur-md">
+                            {course.level}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => toggleWishlist(course, e)}
+                          className={`absolute top-2 right-2 p-1 rounded-lg backdrop-blur-md transition ${
+                            isWish ? "bg-rose-500 text-white" : "bg-black/50 hover:bg-rose-500/80 text-white"
+                          }`}
+                        >
+                          <Heart size={11} fill={isWish ? "currentColor" : "none"} />
+                        </button>
+                      </div>
+
+                      <div className="p-3 space-y-1.5">
+                        <h3 className="text-xs font-bold text-[#F5F5F7] group-hover:text-[#C5A880] transition line-clamp-1">
+                          {course.title}
+                        </h3>
+                        <div className="flex items-center justify-between text-xs pt-1 border-t border-white/[0.04]">
+                          <div className="flex items-center gap-1 text-[#C5A880] font-mono font-bold text-[10px]">
+                            <Star size={10} fill="currentColor" /> {course.rating.toFixed(1)}
+                          </div>
+                          <span className="text-xs font-extrabold text-[#F5F5F7] font-mono">₹{course.price}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* ── TOOLBAR: SEARCH, CATEGORY PILLS, FILTERS & VIEW MODE ───────── */}
+          <div className="rounded-3xl border border-white/[0.04] bg-[#0F0F13] p-5 space-y-4 shadow-sm">
+            {/* Top Controls: Search, Sort & View Mode */}
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+              {/* Physics-Based Muted Gold Search Input */}
+              <div className="relative flex-1 max-w-md">
+                <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" />
+                <input
+                  type="text"
+                  placeholder="Search tracks by topic, distributed architecture, or lead..."
+                  value={searchQuery}
+                  onChange={(e) => updateSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-9 py-2 rounded-xl border border-white/[0.06] bg-[#14141A] text-xs sm:text-sm text-[#F5F5F7] placeholder-[#71717A] outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880]/30 transition-all duration-300"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => updateSearchQuery("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-[#F5F5F7] transition-colors"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+
+              {/* Right Controls: Level, Sort By & View Toggle */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                {/* Level Selector */}
+                <div className="relative">
+                  <select
+                    value={selectedLevel}
+                    onChange={(e) => updateLevelFilter(e.target.value)}
+                    className="appearance-none pl-3 pr-8 py-2 rounded-xl border border-white/[0.06] bg-[#14141A] text-xs font-semibold text-[#E5E5E7] outline-none hover:border-white/20 focus:border-[#C5A880] transition cursor-pointer"
+                  >
+                    {LEVEL_OPTIONS.map((lvl) => (
+                      <option key={lvl} value={lvl} className="bg-[#14141A] text-[#F5F5F7]">
+                        {lvl}
+                      </option>
+                    ))}
+                  </select>
+                  <Filter size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#71717A] pointer-events-none" />
+                </div>
+
+                {/* Sort Selector */}
+                <div className="relative">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="appearance-none pl-3 pr-8 py-2 rounded-xl border border-white/[0.06] bg-[#14141A] text-xs font-semibold text-[#E5E5E7] outline-none hover:border-white/20 focus:border-[#C5A880] transition cursor-pointer"
+                  >
+                    {SORT_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value} className="bg-[#14141A] text-[#F5F5F7]">
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                  <SlidersHorizontal size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#71717A] pointer-events-none" />
+                </div>
+
+                {/* View Mode Grid/List Toggle */}
+                <div className="flex items-center p-1 rounded-xl border border-white/[0.06] bg-[#14141A]">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("grid")}
+                    title="Grid View"
+                    className={`p-1.5 rounded-lg transition ${
+                      viewMode === "grid"
+                        ? "bg-[#C5A880] text-[#070709] font-bold"
+                        : "text-[#71717A] hover:text-[#F5F5F7]"
+                    }`}
+                  >
+                    <LayoutGrid size={15} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("list")}
+                    title="List View"
+                    className={`p-1.5 rounded-lg transition ${
+                      viewMode === "list"
+                        ? "bg-[#C5A880] text-[#070709] font-bold"
+                        : "text-[#71717A] hover:text-[#F5F5F7]"
+                    }`}
+                  >
+                    <List size={15} />
                   </button>
                 </div>
-              </motion.div>
+              </div>
             </div>
+
+            {/* Category Pills Bar with Shared Spring Gliding Highlight */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 hide-scrollbar">
+              {CATEGORY_OPTIONS.map((cat) => {
+                const isSel = selectedCategory === cat;
+                return (
+                  <motion.button
+                    key={cat}
+                    type="button"
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => updateCategoryFilter(cat)}
+                    className={`relative whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all select-none border cursor-pointer ${
+                      isSel
+                        ? "text-[#070709] font-bold border-[#C5A880]"
+                        : "text-[#8E8E93] hover:text-[#F5F5F7] border-white/[0.04] hover:border-white/20 bg-[#14141A]"
+                    }`}
+                  >
+                    {isSel && (
+                      <motion.div
+                        layoutId="activeCatalogCategory"
+                        className="absolute inset-0 bg-[#C5A880] rounded-xl -z-10 shadow-[0_0_15px_rgba(197,168,128,0.25)]"
+                        transition={SPRING_TRANSITION}
+                      />
+                    )}
+                    <span>{cat}</span>
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            {/* Active Filter Reset CTA Bar */}
+            {hasActiveFilters && (
+              <div className="pt-2 border-t border-white/[0.04] flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[#8E8E93] text-[11px]">Active Filters:</span>
+                  {searchQuery && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-[#E5E5E7] text-[11px]">
+                      <span>Query: "{searchQuery}"</span>
+                      <button type="button" onClick={() => setSearchQuery("")} className="hover:text-rose-400">
+                        <X size={12} />
+                      </button>
+                    </span>
+                  )}
+                  {selectedCategory !== "All" && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-[#E5E5E7] text-[11px]">
+                      <span>Category: {selectedCategory}</span>
+                      <button type="button" onClick={() => setSelectedCategory("All")} className="hover:text-rose-400">
+                        <X size={12} />
+                      </button>
+                    </span>
+                  )}
+                  {selectedLevel !== "All Levels" && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-[#E5E5E7] text-[11px]">
+                      <span>Level: {selectedLevel}</span>
+                      <button type="button" onClick={() => setSelectedLevel("All Levels")} className="hover:text-rose-400">
+                        <X size={12} />
+                      </button>
+                    </span>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={clearAllFilters}
+                  className="px-3 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/25 text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  Clear All Active Selections
+                </button>
+              </div>
+            )}
           </div>
-        </Portal>
-        )}
-      </AnimatePresence>
-    </motion.div>
+
+          {/* ── COURSE LISTING GRID / LIST ─────────────────────────────────── */}
+          {loading ? (
+            /* Synchronized Skeletons with locked 16:9 aspect ratios */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl border border-white/[0.04] bg-[#0F0F13] p-4 space-y-3 animate-pulse"
+                  style={{ animationDuration: "1.5s" }}
+                >
+                  <div className="aspect-video bg-[#14141A] rounded-xl" />
+                  <div className="h-4 bg-[#14141A] rounded w-3/4" />
+                  <div className="h-3 bg-[#14141A]/70 rounded w-1/2" />
+                  <div className="h-8 bg-[#14141A]/50 rounded mt-4" />
+                </div>
+              ))}
+            </div>
+          ) : paginatedCourses.length === 0 ? (
+            /* Empty Query Telemetry State with Alternative Domains */
+            <div className="rounded-3xl border border-white/[0.04] bg-[#0F0F13] p-8 sm:p-12 text-center space-y-6">
+              <div className="h-14 w-14 rounded-2xl bg-[#14141A] border border-white/[0.06] text-[#C5A880] flex items-center justify-center mx-auto">
+                <BookOpen size={28} />
+              </div>
+
+              <div className="space-y-1.5 max-w-md mx-auto">
+                <h3 className="text-lg font-bold text-[#F5F5F7]">No Matching Engineering Tracks</h3>
+                <p className="text-xs text-[#8E8E93] leading-relaxed">
+                  No courses matched your current filter criteria. Explore one of our core architecture specializations below or reset selections.
+                </p>
+              </div>
+
+              {/* Recommended Domains Matrix */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 max-w-4xl mx-auto pt-2 text-left">
+                {RECOMMENDED_DOMAINS.map((domain) => (
+                  <button
+                    key={domain.title}
+                    type="button"
+                    onClick={() => {
+                      setSelectedCategory(domain.title);
+                      setSearchQuery("");
+                      setSelectedLevel("All Levels");
+                      setCurrentPage(1);
+                    }}
+                    className="p-3.5 rounded-2xl bg-[#14141A] border border-white/[0.04] hover:border-[#C5A880]/40 transition-all group text-left cursor-pointer"
+                  >
+                    <span className="text-xs font-bold text-[#F5F5F7] group-hover:text-[#C5A880] block transition-colors">
+                      {domain.title}
+                    </span>
+                    <span className="text-[11px] text-[#71717A] mt-1 block leading-normal line-clamp-2">
+                      {domain.desc}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={clearAllFilters}
+                  className="px-5 py-2.5 rounded-xl bg-[#C5A880] text-[#070709] text-xs font-bold hover:bg-[#D4BC98] transition cursor-pointer"
+                >
+                  Clear All Filters & Show Full Catalog
+                </button>
+              </div>
+            </div>
+          ) : viewMode === "grid" ? (
+            /* ── GRID VIEW ── */
+            <motion.div
+              layout
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+            >
+              {paginatedCourses.map((course, idx) => {
+                const isWish = wishlist.some((id) => String(id) === String(course.id));
+                const catClass =
+                  CATEGORY_COLORS[course.category] || "bg-[#14141A] text-[#E5E5E7] border-white/[0.06]";
+
+                return (
+                  <motion.div
+                    key={course.id}
+                    layout
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2, delay: idx * 0.03 }}
+                    whileHover={{ y: -4 }}
+                    onClick={() => handleCardClick(course.id)}
+                    className="group flex flex-col justify-between rounded-2xl border border-white/[0.04] bg-[#0F0F13] hover:border-[#C5A880]/40 hover:shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)] transition-all duration-300 overflow-hidden cursor-pointer"
+                  >
+                    <div>
+                      {/* Card 16:9 Aspect Ratio Frame */}
+                      <div className="relative aspect-video w-full overflow-hidden bg-[#070709]">
+                        <img
+                          src={course.image}
+                          alt={course.title}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.target.src =
+                              "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80";
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#070709]/95 via-transparent to-black/20" />
+
+                        {/* Category & Level Badges */}
+                        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                          <span className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border backdrop-blur-md ${catClass}`}>
+                            {course.category}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-[#0F0F13]/90 text-[#F5F5F7] border border-white/[0.06] backdrop-blur-md">
+                            {course.level}
+                          </span>
+                        </div>
+
+                        {/* Interactive Wishlist & Quick Preview Buttons */}
+                        <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDrawerCourse(course);
+                            }}
+                            title="Quick View"
+                            className="p-1.5 rounded-lg bg-[#0F0F13]/80 hover:bg-[#14141A] text-[#E5E5E7] border border-white/[0.06] backdrop-blur-md transition"
+                          >
+                            <Eye size={13} />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={(e) => toggleWishlist(course, e)}
+                            title={isWish ? "Remove from Saved" : "Save Course"}
+                            className={`p-1.5 rounded-lg backdrop-blur-md transition ${
+                              isWish
+                                ? "bg-rose-500 text-white"
+                                : "bg-[#0F0F13]/80 hover:bg-rose-500/80 text-white border border-white/[0.06]"
+                            }`}
+                          >
+                            <Heart size={13} fill={isWish ? "currentColor" : "none"} />
+                          </button>
+                        </div>
+
+                        {/* Duration & Lessons Pill */}
+                        <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[11px] text-[#E5E5E7] font-mono">
+                          <span className="flex items-center gap-1 bg-[#0F0F13]/90 border border-white/[0.06] px-2 py-0.5 rounded-md backdrop-blur-md">
+                            <Clock size={11} className="text-[#C5A880]" /> {course.duration}
+                          </span>
+                          <span className="flex items-center gap-1 bg-[#0F0F13]/90 border border-white/[0.06] px-2 py-0.5 rounded-md backdrop-blur-md">
+                            <BookOpen size={11} className="text-[#C5A880]" /> {course.lessonsCount} Lessons
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Body Content */}
+                      <div className="p-4 space-y-2">
+                        <h3 className="text-sm font-bold text-[#F5F5F7] group-hover:text-[#C5A880] transition-colors line-clamp-2 leading-snug">
+                          {course.title}
+                        </h3>
+
+                        <p className="text-xs text-[#8E8E93] line-clamp-2 leading-relaxed">
+                          {course.description}
+                        </p>
+
+                        {/* Instructor Info */}
+                        <div className="pt-2 flex items-center justify-between text-xs text-[#8E8E93] border-t border-white/[0.04]">
+                          <div className="flex items-center gap-1.5">
+                            <div className="h-5 w-5 rounded-full bg-[#14141A] border border-white/[0.06] text-[#E5E5E7] flex items-center justify-center font-bold text-[9px]">
+                              {course.instructor.charAt(0)}
+                            </div>
+                            <span className="font-semibold text-[#E5E5E7] truncate">{course.instructor}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-[#C5A880] font-mono font-bold text-[11px]">
+                            <Star size={12} fill="currentColor" /> {course.rating.toFixed(1)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Footer: Price & CTA */}
+                    <div className="p-4 pt-2 border-t border-white/[0.04] flex items-center justify-between">
+                      <div>
+                        <span className="text-base font-extrabold text-[#F5F5F7] font-mono">
+                          ₹{course.price}
+                        </span>
+                        {course.originalPrice > course.price && (
+                          <span className="text-xs text-[#71717A] line-through ml-1.5 font-mono">
+                            ₹{course.originalPrice}
+                          </span>
+                        )}
+                      </div>
+
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-[#C5A880] group-hover:bg-[#C5A880] group-hover:text-[#070709] text-xs font-bold transition-all">
+                        <span>View Track</span>
+                        <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+                      </span>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          ) : (
+            /* ── LIST VIEW ── */
+            <motion.div layout className="space-y-3">
+              {paginatedCourses.map((course, idx) => {
+                const isWish = wishlist.some((id) => String(id) === String(course.id));
+                const catClass =
+                  CATEGORY_COLORS[course.category] || "bg-[#14141A] text-[#E5E5E7] border-white/[0.06]";
+
+                return (
+                  <motion.div
+                    key={course.id}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.15, delay: idx * 0.02 }}
+                    onClick={() => handleCardClick(course.id)}
+                    className="group flex flex-col sm:flex-row items-stretch sm:items-center justify-between rounded-2xl border border-white/[0.04] bg-[#0F0F13] p-3.5 sm:p-4 hover:border-[#C5A880]/40 transition-all cursor-pointer gap-4"
+                  >
+                    {/* 16:9 Aspect Ratio Thumbnail */}
+                    <div className="relative aspect-video sm:h-28 sm:w-44 shrink-0 rounded-xl overflow-hidden bg-[#070709]">
+                      <img
+                        src={course.image}
+                        alt={course.title}
+                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                      />
+                      <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-lg text-[10px] font-bold border backdrop-blur-md ${catClass}`}>
+                        {course.category}
+                      </span>
+                    </div>
+
+                    {/* Details */}
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center gap-2 text-xs text-[#8E8E93] font-mono">
+                        <span className="font-bold text-[#E5E5E7]">{course.level}</span>
+                        <span>•</span>
+                        <span className="flex items-center gap-1">
+                          <Clock size={11} className="text-[#C5A880]" /> {course.duration}
+                        </span>
+                        <span>•</span>
+                        <span className="flex items-center gap-1 text-[#C5A880] font-bold">
+                          <Star size={11} fill="currentColor" /> {course.rating.toFixed(1)}
+                        </span>
+                      </div>
+
+                      <h3 className="text-sm font-bold text-[#F5F5F7] group-hover:text-[#C5A880] transition truncate">
+                        {course.title}
+                      </h3>
+
+                      <p className="text-xs text-[#8E8E93] line-clamp-1">
+                        {course.description}
+                      </p>
+
+                      <p className="text-[11px] text-[#71717A]">
+                        Instructor: <strong className="text-[#E5E5E7] font-semibold">{course.instructor}</strong>
+                      </p>
+                    </div>
+
+                    {/* Price & CTA */}
+                    <div className="sm:border-l sm:border-white/[0.04] sm:pl-4 flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0">
+                      <div className="text-left sm:text-right">
+                        <div className="text-base font-extrabold text-[#F5F5F7] font-mono">₹{course.price}</div>
+                        {course.originalPrice > course.price && (
+                          <div className="text-[11px] text-[#71717A] line-through font-mono">₹{course.originalPrice}</div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={(e) => toggleWishlist(course, e)}
+                          className={`p-2 rounded-xl border border-white/[0.06] transition ${
+                            isWish ? "bg-rose-500 text-white border-rose-500" : "hover:bg-[#14141A] text-[#8E8E93]"
+                          }`}
+                        >
+                          <Heart size={14} fill={isWish ? "currentColor" : "none"} />
+                        </button>
+                        <span className="px-3 py-1.5 rounded-xl bg-[#C5A880] text-[#070709] text-xs font-bold hover:bg-[#D4BC98] transition">
+                          Enroll
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          )}
+
+          {/* ── PAGINATION CONTROLS ───────────────────────────────────────── */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between pt-2 px-2 text-xs text-[#8E8E93]">
+              <p className="font-mono">
+                Showing <strong className="text-[#F5F5F7]">{(currentPage - 1) * itemsPerPage + 1}</strong> to{" "}
+                <strong className="text-[#F5F5F7]">
+                  {Math.min(currentPage * itemsPerPage, filteredAndSortedCourses.length)}
+                </strong>{" "}
+                of <strong className="text-[#F5F5F7]">{filteredAndSortedCourses.length}</strong> courses
+              </p>
+
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-xl border border-white/[0.06] bg-[#0F0F13] text-[#8E8E93] hover:text-white disabled:opacity-30 transition cursor-pointer"
+                >
+                  <ChevronLeft size={14} />
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
+                  <button
+                    key={pg}
+                    type="button"
+                    onClick={() => setCurrentPage(pg)}
+                    className={`h-8 w-8 rounded-xl text-xs font-mono font-bold transition cursor-pointer ${
+                      currentPage === pg
+                        ? "bg-[#C5A880] text-[#070709]"
+                        : "border border-white/[0.06] bg-[#0F0F13] text-[#8E8E93] hover:text-white"
+                    }`}
+                  >
+                    {pg}
+                  </button>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-xl border border-white/[0.06] bg-[#0F0F13] text-[#8E8E93] hover:text-white disabled:opacity-30 transition cursor-pointer"
+                >
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── QUICK PREVIEW SLIDE-OUT DRAWER ────────────────────────────── */}
+          <AnimatePresence>
+            {drawerCourse && (
+              <Portal>
+                <div className="fixed inset-0 z-50 overflow-hidden">
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setDrawerCourse(null)}
+                    className="absolute inset-0 bg-black/75 backdrop-blur-xs transition-opacity"
+                  />
+
+                  <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+                    <motion.div
+                      initial={{ x: "100%" }}
+                      animate={{ x: 0 }}
+                      exit={{ x: "100%" }}
+                      transition={{ type: "spring", stiffness: 350, damping: 35 }}
+                      className="w-screen max-w-md bg-[#0F0F13] border-l border-white/[0.08] shadow-2xl flex flex-col justify-between text-[#F5F5F7]"
+                    >
+                      <div className="overflow-y-auto p-6 space-y-4">
+                        {/* Drawer Header */}
+                        <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
+                          <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-[#14141A] text-[#C5A880] border border-white/[0.06] font-mono">
+                            {drawerCourse.category}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setDrawerCourse(null)}
+                            className="p-1.5 rounded-lg hover:bg-white/[0.04] text-[#8E8E93] hover:text-white transition"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+
+                        {/* Thumbnail */}
+                        <div className="relative aspect-video rounded-2xl overflow-hidden bg-black border border-white/[0.04]">
+                          <img
+                            src={drawerCourse.image}
+                            alt={drawerCourse.title}
+                            className="h-full w-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                          <div className="absolute bottom-3 left-3 text-[#E5E5E7] font-mono text-xs">
+                            {drawerCourse.level} • {drawerCourse.duration}
+                          </div>
+                        </div>
+
+                        <div>
+                          <h2 className="text-lg font-bold text-[#F5F5F7]">{drawerCourse.title}</h2>
+                          <p className="text-xs text-[#8E8E93] mt-1 leading-relaxed">
+                            {drawerCourse.description}
+                          </p>
+                        </div>
+
+                        {/* Highlights */}
+                        <div className="space-y-2 pt-2 border-t border-white/[0.04]">
+                          <h4 className="text-xs font-bold text-[#E5E5E7] uppercase font-mono tracking-wider">
+                            Curriculum Inclusions
+                          </h4>
+                          <ul className="space-y-1.5 text-xs text-[#A1A1AA]">
+                            <li className="flex items-center gap-2">
+                              <CheckCircle2 size={13} className="text-[#C5A880]" />
+                              <span>{drawerCourse.modulesCount} Comprehensive technical modules</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <CheckCircle2 size={13} className="text-[#C5A880]" />
+                              <span>Verified certificate on completion</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <CheckCircle2 size={13} className="text-[#C5A880]" />
+                              <span>Direct faculty mentorship & live Q&A</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <CheckCircle2 size={13} className="text-[#C5A880]" />
+                              <span>Full lifetime access on desktop & mobile</span>
+                            </li>
+                          </ul>
+                        </div>
+
+                        {/* Faculty */}
+                        <div className="p-3 rounded-xl border border-white/[0.04] bg-[#14141A] flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-xl bg-[#070709] border border-white/[0.06] text-[#C5A880] flex items-center justify-center font-bold text-xs">
+                            {drawerCourse.instructor.charAt(0)}
+                          </div>
+                          <div>
+                            <h5 className="text-xs font-bold text-[#F5F5F7]">{drawerCourse.instructor}</h5>
+                            <p className="text-[11px] text-[#8E8E93]">{drawerCourse.instructorRole}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Drawer Footer CTA */}
+                      <div className="p-4 border-t border-white/[0.04] bg-[#070709] flex items-center justify-between">
+                        <div>
+                          <span className="text-lg font-extrabold text-[#F5F5F7] font-mono">₹{drawerCourse.price}</span>
+                          <span className="text-xs text-[#71717A] line-through ml-1.5 font-mono">₹{drawerCourse.originalPrice}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDrawerCourse(null);
+                            handleCardClick(drawerCourse.id);
+                          }}
+                          className="px-5 py-2.5 rounded-xl bg-[#C5A880] hover:bg-[#D4BC98] text-[#070709] font-bold text-xs transition flex items-center gap-2 cursor-pointer"
+                        >
+                          <span>View Full Syllabus</span>
+                          <ArrowRight size={13} />
+                        </button>
+                      </div>
+                    </motion.div>
+                  </div>
+                </div>
+              </Portal>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
     </>
   );
 };

@@ -45,7 +45,8 @@ import { Skeleton } from '../../design-system/primitives/Skeleton';
 import toast from 'react-hot-toast';
 import LiveDiscussionHub from '../../components/classroom/LiveDiscussionHub';
 
-const SPRING = { type: 'spring', stiffness: 350, damping: 28 };
+// Intentional spring physics configuration per architectural specification (damping: 30 for jitter-free accordions)
+const SPRING = { type: 'spring', stiffness: 280, damping: 30 };
 
 // Default sample lesson videos for smooth HTML5 playback demonstration
 const SAMPLE_STREAM = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
@@ -92,6 +93,28 @@ export const ClassroomView = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [quizResult, setQuizResult] = useState(null);
   const [quizSubmitting, setQuizSubmitting] = useState(false);
+  const [showQuizExitModal, setShowQuizExitModal] = useState(false);
+
+  // Hotkey answer selection (1, 2, 3, 4) in Quiz mode
+  useEffect(() => {
+    if (!quizModeActive || quizCompleted) return;
+    const handleKeyDown = (e) => {
+      const currentQ = questionsData[currentQuestionIndex];
+      if (!currentQ || !currentQ.options) return;
+      const key = e.key;
+      let optIdx = -1;
+      if (key === '1') optIdx = 0;
+      else if (key === '2') optIdx = 1;
+      else if (key === '3') optIdx = 2;
+      else if (key === '4') optIdx = 3;
+
+      if (optIdx >= 0 && optIdx < currentQ.options.length) {
+        handleSelectOption(currentQ.id, currentQ.options[optIdx].id);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [quizModeActive, quizCompleted, currentQuestionIndex, questionsData]);
 
   // Discussion state
   const [questionsList, setQuestionsList] = useState([
@@ -273,6 +296,65 @@ export const ClassroomView = () => {
       isMounted = false;
     };
   }, [courseId]);
+
+  // Live stream reconnection telemetry state
+  const [isReconnecting, setIsReconnecting] = useState(typeof navigator !== 'undefined' ? !navigator.onLine : false);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsReconnecting(false);
+      toast.success('Live stream connection restored');
+    };
+    const handleOffline = () => {
+      setIsReconnecting(true);
+      toast.error('Network dropped: attempting stream reconnection');
+    };
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  // Keyboard accessibility layer for media player controls
+  const handlePlayerKeyDown = (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.code === 'Space' || e.key === 'k') {
+      e.preventDefault();
+      togglePlay();
+    } else if (e.code === 'ArrowLeft' || e.key === 'j') {
+      e.preventDefault();
+      if (videoRef.current) {
+        videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 5);
+      }
+    } else if (e.code === 'ArrowRight' || e.key === 'l') {
+      e.preventDefault();
+      if (videoRef.current) {
+        videoRef.current.currentTime = Math.min(duration, videoRef.current.currentTime + 5);
+      }
+    } else if (e.code === 'ArrowUp') {
+      e.preventDefault();
+      setVolume((prev) => {
+        const next = Math.min(1, prev + 0.1);
+        if (videoRef.current) videoRef.current.volume = next;
+        return next;
+      });
+    } else if (e.code === 'ArrowDown') {
+      e.preventDefault();
+      setVolume((prev) => {
+        const next = Math.max(0, prev - 0.1);
+        if (videoRef.current) videoRef.current.volume = next;
+        return next;
+      });
+    } else if (e.key === 'm' || e.key === 'M') {
+      e.preventDefault();
+      toggleMute();
+    } else if (e.key === 'f' || e.key === 'F') {
+      e.preventDefault();
+      toggleFullscreen();
+    }
+  };
 
   // =========================================================================
   // 2. VIDEO PLAYER CONTROLS & TIMELINE
@@ -605,11 +687,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
           <div className="flex items-center gap-4">
             <button
               type="button"
-              onClick={() => {
-                if (window.confirm('Exit assessment? Your current timer will be forfeit.')) {
-                  setQuizModeActive(false);
-                }
-              }}
+              onClick={() => setShowQuizExitModal(true)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-ink-300 hover:text-white border border-white/5 transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -633,8 +711,8 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                   REMAINING TIME
                 </span>
                 <span
-                  className={`font-mono text-sm sm:text-base font-extrabold tracking-wider ${
-                    timerRatio <= 0.1 ? 'text-rose-400 animate-pulse' : 'text-brand-accent'
+                  className={`font-mono text-sm sm:text-base font-extrabold tracking-wider transition-colors duration-500 ${
+                    timerRatio <= 0.1 ? 'text-rose-400 animate-pulse' : timerRatio <= 0.3 ? 'text-amber-400' : 'text-[#C5A880]'
                   }`}
                 >
                   {formatTelemetryTime(quizTimerMs)}
@@ -690,34 +768,38 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                   </div>
                 )}
 
-                {/* Modular Spring-Framed Answer Cards */}
+                {/* Modular Spring-Framed Answer Cards: Single Border & Physics scale: 0.99 */}
                 <div className="grid grid-cols-1 gap-3.5">
-                  {currentQ.options.map((opt) => {
+                  {currentQ.options.map((opt, optIdx) => {
                     const isSelected = selectedAnswers[currentQ.id] === opt.id;
                     return (
                       <motion.button
                         key={opt.id}
                         type="button"
-                        whileHover={{ scale: 1.012, y: -1 }}
-                        whileTap={{ scale: 0.988 }}
+                        whileHover={{ scale: 1.008 }}
+                        whileTap={{ scale: 0.99 }}
+                        transition={SPRING}
                         onClick={() => handleSelectOption(currentQ.id, opt.id)}
-                        className={`p-4 sm:p-5 rounded-2xl border text-left transition-all relative overflow-hidden flex items-start gap-4 select-none ${
+                        className={`p-4 sm:p-5 rounded-2xl border text-left transition-all relative overflow-hidden flex items-start gap-4 select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C5A880] ${
                           isSelected
-                            ? 'bg-brand-600/20 border-brand-500 shadow-glow-brand text-white'
+                            ? 'bg-[#C5A880]/15 border-[#C5A880] text-white'
                             : 'bg-obsidian-900/60 border-obsidian-800/60 text-ink-300 hover:text-white hover:bg-obsidian-850'
                         }`}
                       >
                         <div
                           className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold font-mono shrink-0 transition-colors ${
                             isSelected
-                              ? 'bg-brand-500 text-white shadow-sm'
+                              ? 'bg-[#C5A880] text-[#070709] shadow-sm'
                               : 'bg-white/5 border border-white/10 text-ink-400'
                           }`}
                         >
                           {opt.id}
                         </div>
-                        <span className="text-sm font-medium leading-relaxed pt-0.5">
+                        <span className="text-sm font-medium leading-relaxed pt-0.5 flex-1">
                           {opt.text}
+                        </span>
+                        <span className="text-[10px] text-[#52525B] font-mono shrink-0 self-center hidden sm:inline">
+                          [{optIdx + 1}]
                         </span>
                       </motion.button>
                     );
@@ -868,6 +950,50 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
             )}
           </AnimatePresence>
         </main>
+
+        {/* Unsaved Response Alert Dialog */}
+        <AnimatePresence>
+          {showQuizExitModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={SPRING}
+                className="w-full max-w-md rounded-3xl bg-[#0F0F13] border border-white/[0.08] p-6 shadow-2xl space-y-4"
+              >
+                <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#F5F5F7]">Exit Assessment Session?</h3>
+                  <p className="text-xs text-[#8E8E93] mt-1.5 leading-relaxed">
+                    Your ongoing countdown timer will be forfeited and your current attempt discarded. Are you sure you wish to exit?
+                  </p>
+                </div>
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowQuizExitModal(false)}
+                  >
+                    Resume Assessment
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => {
+                      setShowQuizExitModal(false);
+                      setQuizModeActive(false);
+                    }}
+                  >
+                    Abandon & Exit
+                  </Button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     );
   }
@@ -876,22 +1002,22 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
   // RENDER: SPLIT-WINDOW VIDEO CLASSROOM CANVAS
   // =========================================================================
   return (
-    <div className="w-full max-w-[1700px] mx-auto space-y-6">
+    <div className="w-full space-y-6">
       {/* Top Navigation & Course Breadcrumb Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-obsidian-800/40">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-white/[0.04]">
         <div className="flex items-center gap-3">
           <Link
             to="/student/my-learning"
-            className="p-2 rounded-xl text-ink-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 transition-colors"
+            className="p-2 rounded-xl text-[#8E8E93] hover:text-white hover:bg-white/[0.04] border border-transparent hover:border-white/[0.04] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-brand-400" />
+            <h1 className="text-lg sm:text-xl font-bold text-[#F5F5F7] tracking-tight flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-[#C5A880]" />
               <span>{course?.title || 'Interactive Course Player'}</span>
             </h1>
-            <p className="text-xs text-ink-400 mt-0.5">
+            <p className="text-xs text-[#8E8E93] mt-0.5">
               Current Track: <span className="text-white font-medium">{activeLecture?.title || 'Lecture Stream'}</span>
             </p>
           </div>
@@ -901,12 +1027,12 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
         <div className="flex items-center gap-4 self-start sm:self-auto">
           <div className="w-36 sm:w-48 space-y-1">
             <div className="flex items-center justify-between text-[11px] font-bold">
-              <span className="text-ink-400">Track Progress</span>
+              <span className="text-[#8E8E93]">Track Progress</span>
               <span className="text-emerald-400 font-mono">{progressPercentage}%</span>
             </div>
-            <div className="w-full h-1.5 rounded-full bg-obsidian-800 overflow-hidden">
+            <div className="w-full h-1.5 rounded-full bg-[#14141A] overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-brand-600 to-emerald-400 rounded-full"
+                className="h-full bg-[#C5A880] rounded-full"
                 animate={{ width: `${progressPercentage}%` }}
                 transition={SPRING}
               />
@@ -926,9 +1052,27 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
           {/* HTML5 Video Player Container */}
           <div
             ref={playerContainerRef}
+            tabIndex={0}
+            onKeyDown={handlePlayerKeyDown}
             onMouseMove={handleMouseMovePlayer}
-            className="relative w-full aspect-video rounded-3xl overflow-hidden bg-black border border-obsidian-800/80 shadow-elevated-lg group"
+            className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black border border-white/[0.04] shadow-2xl group focus:outline-none focus-visible:ring-1 focus-visible:ring-[#C5A880]"
+            aria-label="Video Player Canvas. Press Spacebar or K to play/pause, Left/Right arrow to seek, Up/Down for volume, M to mute, F for fullscreen."
           >
+            {/* Live Stream Reconnection Overlay */}
+            <AnimatePresence>
+              {isReconnecting && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  className="absolute top-4 right-4 z-30 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0F0F13]/90 border border-amber-500/40 text-amber-300 text-xs backdrop-blur-md shadow-lg"
+                >
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin text-amber-400" />
+                  <span className="font-mono text-[11px]">Stream reconnecting...</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <video
               ref={videoRef}
               src={activeLecture?.videoUrl || SAMPLE_STREAM}
@@ -1068,17 +1212,17 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                     type="button"
                     onClick={() => setActiveTab(tab.id)}
                     className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors select-none ${
-                      isSelected ? 'text-white' : 'text-ink-400 hover:text-white'
+                      isSelected ? 'text-white' : 'text-[#A1A1AA] hover:text-white'
                     }`}
                   >
                     {isSelected && (
                       <motion.div
                         layoutId="classroomTabIndicator"
-                        className="absolute inset-0 bg-brand-600/20 border border-brand-500/40 rounded-xl -z-10"
+                        className="absolute inset-0 bg-[#C5A880]/15 border border-[#C5A880]/40 rounded-xl -z-10 shadow-[0_0_15px_rgba(197,168,128,0.06)]"
                         transition={SPRING}
                       />
                     )}
-                    <Icon className="w-4 h-4 text-brand-300" />
+                    <Icon className={`w-4 h-4 ${isSelected ? 'text-[#C5A880]' : 'text-[#71717A]'}`} />
                     <span>{tab.label}</span>
                   </button>
                 );
@@ -1241,23 +1385,23 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                                 onClick={() => selectLecture(lecture)}
                                 className={`w-full p-2.5 rounded-xl flex items-center justify-between text-left transition-all ${
                                   isCurrent
-                                    ? 'bg-brand-600/20 border border-brand-500/40 text-white shadow-glow-brand'
-                                    : 'hover:bg-white/5 text-ink-300 hover:text-white'
+                                    ? 'bg-[#C5A880]/15 border border-[#C5A880]/40 text-white'
+                                    : 'hover:bg-white/[0.04] text-[#A1A1AA] hover:text-white'
                                 }`}
                               >
                                 <div className="flex items-center gap-2.5 min-w-0">
                                   {isDone ? (
                                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                                   ) : isCurrent ? (
-                                    <PlayCircle className="w-4 h-4 text-brand-accent shrink-0 animate-pulse" />
+                                    <PlayCircle className="w-4 h-4 text-[#C5A880] shrink-0" />
                                   ) : (
-                                    <Circle className="w-4 h-4 text-ink-600 shrink-0" />
+                                    <Circle className="w-4 h-4 text-[#52525B] shrink-0" />
                                   )}
                                   <span className="text-xs font-medium truncate">
                                     {lecture.title}
                                   </span>
                                 </div>
-                                <span className="text-[10px] text-ink-500 font-mono shrink-0 ml-2">
+                                <span className="text-[10px] text-[#71717A] font-mono shrink-0 ml-2">
                                   {lecture.duration}
                                 </span>
                               </button>
@@ -1270,20 +1414,20 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                               <button
                                 type="button"
                                 onClick={() => startQuizSession(section.quiz)}
-                                className="w-full p-3 rounded-xl bg-gradient-to-r from-brand-accent/15 via-brand-600/10 to-transparent border border-brand-accent/30 hover:border-brand-accent flex items-center justify-between text-left transition-all group"
+                                className="w-full p-3 rounded-xl bg-[#14141A] border border-white/[0.06] hover:border-[#C5A880]/40 flex items-center justify-between text-left transition-all group"
                               >
                                 <div className="flex items-center gap-2.5">
-                                  <Award className="w-4 h-4 text-cyan-300 group-hover:scale-110 transition-transform" />
+                                  <Award className="w-4 h-4 text-[#C5A880] group-hover:scale-110 transition-transform" />
                                   <div>
                                     <p className="text-xs font-bold text-white">
                                       {section.quiz.title}
                                     </p>
-                                    <span className="text-[10px] text-cyan-300">
+                                    <span className="text-[10px] text-[#A1A1AA]">
                                       {section.quiz.durationMinutes} min • {section.quiz.questionsCount || 4} Questions
                                     </span>
                                   </div>
                                 </div>
-                                <ArrowRight className="w-4 h-4 text-cyan-300 group-hover:translate-x-1 transition-transform" />
+                                <ArrowRight className="w-4 h-4 text-[#C5A880] group-hover:translate-x-1 transition-transform" />
                               </button>
                             </div>
                           )}

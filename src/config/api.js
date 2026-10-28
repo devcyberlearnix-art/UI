@@ -1,8 +1,6 @@
 // In development, use empty string to leverage Vite proxy
 // In production, use the full backend URL
-const API_BASE_URL = import.meta.env.DEV
-  ? ""
-  : (import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev").replace(/\/+$/, "");
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
 
 // Backend photo proxy base URL - matches the API gateway URL
 export const PHOTO_PROXY_BASE = API_BASE_URL;

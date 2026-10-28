@@ -27,3 +27,10 @@ nul
 *.timestamp*
 .opencode/
 scratch/
+
+# Agent & tool directories
+.agent/
+.agents/
+.codex/
+.impeccable/
+telemetry_snapshots/

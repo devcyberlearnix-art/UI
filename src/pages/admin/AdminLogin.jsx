@@ -226,15 +226,15 @@ const AdminLogin = () => {
         { value: "24/7", label: "Control" },
       ]}
     >
-      <div className="mb-8 text-center">
-        <div className="inline-flex rounded-2xl bg-gradient-to-r from-orange-500 to-cyan-600 p-3 text-white shadow-lg">
-          <LogIn size={30} />
+      <div className="mb-6 text-center space-y-2">
+        <div className="mx-auto w-12 h-12 rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shadow-sm">
+          <LogIn size={22} className="text-[#C5A880]" />
         </div>
-        <h1 className="mt-3 text-2xl font-bold text-slate-900">Admin Sign In</h1>
-        <p className="mt-1 text-sm text-slate-500">Choose password or one-time code login</p>
+        <h1 className="text-2xl font-extrabold text-[#F5F5F7] tracking-tight">Admin Command Sign In</h1>
+        <p className="text-xs text-[#8E8E93]">Choose password or one-time passcode authentication</p>
       </div>
 
-      <div className="mb-6 grid grid-cols-2 rounded-xl border border-slate-200 bg-slate-100 p-1">
+      <div className="mb-6 grid grid-cols-2 p-1 rounded-2xl bg-[#14141A] border border-white/[0.04]">
         <button
           type="button"
           onClick={() => {
@@ -242,8 +242,8 @@ const AdminLogin = () => {
             setOtpSent(false);
             setError("");
           }}
-          className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
-            loginMethod === "password" ? "bg-white text-orange-600 shadow" : "text-slate-600"
+          className={`py-2 text-xs font-semibold rounded-xl transition-all ${
+            loginMethod === "password" ? "bg-[#C5A880] text-[#070709] font-bold shadow-sm" : "text-[#8E8E93] hover:text-[#F5F5F7]"
           }`}
         >
           Password
@@ -255,11 +255,11 @@ const AdminLogin = () => {
             setOtpSent(false);
             setError("");
           }}
-          className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
-            loginMethod === "otp" ? "bg-white text-orange-600 shadow" : "text-slate-600"
+          className={`py-2 text-xs font-semibold rounded-xl transition-all ${
+            loginMethod === "otp" ? "bg-[#C5A880] text-[#070709] font-bold shadow-sm" : "text-[#8E8E93] hover:text-[#F5F5F7]"
           }`}
         >
-          OTP
+          OTP Code
         </button>
       </div>
 

@@ -171,13 +171,18 @@ const Roles = () => {
   const loadRoles = async () => {
     setLoading(true);
     try {
-      // In production: const data = await adminApi.getRoles();
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      if (adminApi.getRoles) {
+        const response = await adminApi.getRoles();
+        const raw = response?.data || response?.roles || response;
+        if (Array.isArray(raw) && raw.length > 0) {
+          setRoles(raw);
+          return;
+        }
+      }
       setRoles(mockRoles);
     } catch (error) {
-      toast.error("Failed to load roles");
-      console.error(error);
+      console.warn('[Roles] Live getRoles fallback to system RBAC matrix');
+      setRoles(mockRoles);
     } finally {
       setLoading(false);
     }

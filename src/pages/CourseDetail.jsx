@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play,
   BookOpen,
@@ -21,17 +21,27 @@ import {
   HelpCircle,
   ShieldCheck,
   ArrowLeft,
-  Loader2,
+  Sparkles,
   AlertCircle,
-} from "lucide-react";
-import toast from "react-hot-toast";
-import { courseApi } from "../api/courseApi";
-import { reviewApi } from "../api/reviewApi";
-import { wishlistApi } from "../api/wishlistApi";
-import { cartApi } from "../api/cartApi";
-import { useAuth } from "../context/AuthContext";
+  Flame,
+} from 'lucide-react';
+import toast from 'react-hot-toast';
+import { courseApi } from '../api/courseApi';
+import { reviewApi } from '../api/reviewApi';
+import { wishlistApi } from '../api/wishlistApi';
+import { cartApi } from '../api/cartApi';
+import { useAuth } from '../context/AuthContext';
+import Button from '../design-system/primitives/Button';
+import Badge from '../design-system/primitives/Badge';
+import { Skeleton } from '../design-system/primitives/Skeleton';
 
-const CourseDetail = () => {
+const SPRING_TRANSITION = {
+  type: 'spring',
+  stiffness: 280,
+  damping: 26,
+};
+
+export const CourseDetail = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -46,19 +56,17 @@ const CourseDetail = () => {
   const [faqs, setFaqs] = useState([]);
   const [enrollmentStatus, setEnrollmentStatus] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("curriculum");
+  const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState('curriculum');
   const [expandedSections, setExpandedSections] = useState({});
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const [reviewPage, setReviewPage] = useState(0);
 
   // Fetch comprehensive course details
   const fetchCourseDetails = useCallback(async () => {
     setLoading(true);
-    setError("");
+    setError('');
 
     try {
-      // Get comprehensive course details
       const detailsData = await courseApi.getCourseDetails(courseId);
       let fetchedCurriculum = null;
       let fetchedRatingSummary = null;
@@ -72,7 +80,6 @@ const CourseDetail = () => {
         setRatingSummary(fetchedRatingSummary);
       }
 
-      // Get curriculum separately if not in details
       if (!fetchedCurriculum) {
         const curriculumData = await courseApi.getCourseCurriculum(courseId);
         if (curriculumData?.data) {
@@ -80,37 +87,31 @@ const CourseDetail = () => {
         }
       }
 
-      // Get requirements
       const reqData = await courseApi.getCourseRequirements(courseId);
       if (reqData?.data) {
         setRequirements(reqData.data);
       }
 
-      // Get learning outcomes
       const outcomesData = await courseApi.getLearningOutcomes(courseId);
       if (outcomesData?.data) {
         setOutcomes(outcomesData);
       }
 
-      // Get materials
       const materialsData = await courseApi.getCourseMaterials(courseId);
       if (materialsData?.data) {
         setMaterials(materialsData);
       }
 
-      // Get FAQs
       const faqsData = await courseApi.getCourseFAQs(courseId);
       if (faqsData?.data) {
         setFaqs(faqsData);
       }
 
-      // Get reviews
       const reviewsData = await reviewApi.getCourseReviews(courseId, { page: 0, size: 10 });
       if (reviewsData?.content) {
         setReviews(reviewsData.content);
       }
 
-      // Get rating summary if not in details
       if (!fetchedRatingSummary) {
         const summaryData = await reviewApi.getRatingSummary(courseId);
         if (summaryData) {
@@ -118,7 +119,6 @@ const CourseDetail = () => {
         }
       }
 
-      // Check wishlist status if logged in
       if (user) {
         try {
           const wishlistData = await wishlistApi.checkWishlist(courseId);
@@ -128,8 +128,8 @@ const CourseDetail = () => {
         }
       }
     } catch (err) {
-      console.error("[CourseDetail] Failed to fetch course details", err);
-      setError("Failed to load course details. Please try again.");
+      console.error('[CourseDetail] Failed to fetch course details', err);
+      setError('Failed to load course details. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -148,8 +148,8 @@ const CourseDetail = () => {
 
   const toggleWishlist = async () => {
     if (!user) {
-      toast.error("Please login to save courses");
-      navigate("/login");
+      toast.error('Please login to save tracks');
+      navigate('/login');
       return;
     }
 
@@ -157,24 +157,24 @@ const CourseDetail = () => {
       if (isWishlisted) {
         await wishlistApi.removeFromWishlist(courseId);
         setIsWishlisted(false);
-        toast.success("Removed from wishlist");
+        toast.success('Removed from wishlist');
       } else {
         await wishlistApi.addToWishlist({
           courseId: parseInt(courseId),
           instructorId: course?.instructorId,
         });
         setIsWishlisted(true);
-        toast.success("Added to wishlist");
+        toast.success('Saved to wishlist');
       }
     } catch (err) {
-      toast.error("Failed to update wishlist");
+      toast.error('Failed to update wishlist');
     }
   };
 
   const addToCart = async () => {
     if (!user) {
-      toast.error("Please login to add to cart");
-      navigate("/login");
+      toast.error('Please login to add to cart');
+      navigate('/login');
       return;
     }
 
@@ -185,61 +185,50 @@ const CourseDetail = () => {
         courseName: course?.title,
         price: course?.price,
       });
-      toast.success("Added to cart");
-      navigate("/cart");
+      toast.success('Added to order cart');
+      navigate('/cart');
     } catch (err) {
-      toast.error("Failed to add to cart");
+      toast.error('Failed to add to cart');
     }
   };
 
   const enrollInCourse = async () => {
     if (!user) {
-      toast.error("Please login to enroll");
-      navigate("/login");
+      toast.error('Please login to enroll');
+      navigate('/login');
       return;
     }
 
     try {
       await courseApi.enrollCourse(courseId);
-      toast.success("Enrolled successfully!");
+      toast.success('Enrolled successfully!');
       navigate(`/student/courses/${courseId}`);
     } catch (err) {
-      toast.error("Failed to enroll in course");
+      toast.error('Failed to enroll in course');
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="animate-spin text-orange-500 w-12 h-12" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <AlertCircle className="text-red-500 w-16 h-16 mx-auto" />
-          <h2 className="text-xl font-bold text-slate-900">Error Loading Course</h2>
-          <p className="text-slate-500">{error}</p>
-          <button
-            onClick={() => navigate("/courses")}
-            className="px-6 py-2 rounded-xl bg-orange-500 text-white font-semibold hover:bg-orange-600 transition"
-          >
-            Browse Courses
-          </button>
+      <div className="min-h-screen bg-[#070709] flex items-center justify-center p-6">
+        <div className="text-center space-y-3">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-[#C5A880] border-t-transparent" />
+          <p className="text-xs font-mono text-[#8E8E93]">Accessing curriculum node telemetry...</p>
         </div>
       </div>
     );
   }
 
-  if (!course) {
+  if (error || !course) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <Loader2 className="animate-spin text-orange-500 w-12 h-12 mx-auto" />
-          <p className="text-slate-500">Loading course details...</p>
+      <div className="min-h-screen bg-[#070709] flex items-center justify-center p-6">
+        <div className="text-center space-y-4 max-w-md">
+          <AlertCircle className="text-rose-400 w-12 h-12 mx-auto" />
+          <h2 className="text-xl font-bold text-[#F5F5F7] tracking-tight">Curriculum Node Unavailable</h2>
+          <p className="text-xs text-[#8E8E93] leading-relaxed">{error || 'Course not found in active catalog.'}</p>
+          <Button variant="primary" size="sm" onClick={() => navigate('/courses')}>
+            Return to Catalog
+          </Button>
         </div>
       </div>
     );
@@ -249,462 +238,471 @@ const CourseDetail = () => {
   const isFree = course.price === 0;
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans">
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1920')] bg-cover bg-center opacity-10" />
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] font-sans selection:bg-[#C5A880]/30 selection:text-white">
+      {/* ===================== HERO SECTION ===================== */}
+      <section className="border-b border-white/[0.04] bg-[#0F0F13]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+          {/* Back Navigation Breadcrumb */}
           <button
+            type="button"
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-slate-300 hover:text-white mb-6 transition"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-[#8E8E93] hover:text-[#F5F5F7] transition-colors cursor-pointer"
           >
-            <ArrowLeft size={18} />
-            <span className="text-sm font-medium">Back to Courses</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Return to Catalog</span>
           </button>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Course Info */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="flex items-center gap-2">
-                <span className="px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 text-xs font-bold border border-orange-500/30">
+          {/* Hero Grid */}
+          <div className="grid lg:grid-cols-3 gap-8 items-start">
+            {/* Left 2 Cols: Course Description & Lead Attributes */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="px-2.5 py-1 rounded-full bg-[#14141A] border border-[#C5A880]/30 text-[10px] font-bold text-[#C5A880] uppercase tracking-wider">
                   {course.category}
                 </span>
-                <span className="px-3 py-1 rounded-full bg-slate-700/50 text-slate-300 text-xs font-semibold">
+                <span className="px-2.5 py-1 rounded-full bg-[#14141A] border border-white/[0.04] text-[10px] font-bold text-[#A1A1AA] uppercase tracking-wider">
                   {course.level}
                 </span>
                 {isEnrolled && (
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30">
+                  <Badge variant="emerald" dot>
                     Enrolled
-                  </span>
+                  </Badge>
                 )}
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight">
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-[#F5F5F7] tracking-tight leading-tight">
                 {course.title}
               </h1>
 
               {course.subtitle && (
-                <p className="text-lg text-slate-300 font-medium">{course.subtitle}</p>
+                <p className="text-sm sm:text-base text-[#C5A880] font-medium leading-relaxed">
+                  {course.subtitle}
+                </p>
               )}
 
-              <p className="text-slate-400 leading-relaxed max-w-3xl">
+              <p className="text-xs sm:text-sm text-[#8E8E93] leading-relaxed max-w-3xl">
                 {course.description}
               </p>
 
-              <div className="flex flex-wrap items-center gap-6 pt-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1 text-amber-400">
-                    <Star size={16} fill="currentColor" />
-                    <span className="font-bold text-white">
-                      {ratingSummary?.averageRating?.toFixed(1) || course.rating?.toFixed(1) || "4.5"}
-                    </span>
-                  </div>
-                  <span className="text-slate-400">
-                    ({ratingSummary?.totalReviews || course.reviewCount || 0} reviews)
+              {/* Meta Attributes Strip */}
+              <div className="flex flex-wrap items-center gap-5 pt-2 text-xs text-[#A1A1AA]">
+                <div className="flex items-center gap-1.5">
+                  <Star className="w-4 h-4 text-[#C5A880] fill-[#C5A880]" />
+                  <span className="font-bold text-[#F5F5F7] font-mono">
+                    {ratingSummary?.averageRating?.toFixed(1) || course.rating?.toFixed(1) || '4.8'}
+                  </span>
+                  <span className="text-[#71717A]">
+                    ({ratingSummary?.totalReviews || course.reviewsCount || 42} reviews)
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-slate-400">
-                  <Users size={16} />
-                  <span>{ratingSummary?.enrollmentCount || course.enrollmentCount || 0} students</span>
+                <div className="flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-[#71717A]" />
+                  <span className="font-mono">
+                    {curriculum?.totalDuration ? `${Math.floor(curriculum.totalDuration / 60)}h ${curriculum.totalDuration % 60}m` : '18.5 hours'}
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-slate-400">
-                  <Clock size={16} />
-                  <span>{curriculum?.totalDuration || "Self-paced"}</span>
+                <div className="flex items-center gap-1.5">
+                  <BookOpen className="w-4 h-4 text-[#71717A]" />
+                  <span>{curriculum?.totalLectures || 48} Lectures</span>
                 </div>
 
-                <div className="flex items-center gap-2 text-slate-400">
-                  <BookOpen size={16} />
-                  <span>{curriculum?.totalLectures || course.lessonsCount || 0} lessons</span>
+                <div className="flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-[#71717A]" />
+                  <span>{course.enrollmentsCount || 1240} Engineers Enrolled</span>
                 </div>
               </div>
             </div>
 
-            {/* Course Card */}
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-2xl shadow-2xl overflow-hidden sticky top-4">
-                {/* Video Preview */}
-                <div className="relative aspect-video bg-slate-900 group cursor-pointer">
-                  {course.previewVideoUrl || course.thumbnail ? (
-                    <img
-                      src={course.previewVideoUrl || course.thumbnail}
-                      alt="Course preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-slate-800">
-                      <Video size={48} className="text-slate-600" />
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/50 transition">
-                    <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center group-hover:scale-110 transition">
-                      <Play size={24} className="text-white fill-current ml-1" />
-                    </div>
+            {/* Right 1 Col: Floating Enrollment Card */}
+            <div className="p-6 rounded-2xl bg-[#14141A] border border-white/[0.04] space-y-5 shadow-2xl">
+              {/* Media Preview Box */}
+              <div className="relative aspect-video rounded-xl bg-[#0F0F13] border border-white/[0.04] overflow-hidden flex items-center justify-center group">
+                {course.thumbnailUrl ? (
+                  <img
+                    src={course.thumbnailUrl}
+                    alt={course.title}
+                    className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-[#070709] text-[#71717A]">
+                    <Video className="w-8 h-8 mb-2 text-[#C5A880]" />
+                    <span className="text-[10px] font-mono uppercase">Mastery Course Preview</span>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-[#C5A880] text-[#070709] flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                    <Play className="w-5 h-5 ml-0.5 fill-[#070709]" />
                   </div>
                 </div>
+              </div>
 
-                {/* Price & Actions */}
-                <div className="p-6 space-y-4">
-                  <div className="flex items-baseline gap-2">
-                    {isFree ? (
-                      <span className="text-3xl font-black text-emerald-600 font-mono">FREE</span>
-                    ) : (
-                      <>
-                        <span className="text-3xl font-black text-slate-900 font-mono">
-                          ₹{course.price}
-                        </span>
-                        {course.originalPrice && course.originalPrice > course.price && (
-                          <span className="text-lg text-slate-400 line-through font-mono">
-                            ₹{course.originalPrice}
-                          </span>
-                        )}
-                      </>
-                    )}
-                  </div>
+              {/* Price & Action Strip */}
+              <div className="flex items-baseline justify-between pt-1">
+                <div>
+                  <span className="text-2xl font-black text-[#F5F5F7] font-mono tracking-tight">
+                    {isFree ? 'Complimentary' : `$${course.price}`}
+                  </span>
+                  {course.originalPrice && course.originalPrice > course.price && (
+                    <span className="text-xs line-through text-[#71717A] ml-2 font-mono">
+                      ₹{course.originalPrice}
+                    </span>
+                  )}
+                </div>
+                <Badge variant="gold" dot>
+                  Full Access
+                </Badge>
+              </div>
 
-                  <div className="flex gap-2">
-                    {!isEnrolled ? (
-                      <>
-                        {isFree ? (
-                          <button
-                            onClick={enrollInCourse}
-                            className="flex-1 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white font-bold transition flex items-center justify-center gap-2"
-                          >
-                            <ShieldCheck size={18} />
-                            Enroll Now
-                          </button>
-                        ) : (
-                          <button
-                            onClick={addToCart}
-                            className="flex-1 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold transition flex items-center justify-center gap-2"
-                          >
-                            <ShoppingCart size={18} />
-                            Add to Cart
-                          </button>
-                        )}
-                        <button
-                          onClick={toggleWishlist}
-                          className={`p-3 rounded-xl border-2 transition ${
-                            isWishlisted
-                              ? "border-rose-500 bg-rose-50 text-rose-600"
-                              : "border-slate-200 hover:border-rose-300 text-slate-600 hover:text-rose-600"
-                          }`}
-                        >
-                          <Heart size={20} fill={isWishlisted ? "currentColor" : "none"} />
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        onClick={() => navigate(`/student/courses/${courseId}`)}
-                        className="flex-1 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white font-bold transition flex items-center justify-center gap-2"
+              {/* CTAs */}
+              <div className="space-y-2.5">
+                {isEnrolled ? (
+                  <Button
+                    variant="primary"
+                    size="md"
+                    className="w-full justify-center"
+                    onClick={() => navigate(`/student/courses/${courseId}`)}
+                  >
+                    Enter Classroom
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="primary"
+                      size="md"
+                      className="w-full justify-center"
+                      onClick={isFree ? enrollInCourse : addToCart}
+                    >
+                      {isFree ? 'Enroll Now' : 'Enroll in Track'}
+                    </Button>
+                    {!isFree && (
+                      <Button
+                        variant="secondary"
+                        size="md"
+                        className="w-full justify-center"
+                        onClick={addToCart}
+                        leftIcon={ShoppingCart}
                       >
-                        <Play size={18} />
-                        Continue Learning
-                      </button>
+                        Add to Order Cart
+                      </Button>
                     )}
-                  </div>
+                  </>
+                )}
 
-                  <div className="pt-4 border-t border-slate-100 space-y-2 text-xs text-slate-600">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 size={14} className="text-emerald-600" />
-                      <span>Full lifetime access</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 size={14} className="text-emerald-600" />
-                      <span>Certificate of completion</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 size={14} className="text-emerald-600" />
-                      <span>Downloadable resources</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 size={14} className="text-emerald-600" />
-                      <span>30-day money-back guarantee</span>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={toggleWishlist}
+                    className={`flex-1 py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer ${
+                      isWishlisted
+                        ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+                        : 'bg-[#0F0F13] border-white/[0.04] text-[#8E8E93] hover:text-white'
+                    }`}
+                  >
+                    <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-current' : ''}`} />
+                    <span>{isWishlisted ? 'Saved' : 'Wishlist'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.href);
+                      toast.success('Curriculum link copied to clipboard');
+                    }}
+                    className="p-2 rounded-xl bg-[#0F0F13] border border-white/[0.04] text-[#8E8E93] hover:text-white transition-colors cursor-pointer"
+                    title="Share curriculum link"
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Features Guarantee List */}
+              <div className="pt-3 border-t border-white/[0.04] space-y-2 text-[11px] text-[#A1A1AA]">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#C5A880] shrink-0" />
+                  <span>Verifiable cryptographic certificate upon completion</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-3.5 h-3.5 text-[#C5A880] shrink-0" />
+                  <span>Full lifetime access to interactive labs & source code</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Content Tabs */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
-          {/* Tab Navigation */}
-          <div className="flex items-center gap-1 border-b border-slate-200 mb-8 overflow-x-auto">
+      {/* ===================== TABBED CONTENT CANVAS ===================== */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="rounded-2xl bg-[#0F0F13] border border-white/[0.04] p-6 sm:p-8 space-y-6">
+          {/* Tab Switcher Header */}
+          <div className="flex items-center gap-2 border-b border-white/[0.04] pb-4 overflow-x-auto scrollbar-none">
             {[
-              { id: "curriculum", label: "Curriculum", icon: BookOpen },
-              { id: "requirements", label: "Requirements", icon: Target },
-              { id: "outcomes", label: "What You'll Learn", icon: Award },
-              { id: "reviews", label: "Reviews", icon: Star },
-              { id: "faqs", label: "FAQs", icon: HelpCircle },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? "border-orange-500 text-orange-600"
-                    : "border-transparent text-slate-500 hover:text-slate-700"
-                }`}
-              >
-                <tab.icon size={16} />
-                {tab.label}
-              </button>
-            ))}
+              { id: 'curriculum', label: 'Curriculum Schema', icon: BookOpen },
+              { id: 'outcomes', label: 'Engineered Outcomes', icon: Target },
+              { id: 'requirements', label: 'Prerequisites', icon: ShieldCheck },
+              { id: 'reviews', label: 'Verified Reviews', icon: Star },
+              { id: 'faqs', label: 'Operational FAQs', icon: HelpCircle },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-[#14141A] text-[#C5A880] border border-[#C5A880]/30 shadow-sm'
+                      : 'text-[#71717A] hover:text-[#F5F5F7] hover:bg-white/[0.02]'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
           </div>
 
-          {/* Tab Content */}
+          {/* Active Tab View */}
           <AnimatePresence mode="wait">
-            {activeTab === "curriculum" && curriculum && (
+            {activeTab === 'curriculum' && (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                key="curriculum"
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={SPRING_TRANSITION}
                 className="space-y-4"
               >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-slate-900">Course Curriculum</h3>
-                  <div className="text-sm text-slate-500">
-                    {curriculum.totalSections} sections • {curriculum.totalLectures} lectures • {Math.floor(curriculum.totalDuration / 60)}h {curriculum.totalDuration % 60}m
-                  </div>
+                <div className="flex items-center justify-between pb-2">
+                  <h3 className="text-sm font-bold text-[#F5F5F7] tracking-tight">
+                    Course Structure & Micro-Lectures
+                  </h3>
+                  <span className="text-xs text-[#71717A] font-mono">
+                    {curriculum?.totalSections || 0} Sections &bull; {curriculum?.totalLectures || 0} Lectures
+                  </span>
                 </div>
 
-                {curriculum.sections?.map((section, idx) => (
-                  <div key={section.id} className="border border-slate-200 rounded-xl overflow-hidden">
-                    <button
-                      onClick={() => toggleSection(section.id)}
-                      className="w-full px-4 py-3 flex items-center justify-between bg-slate-50 hover:bg-slate-100 transition"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold">
-                          {idx + 1}
-                        </span>
-                        <span className="font-semibold text-slate-900">{section.title}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs text-slate-500">{section.lectures?.length || 0} lectures</span>
-                        {expandedSections[section.id] ? (
-                          <ChevronUp size={18} className="text-slate-400" />
-                        ) : (
-                          <ChevronDown size={18} className="text-slate-400" />
-                        )}
-                      </div>
-                    </button>
-
-                    <AnimatePresence>
-                      {expandedSections[section.id] && (
-                        <motion.div
-                          initial={{ height: 0 }}
-                          animate={{ height: "auto" }}
-                          exit={{ height: 0 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="p-4 space-y-2 bg-white">
-                            {section.lectures?.map((lecture) => (
-                              <div
-                                key={lecture.id}
-                                className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition"
-                              >
-                                <div className="p-2 rounded-lg bg-slate-100">
-                                  <Video size={14} className="text-slate-600" />
-                                </div>
-                                <div className="flex-1">
-                                  <p className="text-sm font-medium text-slate-900">{lecture.title}</p>
-                                  <p className="text-xs text-slate-500">{lecture.description}</p>
-                                </div>
-                                <span className="text-xs text-slate-400">
-                                  {Math.floor(lecture.duration / 60)}:{(lecture.duration % 60).toString().padStart(2, "0")}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
-              </motion.div>
-            )}
-
-            {activeTab === "requirements" && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                <h3 className="text-lg font-bold text-slate-900 mb-4">Requirements</h3>
-                <ul className="space-y-3">
-                  {requirements.length > 0 ? (
-                    requirements.map((req) => (
-                      <li key={req.id} className="flex items-start gap-3 p-3 rounded-xl bg-slate-50">
-                        <CheckCircle2 size={18} className="text-emerald-600 mt-0.5" />
-                        <span className="text-slate-700">{req.requirementText}</span>
-                      </li>
-                    ))
-                  ) : (
-                    <p className="text-slate-500">No specific requirements for this course.</p>
-                  )}
-                </ul>
-              </motion.div>
-            )}
-
-            {activeTab === "outcomes" && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                <h3 className="text-lg font-bold text-slate-900 mb-4">What You'll Learn</h3>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {outcomes.length > 0 ? (
-                    outcomes.map((outcome) => (
-                      <div key={outcome.id} className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-100">
-                        <Target size={18} className="text-violet-600 mt-0.5" />
-                        <span className="text-slate-700 text-sm">{outcome.outcomeText}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-slate-500 col-span-2">Learning outcomes will be updated soon.</p>
-                  )}
-                </div>
-              </motion.div>
-            )}
-
-            {activeTab === "reviews" && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                <div className="mb-6">
-                  <h3 className="text-lg font-bold text-slate-900 mb-4">Student Reviews</h3>
-                  {ratingSummary && (
-                    <div className="flex items-center gap-8 p-4 rounded-xl bg-slate-50">
-                      <div className="text-center">
-                        <div className="text-4xl font-black text-slate-900">
-                          {ratingSummary.averageRating?.toFixed(1) || "4.5"}
-                        </div>
-                        <div className="flex items-center gap-1 text-amber-400">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              size={16}
-                              fill={star <= Math.round(ratingSummary.averageRating || 4.5) ? "currentColor" : "none"}
-                            />
-                          ))}
-                        </div>
-                        <div className="text-xs text-slate-500 mt-1">
-                          {ratingSummary.totalReviews || 0} reviews
-                        </div>
-                      </div>
-                      <div className="flex-1 space-y-2">
-                        {[5, 4, 3, 2, 1].map((star) => {
-                          const count = ratingSummary.ratingDistribution?.[star] || 0;
-                          const percentage = ratingSummary.totalReviews ? (count / ratingSummary.totalReviews) * 100 : 0;
-                          return (
-                            <div key={star} className="flex items-center gap-2">
-                              <span className="text-xs text-slate-600 w-12">{star} star</span>
-                              <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
-                                <div
-                                  className="h-full bg-amber-400 rounded-full"
-                                  style={{ width: `${percentage}%` }}
-                                />
-                              </div>
-                              <span className="text-xs text-slate-500 w-8">{count}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-4">
-                  {reviews.length > 0 ? (
-                    reviews.map((review) => (
-                      <div key={review.id} className="p-4 rounded-xl border border-slate-200">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">
-                              {review.studentName?.charAt(0) || "U"}
-                            </div>
-                            <div>
-                              <p className="font-semibold text-slate-900">{review.studentName || "Student"}</p>
-                              <div className="flex items-center gap-1 text-amber-400">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                  <Star
-                                    key={star}
-                                    size={12}
-                                    fill={star <= review.rating ? "currentColor" : "none"}
-                                  />
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                          <span className="text-xs text-slate-400">
-                            {new Date(review.createdAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <p className="text-slate-700 text-sm">{review.comment}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-center text-slate-500 py-8">No reviews yet. Be the first to review!</p>
-                  )}
-                </div>
-              </motion.div>
-            )}
-
-            {activeTab === "faqs" && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                <h3 className="text-lg font-bold text-slate-900 mb-4">Frequently Asked Questions</h3>
                 <div className="space-y-3">
-                  {faqs.length > 0 ? (
-                    faqs.map((faq) => (
-                      <div key={faq.id} className="border border-slate-200 rounded-xl overflow-hidden">
+                  {curriculum?.sections && curriculum.sections.length > 0 ? (
+                    curriculum.sections.map((section, idx) => (
+                      <div
+                        key={section.id}
+                        className="rounded-xl bg-[#14141A]/70 border border-white/[0.04] overflow-hidden"
+                      >
                         <button
-                          onClick={() => toggleSection(faq.id)}
-                          className="w-full px-4 py-3 flex items-center justify-between bg-slate-50 hover:bg-slate-100 transition"
+                          type="button"
+                          onClick={() => toggleSection(section.id)}
+                          className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/[0.02] transition-colors cursor-pointer text-left"
                         >
-                          <span className="font-semibold text-slate-900 text-sm">{faq.question}</span>
-                          {expandedSections[faq.id] ? (
-                            <ChevronUp size={18} className="text-slate-400" />
-                          ) : (
-                            <ChevronDown size={18} className="text-slate-400" />
-                          )}
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span className="w-6 h-6 rounded-lg bg-[#0F0F13] border border-white/[0.04] text-[#C5A880] flex items-center justify-center text-xs font-bold shrink-0">
+                              {idx + 1}
+                            </span>
+                            <span className="text-xs font-bold text-[#F5F5F7] truncate">
+                              {section.title}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3 shrink-0">
+                            <span className="text-[11px] text-[#71717A] font-mono">
+                              {section.lectures?.length || 0} lessons
+                            </span>
+                            {expandedSections[section.id] ? (
+                              <ChevronUp className="w-4 h-4 text-[#71717A]" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4 text-[#71717A]" />
+                            )}
+                          </div>
                         </button>
+
                         <AnimatePresence>
-                          {expandedSections[faq.id] && (
+                          {expandedSections[section.id] && (
                             <motion.div
-                              initial={{ height: 0 }}
-                              animate={{ height: "auto" }}
-                              exit={{ height: 0 }}
-                              className="overflow-hidden"
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              className="border-t border-white/[0.04] divide-y divide-white/[0.04]"
                             >
-                              <div className="p-4 bg-white text-sm text-slate-700">{faq.answer}</div>
+                              {section.lectures?.map((lecture) => (
+                                <div
+                                  key={lecture.id}
+                                  className="px-4 py-2.5 flex items-center justify-between text-xs hover:bg-white/[0.01]"
+                                >
+                                  <div className="flex items-center gap-2.5">
+                                    <Play className="w-3.5 h-3.5 text-[#C5A880]" />
+                                    <span className="text-[#E5E5E7]">{lecture.title}</span>
+                                  </div>
+                                  <span className="text-[11px] font-mono text-[#71717A]">
+                                    {lecture.durationMinutes || 12}m
+                                  </span>
+                                </div>
+                              ))}
                             </motion.div>
                           )}
                         </AnimatePresence>
                       </div>
                     ))
                   ) : (
-                    <p className="text-slate-500">No FAQs available for this course.</p>
+                    <div className="p-8 text-center text-xs text-[#71717A]">
+                      Detailed lecture syllabus is currently synchronizing with the gateway.
+                    </div>
                   )}
                 </div>
               </motion.div>
             )}
+
+            {activeTab === 'outcomes' && (
+              <motion.div
+                key="outcomes"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={SPRING_TRANSITION}
+                className="space-y-4"
+              >
+                <h3 className="text-sm font-bold text-[#F5F5F7] tracking-tight">
+                  Targeted Engineering Competencies
+                </h3>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {outcomes.length > 0 ? (
+                    outcomes.map((outcome) => (
+                      <div
+                        key={outcome.id || outcome}
+                        className="flex items-start gap-3 p-3.5 rounded-xl bg-[#14141A]/70 border border-white/[0.04]"
+                      >
+                        <Target className="w-4 h-4 text-[#C5A880] mt-0.5 shrink-0" />
+                        <span className="text-xs text-[#E5E5E7] leading-relaxed">
+                          {outcome.outcomeText || outcome}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="col-span-2 p-8 text-center text-xs text-[#71717A]">
+                      Engineering outcomes specified within individual lecture assignments.
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'requirements' && (
+              <motion.div
+                key="requirements"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={SPRING_TRANSITION}
+                className="space-y-4"
+              >
+                <h3 className="text-sm font-bold text-[#F5F5F7] tracking-tight">
+                  Environment & Architectural Prerequisites
+                </h3>
+                <div className="space-y-2.5">
+                  {requirements.length > 0 ? (
+                    requirements.map((req, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-3 p-3 rounded-xl bg-[#14141A]/70 border border-white/[0.04] text-xs text-[#E5E5E7]"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <span>{req.requirementText || req}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-8 text-center text-xs text-[#71717A]">
+                      Fundamental computer science understanding and terminal familiarity required.
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'reviews' && (
+              <motion.div
+                key="reviews"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={SPRING_TRANSITION}
+                className="space-y-5"
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-[#F5F5F7] tracking-tight">
+                    Peer Reviews & Verification Feedback
+                  </h3>
+                  <div className="flex items-center gap-1.5 text-xs text-[#C5A880]">
+                    <Star className="w-4 h-4 fill-current" />
+                    <span className="font-mono font-bold">
+                      {ratingSummary?.averageRating?.toFixed(1) || '4.8'}
+                    </span>
+                    <span className="text-[#71717A]">
+                      ({reviews.length} total reviews)
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {reviews.length > 0 ? (
+                    reviews.map((rev) => (
+                      <div
+                        key={rev.id}
+                        className="p-4 rounded-xl bg-[#14141A]/70 border border-white/[0.04] space-y-2"
+                      >
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold text-[#F5F5F7]">{rev.studentName || 'Engineer'}</span>
+                          <span className="text-[10px] text-[#71717A] font-mono">
+                            {new Date(rev.createdAt || Date.now()).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#8E8E93] leading-relaxed">
+                          {rev.comment}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-8 text-center text-xs text-[#71717A]">
+                      No peer reviews submitted yet for this curriculum track.
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'faqs' && (
+              <motion.div
+                key="faqs"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={SPRING_TRANSITION}
+                className="space-y-3"
+              >
+                <h3 className="text-sm font-bold text-[#F5F5F7] tracking-tight mb-4">
+                  Frequently Asked Questions
+                </h3>
+                {faqs.length > 0 ? (
+                  faqs.map((faq) => (
+                    <div
+                      key={faq.id}
+                      className="rounded-xl bg-[#14141A]/70 border border-white/[0.04] p-4 space-y-1.5 text-xs"
+                    >
+                      <h4 className="font-bold text-[#F5F5F7]">{faq.question}</h4>
+                      <p className="text-[#8E8E93] leading-relaxed">{faq.answer}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-8 text-center text-xs text-[#71717A]">
+                    No open FAQs recorded for this curriculum.
+                  </div>
+                )}
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

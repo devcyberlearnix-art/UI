@@ -12,7 +12,7 @@ const Subscription = () => {
     {
       id: "basic",
       name: "Basic",
-      price: "$9",
+      price: "₹749",
       period: "/mo",
       features: ["Access to 50+ courses", "Community support", "Certificate of completion"],
       icon: "⭐",
@@ -20,7 +20,7 @@ const Subscription = () => {
     {
       id: "pro",
       name: "Pro",
-      price: "$19",
+      price: "₹1,499",
       period: "/mo",
       features: [
         "Access to all courses",
@@ -34,7 +34,7 @@ const Subscription = () => {
     {
       id: "premium",
       name: "Premium",
-      price: "$29",
+      price: "₹2,499",
       period: "/mo",
       features: [
         "Everything in Pro",
@@ -114,20 +114,20 @@ const Subscription = () => {
               }`}
             >
               {plan.popular && (
-                <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white text-xs font-semibold px-4 py-1 rounded-full">
+                <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#C5A880] text-[#070709] text-xs font-bold px-4 py-1 rounded-full shadow-sm">
                   Most Popular
                 </span>
               )}
               <div className="text-4xl mb-3">{plan.icon}</div>
               <h3 className="text-xl font-bold text-gray-800 mb-1">{plan.name}</h3>
               <div className="mb-4">
-                <span className="text-3xl font-bold text-purple-600">{plan.price}</span>
+                <span className="text-3xl font-bold font-mono text-[#C5A880]">{plan.price}</span>
                 <span className="text-gray-500 text-sm">{plan.period}</span>
               </div>
               <ul className="text-sm text-gray-600 space-y-2 mb-6">
                 {plan.features.map((feature, idx) => (
                   <li key={idx} className="flex items-center gap-2 justify-center">
-                    <CheckCircle size={16} className="text-green-500 flex-shrink-0" />
+                    <CheckCircle size={16} className="text-emerald-500 flex-shrink-0" />
                     {feature}
                   </li>
                 ))}
@@ -137,7 +137,7 @@ const Subscription = () => {
                 disabled={loading === plan.id}
                 className={`w-full py-2.5 rounded-lg font-semibold transition ${
                   plan.popular
-                    ? "bg-purple-600 text-white hover:bg-purple-700"
+                    ? "bg-[#C5A880] text-[#070709] hover:bg-[#D4BC98] font-bold shadow-sm"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >

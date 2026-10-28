@@ -1,0 +1,156 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: Workflow
+metadata:
+  name: lms-distributed-resilience-workflow
+  namespace: lms-chaos
+spec:
+  entry: entry-step
+  templates:
+    - name: entry-step
+      templateType: Serial
+      children:
+        - outbox-kafka-partition-scenario
+        - redis-lock-failover-scenario
+        - postgres-contention-scenario
+        - saga-compensation-partition-scenario
+
+    # =========================================================================
+    # Scenario 1: Outbox-to-Kafka Partition Drop (Ghost Enrollment Prevention)
+    # Target: lms-order-service -> Kafka:9092
+    # Invariant: DB commits staged order + outbox log; zero message loss upon heal
+    # =========================================================================
+    - name: outbox-kafka-partition-scenario
+      templateType: NetworkChaos
+      deadline: 60s
+      networkChaos:
+        action: partition
+        mode: all
+        selector:
+          namespaces:
+            - default
+          labelSelectors:
+            app: lms-order-service
+        direction: to
+        target:
+          selector:
+            namespaces:
+              - default
+            labelSelectors:
+              app: kafka
+          mode: all
+
+    # =========================================================================
+    # Scenario 2: Redis Lock Split-Brain & Leader Kill (Anti-Double-Spend)
+    # Target: redis-cluster / primary
+    # Invariant: Redlock refuses staging without quorum lease; zero dual orders
+    # =========================================================================
+    - name: redis-lock-failover-scenario
+      templateType: PodChaos
+      deadline: 30s
+      podChaos:
+        action: pod-kill
+        mode: one
+        selector:
+          namespaces:
+            - default
+          labelSelectors:
+            app.kubernetes.io/name: redis
+
+    # =========================================================================
+    # Scenario 3: Main DB IO Latency Contention (Thundering Herd Suppression)
+    # Target: lms-course-service / PostgreSQL (Port 15432)
+    # Invariant: XFetch probabilistic refresh serves cached price; zero DB stall
+    # =========================================================================
+    - name: postgres-contention-scenario
+      templateType: NetworkChaos
+      deadline: 45s
+      networkChaos:
+        action: delay
+        mode: all
+        selector:
+          namespaces:
+            - default
+          labelSelectors:
+            app: lms-course-service
+        delay:
+          latency: "2500ms"
+          jitter: "500ms"
+          correlation: "50"
+        direction: to
+        target:
+          selector:
+            namespaces:
+              - default
+            labelSelectors:
+              app: postgresql
+          mode: all
+
+    # =========================================================================
+    # Scenario 4: Partial Saga Network Drop (Enrollment Service Partition)
+    # Target: lms-order-service -> lms-course-service
+    # Invariant: Saga emits ORDER_COMPENSATING_ROLLBACK; zero dangling charges
+    # =========================================================================
+    - name: saga-compensation-partition-scenario
+      templateType: NetworkChaos
+      deadline: 45s
+      networkChaos:
+        action: partition
+        mode: all
+        selector:
+          namespaces:
+            - default
+          labelSelectors:
+            app: lms-payment-service
+        direction: to
+        target:
+          selector:
+            namespaces:
+              - default
+            labelSelectors:
+              app: lms-course-service
+          mode: all
+---
+# =============================================================================
+# Standalone Scenario CRD: Kafka Partition Drop for Order Outbox
+# =============================================================================
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: order-outbox-kafka-partition
+  namespace: lms-chaos
+spec:
+  action: partition
+  mode: fixed
+  value: "1"
+  selector:
+    namespaces:
+      - default
+    labelSelectors:
+      app: lms-order-service
+  direction: to
+  target:
+    selector:
+      namespaces:
+        - default
+      labelSelectors:
+        app: kafka
+    mode: all
+  duration: "45s"
+---
+# =============================================================================
+# Standalone Scenario CRD: Redis Distributed Lock Kill Injection
+# =============================================================================
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: redis-redlock-pod-kill
+  namespace: lms-chaos
+spec:
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces:
+      - default
+    labelSelectors:
+      app: redis
+  duration: "20s"

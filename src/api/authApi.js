@@ -156,6 +156,13 @@ export const authApi = {
     }
   },
 
+  verifyOtp: async ({ email, otp, otpSessionId, flow }) => {
+    if (flow === 'login') {
+      return await authApi.verifyLoginOtp({ email, otpSessionId, otp });
+    }
+    return await authApi.verifyEmail({ email, otp, otpSessionId });
+  },
+
   requestForgotPasswordOtp: async (email) => {
     try {
       const response = await axiosInstance.post('/api/v1/auth/password/forgot', { email });

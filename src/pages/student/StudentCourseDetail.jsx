@@ -658,12 +658,12 @@ const StudentCourseDetail = () => {
             {/* Instructor Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
               <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <MonitorUp size={18} className="text-indigo-500" />
+                <MonitorUp size={18} className="text-[#C5A880]" />
                 Instructor
               </h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center font-bold text-lg">
+                  <div className="w-12 h-12 rounded-full bg-[#14141A] border border-white/[0.08] text-[#C5A880] flex items-center justify-center font-bold text-lg">
                     {course.instructor?.charAt(0) || 'I'}
                   </div>
                   <div>

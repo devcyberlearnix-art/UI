@@ -11,6 +11,12 @@ import { getDashboardPath } from "../context/AuthContext";
 import { parseApiError } from "../utils/apiErrorParser";
 import { validateEmail as isValidEmail } from "../utils/validation";
 
+const SPRING_TRANSITION = {
+  type: "spring",
+  stiffness: 280,
+  damping: 26,
+};
+
 const Login = () => {
   const [loginMethod, setLoginMethod] = useState("password");
   const location = useLocation();
@@ -46,10 +52,10 @@ const Login = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-[#1455d9]"></div>
-          <p className="text-slate-600">Loading...</p>
+      <div className="min-h-screen bg-[#070709] flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-[#C5A880] border-t-transparent" />
+          <p className="text-xs font-mono text-[#8E8E93]">Initializing secure session...</p>
         </div>
       </div>
     );
@@ -76,28 +82,30 @@ const Login = () => {
     }
 
     setLoading(true);
-    
+
     try {
       const result = await login(email.trim(), password);
-      
+
       if (result.success) {
         if (result.message) toast.success(result.message);
         navigate(getDashboardPath(result.user?.role || result.user?.role1 || result.user?.userRole), { replace: true });
       } else {
-        const isUnverified = result.originalError?.response?.data?.message?.toLowerCase().includes("not verified") || 
-                             result.originalError?.response?.data?.message?.toLowerCase().includes("verify your email") || 
-                             result.error?.toLowerCase().includes("not verified") || 
-                             result.error?.toLowerCase().includes("unverified") || 
-                             result.error?.toLowerCase().includes("verify your email");
-                             
-        const errorOtpSessionId = result.originalError?.response?.data?.data?.otpSessionId || 
-                                  result.originalError?.response?.data?.otpSessionId;
+        const isUnverified =
+          result.originalError?.response?.data?.message?.toLowerCase().includes("not verified") ||
+          result.originalError?.response?.data?.message?.toLowerCase().includes("verify your email") ||
+          result.error?.toLowerCase().includes("not verified") ||
+          result.error?.toLowerCase().includes("unverified") ||
+          result.error?.toLowerCase().includes("verify your email");
+
+        const errorOtpSessionId =
+          result.originalError?.response?.data?.data?.otpSessionId ||
+          result.originalError?.response?.data?.otpSessionId;
 
         if (result.error) {
           setError(result.error);
           toast.error(result.error);
         }
-        
+
         if (isUnverified && errorOtpSessionId) {
           setUnverifiedSession(errorOtpSessionId);
         } else {
@@ -147,9 +155,9 @@ const Login = () => {
       toast.error("OTP is required");
       return;
     }
-      if (!otpSessionId) {
-        setError("");
-        return;
+    if (!otpSessionId) {
+      setError("");
+      return;
     }
 
     setLoading(true);
@@ -229,17 +237,28 @@ const Login = () => {
   };
 
   return (
-    <AuthShell variant="signup" showTerms={false} showCardBrand wide>
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="mb-8 text-center">
-          <div className="cyber-login-icon">
-            <LogIn size={30} />
+    <AuthShell variant="split" showTerms={false} showBackHome>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={SPRING_TRANSITION}
+        className="space-y-6"
+      >
+        {/* Card Header */}
+        <div className="text-center space-y-2">
+          <div className="mx-auto w-12 h-12 rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shadow-sm">
+            <LogIn className="w-5 h-5 text-[#C5A880]" />
           </div>
-          <h1 className="mt-3 text-2xl font-bold text-[#10284e]">Sign In</h1>
-          <p className="mt-1 text-sm text-slate-500">Enter your account credentials to continue</p>
+          <h1 className="text-2xl font-extrabold text-[#F5F5F7] tracking-tight">
+            Sign In
+          </h1>
+          <p className="text-xs text-[#8E8E93]">
+            Enter your account credentials to access your workspace.
+          </p>
         </div>
 
-        <div className="cyber-login-tabs mb-6 grid grid-cols-2 rounded-xl border border-slate-200 bg-slate-100 p-1">
+        {/* Method Switcher Tabs with Kinetic Morphing */}
+        <div className="grid grid-cols-2 p-1 rounded-2xl bg-[#14141A] border border-white/[0.04]">
           <button
             type="button"
             onClick={() => {
@@ -249,12 +268,20 @@ const Login = () => {
               setOtp("");
               setOtpSessionId("");
             }}
-            className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
-              loginMethod === "password" ? "bg-[#1455d9] text-white shadow" : "text-slate-600 hover:text-[#10284e]"
+            className={`relative py-2 text-xs font-semibold rounded-xl transition-colors cursor-pointer ${
+              loginMethod === "password" ? "text-[#070709] font-bold" : "text-[#8E8E93] hover:text-[#F5F5F7]"
             }`}
           >
-            Password
+            {loginMethod === "password" && (
+              <motion.div
+                layoutId="activeLoginTab"
+                className="absolute inset-0 bg-[#C5A880] rounded-xl shadow-sm -z-10"
+                transition={SPRING_TRANSITION}
+              />
+            )}
+            <span>Password</span>
           </button>
+
           <button
             type="button"
             onClick={() => {
@@ -262,32 +289,42 @@ const Login = () => {
               setError("");
               setPassword("");
             }}
-              className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
-                loginMethod === "otp" ? "bg-[#1455d9] text-white shadow" : "text-slate-600 hover:text-[#10284e]"
+            className={`relative py-2 text-xs font-semibold rounded-xl transition-colors cursor-pointer ${
+              loginMethod === "otp" ? "text-[#070709] font-bold" : "text-[#8E8E93] hover:text-[#F5F5F7]"
             }`}
           >
-            OTP
+            {loginMethod === "otp" && (
+              <motion.div
+                layoutId="activeLoginTab"
+                className="absolute inset-0 bg-[#C5A880] rounded-xl shadow-sm -z-10"
+                transition={SPRING_TRANSITION}
+              />
+            )}
+            <span>OTP Code</span>
           </button>
         </div>
 
+        {/* Error Alert */}
         {error && (
-          <div className="mb-4 flex flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-red-700">
+          <div className="flex flex-col gap-2 rounded-2xl border border-rose-500/20 bg-rose-500/10 p-3.5 text-rose-400 text-xs">
             <div className="flex items-start gap-2">
-              <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
-              <span className="text-sm">{error}</span>
+              <AlertCircle size={16} className="shrink-0 mt-0.5" />
+              <span>{error}</span>
             </div>
             {unverifiedSession && (
               <button
                 type="button"
-                onClick={() => navigate("/otp-verify", {
-                  state: {
-                    email,
-                    flow: "register",
-                    otpSessionId: unverifiedSession,
-                    cooldownSeconds: 30,
-                  }
-                })}
-                className="mt-2 self-start text-sm font-semibold text-[#1455d9] hover:text-[#0d47bc]"
+                onClick={() =>
+                  navigate("/otp-verify", {
+                    state: {
+                      email,
+                      flow: "register",
+                      otpSessionId: unverifiedSession,
+                      cooldownSeconds: 30,
+                    },
+                  })
+                }
+                className="mt-1 self-start text-xs font-bold text-[#C5A880] hover:underline"
               >
                 Verify Email Now &rarr;
               </button>
@@ -295,16 +332,19 @@ const Login = () => {
           </div>
         )}
 
+        {/* Password Form */}
         {loginMethod === "password" ? (
           <form onSubmit={handlePasswordLogin} className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">Email Address</label>
+              <label className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block mb-1.5">
+                Email Address
+              </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" size={16} />
                 <input
                   type="email"
-                  placeholder="Enter your email"
-                  className="lms-input pl-10"
+                  placeholder="name@enterprise.io"
+                  className="lms-input pl-10 text-xs"
                   value={email}
                   autoComplete="email"
                   aria-label="Email address"
@@ -315,13 +355,23 @@ const Login = () => {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">Password</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block">
+                  Password
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-[11px] font-semibold text-[#8E8E93] hover:text-[#C5A880] transition-colors"
+                >
+                  Forgot?
+                </Link>
+              </div>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" size={16} />
                 <input
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  className="lms-input pl-10 pr-10"
+                  placeholder="••••••••••••"
+                  className="lms-input pl-10 pr-10 text-xs"
                   value={password}
                   autoComplete="current-password"
                   aria-label="Password"
@@ -332,34 +382,41 @@ const Login = () => {
                   type="button"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-600"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-[#F5F5F7] transition-colors"
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
-            <button type="submit" disabled={loading || !isValidEmail(email) || !password.trim()} className="lms-btn-primary">
+            <button
+              type="submit"
+              disabled={loading || !isValidEmail(email) || !password.trim()}
+              className="lms-btn-primary cursor-pointer active:scale-98"
+            >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                  Logging in...
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#070709] border-t-transparent" />
+                  <span>Authenticating...</span>
                 </span>
               ) : (
-                "Login"
+                "Sign In"
               )}
             </button>
           </form>
         ) : (
+          /* OTP Form */
           <div className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">Email Address</label>
+              <label className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block mb-1.5">
+                Email Address
+              </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" size={16} />
                 <input
                   type="email"
-                  placeholder="Enter your email"
-                  className="lms-input pl-10"
+                  placeholder="name@enterprise.io"
+                  className="lms-input pl-10 text-xs"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading || otpSent}
@@ -368,19 +425,26 @@ const Login = () => {
             </div>
 
             {!otpSent ? (
-              <button type="button" onClick={handleSendOtp} disabled={loading || !isValidEmail(email)} className="lms-btn-primary">
-                {loading ? "Sending OTP..." : "Send OTP"}
+              <button
+                type="button"
+                onClick={handleSendOtp}
+                disabled={loading || !isValidEmail(email)}
+                className="lms-btn-primary cursor-pointer active:scale-98"
+              >
+                {loading ? "Generating OTP..." : "Send Verification OTP"}
               </button>
             ) : (
               <form onSubmit={handleOtpLogin} className="space-y-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">One-Time Password</label>
+                  <label className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block mb-1.5">
+                    One-Time Passcode
+                  </label>
                   <div className="relative">
-                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" size={16} />
                     <input
                       type="text"
-                      placeholder="Enter 6-digit OTP"
-                      className="lms-input pl-10"
+                      placeholder="6-digit code"
+                      className="lms-input pl-10 text-xs font-mono tracking-widest text-center"
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
                       maxLength={6}
@@ -389,31 +453,36 @@ const Login = () => {
                   </div>
                 </div>
 
-                <button type="submit" disabled={loading || otp.length !== 6} className="lms-btn-primary">
-                  {loading ? "Verifying..." : "Verify and Login"}
+                <button
+                  type="submit"
+                  disabled={loading || otp.length !== 6}
+                  className="lms-btn-primary cursor-pointer active:scale-98"
+                >
+                  {loading ? "Verifying..." : "Verify & Sign In"}
                 </button>
 
                 <button
                   type="button"
                   onClick={handleResendOtp}
                   disabled={otpResending || !canResend}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#1455d9] hover:text-[#1455d9] disabled:opacity-60"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/[0.04] bg-[#14141A] px-4 py-2.5 text-xs font-semibold text-[#8E8E93] hover:text-[#F5F5F7] hover:border-white/[0.08] transition-colors disabled:opacity-50"
                 >
-                  <RefreshCw size={16} className={otpResending ? "animate-spin" : ""} />
-                  {otpResending ? "Resending..." : canResend ? "Resend OTP" : `Resend in ${cooldownSeconds}s`}
+                  <RefreshCw size={14} className={otpResending ? "animate-spin text-[#C5A880]" : ""} />
+                  {otpResending ? "Resending..." : canResend ? "Resend Passcode" : `Resend in ${cooldownSeconds}s`}
                 </button>
               </form>
             )}
           </div>
         )}
 
-        <div className="mt-6 space-y-2 text-center">
-          <Link to="/register" className="lms-link block text-sm">
-            Don't have an account? Register
-          </Link>
-           <Link to="/forgot-password" className="block text-sm text-slate-500 transition hover:text-[#1455d9]">
-            Forgot Password?
-          </Link>
+        {/* Footer Navigation */}
+        <div className="pt-4 border-t border-white/[0.04] text-center space-y-2">
+          <p className="text-xs text-[#8E8E93]">
+            Don't have an engineering account?{" "}
+            <Link to="/register" className="text-[#C5A880] hover:text-[#D4BC98] font-bold transition-colors">
+              Register now
+            </Link>
+          </p>
         </div>
       </motion.div>
     </AuthShell>

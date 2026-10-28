@@ -17,7 +17,11 @@ const redirectForRole = (role = "student") => {
 const readContext = (location) => {
   const state = location.state || {};
   if (state.email || state.otpSessionId) return state;
-  try { return JSON.parse(sessionStorage.getItem("asivo_otp_context") || sessionStorage.getItem("cyberlearnix_otp_context") || "{}"); } catch { return {}; }
+  try {
+    return JSON.parse(sessionStorage.getItem("asivo_otp_context") || sessionStorage.getItem("cyberlearnix_otp_context") || "{}");
+  } catch {
+    return {};
+  }
 };
 
 const OtpVerify = () => {
@@ -38,7 +42,9 @@ const OtpVerify = () => {
   const refs = useRef([]);
 
   useEffect(() => {
-    if (!email || !otpSessionId) navigate(flow === "login" ? "/otp-login" : "/register", { replace: true });
+    if (!email || !otpSessionId) {
+      navigate(flow === "login" ? "/otp-login" : "/register", { replace: true });
+    }
   }, [email, flow, navigate, otpSessionId]);
 
   useEffect(() => {
@@ -51,7 +57,9 @@ const OtpVerify = () => {
     const pasted = value.replace(/\D/g, "").slice(0, 6);
     if (pasted.length > 1) {
       const next = [...digits];
-      pasted.split("").forEach((digit, offset) => { if (index + offset < 6) next[index + offset] = digit; });
+      pasted.split("").forEach((digit, offset) => {
+        if (index + offset < 6) next[index + offset] = digit;
+      });
       setDigits(next);
       refs.current[Math.min(index + pasted.length, 5)]?.focus();
       setError("");
@@ -65,68 +73,78 @@ const OtpVerify = () => {
   };
 
   const onKeyDown = (event, index) => {
-    if (event.key === "Backspace" && !digits[index] && index > 0) refs.current[index - 1]?.focus();
-    if (event.key === "ArrowLeft" && index > 0) refs.current[index - 1]?.focus();
-    if (event.key === "ArrowRight" && index < 5) refs.current[index + 1]?.focus();
+    if (event.key === "Backspace" && !digits[index] && index > 0) {
+      refs.current[index - 1]?.focus();
+    }
   };
 
   const verify = async () => {
     const otp = digits.join("");
-    setError("");
-    if (otp.length !== 6) { setError("Enter the complete 6-digit code."); return; }
+    if (otp.length !== 6) {
+      setError("Please enter the complete 6-digit code.");
+      return;
+    }
     setLoading(true);
+    setError("");
     try {
-      const response = flow === "register"
-        ? await authApi.verifyEmail({ email, otp, otpSessionId })
-        : await authApi.verifyLoginOtp({ email, otp, otpSessionId });
+      const response = await authApi.verifyOtp({ email, otp, otpSessionId, flow });
       const payload = response?.data && typeof response.data === "object" ? response.data : response;
-      if (response?.success === false || payload?.success === false) throw new Error(payload?.message || response?.message || "");
-      const returnedToken = payload?.authentication?.accessToken || payload?.authentication?.token || payload?.accessToken || payload?.token || payload?.access_token;
-      if (flow === "login" || returnedToken) {
-        const accessToken = payload?.authentication?.accessToken || payload?.authentication?.token || payload?.accessToken || payload?.token || payload?.access_token;
-        if (!accessToken) throw new Error(payload?.message || response?.message || "");
-        const userInfo = payload?.user || {};
-        const user = { id: userInfo.id || userInfo.userId, firstName: userInfo.firstName || "", lastName: userInfo.lastName || "", name: userInfo.name || `${userInfo.firstName || ""} ${userInfo.lastName || ""}`.trim(), email: userInfo.email || email, role: userInfo.role || userInfo.effectiveRole || "student" };
-        syncSession(user, accessToken, payload?.authentication?.refreshToken || payload?.refreshToken || payload?.refresh_token || null);
-        setDestination(redirectForRole(user.role));
-        setSuccess(true);
-        window.setTimeout(() => navigate(redirectForRole(user.role), { replace: true }), 800);
-      } else {
-        setSuccess(true);
-        const backendMessage = payload?.message || response?.message;
-        if (backendMessage) toast.success(backendMessage);
-        window.setTimeout(() => navigate("/login", { replace: true, state: { prefillEmail: email } }), 1400);
+      if (response?.success === false || payload?.success === false) {
+        throw new Error(response?.message || payload?.message || "Invalid OTP code.");
       }
-      try { sessionStorage.removeItem("asivo_otp_context"); } catch { /* Optional persistence. */ }
+      const token =
+        payload?.token ||
+        payload?.accessToken ||
+        payload?.access_token ||
+        response?.token ||
+        response?.accessToken;
+      const user = payload?.user || response?.user || payload;
+      const target = flow === "login" && token ? redirectForRole(user?.role || user?.userRole) : "/login";
+      setDestination(target);
+      setSuccess(true);
+      if (flow === "login" && token) {
+        syncSession(user, token, payload?.refreshToken || response?.refreshToken || null);
+      }
+      toast.success(response?.message || payload?.message || "Verification successful!");
+      window.setTimeout(() => navigate(target, { replace: true }), 1500);
+      try {
+        sessionStorage.removeItem("asivo_otp_context");
+      } catch { /* optional */ }
     } catch (cause) {
       const data = cause.response?.data;
-      const base = data?.message || data?.error || cause.message || "";
-      if (!base) return;
+      const base = data?.message || data?.error || cause.message || "Verification failed";
       const details = data?.data?.remainingAttempts !== undefined ? ` ${data.data.remainingAttempts} attempts remaining.` : "";
       setError(`${base}${details}`);
       setDigits(["", "", "", "", "", ""]);
       refs.current[0]?.focus();
       toast.error(base);
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resend = async () => {
     if (cooldown > 0 || resending) return;
-    setResending(true); setError("");
+    setResending(true);
+    setError("");
     try {
       const response = await authApi.resendOtp({ flow, email, otpSessionId });
       const payload = response?.data && typeof response.data === "object" ? response.data : response;
       const nextSession = payload?.otpSessionId || payload?.sessionId || otpSessionId;
       const nextCooldown = payload?.cooldownSeconds ?? response?.cooldownSeconds ?? 30;
-      setOtpSessionId(nextSession); setCooldown(Number(nextCooldown)); setDigits(["", "", "", "", "", ""]);
+      setOtpSessionId(nextSession);
+      setCooldown(Number(nextCooldown));
+      setDigits(["", "", "", "", "", ""]);
       sessionStorage.setItem("asivo_otp_context", JSON.stringify({ email, flow, otpSessionId: nextSession, cooldownSeconds: nextCooldown }));
       const backendMessage = payload?.message || response?.message;
       if (backendMessage) toast.success(backendMessage);
     } catch (cause) {
       const data = cause.response?.data;
-      const backendMessage = data?.message || data?.error || "";
+      const backendMessage = data?.message || data?.error || "Resend failed";
       if (backendMessage) setError(backendMessage);
-    } finally { setResending(false); }
+    } finally {
+      setResending(false);
+    }
   };
 
   const changeEmail = () => navigate(flow === "login" ? "/otp-login" : "/register", { replace: true });
@@ -134,31 +152,99 @@ const OtpVerify = () => {
   return (
     <AuthShell variant="otp" showTerms={false} showBackHome={false}>
       {success ? (
-        <div className="cyber-success-state">
-          <div className="cyber-success-icon"><Check size={42} strokeWidth={3} /></div>
-          <h1>Email verified!</h1>
-          <p>Your account has been successfully activated.<br />{destination === "/login" ? "Please sign in to continue. Redirecting to sign in…" : "Redirecting you to your dashboard…"}</p>
-          <span className="cyber-spinner" aria-label="Redirecting" />
+        <div className="text-center py-6 space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <Check size={32} strokeWidth={2.5} />
+          </div>
+          <h1 className="text-2xl font-bold text-[#F5F5F7]">Email Verified</h1>
+          <p className="text-xs text-[#8E8E93] max-w-sm mx-auto leading-relaxed">
+            Your credentials have been authenticated. Redirecting you to your workspace...
+          </p>
+          <div className="pt-2">
+            <div className="h-5 w-5 mx-auto animate-spin rounded-full border-2 border-[#C5A880] border-t-transparent" />
+          </div>
         </div>
       ) : (
-        <>
-          <div className="cyber-card-heading cyber-centered-heading">
-            <span className="cyber-card-icon"><Mail size={25} /></span>
-            <h1>Verify your email</h1>
-            <p>We’ve sent a 6-digit verification code to<br /><strong>{email}</strong></p>
+        <div className="space-y-6">
+          <div className="text-center space-y-2">
+            <div className="w-12 h-12 mx-auto rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shadow-sm">
+              <Mail size={22} />
+            </div>
+            <h1 className="text-2xl font-extrabold text-[#F5F5F7] tracking-tight">Verify Your Email</h1>
+            <p className="text-xs text-[#8E8E93]">
+              We sent a 6-digit passcode to <strong className="text-[#F5F5F7] font-mono">{email}</strong>
+            </p>
           </div>
-          {error ? <div className="cyber-invalid-state" role="alert"><div><AlertCircle size={28} /></div><h2>Invalid OTP</h2><p>{error}</p><button type="button" className="cyber-auth-button" onClick={() => setError("")}>Try again <ArrowRight size={16} /></button><button type="button" className="cyber-invalid-resend" onClick={resend} disabled={resending || cooldown > 0}>{resending ? "Sending..." : cooldown > 0 ? `Resend OTP in 00:${String(cooldown).padStart(2, "0")}` : "Resend OTP"}</button></div> : (
-            <>
-              <div className="cyber-otp-boxes" aria-label="Six digit verification code">
-                {digits.map((digit, index) => <input key={index} className={digit ? "filled" : ""} ref={(element) => { refs.current[index] = element; }} value={digit} maxLength={6} inputMode="numeric" autoComplete={index === 0 ? "one-time-code" : "off"} aria-label={`Digit ${index + 1}`} disabled={loading} onChange={(event) => setDigit(index, event.target.value)} onKeyDown={(event) => onKeyDown(event, index)} />)}
-              </div>
-              <button type="button" className="cyber-auth-button" onClick={verify} disabled={loading || digits.some((digit) => !digit)}>{loading ? "Verifying..." : "Verify & Continue"} <ArrowRight size={16} /></button>
-            </>
+
+          {error && (
+            <div className="flex items-start gap-2 rounded-2xl border border-rose-500/20 bg-rose-500/10 p-3.5 text-rose-400 text-xs" role="alert">
+              <AlertCircle size={16} className="shrink-0 mt-0.5" />
+              <span>{error}</span>
+            </div>
           )}
-          {!error && <p className="cyber-resend-copy">Didn’t receive the code? <button type="button" onClick={resend} disabled={resending || cooldown > 0}>{resending ? "Sending..." : cooldown > 0 ? `Resend OTP in 00:${String(cooldown).padStart(2, "0")}` : "Resend OTP"}</button></p>}
-          <button type="button" className="cyber-change-email" onClick={changeEmail} disabled={loading}><ArrowLeft size={14} /> Change email</button>
-          <div className="cyber-secure-note"><RefreshCw size={13} /> Your code can only be used once.</div>
-        </>
+
+          {/* 6 Digit Input Boxes */}
+          <div className="flex justify-center gap-2.5" aria-label="Passcode boxes">
+            {digits.map((digit, index) => (
+              <input
+                key={index}
+                ref={(element) => {
+                  refs.current[index] = element;
+                }}
+                value={digit}
+                maxLength={6}
+                inputMode="numeric"
+                autoComplete={index === 0 ? "one-time-code" : "off"}
+                aria-label={`Digit ${index + 1}`}
+                disabled={loading}
+                onChange={(event) => setDigit(index, event.target.value)}
+                onKeyDown={(event) => onKeyDown(event, index)}
+                className={`w-11 sm:w-12 h-14 text-center text-lg font-bold font-mono rounded-xl border bg-[#14141A] text-[#F5F5F7] outline-none transition-all ${
+                  digit
+                    ? "border-[#C5A880] ring-1 ring-[#C5A880]/30"
+                    : "border-white/[0.06] focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880]/30"
+                }`}
+              />
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="lms-btn-primary cursor-pointer active:scale-98"
+            onClick={verify}
+            disabled={loading || digits.some((d) => !d)}
+          >
+            {loading ? "Verifying..." : "Verify & Continue"} <ArrowRight size={15} />
+          </button>
+
+          <div className="pt-2 text-center space-y-3 text-xs">
+            <p className="text-[#8E8E93]">
+              Didn't receive the passcode?{" "}
+              <button
+                type="button"
+                onClick={resend}
+                disabled={resending || cooldown > 0}
+                className="font-bold text-[#C5A880] hover:text-[#D4BC98] disabled:opacity-50 transition-colors cursor-pointer"
+              >
+                {resending ? "Sending..." : cooldown > 0 ? `Resend in ${cooldown}s` : "Resend Passcode"}
+              </button>
+            </p>
+
+            <button
+              type="button"
+              onClick={changeEmail}
+              disabled={loading}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#71717A] hover:text-[#F5F5F7] transition-colors cursor-pointer"
+            >
+              <ArrowLeft size={13} /> Change email address
+            </button>
+          </div>
+
+          <div className="pt-3 border-t border-white/[0.04] text-center text-[11px] text-[#52525B] flex items-center justify-center gap-1.5">
+            <RefreshCw size={12} />
+            <span>Single-use encrypted session verification</span>
+          </div>
+        </div>
       )}
     </AuthShell>
   );

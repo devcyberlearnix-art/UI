@@ -11,7 +11,9 @@
     "test:runtime": "node scripts/e2e-live-runtime-test.mjs",
     "check:routes": "node scripts/ui-route-surface-check.cjs",
     "sync:api-contract": "node scripts/sync-api-contract.mjs",
-    "generate:api-client": "node scripts/generate-api-client.mjs"
+    "generate:api-client": "node scripts/generate-api-client.mjs",
+    "test:realtime": "node scripts/test-realtime-notifications-e2e.mjs",
+    "test:spectrum": "node scripts/platform_full_spectrum_audit.spec.js"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.105.0",

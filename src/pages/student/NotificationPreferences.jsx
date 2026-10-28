@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Bell,
@@ -10,9 +10,16 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
+  Sliders,
 } from "lucide-react";
-import toast from "react-hot-toast";
-import { notificationApi } from "../../api/notificationApi";
+import { useNotificationPreferences } from "../../hooks/useNotifications";
+import Button from "../../design-system/primitives/Button";
+
+const SPRING_TRANSITION = {
+  type: "spring",
+  stiffness: 280,
+  damping: 26,
+};
 
 const ToggleSwitch = ({ checked, onChange, id }) => (
   <button
@@ -21,24 +28,30 @@ const ToggleSwitch = ({ checked, onChange, id }) => (
     role="switch"
     aria-checked={checked}
     onClick={() => onChange(!checked)}
-    className={"relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none " + (checked ? "bg-orange-500" : "bg-slate-300")}
+    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-1 focus:ring-[#C5A880] ${
+      checked ? "bg-[#C5A880]" : "bg-[#14141A] border border-white/10"
+    }`}
   >
-    <span className={"pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform transition duration-200 ease-in-out " + (checked ? "translate-x-5" : "translate-x-0")} />
+    <span
+      className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform transition duration-200 ease-in-out ${
+        checked ? "translate-x-5 bg-[#070709]" : "translate-x-0 bg-[#8E8E93]"
+      }`}
+    />
   </button>
 );
 
 const PreferenceRow = ({ icon: Icon, title, description, value, onChange, id }) => (
-  <div className="flex items-center justify-between gap-4 py-4">
-    <div className="flex items-start gap-3">
-      <div className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
-        <Icon size={17} className="text-orange-600" />
+  <div className="flex items-center justify-between gap-4 py-4 border-b border-white/[0.04] last:border-b-0">
+    <div className="flex items-start gap-3.5">
+      <div className="w-9 h-9 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center flex-shrink-0 text-[#C5A880]">
+        <Icon size={16} />
       </div>
       <div>
-        <p className="text-sm font-medium text-slate-900">{title}</p>
-        <p className="text-xs text-slate-500 mt-0.5">{description}</p>
+        <p className="text-xs sm:text-sm font-semibold text-[#F5F5F7]">{title}</p>
+        <p className="text-[11px] sm:text-xs text-[#8E8E93] mt-0.5 leading-relaxed">{description}</p>
       </div>
     </div>
-    <ToggleSwitch checked={!!value} onChange={onChange} id={id} />
+    <ToggleSwitch checked={Boolean(value)} onChange={onChange} id={id} />
   </div>
 );
 
@@ -53,119 +66,170 @@ const DEFAULT_PREFS = {
   marketingEmails: false,
 };
 
-const NotificationPreferences = () => {
+export const NotificationPreferences = () => {
+  const { preferences, isLoading, updatePreferences, isUpdating } = useNotificationPreferences();
   const [prefs, setPrefs] = useState(DEFAULT_PREFS);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const fetchPrefs = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const res = await notificationApi.getPreferences();
-        const data = res?.data || res;
-        if (data && typeof data === "object") {
-          setPrefs(prev => ({ ...prev, ...data }));
-        }
-      } catch (err) {
-        if (err.response?.status === 404) {
-          // No preferences set yet, use defaults
-        } else {
-          setError("Failed to load preferences. Showing defaults.");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPrefs();
-  }, []);
-
-  const handleSave = async () => {
-    setSaving(true);
-    setSaved(false);
-    try {
-      await notificationApi.updatePreferences(prefs);
-      setSaved(true);
-      toast.success("Notification preferences saved!");
-      setTimeout(() => setSaved(false), 3000);
-    } catch (err) {
-      const msg = err.response?.data?.message || "Failed to save preferences";
-      toast.error(msg);
-    } finally {
-      setSaving(false);
+    if (preferences && typeof preferences === "object") {
+      setPrefs((prev) => ({ ...prev, ...preferences }));
     }
+  }, [preferences]);
+
+  const toggle = (key) => (val) => setPrefs((prev) => ({ ...prev, [key]: val }));
+
+  const handleSave = () => {
+    updatePreferences(prefs);
   };
 
-  const toggle = (key) => (val) => setPrefs(prev => ({ ...prev, [key]: val }));
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="min-h-[50vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
+      <div className="min-h-[50vh] flex items-center justify-center bg-[#070709]">
+        <div className="text-center space-y-3">
+          <Loader2 className="w-8 h-8 animate-spin text-[#C5A880] mx-auto" />
+          <p className="text-xs text-[#8E8E93] font-mono">Syncing alert preferences...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="py-8 px-4">
+    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] py-8 px-4 sm:px-6">
       <div className="max-w-2xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="rounded-2xl bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-500 p-6 text-white shadow-xl">
-          <h1 className="text-2xl font-bold flex items-center gap-2"><Bell size={24} /> Notification Preferences</h1>
-          <p className="text-orange-50 text-sm mt-1">Control how and when you receive notifications from ASIVO LMS.</p>
-        </div>
-
-        {error && (
-          <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-700">
-            <AlertCircle size={16} /><p className="text-sm">{error}</p>
+        {/* Header Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={SPRING_TRANSITION}
+          className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-xl relative overflow-hidden"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#C5A880]">
+              <Sliders size={20} />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight text-[#F5F5F7]">
+                Notification Stream Governance
+              </h1>
+              <p className="text-xs text-[#8E8E93] font-mono mt-0.5">
+                Configure delivery channels and telemetry alert sensitivity
+              </p>
+            </div>
           </div>
-        )}
+        </motion.div>
 
         {/* Channel Preferences */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-          <h2 className="font-semibold text-slate-900 mb-1">Notification Channels</h2>
-          <p className="text-xs text-slate-500 mb-2">Choose which channels you receive notifications through.</p>
-          <div className="divide-y divide-slate-100">
-            <PreferenceRow id="pref-email" icon={Mail} title="Email Notifications" description="Receive notifications via email" value={prefs.emailNotifications} onChange={toggle("emailNotifications")} />
-            <PreferenceRow id="pref-push" icon={Smartphone} title="Push Notifications" description="Browser push notifications (requires permission)" value={prefs.pushNotifications} onChange={toggle("pushNotifications")} />
-            <PreferenceRow id="pref-inapp" icon={Bell} title="In-App Notifications" description="Notifications within the platform" value={prefs.inAppNotifications} onChange={toggle("inAppNotifications")} />
+        <div className="bg-[#0F0F13] rounded-3xl border border-white/[0.04] shadow-xl p-6">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-[#F5F5F7] mb-1 font-mono">
+            Delivery Channels
+          </h2>
+          <p className="text-xs text-[#8E8E93] mb-4">
+            Select the communication transports to receive live events through.
+          </p>
+          <div>
+            <PreferenceRow
+              id="pref-email"
+              icon={Mail}
+              title="Email Transports"
+              description="Receive critical receipts and announcements via SMTP/SES"
+              value={prefs.emailNotifications}
+              onChange={toggle("emailNotifications")}
+            />
+            <PreferenceRow
+              id="pref-push"
+              icon={Smartphone}
+              title="Browser Push Notifications"
+              description="Real-time WebSocket & Push notification popups"
+              value={prefs.pushNotifications}
+              onChange={toggle("pushNotifications")}
+            />
+            <PreferenceRow
+              id="pref-inapp"
+              icon={Bell}
+              title="In-App Telemetry Banner"
+              description="Live notifications in the upper workspace navigation bar"
+              value={prefs.inAppNotifications}
+              onChange={toggle("inAppNotifications")}
+            />
           </div>
         </div>
 
-        {/* Content Preferences */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-          <h2 className="font-semibold text-slate-900 mb-1">What to Notify You About</h2>
-          <p className="text-xs text-slate-500 mb-2">Select the types of updates you want to be notified about.</p>
-          <div className="divide-y divide-slate-100">
-            <PreferenceRow id="pref-course" icon={Volume2} title="Course Updates" description="New lectures, content changes, announcements" value={prefs.courseUpdates} onChange={toggle("courseUpdates")} />
-            <PreferenceRow id="pref-enrollment" icon={CheckCircle2} title="Enrollment Alerts" description="Enrollment confirmations and access updates" value={prefs.enrollmentAlerts} onChange={toggle("enrollmentAlerts")} />
-            <PreferenceRow id="pref-assignment" icon={RefreshCw} title="Assignment Reminders" description="Due date reminders and grading updates" value={prefs.assignmentReminders} onChange={toggle("assignmentReminders")} />
-            <PreferenceRow id="pref-review" icon={Bell} title="Review Alerts" description="Responses to your reviews and ratings" value={prefs.reviewAlerts} onChange={toggle("reviewAlerts")} />
-            <PreferenceRow id="pref-marketing" icon={Mail} title="Marketing Emails" description="Promotions, offers, and product updates" value={prefs.marketingEmails} onChange={toggle("marketingEmails")} />
+        {/* Content Subscriptions */}
+        <div className="bg-[#0F0F13] rounded-3xl border border-white/[0.04] shadow-xl p-6">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-[#F5F5F7] mb-1 font-mono">
+            Event Topics & Alerts
+          </h2>
+          <p className="text-xs text-[#8E8E93] mb-4">
+            Filter the specific platform events you wish to be alerted about.
+          </p>
+          <div>
+            <PreferenceRow
+              id="pref-course"
+              icon={Volume2}
+              title="Course Updates & Milestones"
+              description="New lecture releases, curriculum edits, and mentor broadcasts"
+              value={prefs.courseUpdates}
+              onChange={toggle("courseUpdates")}
+            />
+            <PreferenceRow
+              id="pref-enrollment"
+              icon={CheckCircle2}
+              title="Enrollment & License Signals"
+              description="Registration receipts, invoice access, and workspace verification"
+              value={prefs.enrollmentAlerts}
+              onChange={toggle("enrollmentAlerts")}
+            />
+            <PreferenceRow
+              id="pref-assignment"
+              icon={RefreshCw}
+              title="Lab & Assessment Reminders"
+              description="Countdown deadlines, submission confirmations, and evaluation results"
+              value={prefs.assignmentReminders}
+              onChange={toggle("assignmentReminders")}
+            />
+            <PreferenceRow
+              id="pref-review"
+              icon={Bell}
+              title="Review & Feedback Signals"
+              description="Instructor responses to your questions and code critiques"
+              value={prefs.reviewAlerts}
+              onChange={toggle("reviewAlerts")}
+            />
+            <PreferenceRow
+              id="pref-marketing"
+              icon={Mail}
+              title="Ecosystem Announcements"
+              description="Quarterly masterclass releases and architectural briefs"
+              value={prefs.marketingEmails}
+              onChange={toggle("marketingEmails")}
+            />
           </div>
         </div>
 
-        {/* Save Button */}
-        <div className="flex items-center justify-end gap-3">
-          {saved && (
-            <span className="text-emerald-600 text-sm flex items-center gap-1">
-              <CheckCircle2 size={15} /> Saved!
-            </span>
-          )}
-          <button
-            onClick={handleSave}
-            disabled={saving}
+        {/* Save Bar */}
+        <div className="flex items-center justify-end gap-3 pt-2">
+          <Button
+            variant="primary"
+            size="md"
+            disabled={isUpdating}
             id="save-notification-preferences"
-            className="flex items-center gap-2 px-6 py-2.5 bg-orange-600 text-white rounded-xl font-semibold text-sm hover:bg-orange-700 transition disabled:opacity-60"
+            onClick={handleSave}
           >
-            {saving ? <><Loader2 size={15} className="animate-spin" /> Saving...</> : <><Save size={15} /> Save Preferences</>}
-          </button>
+            {isUpdating ? (
+              <>
+                <Loader2 size={15} className="animate-spin mr-2" />
+                <span>Committing Preferences...</span>
+              </>
+            ) : (
+              <>
+                <Save size={15} className="mr-2" />
+                <span>Save Telemetry Configuration</span>
+              </>
+            )}
+          </Button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

@@ -1,11 +1,18 @@
-import { useMemo, useState } from "react";
-import { Check, Circle, Eye, EyeOff, LockKeyhole, Mail, UserRound, AlertCircle, ArrowRight } from "lucide-react";
+import React, { useMemo, useState } from "react";
+import { Check, Circle, Eye, EyeOff, LockKeyhole, Mail, UserRound, AlertCircle, ArrowRight, UserPlus } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import AuthShell from "../components/ui/AuthShell";
 import { authApi } from "../api/authApi";
 import { parseApiError } from "../utils/apiErrorParser";
 import { getPasswordChecks, isStrongPassword, validateEmail } from "../utils/validation";
+
+const SPRING_TRANSITION = {
+  type: "spring",
+  stiffness: 280,
+  damping: 26,
+};
 
 const initialForm = { firstName: "", lastName: "", email: "", password: "", confirmPassword: "" };
 
@@ -68,9 +75,11 @@ const Register = () => {
       const cooldownSeconds = payload?.cooldownSeconds ?? payload?.data?.cooldownSeconds;
       const expiresInSeconds = payload?.expiresInSeconds ?? payload?.data?.expiresInSeconds;
       if (!otpSessionId) throw new Error("Registration did not return a verification session. Please try again.");
-      try { sessionStorage.setItem("asivo_otp_context", JSON.stringify({
-        email: form.email.trim().toLowerCase(), flow: "register", otpSessionId, cooldownSeconds, expiresInSeconds,
-      })); } catch { /* Router state remains available if storage is restricted. */ }
+      try {
+        sessionStorage.setItem("asivo_otp_context", JSON.stringify({
+          email: form.email.trim().toLowerCase(), flow: "register", otpSessionId, cooldownSeconds, expiresInSeconds,
+        }));
+      } catch { /* storage fallback */ }
       const backendMessage = response?.message || payload?.message;
       if (backendMessage) toast.success(backendMessage);
       navigate("/otp-verify", { state: { email: form.email.trim().toLowerCase(), flow: "register", otpSessionId, cooldownSeconds, expiresInSeconds } });
@@ -84,53 +93,171 @@ const Register = () => {
     }
   };
 
-  const field = (name, label, Icon, type = "text", placeholder = "") => {
-    const password = name === "password" || name === "confirmPassword";
+  const renderField = (name, label, Icon, type = "text", placeholder = "") => {
+    const isPassword = name === "password" || name === "confirmPassword";
     const visible = name === "password" ? showPassword : showConfirmPassword;
     return (
-      <div className="cyber-field">
-        <label htmlFor={name}>{label} <span>*</span></label>
-        <div className="cyber-field-control">
-          <Icon size={15} aria-hidden="true" />
-          <input id={name} name={name} type={password ? (visible ? "text" : "password") : type} value={form[name]} placeholder={placeholder} onChange={(event) => update(name, event.target.value)} disabled={loading} autoComplete={password ? (name === "password" ? "new-password" : "new-password") : name} />
-          {password && <button type="button" aria-label={visible ? `Hide ${label}` : `Show ${label}`} onClick={() => (name === "password" ? setShowPassword((value) => !value) : setShowConfirmPassword((value) => !value))}><span>{visible ? <EyeOff size={15} /> : <Eye size={15} />}</span></button>}
+      <div className="space-y-1">
+        <label htmlFor={name} className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block">
+          {label} <span className="text-[#C5A880]">*</span>
+        </label>
+        <div className="relative">
+          <Icon size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" aria-hidden="true" />
+          <input
+            id={name}
+            name={name}
+            type={isPassword ? (visible ? "text" : "password") : type}
+            value={form[name]}
+            placeholder={placeholder}
+            onChange={(event) => update(name, event.target.value)}
+            disabled={loading}
+            autoComplete={isPassword ? "new-password" : name}
+            className="lms-input pl-10 pr-10 text-xs"
+          />
+          {isPassword && (
+            <button
+              type="button"
+              aria-label={visible ? `Hide ${label}` : `Show ${label}`}
+              onClick={() => (name === "password" ? setShowPassword((v) => !v) : setShowConfirmPassword((v) => !v))}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-[#F5F5F7] transition-colors"
+            >
+              {visible ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          )}
         </div>
-        {errors[name] && <p className="cyber-field-error">{errors[name]}</p>}
+        {errors[name] && <p className="text-[11px] text-rose-400 font-medium mt-1">{errors[name]}</p>}
       </div>
     );
   };
 
   return (
-    <AuthShell variant="signup" step={1}>
-      <div className="cyber-card-heading">
-        <h1>Create your account</h1>
-        <p>Start your learning journey today.</p>
-      </div>
-      {globalError && <div className="cyber-form-error" role="alert"><AlertCircle size={16} />{globalError}</div>}
-      <form onSubmit={submit} noValidate>
-        <div className="cyber-name-grid">
-          {field("firstName", "First name", UserRound, "text", "Enter your first name")}
-          {field("lastName", "Last name", UserRound, "text", "Enter your last name")}
-        </div>
-        {field("email", "Email address", Mail, "email", "you@example.com")}
-        {field("password", "Password", LockKeyhole, "password", "Create a strong password")}
-        <div className="cyber-password-help" aria-live="polite">
-          <strong>Password must contain:</strong>
-          <div className="cyber-password-rules">
-            {[["length", "At least 8 characters"], ["upper", "One uppercase letter (A–Z)"], ["lower", "One lowercase letter (a–z)"], ["number", "One number (0–9)"], ["symbol", "One special character"]].map(([rule, label]) => (
-              <span key={rule} className={passwordChecks[rule] ? "met" : ""}>{passwordChecks[rule] ? <Check size={13} aria-hidden="true" /> : <Circle size={11} aria-hidden="true" />}{label}</span>
-            ))}
+    <AuthShell variant="split" showTerms showBackHome wide>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={SPRING_TRANSITION}
+        className="space-y-6"
+      >
+        {/* Card Header */}
+        <div className="text-center space-y-2">
+          <div className="mx-auto w-12 h-12 rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shadow-sm">
+            <UserPlus className="w-5 h-5 text-[#C5A880]" />
           </div>
-          <div className="cyber-strength" aria-label={form.password ? `Password strength ${strength} of 5` : "Password strength not entered"}>
-            <small>Password strength: <b>{!form.password ? "Not entered" : strength === 5 ? "Strong" : strength >= 4 ? "Good" : strength >= 3 ? "Fair" : "Weak"}</b></small>
-            <div>{[1, 2, 3, 4, 5].map((item) => <span key={item} className={item <= strength ? "filled" : ""} />)}</div>
-          </div>
+          <h1 className="text-2xl font-extrabold text-[#F5F5F7] tracking-tight">
+            Create Engineering Account
+          </h1>
+          <p className="text-xs text-[#8E8E93]">
+            Start your learning journey across enterprise disciplines.
+          </p>
         </div>
-        {field("confirmPassword", "Confirm password", LockKeyhole, "password", "Re-enter your password")}
-        {form.confirmPassword && <p className={`cyber-confirm-feedback ${form.password === form.confirmPassword ? "match" : "mismatch"}`} role="status">{form.password === form.confirmPassword ? <><Check size={14} /> Passwords match</> : "Passwords do not match"}</p>}
-        <button className="cyber-auth-button" type="submit" disabled={loading || !form.firstName.trim() || !form.lastName.trim() || !validateEmail(form.email) || !isStrongPassword(form.password) || form.password !== form.confirmPassword}>{loading ? "Creating account..." : "Create account"} <ArrowRight size={16} /></button>
-      </form>
-      <p className="cyber-auth-switch">Already have an account? <Link to="/login">Sign in</Link></p>
+
+        {globalError && (
+          <div className="flex items-start gap-2 rounded-2xl border border-rose-500/20 bg-rose-500/10 p-3.5 text-rose-400 text-xs" role="alert">
+            <AlertCircle size={16} className="shrink-0 mt-0.5" />
+            <span>{globalError}</span>
+          </div>
+        )}
+
+        <form onSubmit={submit} noValidate className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {renderField("firstName", "First Name", UserRound, "text", "Ada")}
+            {renderField("lastName", "Last Name", UserRound, "text", "Lovelace")}
+          </div>
+
+          {renderField("email", "Email Address", Mail, "email", "name@enterprise.io")}
+          {renderField("password", "Master Password", LockKeyhole, "password", "••••••••••••")}
+
+          {/* Password Validation Checklist */}
+          {form.password && (
+            <div className="p-3.5 rounded-2xl bg-[#14141A] border border-white/[0.04] space-y-2.5 text-xs">
+              <span className="font-semibold text-[#8E8E93] text-[11px] uppercase tracking-wider block">
+                Password Security Criteria:
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px]">
+                {[
+                  ["length", "8+ characters"],
+                  ["upper", "Uppercase (A-Z)"],
+                  ["lower", "Lowercase (a-z)"],
+                  ["number", "Number (0-9)"],
+                  ["symbol", "Special symbol"],
+                ].map(([rule, label]) => (
+                  <span
+                    key={rule}
+                    className={`flex items-center gap-1.5 ${
+                      passwordChecks[rule] ? "text-[#C5A880] font-semibold" : "text-[#71717A]"
+                    }`}
+                  >
+                    {passwordChecks[rule] ? <Check size={12} /> : <Circle size={10} />}
+                    <span>{label}</span>
+                  </span>
+                ))}
+              </div>
+
+              {/* Strength Meter Bar */}
+              <div className="pt-2 border-t border-white/[0.04] flex items-center justify-between text-[11px]">
+                <span className="text-[#8E8E93]">
+                  Strength:{" "}
+                  <b className="text-[#F5F5F7]">
+                    {strength === 5 ? "Robust" : strength >= 4 ? "Good" : strength >= 3 ? "Fair" : "Weak"}
+                  </b>
+                </span>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((item) => (
+                    <span
+                      key={item}
+                      className={`h-1.5 w-5 rounded-full transition-colors ${
+                        item <= strength ? "bg-[#C5A880]" : "bg-white/[0.06]"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {renderField("confirmPassword", "Confirm Password", LockKeyhole, "password", "••••••••••••")}
+
+          {form.confirmPassword && (
+            <p
+              className={`text-[11px] font-semibold flex items-center gap-1.5 ${
+                form.password === form.confirmPassword ? "text-emerald-400" : "text-rose-400"
+              }`}
+            >
+              {form.password === form.confirmPassword ? (
+                <>
+                  <Check size={13} /> Passwords match
+                </>
+              ) : (
+                "Passwords do not match"
+              )}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={
+              loading ||
+              !form.firstName.trim() ||
+              !form.lastName.trim() ||
+              !validateEmail(form.email) ||
+              !isStrongPassword(form.password) ||
+              form.password !== form.confirmPassword
+            }
+            className="lms-btn-primary cursor-pointer active:scale-98"
+          >
+            {loading ? "Provisioning account..." : "Create Account"} <ArrowRight size={15} />
+          </button>
+        </form>
+
+        <div className="pt-4 border-t border-white/[0.04] text-center">
+          <p className="text-xs text-[#8E8E93]">
+            Already have an active account?{" "}
+            <Link to="/login" className="text-[#C5A880] hover:text-[#D4BC98] font-bold transition-colors">
+              Sign in
+            </Link>
+          </p>
+        </div>
+      </motion.div>
     </AuthShell>
   );
 };

@@ -63,9 +63,9 @@ const RegistrationSuccess = () => {
           <Mail size={18} className="animate-pulse" />
           <span className="text-sm font-medium">Redirecting to login page...</span>
           <div className="flex gap-1">
-            <div className="w-1.5 h-1.5 bg-orange-600 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-            <div className="w-1.5 h-1.5 bg-orange-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-            <div className="w-1.5 h-1.5 bg-orange-600 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+            <div className="w-1.5 h-1.5 bg-orange-600 rounded-full animate-pulse" style={{ animationDelay: '0s' }}></div>
+            <div className="w-1.5 h-1.5 bg-orange-600 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-1.5 h-1.5 bg-orange-600 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
           </div>
         </div>
         

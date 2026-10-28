@@ -280,6 +280,9 @@ export const OrderProvider = ({ children }) => {
       removeCouponMutation,
       createOrderMutation,
 
+      // Currency utility
+      formatCurrency: (amount) => `₹${Number(amount || 0).toLocaleString('en-IN')}`,
+
       // Orders state
       orders,
       isOrdersLoading,

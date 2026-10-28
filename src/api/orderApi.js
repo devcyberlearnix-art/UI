@@ -7,6 +7,45 @@ import axiosInstance from "./axiosInstance";
  */
 export const orderApi = {
   /**
+   * POST /api/v1/orders/stage
+   * Stage order from cart queue before checkout payment
+   */
+  stageOrder: async (stagePayload) => {
+    try {
+      const response = await axiosInstance.post('/api/v1/orders/stage', stagePayload);
+      return response.data;
+    } catch (err) {
+      console.warn('[orderApi] POST /api/v1/orders/stage fallback handling', err?.message);
+      if (err.response?.status === 404 || err.response?.status === 405) {
+        const fallbackRes = await axiosInstance.post('/api/v1/orders/create', {
+          ...stagePayload,
+          status: 'PENDING_PAYMENT',
+        });
+        return fallbackRes.data;
+      }
+      throw err;
+    }
+  },
+
+  /**
+   * GET /api/v1/orders/staged/{orderId}
+   * Get staged order verification details
+   */
+  getStagedOrder: async (orderId) => {
+    try {
+      const response = await axiosInstance.get(`/api/v1/orders/staged/${orderId}`);
+      return response.data;
+    } catch (err) {
+      console.warn(`[orderApi] GET /api/v1/orders/staged/${orderId} fallback handling`, err?.message);
+      if (err.response?.status === 404 || err.response?.status === 405) {
+        const fallbackRes = await axiosInstance.get(`/api/v1/orders/${orderId}`);
+        return fallbackRes.data;
+      }
+      throw err;
+    }
+  },
+
+  /**
    * POST /api/v1/orders/create
    * Create order
    */
@@ -35,16 +74,17 @@ export const orderApi = {
   },
 
   /**
-   * GET /api/v1/orders
-   * Get user orders
+   * GET /api/v1/orders/my-orders
+   * Get user orders (Standardized historical tracking ledger)
    */
   getMyOrders: async () => {
     try {
-      const response = await axiosInstance.get('/api/v1/orders');
+      const response = await axiosInstance.get('/api/v1/orders/my-orders');
       return response.data;
     } catch (err) {
-      console.warn('[orderApi] GET /api/v1/orders failed');
-      throw err;
+      console.warn('[orderApi] GET /api/v1/orders/my-orders fallback to /api/v1/orders');
+      const fallbackResponse = await axiosInstance.get('/api/v1/orders');
+      return fallbackResponse.data;
     }
   },
 

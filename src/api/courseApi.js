@@ -251,17 +251,17 @@ export const courseApi = {
   },
 
   /**
-   * GET /api/v1/dashboard/student
-   * Get student dashboard overview
+   * GET /api/v1/dashboard/student or /api/v1/progress/courses
+   * Get student dashboard overview & batch metrics
    */
   getStudentDashboard: async () => {
     try {
-      const response = await axiosInstance.get('/api/v1/dashboard/student');
-      // Backend returns ApiResponse<StudentDashboardResponse> envelope
+      const response = await axiosInstance.get('/api/v1/progress/courses');
       return response.data?.data || response.data;
     } catch (err) {
-      console.warn('[courseApi] GET /api/v1/dashboard/student failed');
-      throw err;
+      console.warn('[courseApi] GET /api/v1/progress/courses fallback to /api/v1/dashboard/student');
+      const fallback = await axiosInstance.get('/api/v1/dashboard/student');
+      return fallback.data?.data || fallback.data;
     }
   },
 
@@ -272,10 +272,23 @@ export const courseApi = {
   getStudentCourses: async () => {
     try {
       const response = await axiosInstance.get('/api/v1/dashboard/student/courses');
-      // Backend returns ApiResponse<DashboardCourseResponse> envelope
       return response.data?.data || response.data;
     } catch (err) {
       console.warn('[courseApi] GET /api/v1/dashboard/student/courses failed');
+      throw err;
+    }
+  },
+
+  /**
+   * GET /api/v1/progress/courses
+   * Get aggregated batch progress for user's enrolled courses
+   */
+  getBatchCourseProgress: async () => {
+    try {
+      const response = await axiosInstance.get('/api/v1/progress/courses');
+      return response.data?.data || response.data;
+    } catch (err) {
+      console.warn('[courseApi] GET /api/v1/progress/courses failed');
       throw err;
     }
   },
@@ -287,10 +300,15 @@ export const courseApi = {
   getCourseProgress: async (courseId) => {
     try {
       const response = await axiosInstance.get(`/api/v1/progress/courses/${courseId}`);
-      return response.data;
+      return response.data?.data || response.data;
     } catch (err) {
-      console.warn(`[courseApi] GET /api/v1/progress/courses/${courseId} failed`);
-      throw err;
+      try {
+        const fallback = await axiosInstance.get(`/api/v1/progress/course/${courseId}`);
+        return fallback.data?.data || fallback.data;
+      } catch (err2) {
+        console.warn(`[courseApi] GET /api/v1/progress/courses/${courseId} failed`);
+        throw err;
+      }
     }
   },
 

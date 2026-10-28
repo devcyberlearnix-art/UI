@@ -297,7 +297,7 @@ o=>o.payment==="Pending"
 
 <p>Revenue</p>
 
-<h2 className="text-3xl text-purple-500">
+<h2 className="text-3xl font-extrabold font-mono text-[#C5A880]">
 
 ₹{
 

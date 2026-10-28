@@ -1,71 +1,176 @@
 // src/pages/student/Orders.jsx
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useOrders } from "../../context/OrderContext";
-import OrderCard from "../../components/order/OrderCard";
-import { Package, RefreshCw } from "lucide-react";
+import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useOrders } from '../../context/OrderContext';
+import OrderCard from '../../components/order/OrderCard';
+import GlobalLayoutWrapper from '../../design-system/layout/GlobalLayoutWrapper';
+import Button from '../../design-system/primitives/Button';
+import Badge from '../../design-system/primitives/Badge';
+import Skeleton from '../../design-system/primitives/Skeleton';
+import EmptyState from '../../design-system/feedback/EmptyState';
+import {
+  Package,
+  RefreshCw,
+  ShoppingBag,
+  CreditCard,
+  ShieldCheck,
+  Loader2,
+  Filter,
+} from 'lucide-react';
+
+const SPRING = { type: 'spring', stiffness: 280, damping: 26 };
 
 const Orders = () => {
-  const { orders, loading, loadUserOrders } = useOrders();
+  const navigate = useNavigate();
+  const { orders = [], loading, loadUserOrders } = useOrders();
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('ALL');
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await loadUserOrders();
-    setTimeout(() => setRefreshing(false), 500);
+    try {
+      await loadUserOrders();
+    } finally {
+      setTimeout(() => setRefreshing(false), 500);
+    }
   };
+
+  const filteredOrders = useMemo(() => {
+    if (selectedFilter === 'ALL') return orders;
+    return orders.filter((order) => {
+      const st = String(order.status || 'pending').toLowerCase();
+      if (selectedFilter === 'PENDING') return st === 'pending' || st === 'processing';
+      if (selectedFilter === 'SETTLED') return st === 'paid' || st === 'delivered' || st === 'completed';
+      if (selectedFilter === 'CANCELLED') return st === 'cancelled' || st === 'refunded';
+      return true;
+    });
+  }, [orders, selectedFilter]);
 
   if (loading && !orders.length) {
     return (
-      <div className="p-6 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
-        <p className="mt-2 text-gray-500">Loading orders...</p>
-      </div>
+      <GlobalLayoutWrapper showFooter={false}>
+        <div className="space-y-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Skeleton className="h-8 w-1/4 rounded bg-[#0F0F13]" />
+          <div className="space-y-4">
+            <Skeleton className="h-28 w-full rounded-2xl bg-[#0F0F13]" />
+            <Skeleton className="h-28 w-full rounded-2xl bg-[#0F0F13]" />
+          </div>
+        </div>
+      </GlobalLayoutWrapper>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="p-6 max-w-4xl mx-auto"
-    >
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">My Orders</h1>
-        <button
-          onClick={handleRefresh}
-          disabled={refreshing}
-          className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
-        >
-          <RefreshCw size={16} className={refreshing ? "animate-spin" : ""} />
-          Refresh
-        </button>
-      </div>
+    <GlobalLayoutWrapper showFooter={false}>
+      <div className="space-y-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 font-sans">
+        
+        {/* Title Meta Frame */}
+        <div className="border-b border-white/[0.04] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl font-bold tracking-tight text-[#F5F5F7]">
+                Billing Records & Order Pipeline
+              </h1>
+              <Badge
+                variant="pewter"
+                className="bg-[#14141A] text-[#C5A880] border-white/5 font-mono text-[10px] px-2 py-0.5"
+              >
+                {orders.length} Total
+              </Badge>
+            </div>
+            <p className="text-xs text-[#8E8E93] font-light mt-0.5">
+              Cryptographically verified transaction telemetry and seat license records.
+            </p>
+          </div>
 
-      {orders.length === 0 ? (
-        <motion.div
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          className="text-center py-12 bg-gray-50 rounded-xl border"
-        >
-          <Package size={48} className="mx-auto text-gray-400 mb-3" />
-          <p className="text-gray-500">You haven't placed any orders yet.</p>
-        </motion.div>
-      ) : (
-        <div className="space-y-4">
-          {orders.map((order, idx) => (
-            <motion.div
-              key={order.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="gap-1.5 text-xs bg-[#14141A] border-white/5 hover:border-white/10 cursor-pointer"
             >
-              <OrderCard order={order} onCancel={() => loadUserOrders()} />
-            </motion.div>
-          ))}
+              <RefreshCw
+                size={14}
+                className={`text-[#C5A880] ${refreshing ? 'animate-spin' : ''}`}
+              />
+              <span>{refreshing ? 'Syncing...' : 'Refresh Records'}</span>
+            </Button>
+          </div>
         </div>
-      )}
-    </motion.div>
+
+        {/* Status Filter Tab Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          {[
+            { id: 'ALL', label: 'All Records', count: orders.length },
+            {
+              id: 'PENDING',
+              label: 'Pending Ingest',
+              count: orders.filter((o) => ['pending', 'processing'].includes(String(o.status || '').toLowerCase())).length,
+            },
+            {
+              id: 'SETTLED',
+              label: 'Settled & Verified',
+              count: orders.filter((o) => ['paid', 'delivered', 'completed'].includes(String(o.status || '').toLowerCase())).length,
+            },
+            {
+              id: 'CANCELLED',
+              label: 'Terminated',
+              count: orders.filter((o) => ['cancelled', 'refunded'].includes(String(o.status || '').toLowerCase())).length,
+            },
+          ].map((tab) => {
+            const active = selectedFilter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setSelectedFilter(tab.id)}
+                className={`relative px-3.5 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-colors duration-200 select-none cursor-pointer shrink-0 flex items-center gap-1.5 border ${
+                  active
+                    ? 'border-[#C5A880]/40 text-[#C5A880] bg-[#14141A]'
+                    : 'border-white/[0.04] text-[#8E8E93] hover:text-[#F5F5F7] bg-[#0F0F13] hover:border-white/10'
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span className="text-[10px] font-mono opacity-60">({tab.count})</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Orders List / Empty State */}
+        {filteredOrders.length === 0 ? (
+          <EmptyState
+            title="No Transaction Telemetry Found"
+            description={
+              selectedFilter === 'ALL'
+                ? "You haven't initiated any curriculum orders or node licenses yet."
+                : `No orders matching filter '${selectedFilter.toLowerCase()}'.`
+            }
+            actionLabel="Explore Catalog Matrix"
+            onAction={() => navigate('/courses')}
+          />
+        ) : (
+          <div className="space-y-4">
+            <AnimatePresence mode="popLayout">
+              {filteredOrders.map((order, idx) => (
+                <motion.div
+                  key={order.id || `order-${idx}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ delay: idx * 0.04, ...SPRING }}
+                >
+                  <OrderCard order={order} onCancel={() => loadUserOrders()} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+
+      </div>
+    </GlobalLayoutWrapper>
   );
 };
 

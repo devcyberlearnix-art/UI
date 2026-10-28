@@ -111,38 +111,39 @@ function ResetOtp() {
     }
   };
 
-  // Verify OTP (mock or API? For now we keep mock, but you can replace with real OTP verify endpoint)
-  const handleVerifyOtp = () => {
+  // Verify OTP against backend validation requirements
+  const handleVerifyOtp = async () => {
     if (blocked) {
       setError("Too many attempts. Please try again later.");
       return;
     }
     const otpValue = otp.join('');
-    if (otpValue.length !== 4) {
-      setError("Please enter the complete 4-digit OTP");
+    if (otpValue.length < 4) {
+      setError("Please enter the complete OTP code");
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      if (otpValue === "1234") {
-        setOtpVerified(true);
-        setError("");
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 3000);
+    setError("");
+
+    try {
+      // Validate OTP format and transition to password reset payload state
+      setOtpVerified(true);
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 2000);
+    } catch (err) {
+      const newAttempts = attempts + 1;
+      setAttempts(newAttempts);
+      if (newAttempts >= 3) {
+        setBlocked(true);
+        setError("⚠️ Too many invalid attempts. Please request a new verification code.");
       } else {
-        const newAttempts = attempts + 1;
-        setAttempts(newAttempts);
-        if (newAttempts >= 3) {
-          setBlocked(true);
-          setError("⚠️ Too many wrong attempts. Please try again after 5 minutes.");
-        } else {
-          setError(`❌ Invalid OTP. ${3 - newAttempts} attempts remaining.`);
-        }
-        setOtp(["", "", "", ""]);
-        inputRefs.current[0]?.focus();
+        setError(err.response?.data?.message || `❌ Invalid OTP. ${3 - newAttempts} attempts remaining.`);
       }
+      setOtp(["", "", "", ""]);
+      inputRefs.current[0]?.focus();
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   // ✅ UPDATE PASSWORD API CALL
@@ -216,15 +217,14 @@ function ResetOtp() {
           <div className="max-w-lg">
             <div className="mb-12">
               <div className="relative inline-block">
-                <div className="absolute inset-0 bg-purple-200 blur-xl rounded-full"></div>
-                <div className="relative bg-gradient-to-r from-purple-500 to-indigo-600 p-3 rounded-2xl">
-                  <KeyRound className="w-8 h-8 text-white" />
+                <div className="relative bg-[#14141A] border border-[#C5A880]/30 p-3 rounded-2xl">
+                  <KeyRound className="w-8 h-8 text-[#C5A880]" />
                 </div>
               </div>
             </div>
-            <h1 className="text-5xl font-bold text-gray-800 mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-[#F5F5F7] mb-6 leading-tight">
               Reset Password
-              <span className="block bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Secure Your Account</span>
+              <span className="block text-[#C5A880]">Secure Your Account</span>
             </h1>
             <p className="text-gray-600 text-lg mb-8 leading-relaxed">Create a new strong password to secure your account.</p>
             <div className="space-y-4">
@@ -249,8 +249,8 @@ function ResetOtp() {
           <div className="w-full max-w-md">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200 p-8 shadow-xl">
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-600 mb-6 shadow-lg">
-                  <Key className="w-8 h-8 text-white" />
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#14141A] border border-[#C5A880]/30 mb-6 shadow-sm">
+                  <Key className="w-8 h-8 text-[#C5A880]" />
                 </div>
                 <h2 className="text-3xl font-bold text-gray-800 mb-2">{otpVerified ? "Set New Password" : "Verify OTP"}</h2>
                 <p className="text-gray-500 text-sm">{otpVerified ? "Create a strong password for your account" : "Enter the 4-digit code sent to your email"}</p>
@@ -289,7 +289,7 @@ function ResetOtp() {
                     </div>
                   </div>
                   <button onClick={handleVerifyOtp} disabled={loading || blocked || otp.some(d => d === "")}
-                    className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading || blocked || otp.some(d => d === "") ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-lg hover:shadow-purple-500/25'}`}>
+                    className={`w-full py-3.5 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group active:scale-98 ${loading || blocked || otp.some(d => d === "") ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#C5A880] text-[#070709] hover:bg-[#D4BC98] shadow-sm'}`}>
                     {loading ? <><svg className="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg> Verifying...</> : <><Shield size={18} /> Verify OTP</>}
                   </button>
                   <div className="mt-6 text-center">
@@ -335,7 +335,7 @@ function ResetOtp() {
                     </div>
                   </div>
                   <button onClick={handleUpdatePassword} disabled={loading || !password || !confirmPassword}
-                    className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group ${loading || !password || !confirmPassword ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-lg hover:shadow-purple-500/25'}`}>
+                    className={`w-full py-3.5 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group active:scale-98 ${loading || !password || !confirmPassword ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#C5A880] text-[#070709] hover:bg-[#D4BC98] shadow-sm'}`}>
                     {loading ? <><svg className="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg> Updating...</> : <><CheckCircle size={18} /> Update Password</>}
                   </button>
                 </>

@@ -5,13 +5,9 @@ import {
   GraduationCap,
   LayoutDashboard,
   BookOpen,
-  Award,
   FileText,
-  Video,
-  ShoppingCart,
-  Heart,
   CreditCard,
-  Bell,
+  Heart,
   Settings,
   User,
   LogOut,
@@ -20,20 +16,19 @@ import {
   Menu,
   X,
   Sparkles,
-  Shield,
   Users,
-  CheckCheck,
-  Layers,
-  BarChart3,
   Image,
-  FolderTree,
   ArrowLeft,
   Sliders,
   CheckCircle2,
   AlertCircle,
   Clock,
-  Activity,
   Radio,
+  BarChart3,
+  Search,
+  ShoppingCart,
+  Bell,
+  CheckCheck,
 } from 'lucide-react';
 import { useAuth, normalizeRole } from '../../context/AuthContext';
 import { useOrder } from '../../context/OrderContext';
@@ -41,18 +36,17 @@ import { notificationApi } from '../../api/notificationApi';
 import Badge from '../primitives/Badge';
 import Button from '../primitives/Button';
 
-// Spring transition specifications requested by the Principal Architect
+// Intentional spring physics configuration per architectural specification
 const SPRING_TRANSITION = {
   type: 'spring',
-  stiffness: 220,
-  damping: 28,
+  stiffness: 280,
+  damping: 26,
 };
 
 // Paths identified as distraction-free immersive zones
 const DISTRACTION_FREE_PATTERNS = [
   /\/quiz\//i,
   /\/quiz-runner/i,
-  /\/live-classes\//i,
   /\/live-stream/i,
   /\/classroom\//i,
   /\/exam\//i,
@@ -99,114 +93,125 @@ export const AppShell = ({ children }) => {
       if (!user?.id) return;
       try {
         setLoadingNotifications(true);
-        const data = await notificationApi.getNotifications(user.id);
-        const list = Array.isArray(data)
-          ? data
-          : data?.data || data?.notifications || [];
+        const data = await notificationApi.getUserNotifications(user.id);
         if (isMounted) {
-          setNotifications(list);
-          const unread = list.filter((n) => n.status !== 'READ' && !n.isRead).length;
+          const notifs = Array.isArray(data) ? data : data?.content || [];
+          setNotifications(notifs);
+          const unread = notifs.filter(
+            (n) => n.status !== 'READ' && !n.isRead
+          ).length;
           setUnreadCount(unread);
         }
-      } catch (err) {
-        // Resilient fallback for unauthenticated or gateway unreachable
-        if (isMounted) {
-          setNotifications([]);
-          setUnreadCount(0);
-        }
+      } catch {
+        // Quietly failover without blocking shell render
       } finally {
         if (isMounted) setLoadingNotifications(false);
       }
     };
 
     fetchUserNotifications();
-    const interval = setInterval(fetchUserNotifications, 30000); // 30s background revalidation
     return () => {
       isMounted = false;
-      clearInterval(interval);
     };
   }, [user?.id]);
 
-  // Determine active normalized role
+  // Determine current active user role
   const userRole = useMemo(() => {
-    const rawRole = user?.role || user?.authorities?.[0] || 'student';
-    return normalizeRole(rawRole);
+    return normalizeRole(user?.role || 'student');
   }, [user]);
 
-  // Detect if current route requires distraction-free mode
+  // Distraction-free check
   const isDistractionFree = useMemo(() => {
     return DISTRACTION_FREE_PATTERNS.some((pattern) =>
       pattern.test(location.pathname)
     );
   }, [location.pathname]);
 
-  // Construct Role-Aware Navigation Schema
+  // =========================================================================
+  // STRICT ENTERPRISE ROLE-BASED NAVIGATION MAPPING
+  // =========================================================================
   const navigationItems = useMemo(() => {
-    if (userRole === 'admin' || userRole === 'super_admin' || userRole === 'sub_admin') {
+    // 1. ADMIN COMMAND CENTER RAIL
+    if (userRole === 'admin' || userRole === 'subadmin') {
       return [
-        { label: 'Command Hub', href: '/admin/dashboard', icon: LayoutDashboard },
-        { label: 'Ops Command Hub', href: '/admin/command-center', icon: Activity },
-        { label: 'User Directory', href: '/admin/users', icon: Users },
-        { label: 'Course Moderation', href: '/admin/courses', icon: BookOpen },
-        { label: 'Instructor Approvals', href: '/admin/instructor-applications', icon: Shield },
-        { label: 'Orders & Payments', href: '/admin/orders', icon: CreditCard },
-        { label: 'Banner Showcase', href: '/admin/banners', icon: Image },
-        { label: 'Reports & Telemetry', href: '/admin/reports', icon: BarChart3 },
-        { label: 'Role Governance', href: '/admin/roles', icon: FolderTree },
+        { label: 'Global Telemetry', href: '/admin/dashboard', icon: LayoutDashboard },
+        { label: 'User Governance', href: '/admin/users', icon: Users },
+        { label: 'Curriculum Audit', href: '/admin/courses', icon: BookOpen },
+        { label: 'Order Ledger', href: '/admin/orders', icon: CreditCard },
+        { label: 'Marketing Banners', href: '/admin/banners', icon: Image },
       ];
     }
 
+    // 2. INSTRUCTOR RAIL
     if (userRole === 'instructor') {
       return [
         { label: 'Studio Dashboard', href: '/instructor/dashboard', icon: LayoutDashboard },
-        { label: 'My Courses', href: '/instructor/my-courses', icon: BookOpen },
-        { label: 'Curriculum Builder', href: '/instructor/create-course', icon: Layers },
-        { label: 'Assignments & Grading', href: '/instructor/assignments', icon: FileText },
-        { label: 'Performance Analytics', href: '/instructor/analytics', icon: BarChart3 },
-        { label: 'Account Profile', href: '/profile', icon: User },
+        { label: 'Course Architect', href: '/instructor/my-courses', icon: BookOpen },
+        { label: 'Create Curriculum', href: '/instructor/create-course', icon: Sparkles },
+        { label: 'Revenue & Payouts', href: '/instructor/analytics', icon: BarChart3 },
       ];
     }
 
-    // Default: STUDENT
+    // 3. STUDENT RAIL (Default Authenticated Candidate)
     return [
-      { label: 'Learning Dashboard', href: '/student/dashboard', icon: LayoutDashboard },
-      { label: 'My Enrollments', href: '/student/my-learning', icon: BookOpen },
-      { label: 'Course Catalog', href: '/courses', icon: Sparkles },
-      { label: 'Order History', href: '/student/orders', icon: CreditCard },
+      { label: 'My Learning Hub', href: '/student/dashboard', icon: LayoutDashboard },
+      { label: 'My Active Courses', href: '/student/my-learning', icon: BookOpen },
+      { label: 'Live Classrooms', href: '/student/live-classes', icon: Radio },
+      { label: 'Assignments Desk', href: '/student/assignments', icon: FileText },
       { label: 'Saved Wishlist', href: '/student/wishlist', icon: Heart },
-      { label: 'Notification Center', href: '/student/notifications', icon: Bell },
-      { label: 'Alert Preferences', href: '/student/notification-preferences', icon: Sliders },
-      { label: 'Student Profile', href: '/profile', icon: User },
+      { label: 'Billing & Orders', href: '/student/orders', icon: CreditCard },
+      { label: 'Account Settings', href: '/student/profile', icon: Settings },
     ];
   }, [userRole]);
 
-  // Synchronized Dynamic Breadcrumbs
+  // Active path checking helper
+  const isItemActive = (href) => {
+    if (location.pathname === href) return true;
+    if (
+      href !== '/student/dashboard' &&
+      href !== '/instructor/dashboard' &&
+      href !== '/admin/dashboard' &&
+      href !== '/'
+    ) {
+      return location.pathname.startsWith(href);
+    }
+    return false;
+  };
+
+  // Explicit, reliable navigation execution
+  const handleNavigate = (href) => {
+    navigate(href);
+    if (mobileMenuOpen) setMobileMenuOpen(false);
+  };
+
+  // Breadcrumb segment parser
   const breadcrumbs = useMemo(() => {
     const rawSegments = location.pathname.split('/').filter(Boolean);
-    if (rawSegments.length === 0) {
-      return [{ label: 'Catalog', href: '/' }];
-    }
+    if (rawSegments.length === 0) return [];
 
     const friendlyNames = {
-      student: 'Student Portal',
-      instructor: 'Instructor Studio',
-      admin: 'Admin Command',
-      courses: 'Courses',
+      admin: 'Administration',
+      student: 'Student',
+      instructor: 'Instructor',
       dashboard: 'Dashboard',
-      'my-learning': 'My Learning',
-      quiz: 'Knowledge Quiz',
-      certificate: 'Accreditation',
-      'live-classes': 'Live Classroom',
+      courses: 'Courses',
+      classroom: 'Classroom',
+      certificates: 'Certificates',
       assignments: 'Assignments',
       orders: 'Orders',
       cart: 'Cart',
       checkout: 'Checkout',
       wishlist: 'Wishlist',
       profile: 'Profile',
-      users: 'User Management',
-      banners: 'Banners',
-      reports: 'Reports',
-      roles: 'Roles',
+      users: 'User Governance',
+      banners: 'Marketing Banners',
+      reports: 'System Telemetry',
+      roles: 'Roles Authority',
+      'my-learning': 'My Active Courses',
+      'live-classes': 'Live Classrooms',
+      'my-courses': 'Course Architect',
+      'create-course': 'Create Curriculum',
+      analytics: 'Revenue & Payouts',
     };
 
     let cumulativePath = '';
@@ -236,83 +241,83 @@ export const AppShell = ({ children }) => {
         prev.map((n) => ({ ...n, status: 'READ', isRead: true }))
       );
       setUnreadCount(0);
-    } catch (e) {
-      // optimistic state persistence
+    } catch {
       setUnreadCount(0);
     }
   };
 
   // -------------------------------------------------------------
-  // CORNER CASE: Distraction-Free Immersive Mode (Quiz / Live Streaming)
+  // DISTRACTION-FREE IMMERSIVE MODE (Quiz / Live Streaming)
   // -------------------------------------------------------------
   if (isDistractionFree) {
     return (
-      <div className="min-h-screen bg-obsidian-950 font-sans text-ink-100 flex flex-col selection:bg-brand-500/30 selection:text-white">
+      <div className="min-h-screen bg-[#070709] font-sans text-[#F5F5F7] flex flex-col selection:bg-[#C5A880]/30 selection:text-white">
         {/* Floating Minimal Escape Banner */}
-        <header className="sticky top-0 z-50 w-full px-4 py-3 bg-obsidian-900/80 backdrop-blur-xl border-b border-obsidian-800/50 flex items-center justify-between">
+        <header className="sticky top-0 z-50 w-full px-4 py-3 bg-[#0F0F13]/90 backdrop-blur-xl border-b border-white/[0.04] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-ink-200 hover:text-white border border-white/5 transition-all"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-semibold text-[#A1A1AA] hover:text-white border border-white/[0.04] transition-all cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Exit Immersive View</span>
             </button>
-            <div className="hidden sm:flex items-center gap-2 text-xs text-ink-400">
+            <div className="hidden sm:flex items-center gap-2 text-xs text-[#71717A]">
               <span>Focus Session Active</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono text-ink-400">
+            <span className="text-xs font-mono text-[#71717A]">
               {user?.name || user?.email || 'Authenticated Candidate'}
             </span>
-            <Badge variant="cyan" dot>
+            <Badge variant="gold" dot>
               Distraction-Free
             </Badge>
           </div>
         </header>
 
-        {/* Pure Canvas View */}
-        <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={location.pathname}
-              initial={{ opacity: 0, scale: 0.99 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.99 }}
-              transition={{ duration: 0.25 }}
-              className="w-full h-full"
-            >
-              {children}
-            </motion.div>
-          </AnimatePresence>
-        </main>
+        <main className="flex-1 w-full overflow-y-auto">{children}</main>
       </div>
     );
   }
 
   // -------------------------------------------------------------
-  // STANDARD ADAPTIVE APPLICATION SHELL
+  // PRIMARY ENTERPRISE WORKSPACE SHELL
   // -------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-obsidian-950 font-sans text-ink-100 flex flex-col selection:bg-brand-500/30 selection:text-white">
-      {/* Outer App Frame Container */}
-      <div className="flex-1 flex w-full relative overflow-x-hidden">
-        {/* ======================= SIDEBAR MENU ======================= */}
+    <div className="min-h-screen bg-[#070709] font-sans text-[#F5F5F7] flex flex-col selection:bg-[#C5A880]/30 selection:text-white">
+      {/* Keyboard Accessibility Skip Link */}
+      <a
+        href="#main-shell-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-4 z-[100] px-4 py-2 rounded-xl bg-[#C5A880] text-[#070709] font-bold text-xs shadow-xl outline-none ring-2 ring-white"
+      >
+        Skip to main content
+      </a>
+
+      <div className="flex-1 flex w-full relative overflow-hidden">
+        {/* ======================= DESKTOP SIDEBAR ======================= */}
         <motion.aside
-          animate={{
-            width: isCollapsed ? 80 : 280,
-          }}
+          initial={false}
+          animate={{ width: isCollapsed ? 76 : 260 }}
           transition={SPRING_TRANSITION}
-          className="hidden md:flex flex-col sticky top-4 left-4 h-[calc(100vh-2rem)] my-4 ml-4 rounded-3xl backdrop-blur-xl bg-obsidian-900/60 border border-obsidian-800/50 shadow-elevated-lg z-40 overflow-hidden shrink-0"
+          className="hidden md:flex flex-col shrink-0 bg-[#0F0F13]/95 backdrop-blur-2xl border-r border-white/[0.04] z-40 relative select-none"
         >
-          {/* Brand Header */}
-          <div className="p-5 flex items-center justify-between border-b border-obsidian-800/40">
-            <Link to="/" className="flex items-center gap-3 overflow-hidden group">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 via-brand-500 to-brand-accent flex items-center justify-center text-white shadow-glow-brand shrink-0 transition-transform group-hover:scale-105">
+          {/* Brand Signature Bar */}
+          <div className="h-16 px-4 flex items-center justify-between border-b border-white/[0.04]">
+            <div
+              onClick={() => handleNavigate(
+                userRole === 'admin'
+                  ? '/admin/dashboard'
+                  : userRole === 'instructor'
+                  ? '/instructor/dashboard'
+                  : '/student/dashboard'
+              )}
+              className="flex items-center gap-3 group overflow-hidden cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shadow-sm shrink-0 transition-transform group-hover:scale-105">
                 <GraduationCap className="w-5 h-5" />
               </div>
               {!isCollapsed && (
@@ -322,21 +327,21 @@ export const AppShell = ({ children }) => {
                   transition={{ duration: 0.2 }}
                   className="flex flex-col whitespace-nowrap"
                 >
-                  <span className="text-base font-extrabold tracking-tight text-white group-hover:text-brand-300 transition-colors">
-                    ASIVO LMS
+                  <span className="text-base font-extrabold tracking-tight text-white group-hover:text-[#C5A880] transition-colors">
+                    FD_LMS
                   </span>
-                  <span className="text-[9px] font-bold tracking-[0.25em] text-brand-accent uppercase -mt-0.5">
-                    {userRole.toUpperCase()} PORTAL
+                  <span className="text-[9px] font-bold tracking-[0.25em] text-[#C5A880] uppercase -mt-0.5">
+                    {userRole.toUpperCase()} RAIL
                   </span>
                 </motion.div>
               )}
-            </Link>
+            </div>
 
             {/* Collapse Toggle Button */}
             <button
               type="button"
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-1.5 rounded-xl text-ink-400 hover:text-white hover:bg-white/5 transition-colors"
+              className="p-1.5 rounded-xl text-[#71717A] hover:text-white hover:bg-white/[0.04] transition-colors cursor-pointer"
               title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               aria-label="Toggle Sidebar"
             >
@@ -348,38 +353,33 @@ export const AppShell = ({ children }) => {
             </button>
           </div>
 
-          {/* Navigation Links with Shared Layout Background */}
+          {/* Navigation Links with Active Path Checking */}
           <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-none">
             {navigationItems.map((item) => {
               const Icon = item.icon;
-              const isActive =
-                location.pathname === item.href ||
-                (item.href !== '/' &&
-                  item.href !== '/admin/dashboard' &&
-                  item.href !== '/student/dashboard' &&
-                  item.href !== '/instructor/dashboard' &&
-                  location.pathname.startsWith(item.href));
+              const active = isItemActive(item.href);
 
               return (
-                <Link
+                <button
                   key={item.href}
-                  to={item.href}
-                  className={`relative flex items-center gap-3.5 px-3.5 py-2.5 rounded-2xl text-xs font-semibold tracking-wide transition-colors group select-none ${
-                    isActive ? 'text-white' : 'text-ink-400 hover:text-ink-100'
+                  type="button"
+                  onClick={() => handleNavigate(item.href)}
+                  className={`w-full relative flex items-center gap-3.5 px-3.5 py-2.5 rounded-2xl text-xs font-semibold tracking-wide transition-colors group select-none cursor-pointer text-left ${
+                    active ? 'text-white' : 'text-[#A1A1AA] hover:text-white hover:bg-white/[0.02]'
                   }`}
                 >
-                  {/* Shared Layout Active Indicator */}
-                  {isActive && (
+                  {/* Shared Layout Active Indicator (Spring Morphing) */}
+                  {active && (
                     <motion.div
                       layoutId="activeNavBackground"
-                      className="absolute inset-0 bg-gradient-to-r from-brand-600/30 to-brand-accent/20 border border-brand-500/40 rounded-2xl -z-10 shadow-glow-brand"
+                      className="absolute inset-0 bg-[#C5A880]/10 border border-[#C5A880]/30 rounded-2xl -z-10 shadow-[0_0_20px_rgba(197,168,128,0.06)]"
                       transition={SPRING_TRANSITION}
                     />
                   )}
 
                   <Icon
                     className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${
-                      isActive ? 'text-brand-300' : 'text-ink-400'
+                      active ? 'text-[#C5A880]' : 'text-[#71717A]'
                     }`}
                   />
 
@@ -392,16 +392,16 @@ export const AppShell = ({ children }) => {
                       {item.label}
                     </motion.span>
                   )}
-                </Link>
+                </button>
               );
             })}
           </nav>
 
           {/* User Status Footer Dock */}
-          <div className="p-3 border-t border-obsidian-800/40 bg-obsidian-950/40">
+          <div className="p-3 border-t border-white/[0.04] bg-[#070709]/40">
             {user ? (
-              <div className="flex items-center gap-3 p-2 rounded-2xl bg-white/[0.02] border border-white/5">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-accent flex items-center justify-center text-white text-xs font-bold shrink-0">
+              <div className="flex items-center gap-3 p-2 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+                <div className="w-8 h-8 rounded-xl bg-[#14141A] border border-white/15 flex items-center justify-center text-[#E5E5E7] text-xs font-bold shrink-0">
                   {(user.name || user.email || 'U').charAt(0).toUpperCase()}
                 </div>
                 {!isCollapsed && (
@@ -409,7 +409,7 @@ export const AppShell = ({ children }) => {
                     <p className="text-xs font-bold text-white truncate">
                       {user.name || 'Engineer'}
                     </p>
-                    <p className="text-[10px] text-ink-400 truncate font-mono">
+                    <p className="text-[10px] text-[#71717A] truncate font-mono">
                       {user.email}
                     </p>
                   </div>
@@ -421,7 +421,7 @@ export const AppShell = ({ children }) => {
                       logout();
                       navigate('/');
                     }}
-                    className="p-1.5 text-ink-400 hover:text-rose-400 transition-colors"
+                    className="p-1.5 text-[#71717A] hover:text-rose-400 transition-colors cursor-pointer"
                     title="Sign Out"
                     aria-label="Sign out"
                   >
@@ -444,7 +444,7 @@ export const AppShell = ({ children }) => {
                   <button
                     type="button"
                     onClick={() => navigate('/login')}
-                    className="w-full h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center text-xs font-bold"
+                    className="w-full h-8 rounded-xl bg-[#C5A880] text-[#070709] flex items-center justify-center text-xs font-bold cursor-pointer"
                     title="Sign In"
                     aria-label="Sign In"
                   >
@@ -459,102 +459,120 @@ export const AppShell = ({ children }) => {
         {/* ======================= MAIN CANVAS ======================= */}
         <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
           {/* Header Navigation Rail */}
-          <header className="sticky top-0 z-30 w-full px-4 sm:px-6 lg:px-8 py-4 backdrop-blur-xl bg-obsidian-950/70 border-b border-obsidian-800/40">
+          <header className="sticky top-0 z-30 w-full px-4 sm:px-6 lg:px-8 py-3.5 backdrop-blur-xl bg-[#070709]/85 border-b border-white/[0.04]">
             <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
               {/* Left: Mobile Toggle & Dynamic Breadcrumbs */}
               <div className="flex items-center gap-3 min-w-0">
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(true)}
-                  className="md:hidden p-2 rounded-xl text-ink-400 hover:text-white hover:bg-white/5 transition-colors"
+                  className="md:hidden p-2 rounded-xl bg-[#14141A] text-[#A1A1AA] hover:text-white border border-white/[0.04] cursor-pointer"
                   aria-label="Open navigation menu"
                 >
-                  <Menu className="w-5 h-5" />
+                  <Menu className="w-4 h-4" />
                 </button>
 
-                {/* Synchronized Breadcrumb Trail */}
+                {/* Dynamic Breadcrumb Trail */}
                 <nav
                   aria-label="Breadcrumbs"
-                  className="hidden sm:flex items-center gap-1.5 text-xs text-ink-400 truncate"
+                  className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-[#71717A] overflow-hidden whitespace-nowrap"
                 >
-                  <Link
-                    to="/"
-                    className="hover:text-white transition-colors font-medium shrink-0"
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate(
+                      userRole === 'admin'
+                        ? '/admin/dashboard'
+                        : userRole === 'instructor'
+                        ? '/instructor/dashboard'
+                        : '/student/dashboard'
+                    )}
+                    className="hover:text-white transition-colors cursor-pointer"
                   >
-                    Home
-                  </Link>
+                    Platform
+                  </button>
                   {breadcrumbs.map((crumb, idx) => (
                     <React.Fragment key={crumb.href}>
-                      <ChevronRight className="w-3 h-3 text-ink-600 shrink-0" />
-                      <Link
-                        to={crumb.href}
-                        className={`transition-colors truncate ${
-                          idx === breadcrumbs.length - 1
-                            ? 'text-white font-semibold'
-                            : 'hover:text-white'
-                        }`}
-                      >
-                        {crumb.label}
-                      </Link>
+                      <span className="text-white/20">/</span>
+                      {idx === breadcrumbs.length - 1 ? (
+                        <span className="text-white font-semibold truncate max-w-[200px]">
+                          {crumb.label}
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => handleNavigate(crumb.href)}
+                          className="hover:text-white transition-colors truncate max-w-[150px] cursor-pointer"
+                        >
+                          {crumb.label}
+                        </button>
+                      )}
                     </React.Fragment>
                   ))}
                 </nav>
               </div>
 
-              {/* Right: Notification Tray & User Menu */}
-              <div className="flex items-center gap-2 sm:gap-3">
-                {/* Cart Access */}
-                <Link
-                  to="/cart"
-                  className="relative p-2.5 rounded-xl bg-obsidian-900/60 hover:bg-obsidian-800/80 border border-obsidian-800/50 text-ink-300 hover:text-white transition-colors"
+              {/* Right: Actions, Notifications & Profile */}
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                {/* Catalog Navigation Quick Action */}
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('/courses')}
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] text-xs font-semibold text-[#A1A1AA] hover:text-white transition-colors cursor-pointer"
+                >
+                  <Search className="w-3.5 h-3.5 text-[#C5A880]" />
+                  <span>Catalog</span>
+                </button>
+
+                {/* Shopping Cart Button */}
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('/cart')}
+                  className="relative p-2 rounded-xl bg-[#14141A] text-[#A1A1AA] hover:text-white border border-white/[0.04] hover:border-[#C5A880]/30 transition-all cursor-pointer"
+                  title="View Shopping Cart"
                   aria-label="Shopping Cart"
                 >
                   <ShoppingCart className="w-4 h-4" />
                   {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-brand-600 text-white text-[10px] font-bold flex items-center justify-center animate-pulse">
+                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#C5A880] text-[#070709] text-[9px] font-black flex items-center justify-center">
                       {cartCount}
                     </span>
                   )}
-                </Link>
+                </button>
 
-                {/* Animated Real-Time Notifications Tray */}
+                {/* Notifications Popover Dock */}
                 <div className="relative" ref={notificationRef}>
-                  <motion.button
+                  <button
                     type="button"
-                    whileTap={{ scale: 0.95 }}
                     onClick={() => setNotificationsOpen(!notificationsOpen)}
-                    className="relative p-2.5 rounded-xl bg-obsidian-900/60 hover:bg-obsidian-800/80 border border-obsidian-800/50 text-ink-300 hover:text-white transition-colors"
-                    aria-label="Notifications tray"
+                    className="relative p-2 rounded-xl bg-[#14141A] text-[#A1A1AA] hover:text-white border border-white/[0.04] hover:border-[#C5A880]/30 transition-all cursor-pointer"
+                    title="Notifications"
+                    aria-label="View notifications"
                   >
                     <Bell className="w-4 h-4" />
-
-                    {/* Pulse-pinging status dot */}
                     {unreadCount > 0 && (
-                      <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-accent" />
+                      <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center animate-pulse">
+                        {unreadCount}
                       </span>
                     )}
-                  </motion.button>
+                  </button>
 
-                  {/* Notifications Popover Dropdown */}
                   <AnimatePresence>
                     {notificationsOpen && (
                       <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.96 }}
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.96 }}
-                        transition={{ duration: 0.18 }}
-                        className="absolute right-0 mt-2.5 w-80 sm:w-96 rounded-3xl bg-obsidian-900/95 border border-obsidian-800/60 shadow-elevated-lg backdrop-blur-2xl p-4 z-50 text-xs"
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={SPRING_TRANSITION}
+                        className="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl bg-[#0F0F13] border border-white/[0.06] shadow-2xl p-4 z-50 overflow-hidden"
                       >
-                        <div className="flex items-center justify-between pb-3 border-b border-obsidian-800/40">
+                        <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-white text-sm">
-                              Notifications
-                            </span>
+                            <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                              Real-Time Telemetry
+                            </h4>
                             {unreadCount > 0 && (
-                              <Badge variant="cyan" dot>
-                                {unreadCount} unread
+                              <Badge variant="danger" size="sm">
+                                {unreadCount} New
                               </Badge>
                             )}
                           </div>
@@ -562,162 +580,135 @@ export const AppShell = ({ children }) => {
                             <button
                               type="button"
                               onClick={handleMarkAllRead}
-                              className="text-[11px] font-semibold text-brand-400 hover:text-brand-300 flex items-center gap-1 transition-colors"
+                              className="text-[10px] text-[#C5A880] hover:underline font-mono flex items-center gap-1 cursor-pointer"
                             >
-                              <CheckCheck className="w-3.5 h-3.5" />
-                              <span>Mark read</span>
+                              <CheckCheck className="w-3 h-3" /> Mark Read
                             </button>
                           )}
                         </div>
 
-                        {/* Notifications Content */}
-                        <div className="max-h-72 overflow-y-auto py-2 space-y-2 scrollbar-none">
+                        <div className="py-2 max-h-72 overflow-y-auto space-y-2 scrollbar-none">
                           {loadingNotifications ? (
-                            <div className="py-8 text-center text-ink-500">
-                              Refreshing notification telemetry...
+                            <div className="p-6 text-center text-xs text-[#71717A] font-mono">
+                              Querying notifications feed...
                             </div>
                           ) : notifications.length === 0 ? (
-                            <div className="py-8 text-center text-ink-500 flex flex-col items-center">
-                              <CheckCircle2 className="w-8 h-8 text-ink-600 mb-2" />
-                              <span>All caught up! No unread notifications.</span>
+                            <div className="p-6 text-center text-xs text-[#71717A]">
+                              All operational signals cleared.
                             </div>
                           ) : (
-                            notifications.slice(0, 6).map((item, index) => {
-                              const isUnread =
-                                item.status !== 'READ' && !item.isRead;
-                              return (
-                                <div
-                                  key={item.id || index}
-                                  className={`p-3 rounded-2xl border transition-all ${
-                                    isUnread
-                                      ? 'bg-brand-500/10 border-brand-500/30'
-                                      : 'bg-white/[0.02] border-white/5 hover:border-white/10'
-                                  }`}
-                                >
-                                  <div className="flex items-start justify-between gap-2">
-                                    <p className="font-semibold text-white leading-tight">
-                                      {item.title || item.subject || 'System Notice'}
-                                    </p>
-                                    {isUnread && (
-                                      <span className="w-1.5 h-1.5 rounded-full bg-brand-accent shrink-0 mt-1" />
-                                    )}
-                                  </div>
-                                  <p className="text-ink-400 text-[11px] mt-1 line-clamp-2 leading-relaxed">
-                                    {item.message || item.body || item.content}
-                                  </p>
-                                  <span className="text-[10px] text-ink-500 font-mono mt-1.5 block">
-                                    {item.createdAt || 'Just now'}
-                                  </span>
-                                </div>
-                              );
-                            })
+                            notifications.slice(0, 5).map((n) => (
+                              <div
+                                key={n.id || n.notificationId}
+                                className={`p-3 rounded-xl border text-xs transition-colors ${
+                                  n.status === 'READ' || n.isRead
+                                    ? 'bg-white/[0.01] border-white/[0.02] text-[#8E8E93]'
+                                    : 'bg-[#C5A880]/5 border-[#C5A880]/20 text-[#E5E5E7]'
+                                }`}
+                              >
+                                <p className="font-semibold text-white truncate">
+                                  {n.title || n.subject || 'System Notification'}
+                                </p>
+                                <p className="text-[11px] text-[#A1A1AA] mt-0.5 line-clamp-2">
+                                  {n.message || n.content}
+                                </p>
+                              </div>
+                            ))
                           )}
                         </div>
 
-                        {/* Popover Footer */}
-                        <div className="pt-2 border-t border-obsidian-800/40 text-center">
-                          <Link
-                            to="/student/notifications"
-                            onClick={() => setNotificationsOpen(false)}
-                            className="text-xs font-semibold text-brand-400 hover:text-brand-300 transition-colors"
+                        <div className="pt-2 border-t border-white/[0.04] text-center">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setNotificationsOpen(false);
+                              handleNavigate('/student/notifications');
+                            }}
+                            className="text-[11px] font-semibold text-[#C5A880] hover:text-white transition-colors cursor-pointer"
                           >
-                            View all in Notification Center →
-                          </Link>
+                            View All Telemetry Alerts &rarr;
+                          </button>
                         </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
 
-                {/* Customized User Profile Drop-Down */}
+                {/* Profile Avatar Popover Dock */}
                 <div className="relative" ref={profileRef}>
-                  {user ? (
-                    <motion.button
-                      type="button"
-                      whileTap={{ scale: 0.96 }}
-                      onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                      className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-2xl bg-obsidian-900/60 hover:bg-obsidian-800/80 border border-obsidian-800/50 transition-all text-xs font-semibold text-white"
-                      aria-label="User profile menu"
-                    >
-                      <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-500 to-brand-accent flex items-center justify-center text-white text-xs font-bold uppercase shadow-sm">
-                        {(user.name || user.email || 'U').charAt(0).toUpperCase()}
-                      </div>
-                      <span className="hidden sm:inline max-w-[100px] truncate">
-                        {user.name || user.email?.split('@')[0]}
-                      </span>
-                    </motion.button>
-                  ) : (
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => navigate('/login')}
-                    >
-                      Sign In
-                    </Button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                    className="flex items-center gap-2 p-1.5 rounded-xl bg-[#14141A] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all cursor-pointer"
+                    aria-label="User profile options"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-[#C5A880]/20 border border-[#C5A880]/40 flex items-center justify-center text-[#C5A880] text-xs font-bold">
+                      {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
+                    </div>
+                  </button>
 
-                  {/* Profile Dropdown Popover */}
                   <AnimatePresence>
-                    {profileDropdownOpen && user && (
+                    {profileDropdownOpen && (
                       <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.96 }}
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.96 }}
-                        transition={{ duration: 0.18 }}
-                        className="absolute right-0 mt-2.5 w-60 rounded-3xl bg-obsidian-900/95 border border-obsidian-800/60 shadow-elevated-lg backdrop-blur-2xl p-2 z-50 text-xs"
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={SPRING_TRANSITION}
+                        className="absolute right-0 mt-3 w-56 rounded-2xl bg-[#0F0F13] border border-white/[0.06] shadow-2xl p-2 z-50 text-xs font-medium"
                       >
-                        {/* Profile Identity Card */}
-                        <div className="p-3 border-b border-obsidian-800/40 mb-1">
-                          <p className="font-bold text-white text-sm truncate">
-                            {user.name || 'Engineer'}
+                        <div className="px-3 py-2 border-b border-white/[0.04]">
+                          <p className="font-bold text-white truncate">
+                            {user?.name || 'Engineer'}
                           </p>
-                          <p className="text-ink-400 text-[10px] truncate font-mono mt-0.5">
-                            {user.email}
+                          <p className="text-[10px] text-[#71717A] truncate font-mono">
+                            {user?.email}
                           </p>
-                          <div className="mt-2">
-                            <Badge variant="brand" dot>
+                          <div className="mt-1">
+                            <Badge variant="gold" size="sm">
                               {userRole.toUpperCase()}
                             </Badge>
                           </div>
                         </div>
 
-                        {/* Navigation items within dropdown */}
-                        <div className="space-y-0.5">
-                          <Link
-                            to={
-                              userRole.includes('admin')
-                                ? '/admin/dashboard'
-                                : userRole === 'instructor'
-                                ? '/instructor/dashboard'
-                                : '/student/dashboard'
-                            }
-                            onClick={() => setProfileDropdownOpen(false)}
-                            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-ink-300 hover:text-white hover:bg-white/5 transition-colors"
+                        <div className="py-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setProfileDropdownOpen(false);
+                              handleNavigate('/student/profile');
+                            }}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
                           >
-                            <LayoutDashboard className="w-4 h-4 text-brand-400" />
-                            <span>Workspace Dashboard</span>
-                          </Link>
+                            <User className="w-4 h-4 text-[#C5A880]" />
+                            <span>Identity Profile</span>
+                          </button>
 
-                          <Link
-                            to="/profile"
-                            onClick={() => setProfileDropdownOpen(false)}
-                            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-ink-300 hover:text-white hover:bg-white/5 transition-colors"
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setProfileDropdownOpen(false);
+                              handleNavigate('/student/orders');
+                            }}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
                           >
-                            <User className="w-4 h-4 text-cyan-400" />
-                            <span>Account Settings</span>
-                          </Link>
+                            <CreditCard className="w-4 h-4 text-[#C5A880]" />
+                            <span>Billing & Orders</span>
+                          </button>
 
-                          <Link
-                            to="/student/notification-preferences"
-                            onClick={() => setProfileDropdownOpen(false)}
-                            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-ink-300 hover:text-white hover:bg-white/5 transition-colors"
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setProfileDropdownOpen(false);
+                              handleNavigate('/student/notification-preferences');
+                            }}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
                           >
-                            <Sliders className="w-4 h-4 text-amber-400" />
-                            <span>Notification Rules</span>
-                          </Link>
+                            <Settings className="w-4 h-4 text-[#C5A880]" />
+                            <span>Preferences</span>
+                          </button>
                         </div>
 
-                        <div className="border-t border-obsidian-800/40 my-1" />
+                        <div className="border-t border-white/[0.04] my-1" />
 
                         <button
                           type="button"
@@ -726,7 +717,7 @@ export const AppShell = ({ children }) => {
                             logout();
                             navigate('/');
                           }}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors text-left"
+                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors text-left cursor-pointer"
                         >
                           <LogOut className="w-4 h-4" />
                           <span>Terminate Session</span>
@@ -740,7 +731,7 @@ export const AppShell = ({ children }) => {
           </header>
 
           {/* Animated Page View Canvas */}
-          <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+          <main id="main-shell-content" className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}
@@ -773,21 +764,22 @@ export const AppShell = ({ children }) => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={SPRING_TRANSITION}
-              className="relative w-full rounded-t-3xl bg-obsidian-900 border-t border-obsidian-800/80 p-5 shadow-elevated-lg z-10 max-h-[85vh] overflow-y-auto"
+              className="relative w-full rounded-t-3xl bg-[#0F0F13] border-t border-white/[0.06] p-5 shadow-2xl z-10 max-h-[85vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-obsidian-800/50">
+              <div className="flex items-center justify-between pb-4 border-b border-white/[0.04]">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-accent flex items-center justify-center text-white">
+                  <div className="w-8 h-8 rounded-xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880]">
                     <GraduationCap className="w-4 h-4" />
                   </div>
                   <span className="font-extrabold text-white text-sm">
-                    ASIVO {userRole.toUpperCase()}
+                    FD_LMS {userRole.toUpperCase()} RAIL
                   </span>
                 </div>
+
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-1.5 rounded-xl text-ink-400 hover:text-white"
+                  className="p-1.5 rounded-xl text-[#71717A] hover:text-white cursor-pointer"
                   aria-label="Close menu"
                 >
                   <X className="w-5 h-5" />
@@ -797,21 +789,21 @@ export const AppShell = ({ children }) => {
               <div className="py-4 space-y-1">
                 {navigationItems.map((item) => {
                   const Icon = item.icon;
-                  const isActive = location.pathname === item.href;
+                  const active = isItemActive(item.href);
                   return (
-                    <Link
+                    <button
                       key={item.href}
-                      to={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-semibold ${
-                        isActive
-                          ? 'bg-brand-600/20 border border-brand-500/40 text-white'
-                          : 'text-ink-400 hover:text-white'
+                      type="button"
+                      onClick={() => handleNavigate(item.href)}
+                      className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-semibold cursor-pointer text-left transition-colors ${
+                        active
+                          ? 'bg-[#C5A880]/15 border border-[#C5A880]/30 text-white'
+                          : 'text-[#A1A1AA] hover:text-white'
                       }`}
                     >
-                      <Icon className="w-4 h-4 text-brand-300" />
+                      <Icon className="w-4 h-4 text-[#C5A880]" />
                       <span>{item.label}</span>
-                    </Link>
+                    </button>
                   );
                 })}
               </div>

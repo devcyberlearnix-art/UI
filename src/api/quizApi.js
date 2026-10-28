@@ -155,6 +155,25 @@ export const quizApi = {
   },
 
   /**
+   * GET /api/v1/quizzes/{quizId}/take or /api/v1/quizzes/{quizId}/student/questions
+   * Alias: getQuizById
+   */
+  getQuizById: async (quizId) => {
+    try {
+      try {
+        const response = await axiosInstance.get(`/api/v1/quizzes/${quizId}/student/questions`);
+        return response.data;
+      } catch (err) {
+        const response = await axiosInstance.get(`/api/v1/quizzes/${quizId}`);
+        return response.data;
+      }
+    } catch (err) {
+      console.warn(`[quizApi] getQuizById for ${quizId} failed`);
+      throw err;
+    }
+  },
+
+  /**
    * POST /api/v1/quizzes/{quizId}/attempts
    * Start quiz attempt
    */
@@ -166,6 +185,10 @@ export const quizApi = {
       console.warn(`[quizApi] POST /api/v1/quizzes/${quizId}/attempts failed`);
       throw err;
     }
+  },
+
+  startAttempt: async (quizId) => {
+    return quizApi.startQuizAttempt(quizId);
   },
 
   /**
@@ -184,24 +207,53 @@ export const quizApi = {
 
   /**
    * POST /api/v1/quizzes/{quizId}/attempts/{attemptId}/answers
-   * Submit answer
+   * Supports both (quizId, attemptId, answerData) and ({ attemptId, questionId, selectedOption, quizId })
    */
-  submitAnswer: async (quizId, attemptId, answerData) => {
+  submitAnswer: async (quizIdOrData, maybeAttemptId, maybeAnswerData) => {
     try {
-      const response = await axiosInstance.post(
-        `/api/v1/quizzes/${quizId}/attempts/${attemptId}/answers`,
-        answerData
-      );
-      return response.data;
+      let qId = quizIdOrData;
+      let attId = maybeAttemptId;
+      let payload = maybeAnswerData;
+
+      if (typeof quizIdOrData === 'object' && quizIdOrData !== null) {
+        attId = quizIdOrData.attemptId;
+        qId = quizIdOrData.quizId || 1;
+        const selectedOpt = quizIdOrData.selectedOption ?? quizIdOrData.selectedOptionId;
+        payload = {
+          questionId: Number(quizIdOrData.questionId),
+          selectedOptionIds: Array.isArray(quizIdOrData.selectedOptionIds)
+            ? quizIdOrData.selectedOptionIds
+            : selectedOpt !== undefined
+            ? [Number(selectedOpt)]
+            : [],
+          selectedOption: selectedOpt,
+        };
+      }
+
+      // Try nested route first: /api/v1/quizzes/{quizId}/attempts/{attemptId}/answers
+      try {
+        const response = await axiosInstance.post(
+          `/api/v1/quizzes/${qId}/attempts/${attId}/answers`,
+          payload
+        );
+        return response.data;
+      } catch (nestedErr) {
+        // Fallback to direct attempt route: /api/v1/quizzes/attempts/{attemptId}/answers
+        const response = await axiosInstance.post(
+          `/api/v1/quizzes/attempts/${attId}/answers`,
+          payload
+        );
+        return response.data;
+      }
     } catch (err) {
-      console.warn(`[quizApi] POST /api/v1/quizzes/${quizId}/attempts/${attemptId}/answers failed`);
+      console.warn(`[quizApi] submitAnswer failed:`, err?.message);
       throw err;
     }
   },
 
   /**
    * POST /api/v1/quizzes/{quizId}/attempts/{attemptId}/submit
-   * Submit quiz attempt
+   * Supports (quizId, attemptId), ({ attemptId, quizId }), and (attemptId)
    */
   submitQuizAttempt: async (quizId, attemptId) => {
     try {
@@ -211,6 +263,36 @@ export const quizApi = {
       return response.data;
     } catch (err) {
       console.warn(`[quizApi] POST /api/v1/quizzes/${quizId}/attempts/${attemptId}/submit failed`);
+      throw err;
+    }
+  },
+
+  submitQuiz: async (attemptIdOrData, maybeAttemptId) => {
+    try {
+      let qId = 1;
+      let attId = attemptIdOrData;
+
+      if (typeof attemptIdOrData === 'object' && attemptIdOrData !== null) {
+        attId = attemptIdOrData.attemptId;
+        qId = attemptIdOrData.quizId || 1;
+      } else if (maybeAttemptId !== undefined) {
+        qId = attemptIdOrData;
+        attId = maybeAttemptId;
+      }
+
+      try {
+        const response = await axiosInstance.post(
+          `/api/v1/quizzes/${qId}/attempts/${attId}/submit`
+        );
+        return response.data;
+      } catch (nestedErr) {
+        const response = await axiosInstance.post(
+          `/api/v1/quizzes/attempts/${attId}/submit`
+        );
+        return response.data;
+      }
+    } catch (err) {
+      console.warn(`[quizApi] submitQuiz failed:`, err?.message);
       throw err;
     }
   },

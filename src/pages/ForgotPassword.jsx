@@ -14,10 +14,7 @@ import toast from "react-hot-toast";
 import AuthShell from "../components/ui/AuthShell";
 
 // ✅ Your ngrok base URL (can be overridden via .env)
-// In development, use empty string to leverage Vite proxy
-const API_BASE_URL = import.meta.env.DEV
-  ? ""
-  : (import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev");
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -213,21 +210,29 @@ const ForgotPassword = () => {
         { value: "Encrypted", label: "Flow" },
       ]}
     >
-      <h1 className="mb-2 text-2xl font-bold text-slate-900">Reset Password</h1>
-      <p className="mb-6 text-sm text-slate-500">Follow the secure flow to regain access</p>
+      <h1 className="mb-2 text-2xl font-bold text-[#F5F5F7]">Reset Password</h1>
+      <p className="mb-6 text-xs text-[#8E8E93]">Follow the secure flow to regain access to your account</p>
 
       {/* Step indicators */}
       <div className="mb-6 flex items-center gap-2">
         {[1, 2, 3].map((item) => (
           <div key={item} className="flex items-center gap-2">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${
-                step >= item ? "bg-orange-500 text-white" : "bg-slate-200 text-slate-500"
+              className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs font-mono font-bold transition-all ${
+                step >= item
+                  ? "bg-[#C5A880] text-[#070709] shadow-sm"
+                  : "bg-[#14141A] text-[#71717A] border border-white/[0.04]"
               }`}
             >
               {item}
             </div>
-            {item < 3 && <div className={`h-1 w-8 rounded ${step > item ? "bg-orange-500" : "bg-slate-200"}`} />}
+            {item < 3 && (
+              <div
+                className={`h-0.5 w-8 rounded ${
+                  step > item ? "bg-[#C5A880]" : "bg-white/[0.06]"
+                }`}
+              />
+            )}
           </div>
         ))}
       </div>

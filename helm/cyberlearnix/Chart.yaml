@@ -1,0 +1,16 @@
+apiVersion: v2
+name: cyberlearnix
+description: Enterprise Helm Chart for CyberLearnIX / FD_LMS Platform (Presentation Layer, Spring Cloud Gateway, and 11 Microservices)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - lms
+  - elearning
+  - microservices
+  - react
+  - spring-cloud
+  - high-availability
+maintainers:
+  - name: CyberLearnIX Platform Engineering
+    email: platform-eng@cyberlearnix.io

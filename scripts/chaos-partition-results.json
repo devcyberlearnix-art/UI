@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-10-28T08:06:20.043Z",
+  "overallStatus": "PASSED",
+  "scenarios": [
+    {
+      "scenario": "Concurrent Double-Spend Attack Suppression",
+      "assertion": "Exactly 1 order stages; 49 race attempts blocked via Redlock (HTTP 429)",
+      "status": "PASSED",
+      "metrics": {
+        "totalAttempts": 50,
+        "staged": 1,
+        "blocked": 49
+      }
+    },
+    {
+      "scenario": "Network Partition Outbox Log Preservation",
+      "assertion": "Zero dropped events during network severance; logs remain safe in PostgreSQL boundary",
+      "status": "PASSED",
+      "metrics": {
+        "pendingLogs": 1,
+        "droppedEvents": 0
+      }
+    },
+    {
+      "scenario": "Kafka Duplicate Event Redelivery Idempotency",
+      "assertion": "Duplicate event filtered by downstream ledger; 0 duplicate enrollments written",
+      "status": "PASSED",
+      "metrics": {
+        "duplicatesRejected": 1
+      }
+    }
+  ],
+  "stateSummary": {
+    "ordersCreated": 1,
+    "enrollmentsActive": 2,
+    "outboxEventsProcessed": 1
+  }
+}

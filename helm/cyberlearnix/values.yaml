@@ -1,0 +1,288 @@
+# ==============================================================================
+# CyberLearnIX / FD_LMS Enterprise Production Helm Values
+# ==============================================================================
+
+global:
+  environment: production
+  domain: cyberlearnix.io
+  imageRegistry: docker.io/cyberlearnix
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
+
+# ------------------------------------------------------------------------------
+# Ingress Controller Configuration (NGINX + Cert-Manager TLS)
+# ------------------------------------------------------------------------------
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "15"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://cyberlearnix.io, https://*.cyberlearnix.io"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+  hosts:
+    - host: cyberlearnix.io
+      paths:
+        - path: /api
+          pathType: Prefix
+          service: gateway
+          port: 8080
+        - path: /ws
+          pathType: Prefix
+          service: gateway
+          port: 8080
+        - path: /
+          pathType: Prefix
+          service: ui
+          port: 80
+  tls:
+    - secretName: cyberlearnix-tls-cert
+      hosts:
+        - cyberlearnix.io
+
+# ------------------------------------------------------------------------------
+# Presentation Layer: React Single Page Application (Nginx)
+# ------------------------------------------------------------------------------
+ui:
+  enabled: true
+  replicaCount: 3
+  image:
+    repository: cyberlearnix/ui
+    tag: "1.0.0"
+  service:
+    type: ClusterIP
+    port: 80
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  hpa:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 101
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+# ------------------------------------------------------------------------------
+# API Gateway Tier: Spring Cloud Gateway (Port 8080)
+# ------------------------------------------------------------------------------
+gateway:
+  enabled: true
+  replicaCount: 3
+  port: 8080
+  image:
+    repository: cyberlearnix/api-gateway
+    tag: "1.0.0"
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  jvmOpts: "-XX:+UseG1GC -XX:MaxRAMPercentage=75.0 -XX:+ExitOnOutOfMemoryError"
+  hpa:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 12
+    targetCPUUtilizationPercentage: 75
+
+# ------------------------------------------------------------------------------
+# 11 Microservices Matrix Specifications
+# ------------------------------------------------------------------------------
+services:
+  user:
+    name: user-service
+    port: 8091
+    database: lms_user_db
+    replicaCount: 2
+    image:
+      repository: cyberlearnix/user-service
+      tag: "1.0.0"
+    resources:
+      limits: { cpu: 800m, memory: 768Mi }
+      requests: { cpu: 150m, memory: 384Mi }
+    hpa: { enabled: true, minReplicas: 2, maxReplicas: 8, targetCPU: 75 }
+
+  admin:
+    name: admin-service
+    port: 8087
+    database: lms_admin_db
+    replicaCount: 2
+    image:
+      repository: cyberlearnix/admin-service
+      tag: "1.0.0"
+    resources:
+      limits: { cpu: 600m, memory: 512Mi }
+      requests: { cpu: 100m, memory: 256Mi }
+    hpa: { enabled: false }
+
+  course:
+    name: course-service
+    port: 8083
+    database: lms_course_db
+    replicaCount: 3
+    image:
+      repository: cyberlearnix/course-service
+      tag: "1.0.0"
+    resources:
+      limits: { cpu: 1200m, memory: 1024Mi }
+      requests: { cpu: 300m, memory: 512Mi }
+    hpa: { enabled: true, minReplicas: 3, maxReplicas: 15, targetCPU: 70 }
+    env:
+      XFETCH_EARLY_BETA: "1.0"
+      CATALOG_CACHE_TTL_SECONDS: "3600"
+
+  instructor:
+    name: instructor-service
+    port: 8088
+    database: lms_instructor_db
+    replicaCount: 2
+    image:
+      repository: cyberlearnix/instructor-service
+      tag: "1.0.0"
+    resources:
+      limits: { cpu: 600m, memory: 512Mi }
+      requests: { cpu: 100m, memory: 256Mi }
+    hpa: { enabled: false }
+
+  cart:
+    name: cart-service
+    port: 8081
+    database: lms_cart_db
+    replicaCount: 2
+    image:
+      repository: cyberlearnix/cart-service
+      tag: "1.0.0"
+    resources:
+      limits: { cpu: 800m, memory: 768Mi }
+      requests: { cpu: 150m, memory: 384Mi }
+    hpa: { enabled: true, minReplicas: 2, maxReplicas: 10, targetCPU: 75 }
+
+  coupon:
+    name: coupon-service
+    port: 8082
+    database: lms_coupon_db
+    replicaCount: 2
+    image:
+      repository: cyberlearnix/coupon-service
+      tag: "1.0.0"
+    resources:
+      limits: { cpu: 600m, memory: 512Mi }
+      requests: { cpu: 100m, memory: 256Mi }
+    hpa: { enabled: false }
+
+  order:
+    name: order-service
+    port: 8084
+    database: lms_order_db
+    replicaCount: 3
+    image:
+      repository: cyberlearnix/order-service
+      tag: "1.0.0"
+    resources:
+      limits: { cpu: 1000m, memory: 1024Mi }
+      requests: { cpu: 250m, memory: 512Mi }
+    hpa: { enabled: true, minReplicas: 3, maxReplicas: 12, targetCPU: 70 }
+
+  payment:
+    name: payment-service
+    port: 8085
+    database: lms_payment_db
+    replicaCount: 3
+    image:
+      repository: cyberlearnix/payment-service
+      tag: "1.0.0"
+    resources:
+      limits: { cpu: 1000m, memory: 1024Mi }
+      requests: { cpu: 250m, memory: 512Mi }
+    hpa: { enabled: true, minReplicas: 3, maxReplicas: 10, targetCPU: 70 }
+
+  review:
+    name: review-service
+    port: 8089
+    database: lms_review_db
+    replicaCount: 2
+    image:
+      repository: cyberlearnix/review-service
+      tag: "1.0.0"
+    resources:
+      limits: { cpu: 600m, memory: 512Mi }
+      requests: { cpu: 100m, memory: 256Mi }
+    hpa: { enabled: false }
+
+  notification:
+    name: notification-service
+    port: 8093
+    database: lms_notification_db
+    replicaCount: 2
+    image:
+      repository: cyberlearnix/notification-service
+      tag: "1.0.0"
+    resources:
+      limits: { cpu: 800m, memory: 768Mi }
+      requests: { cpu: 200m, memory: 384Mi }
+    hpa: { enabled: true, minReplicas: 2, maxReplicas: 8, targetCPU: 75 }
+
+  wishlist:
+    name: wishlist-service
+    port: 8090
+    database: lms_wishlist_db
+    replicaCount: 2
+    image:
+      repository: cyberlearnix/wishlist-service
+      tag: "1.0.0"
+    resources:
+      limits: { cpu: 600m, memory: 512Mi }
+      requests: { cpu: 100m, memory: 256Mi }
+    hpa: { enabled: false }
+
+# ------------------------------------------------------------------------------
+# Data Persistence: Redis 7 In-Memory Cluster & State Broker
+# ------------------------------------------------------------------------------
+redis:
+  enabled: true
+  replicas: 1
+  port: 6379
+  image:
+    repository: redis
+    tag: "7.2-alpine"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  persistence:
+    enabled: true
+    storageClass: ""
+    size: 5Gi
+
+# ------------------------------------------------------------------------------
+# External PostgreSQL Managed Cluster Coordinates
+# ------------------------------------------------------------------------------
+postgresql:
+  host: "postgres-cluster.cyberlearnix-data.svc.cluster.local"
+  port: 5432
+  user: "postgres"
+  sslMode: "require"
+  poolSize: 20

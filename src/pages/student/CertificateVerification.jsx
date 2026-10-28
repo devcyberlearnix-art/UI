@@ -195,8 +195,21 @@ export const CertificateVerification = () => {
     }
   };
 
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
+  const handleLinkedInShare = () => {
+    const certUrl = `${window.location.origin}/verify-certificate/${verificationCode}`;
+    const courseTitle = courseData?.title || 'Distributed Systems Architecture';
+    const linkedinUrl = `https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name=${encodeURIComponent(courseTitle)}&organizationName=Cyberlearnix&issueYear=${new Date().getFullYear()}&issueMonth=${new Date().getMonth() + 1}&certUrl=${encodeURIComponent(certUrl)}&certId=${encodeURIComponent(verificationCode)}`;
+    window.open(linkedinUrl, '_blank', 'noopener,noreferrer');
+  };
+
   const handlePrintCertificate = () => {
-    window.print();
+    setIsDownloadingPdf(true);
+    setTimeout(() => {
+      window.print();
+      setIsDownloadingPdf(false);
+    }, 600);
   };
 
   if (loading) {
@@ -271,14 +284,33 @@ export const CertificateVerification = () => {
           </Button>
 
           <Button
-            variant="cyan"
+            variant="secondary"
             size="sm"
-            disabled={!isFullyCompleted}
+            onClick={handleLinkedInShare}
+            className="border-[#C5A880]/30 text-[#C5A880] hover:bg-[#C5A880]/10 text-xs font-semibold"
+          >
+            <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
+            <span>Add to LinkedIn</span>
+          </Button>
+
+          <Button
+            variant="primary"
+            size="sm"
+            disabled={!isFullyCompleted || isDownloadingPdf}
             onClick={handlePrintCertificate}
-            leftIcon={Download}
             className="text-xs font-bold"
           >
-            Print / Save PDF
+            {isDownloadingPdf ? (
+              <>
+                <RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                <span>Preparing PDF Render...</span>
+              </>
+            ) : (
+              <>
+                <Download className="w-3.5 h-3.5 mr-1.5" />
+                <span>Print / Save PDF</span>
+              </>
+            )}
           </Button>
         </div>
       </div>
@@ -291,10 +323,10 @@ export const CertificateVerification = () => {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={SPRING}
-          className="p-10 rounded-3xl bg-obsidian-900/40 border border-amber-500/30 backdrop-blur-xl text-center space-y-6 shadow-2xl max-w-2xl mx-auto"
+          className="p-6 sm:p-10 rounded-3xl bg-obsidian-900/40 border border-amber-500/30 backdrop-blur-xl text-center space-y-6 shadow-2xl max-w-2xl mx-auto"
         >
-          <div className="w-20 h-20 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto shadow-glow shadow-amber-500/20">
-            <Lock className="w-10 h-10" />
+          <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto shadow-glow shadow-amber-500/20">
+            <Lock className="w-7 h-7 sm:w-10 sm:h-10" />
           </div>
 
           <div className="space-y-2">
@@ -411,26 +443,26 @@ export const CertificateVerification = () => {
                   <Sparkles className="w-3.5 h-3.5" /> Cyberlearnix Institute of Engineering
                 </div>
 
-                <h2 className="text-2xl md:text-4xl font-extrabold tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-ink-300 font-serif">
+                <h2 className="text-2xl md:text-4xl font-extrabold tracking-widest uppercase text-[#F5F5F7] font-serif">
                   Certificate of Architectural Mastery
                 </h2>
 
-                <p className="text-xs font-mono text-ink-500 tracking-widest uppercase">
+                <p className="text-xs font-mono text-[#71717A] tracking-widest uppercase">
                   Accreditation Code: {verificationCode}
                 </p>
               </div>
 
               {/* Recipient Details */}
               <div className="text-center space-y-4 max-w-3xl mx-auto py-2">
-                <p className="text-sm text-ink-400 font-light italic">
+                <p className="text-sm text-[#A1A1AA] font-light italic">
                   This certifies with definitive cryptographic verification that
                 </p>
 
                 <div className="relative inline-block px-8 py-2">
-                  <h3 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-cyan-300 tracking-tight font-serif">
+                  <h3 className="text-3xl md:text-5xl font-black text-[#C5A880] tracking-tight font-serif">
                     {studentName}
                   </h3>
-                  <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-cyan-400 to-transparent mt-2 opacity-60" />
+                  <div className="h-0.5 w-full bg-[#C5A880]/30 mt-2 opacity-60" />
                 </div>
 
                 <p className="text-sm text-ink-300 font-light leading-relaxed max-w-2xl mx-auto">
@@ -459,13 +491,15 @@ export const CertificateVerification = () => {
                   </p>
                 </div>
 
-                {/* Center: Blockchain Medallion Seal */}
+                {/* Center: Monochromatic Blockchain Medallion Seal with Foil Layer Shimmer Motion */}
                 <div className="flex flex-col items-center justify-center space-y-2">
-                  <div className="relative w-20 h-20 rounded-full border-2 border-cyan-400/60 bg-gradient-to-br from-cyan-950 to-obsidian-950 flex items-center justify-center shadow-glow shadow-cyan-500/20 group-hover:scale-105 transition-transform duration-300">
-                    <ShieldCheck className="w-10 h-10 text-cyan-400" />
-                    <div className="absolute inset-0 rounded-full border border-cyan-400/30 animate-spin-slow pointer-events-none" />
+                  <div className="relative w-20 h-20 rounded-full border border-[#C5A880]/60 bg-[#0F0F13] flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-[0_0_24px_rgba(197,168,128,0.15)] overflow-hidden">
+                    {/* Non-blocking Foil Layer Shimmer Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_3s_infinite] pointer-events-none" />
+                    <ShieldCheck className="w-9 h-9 text-[#C5A880]" />
+                    <div className="absolute inset-1 rounded-full border border-[#C5A880]/30 pointer-events-none" />
                   </div>
-                  <span className="text-[10px] font-mono tracking-widest text-cyan-400 uppercase font-bold text-center">
+                  <span className="text-[10px] font-mono tracking-widest text-[#C5A880] uppercase font-bold text-center">
                     Cryptographically Sealed
                   </span>
                 </div>

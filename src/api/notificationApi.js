@@ -11,16 +11,24 @@ export const notificationApi = {
   // ============================================
 
   /**
-   * GET /api/v1/notifications/user/{userId}
+   * GET /api/v1/users/me/notifications or /api/v1/notifications/user/{userId}
    * Get user-specific notifications
    */
-  getNotifications: async (userId) => {
+  getNotifications: async (userId = null) => {
     try {
-      const response = await axiosInstance.get(`/api/v1/notifications/user/${userId}`);
-      return response.data;
+      try {
+        const response = await axiosInstance.get('/api/v1/users/me/notifications');
+        return response.data;
+      } catch (meErr) {
+        if (userId) {
+          const response = await axiosInstance.get(`/api/v1/notifications/user/${userId}`);
+          return response.data;
+        }
+        throw meErr;
+      }
     } catch (err) {
-      console.warn(`[notificationApi] GET /api/v1/notifications/user/${userId} failed`);
-      throw err;
+      console.warn(`[notificationApi] GET notifications failed:`, err?.message);
+      return { data: [] };
     }
   },
 
@@ -34,32 +42,45 @@ export const notificationApi = {
       return response.data;
     } catch (err) {
       console.warn(`[notificationApi] GET /api/v1/notifications/user/${userId}/combined failed`);
-      throw err;
+      return notificationApi.getNotifications(userId);
     }
   },
 
   /**
-   * GET /api/v1/notifications/user/{userId}/unread
+   * GET /api/v1/users/me/unread or /api/v1/notifications/user/{userId}
    * Get unread notifications for a user
    */
-  getUnreadNotifications: async (userId) => {
+  getUnreadNotifications: async (userId = null) => {
     try {
-      const response = await axiosInstance.get(`/api/v1/notifications/user/${userId}`);
-      const allNotifications = response.data?.data || response.data || [];
-      return allNotifications.filter(n => n.status !== 'READ');
+      try {
+        const response = await axiosInstance.get('/api/v1/users/me/unread');
+        return response.data;
+      } catch (meErr) {
+        const response = await notificationApi.getNotifications(userId);
+        const allNotifications = response.data?.data || response.data || [];
+        return Array.isArray(allNotifications) ? allNotifications.filter(n => !n.read && n.status !== 'READ') : [];
+      }
     } catch (err) {
-      console.warn(`[notificationApi] GET /api/v1/notifications/user/${userId}/unread failed`);
-      throw err;
+      console.warn(`[notificationApi] GET unread notifications failed`);
+      return [];
     }
   },
 
   /**
-   * Get unread count (helper method)
+   * Get unread count via /api/v1/users/me/count or derived
    */
-  getUnreadCount: async (userId) => {
+  getUnreadCount: async (userId = null) => {
     try {
+      try {
+        const response = await axiosInstance.get('/api/v1/users/me/count');
+        const count = response.data?.data?.count ?? response.data?.count ?? (typeof response.data === 'number' ? response.data : null);
+        if (count !== null) return { data: { count } };
+      } catch (countErr) {
+        // Fallback
+      }
       const unread = await notificationApi.getUnreadNotifications(userId);
-      return { data: { count: unread.length } };
+      const list = unread?.data || unread || [];
+      return { data: { count: Array.isArray(list) ? list.length : 0 } };
     } catch (err) {
       console.warn('[notificationApi] getUnreadCount failed');
       return { data: { count: 0 } };
@@ -67,15 +88,20 @@ export const notificationApi = {
   },
 
   /**
-   * PUT /api/v1/notifications/{id}/read
+   * PUT /api/v1/users/me/read/{id} or /api/v1/notifications/{id}/read
    * Mark notification as read
    */
   markAsRead: async (notificationId) => {
     try {
-      const response = await axiosInstance.put(`/api/v1/notifications/${notificationId}/read`);
-      return response.data;
+      try {
+        const response = await axiosInstance.put(`/api/v1/users/me/read/${notificationId}`);
+        return response.data;
+      } catch (meErr) {
+        const response = await axiosInstance.put(`/api/v1/notifications/${notificationId}/read`);
+        return response.data;
+      }
     } catch (err) {
-      console.warn(`[notificationApi] PUT /api/v1/notifications/${notificationId}/read failed`);
+      console.warn(`[notificationApi] markAsRead failed:`, err?.message);
       throw err;
     }
   },
@@ -95,15 +121,20 @@ export const notificationApi = {
   },
 
   /**
-   * POST /api/v1/notifications/mark-all-read
+   * PUT /api/v1/users/me/read-all or POST /api/v1/notifications/mark-all-read
    * Mark all notifications as read
    */
   markAllAsRead: async () => {
     try {
-      const response = await axiosInstance.post('/api/v1/notifications/mark-all-read');
-      return response.data;
+      try {
+        const response = await axiosInstance.put('/api/v1/users/me/read-all');
+        return response.data;
+      } catch (meErr) {
+        const response = await axiosInstance.post('/api/v1/notifications/mark-all-read');
+        return response.data;
+      }
     } catch (err) {
-      console.warn('[notificationApi] POST /api/v1/notifications/mark-all-read failed');
+      console.warn('[notificationApi] markAllAsRead failed:', err?.message);
       throw err;
     }
   },

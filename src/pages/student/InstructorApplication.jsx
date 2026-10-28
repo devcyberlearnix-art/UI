@@ -21,7 +21,7 @@ const DOCUMENT_FIELDS = [
     accept: ".pdf,.doc,.docx",
     acceptLabel: "PDF, DOC, DOCX",
     required: true,
-    color: "purple",
+    color: "gold",
   },
   {
     key: "educationalCertificates",
@@ -81,18 +81,20 @@ const DOCUMENT_FIELDS = [
     accept: ".pdf,.doc,.docx,.jpg,.jpeg,.png",
     acceptLabel: "PDF, DOC, JPG, PNG",
     required: false,
-    color: "indigo",
+    color: "mercury",
   },
 ];
 
 const COLORS = {
-  purple: { bg: "bg-purple-50", border: "border-purple-200", icon: "text-purple-600", badge: "bg-purple-100 text-purple-700", hover: "hover:border-purple-400", ring: "ring-purple-400" },
-  blue:   { bg: "bg-blue-50",   border: "border-blue-200",   icon: "text-blue-600",   badge: "bg-blue-100 text-blue-700",   hover: "hover:border-blue-400",   ring: "ring-blue-400" },
-  green:  { bg: "bg-green-50",  border: "border-green-200",  icon: "text-green-600",  badge: "bg-green-100 text-green-700",  hover: "hover:border-green-400",  ring: "ring-green-400" },
-  orange: { bg: "bg-orange-50", border: "border-orange-200", icon: "text-orange-600", badge: "bg-orange-100 text-orange-700", hover: "hover:border-orange-400", ring: "ring-orange-400" },
-  teal:   { bg: "bg-teal-50",   border: "border-teal-200",   icon: "text-teal-600",   badge: "bg-teal-100 text-teal-700",   hover: "hover:border-teal-400",   ring: "ring-teal-400" },
-  red:    { bg: "bg-red-50",    border: "border-red-200",    icon: "text-red-600",    badge: "bg-red-100 text-red-700",    hover: "hover:border-red-400",    ring: "ring-red-400" },
-  indigo: { bg: "bg-indigo-50", border: "border-indigo-200", icon: "text-indigo-600", badge: "bg-indigo-100 text-indigo-700", hover: "hover:border-indigo-400", ring: "ring-indigo-400" },
+  gold:    { bg: "bg-[#C5A880]/10", border: "border-[#C5A880]/30", icon: "text-[#C5A880]", badge: "bg-[#C5A880]/15 text-[#C5A880]", hover: "hover:border-[#C5A880]/50", ring: "ring-[#C5A880]/40" },
+  mercury: { bg: "bg-white/[0.04]", border: "border-white/[0.08]", icon: "text-[#E5E5E7]", badge: "bg-white/[0.08] text-white", hover: "hover:border-white/[0.16]", ring: "ring-white/20" },
+  purple:  { bg: "bg-[#C5A880]/10", border: "border-[#C5A880]/30", icon: "text-[#C5A880]", badge: "bg-[#C5A880]/15 text-[#C5A880]", hover: "hover:border-[#C5A880]/50", ring: "ring-[#C5A880]/40" },
+  blue:    { bg: "bg-blue-50",   border: "border-blue-200",   icon: "text-blue-600",   badge: "bg-blue-100 text-blue-700",   hover: "hover:border-blue-400",   ring: "ring-blue-400" },
+  green:   { bg: "bg-green-50",  border: "border-green-200",  icon: "text-green-600",  badge: "bg-green-100 text-green-700",  hover: "hover:border-green-400",  ring: "ring-green-400" },
+  orange:  { bg: "bg-orange-50", border: "border-orange-200", icon: "text-orange-600", badge: "bg-orange-100 text-orange-700", hover: "hover:border-orange-400", ring: "ring-orange-400" },
+  teal:    { bg: "bg-teal-50",   border: "border-teal-200",   icon: "text-teal-600",   badge: "bg-teal-100 text-teal-700",   hover: "hover:border-teal-400",   ring: "ring-teal-400" },
+  red:     { bg: "bg-red-50",    border: "border-red-200",    icon: "text-red-600",    badge: "bg-red-100 text-red-700",    hover: "hover:border-red-400",    ring: "ring-red-400" },
+  indigo:  { bg: "bg-white/[0.04]", border: "border-white/[0.08]", icon: "text-[#E5E5E7]", badge: "bg-white/[0.08] text-white", hover: "hover:border-[#C5A880]/40", ring: "ring-[#C5A880]/40" },
 };
 
 // ─── Single File Upload Card ──────────────────────────────────────────────────
@@ -187,10 +189,10 @@ function StepIndicator({ steps, current }) {
       {steps.map((s, i) => (
         <React.Fragment key={i}>
           <div className="flex flex-col items-center">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${i < current ? "bg-green-500 text-white shadow-lg shadow-green-200" : i === current ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-200 scale-110" : "bg-gray-100 text-gray-400"}`}>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${i < current ? "bg-emerald-500 text-white shadow-md shadow-emerald-200" : i === current ? "bg-[#C5A880] text-[#070709] shadow-md shadow-[#C5A880]/30 scale-110" : "bg-gray-100 text-gray-400"}`}>
               {i < current ? <Check className="w-5 h-5" /> : i + 1}
             </div>
-            <span className={`text-xs mt-1.5 font-medium transition-colors ${i === current ? "text-purple-700" : i < current ? "text-green-600" : "text-gray-400"}`}>{s}</span>
+            <span className={`text-xs mt-1.5 font-medium transition-colors ${i === current ? "text-[#C5A880] font-bold" : i < current ? "text-emerald-600" : "text-gray-400"}`}>{s}</span>
           </div>
           {i < steps.length - 1 && (
             <div className={`h-0.5 w-16 mx-1 mb-5 rounded transition-colors duration-300 ${i < current ? "bg-green-400" : "bg-gray-200"}`} />
@@ -451,8 +453,8 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 animate-[fadeInUp_0.3s_ease]">
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-200">
-            <Award className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 bg-[#0F0F13] border border-[#C5A880]/40 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl">
+            <Award className="w-8 h-8 text-[#C5A880]" />
           </div>
           <h3 className="text-xl font-bold text-gray-800">Submit Application?</h3>
           <p className="text-gray-500 text-sm mt-2">You're about to apply for the <strong>Instructor</strong> role. Make sure all documents are accurate before submitting.</p>
@@ -468,7 +470,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         </div>
         <div className="flex gap-3">
           <button onClick={() => setShowConfirm(false)} className="flex-1 px-4 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition-colors">Cancel</button>
-          <button onClick={handleSubmit} disabled={submitting} className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-purple-200 transition-all disabled:opacity-70 flex items-center justify-center gap-2">
+          <button onClick={handleSubmit} disabled={submitting} className="flex-1 px-4 py-3 rounded-xl bg-[#C5A880] hover:bg-[#D4BC98] text-[#070709] font-bold shadow-md shadow-[#C5A880]/20 transition-all disabled:opacity-70 flex items-center justify-center gap-2">
             {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</> : "✅ Confirm & Submit"}
           </button>
         </div>
@@ -486,18 +488,16 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
         <button onClick={onBack} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-5 transition-colors group">
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
         </button>
-        <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 rounded-3xl p-8 text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/4" />
+        <div className="bg-[#0F0F13] border border-white/[0.08] rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
           <div className="relative">
             <div className="flex items-center gap-3 mb-3">
-              <div className="bg-white/20 backdrop-blur p-2.5 rounded-xl">
-                <Star className="w-6 h-6 text-yellow-300" />
+              <div className="bg-[#14141A] border border-white/[0.06] p-2.5 rounded-xl">
+                <Star className="w-6 h-6 text-[#C5A880]" />
               </div>
-              <span className="text-sm font-medium bg-white/20 px-3 py-1 rounded-full">Instructor Application</span>
+              <span className="text-xs font-semibold bg-[#C5A880]/15 text-[#C5A880] border border-[#C5A880]/30 px-3 py-1 rounded-full">Instructor Application</span>
             </div>
-            <h1 className="text-3xl font-bold mb-2">Become an Instructor</h1>
-            <p className="text-purple-100 max-w-lg">Share your expertise with thousands of learners. Submit your documents and join our growing community of educators.</p>
+            <h1 className="text-3xl font-extrabold mb-2 tracking-tight text-white">Become an Instructor</h1>
+            <p className="text-[#A1A1AA] max-w-lg text-sm leading-relaxed">Share your expertise with thousands of learners. Submit your documents and join our growing community of educators.</p>
           </div>
         </div>
       </div>
@@ -520,7 +520,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
               <select
                 value={info.contentType}
                 onChange={(e) => setInfo((p) => ({ ...p, contentType: e.target.value }))}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-gray-800 text-sm"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C5A880]/40 focus:border-[#C5A880] bg-gray-50 text-gray-800 text-sm"
               >
                 <option value="">Select content type…</option>
                 <option>Programming & Development</option>
@@ -548,7 +548,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
                 placeholder="e.g. React, Machine Learning, UI/UX"
                 value={info.specialization}
                 onChange={(e) => setInfo((p) => ({ ...p, specialization: e.target.value }))}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C5A880]/40 focus:border-[#C5A880] bg-gray-50 text-sm"
               />
             </div>
 
@@ -560,7 +560,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
               <select
                 value={info.experience}
                 onChange={(e) => setInfo((p) => ({ ...p, experience: e.target.value }))}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C5A880]/40 focus:border-[#C5A880] bg-gray-50 text-sm"
               >
                 <option value="">Select…</option>
                 <option value="0-1">Less than 1 year</option>
@@ -579,7 +579,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
                 placeholder="+91 XXXXX XXXXX"
                 value={info.phone}
                 onChange={(e) => setInfo((p) => ({ ...p, phone: e.target.value }))}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C5A880]/40 focus:border-[#C5A880] bg-gray-50 text-sm"
               />
             </div>
 
@@ -591,7 +591,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
                 placeholder="https://linkedin.com/in/yourname"
                 value={info.linkedIn}
                 onChange={(e) => setInfo((p) => ({ ...p, linkedIn: e.target.value }))}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C5A880]/40 focus:border-[#C5A880] bg-gray-50 text-sm"
               />
             </div>
 
@@ -603,7 +603,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
                 placeholder="https://yourwebsite.com"
                 value={info.website}
                 onChange={(e) => setInfo((p) => ({ ...p, website: e.target.value }))}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C5A880]/40 focus:border-[#C5A880] bg-gray-50 text-sm"
               />
             </div>
 
@@ -618,7 +618,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
                 placeholder="Tell us about your teaching philosophy, expertise, and what students will learn from you…"
                 value={info.bio}
                 onChange={(e) => setInfo((p) => ({ ...p, bio: e.target.value }))}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm resize-none"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#C5A880]/40 focus:border-[#C5A880] bg-gray-50 text-sm resize-none"
               />
               <p className={`text-xs mt-1 ${info.bio.length >= 30 ? "text-green-600" : "text-gray-400"}`}>
                 {info.bio.length} / 30+ characters
@@ -630,7 +630,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
             <button
               disabled={!step0Valid}
               onClick={() => setStep(1)}
-              className="flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-purple-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex items-center gap-2 px-7 py-3 rounded-xl bg-[#C5A880] hover:bg-[#D4BC98] text-[#070709] font-bold shadow-md shadow-[#C5A880]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               Next: Upload Documents <ArrowRight className="w-4 h-4" />
             </button>
@@ -683,7 +683,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
             <button
               disabled={!step1Valid}
               onClick={() => setStep(2)}
-              className="flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold shadow-lg shadow-purple-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex items-center gap-2 px-7 py-3 rounded-xl bg-[#C5A880] hover:bg-[#D4BC98] text-[#070709] font-bold shadow-md shadow-[#C5A880]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               Review Application <ArrowRight className="w-4 h-4" />
             </button>
@@ -699,8 +699,8 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
           </h2>
 
           {/* Personal Info summary */}
-          <div className="bg-purple-50 rounded-2xl p-5 mb-5 border border-purple-100">
-            <h3 className="font-semibold text-purple-800 mb-3 flex items-center gap-2"><User className="w-4 h-4" /> Personal Information</h3>
+          <div className="bg-[#14141A] rounded-2xl p-5 mb-5 border border-white/[0.06]">
+            <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><User className="w-4 h-4 text-[#C5A880]" /> Personal Information</h3>
             <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
               {[
                 ["Email", user?.email || "—"],
@@ -752,7 +752,7 @@ export default function InstructorApplication({ onBack, applicationStatus, onSta
             <button
               onClick={() => setShowConfirm(true)}
               disabled={submitting}
-              className="flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold shadow-lg shadow-purple-200 transition-all text-sm"
+              className="flex items-center gap-2 px-8 py-3 rounded-xl bg-[#C5A880] hover:bg-[#D4BC98] text-[#070709] font-bold shadow-md shadow-[#C5A880]/20 transition-all text-sm"
             >
               {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</> : <><Award className="w-4 h-4" /> Submit Application</>}
             </button>

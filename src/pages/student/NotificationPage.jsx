@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,259 +11,263 @@ import {
   Star,
   Award,
   BookOpen,
-  Users,
   ShoppingCart,
   AlertCircle,
   RefreshCw,
-  Filter,
+  Sparkles,
 } from "lucide-react";
-import toast from "react-hot-toast";
-import { notificationApi } from "../../api/notificationApi";
 import { useAuth } from "../../context/AuthContext";
+import {
+  useNotifications,
+  useMarkNotificationAsRead,
+  useMarkAllNotificationsAsRead,
+} from "../../hooks/useNotifications";
+import Button from "../../design-system/primitives/Button";
+import Badge from "../../design-system/primitives/Badge";
+
+const SPRING_TRANSITION = {
+  type: "spring",
+  stiffness: 280,
+  damping: 26,
+};
+
+const getNotificationIcon = (type) => {
+  switch (type) {
+    case 'ENROLLMENT':
+      return <BookOpen size={18} className="text-cyan-400" />;
+    case 'REVIEW':
+      return <Star size={18} className="text-amber-400" />;
+    case 'CERTIFICATE':
+      return <Award size={18} className="text-[#C5A880]" />;
+    case 'COURSE_UPDATE':
+      return <BellRing size={18} className="text-[#E5E5E7]" />;
+    case 'PAYMENT':
+      return <ShoppingCart size={18} className="text-emerald-400" />;
+    case 'SYSTEM':
+      return <AlertCircle size={18} className="text-rose-400" />;
+    default:
+      return <Bell size={18} className="text-[#8E8E93]" />;
+  }
+};
 
 const NotificationPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const userId = user?.id || user?.userId;
 
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
 
-  const fetchNotifications = useCallback(async () => {
-    setLoading(true);
-    try {
-      const userId = user?.id || user?.userId;
-      if (!userId) {
-        console.warn("[NotificationPage] No user ID available");
-        setLoading(false);
-        return;
-      }
+  const {
+    notifications = [],
+    unreadCount = 0,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useNotifications(userId);
 
-      const [notifData, countData] = await Promise.all([
-        notificationApi.getNotifications(userId),
-        notificationApi.getUnreadCount(userId),
-      ]);
+  const { mutate: markAsRead } = useMarkNotificationAsRead(userId);
+  const { mutate: markAllAsRead, isPending: markingAll } = useMarkAllNotificationsAsRead(userId);
 
-      if (Array.isArray(notifData?.data)) {
-        setNotifications(notifData.data);
-      } else if (Array.isArray(notifData)) {
-        setNotifications(notifData);
-      }
+  const filteredNotifications = useMemo(() => {
+    return notifications.filter((n) => {
+      if (filter === "all") return true;
+      if (filter === "unread") return !n.read && n.status !== 'READ';
+      return n.type === filter;
+    });
+  }, [notifications, filter]);
 
-      if (countData?.data) {
-        setUnreadCount(countData.data.count || countData.data);
-      }
-    } catch (err) {
-      console.error("[NotificationPage] Failed to load notifications", err);
-      toast.error("Failed to load notifications");
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications]);
-
-  const handleMarkAsRead = async (notificationId) => {
-    try {
-      await notificationApi.markAsRead(notificationId);
-      setNotifications((prev) =>
-        prev.map((n) => (n.notificationId === notificationId || n.id === notificationId ? { ...n, status: 'READ', read: true } : n))
-      );
-      setUnreadCount((prev) => Math.max(0, prev - 1));
-    } catch (err) {
-      toast.error("Failed to mark as read");
-    }
-  };
-
-  const handleMarkAllAsRead = async () => {
-    try {
-      await notificationApi.markAllAsRead();
-      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-      setUnreadCount(0);
-      toast.success("All notifications marked as read");
-    } catch (err) {
-      toast.error("Failed to mark all as read");
-    }
-  };
-
-  const getNotificationIcon = (type) => {
-    switch (type) {
-      case 'ENROLLMENT': return <BookOpen size={20} className="text-blue-600" />;
-      case 'REVIEW': return <Star size={20} className="text-amber-600" />;
-      case 'CERTIFICATE': return <Award size={20} className="text-emerald-600" />;
-      case 'COURSE_UPDATE': return <BellRing size={20} className="text-orange-600" />;
-      case 'PAYMENT': return <ShoppingCart size={20} className="text-purple-600" />;
-      case 'SYSTEM': return <AlertCircle size={20} className="text-red-600" />;
-      default: return <Bell size={20} className="text-slate-600" />;
-    }
-  };
-
-  const getNotificationColor = (type) => {
-    switch (type) {
-      case 'ENROLLMENT': return 'bg-blue-50 border-blue-200';
-      case 'REVIEW': return 'bg-amber-50 border-amber-200';
-      case 'CERTIFICATE': return 'bg-emerald-50 border-emerald-200';
-      case 'COURSE_UPDATE': return 'bg-orange-50 border-orange-200';
-      case 'PAYMENT': return 'bg-purple-50 border-purple-200';
-      case 'SYSTEM': return 'bg-red-50 border-red-200';
-      default: return 'bg-slate-50 border-slate-200';
-    }
-  };
-
-  const filteredNotifications = notifications.filter((n) => {
-    if (filter === "all") return true;
-    if (filter === "unread") return n.status !== 'READ' && !n.read;
-    return n.type === filter;
-  });
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-center space-y-4">
-          <Loader2 className="animate-spin text-orange-500 w-12 h-12 mx-auto" />
-          <p className="text-sm text-slate-600">Loading notifications...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#070709]">
+        <div className="text-center space-y-3">
+          <Loader2 className="animate-spin text-[#C5A880] w-8 h-8 mx-auto" />
+          <p className="text-xs font-mono text-[#8E8E93]">Streaming telemetry alerts...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
+    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] p-4 sm:p-8 selection:bg-[#C5A880]/30 selection:text-white">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header Ribbon */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          transition={SPRING_TRANSITION}
+          className="pb-4 border-b border-white/[0.04]"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-black text-slate-900 mb-2">Notifications</h1>
-              <p className="text-slate-500">
-                Stay updated with your learning journey
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#C5A880]">
+                  <Bell size={16} />
+                </div>
+                <h1 className="text-2xl font-bold tracking-tight text-[#F5F5F7]">
+                  Telemetry & System Alerts
+                </h1>
+              </div>
+              <p className="text-xs text-[#8E8E93] font-mono mt-1">
+                Real-time microservice notifications routed via event pipeline
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               <button
-                onClick={fetchNotifications}
-                className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition"
+                type="button"
+                onClick={() => refetch()}
+                disabled={isFetching}
+                className="p-2 rounded-xl bg-[#0F0F13] border border-white/[0.04] text-[#8E8E93] hover:text-white transition-colors"
+                title="Sync Telemetry Stream"
               >
-                <RefreshCw size={18} />
+                <RefreshCw size={15} className={isFetching ? "animate-spin text-[#C5A880]" : ""} />
               </button>
 
               {unreadCount > 0 && (
-                <button
-                  onClick={handleMarkAllAsRead}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white font-medium hover:bg-slate-800 transition"
+                <Button
+                  variant="primary"
+                  size="sm"
+                  disabled={markingAll}
+                  onClick={() => markAllAsRead()}
                 >
-                  <CheckCircle2 size={16} />
-                  Mark All Read
-                </button>
+                  <CheckCircle2 size={14} className="mr-1.5" />
+                  <span>Mark All Read</span>
+                </Button>
               )}
             </div>
           </div>
 
-          {/* Unread Badge */}
+          {/* Unread Telemetry Pill */}
           {unreadCount > 0 && (
-            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 text-orange-700 font-semibold">
-              <BellRing size={16} />
-              {unreadCount} unread notification{unreadCount > 1 ? 's' : ''}
+            <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C5A880]/10 border border-[#C5A880]/20 text-[#C5A880] text-xs font-mono font-medium">
+              <Sparkles size={13} />
+              <span>{unreadCount} unread system signal{unreadCount > 1 ? 's' : ''}</span>
             </div>
           )}
         </motion.div>
 
-        {/* Filter Tabs */}
+        {/* Filter Navigation Tabs */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6 flex items-center gap-2 overflow-x-auto pb-2"
+          transition={SPRING_TRANSITION}
+          className="flex items-center gap-2 overflow-x-auto pb-1"
         >
-          {['all', 'unread', 'ENROLLMENT', 'REVIEW', 'CERTIFICATE', 'COURSE_UPDATE'].map((f) => (
+          {['all', 'unread', 'ENROLLMENT', 'CERTIFICATE', 'COURSE_UPDATE', 'REVIEW', 'PAYMENT'].map((f) => (
             <button
               key={f}
+              type="button"
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all select-none whitespace-nowrap ${
                 filter === f
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                  ? 'bg-[#C5A880] text-[#070709] font-bold shadow-lg shadow-[#C5A880]/15'
+                  : 'bg-[#0F0F13] text-[#8E8E93] hover:text-white border border-white/[0.04] hover:border-white/10'
               }`}
             >
-              {f === 'all' ? 'All' : f === 'unread' ? 'Unread' : f}
+              {f === 'all' ? 'All Alerts' : f === 'unread' ? `Unread (${unreadCount})` : f.replace('_', ' ')}
             </button>
           ))}
         </motion.div>
 
-        {/* Notifications List */}
+        {/* Notifications List Track */}
         <div className="space-y-3">
-          <AnimatePresence>
-            {filteredNotifications.map((notification, idx) => (
-              <motion.div
-                key={notification.notificationId || notification.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ delay: idx * 0.05 }}
-                onClick={() => {
-                  if (notification.status !== 'READ' && !notification.read) {
-                    handleMarkAsRead(notification.notificationId || notification.id);
-                  }
-                  if (notification.actionUrl) {
-                    navigate(notification.actionUrl);
-                  }
-                }}
-                className={`p-4 rounded-xl border cursor-pointer transition hover:shadow-md ${
-                  (notification.status === 'READ' || notification.read) ? 'bg-white border-slate-200' : 'bg-white border-l-4 border-l-orange-500 border-slate-200'
-                }`}
-              >
-                <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-xl ${getNotificationColor(notification.type)}`}>
-                    {getNotificationIcon(notification.type)}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-1">
-                      <h3 className="font-semibold text-slate-900">{notification.title}</h3>
-                      {notification.status !== 'READ' && !notification.read && (
-                        <div className="w-2 h-2 rounded-full bg-orange-500" />
-                      )}
+          <AnimatePresence mode="popLayout">
+            {filteredNotifications.map((notification, idx) => {
+              const isUnread = !notification.read && notification.status !== 'READ';
+              return (
+                <motion.div
+                  key={notification.notificationId || notification.id || idx}
+                  layout
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={SPRING_TRANSITION}
+                  onClick={() => {
+                    if (isUnread) {
+                      markAsRead(notification.notificationId || notification.id);
+                    }
+                    if (notification.actionUrl) {
+                      navigate(notification.actionUrl);
+                    }
+                  }}
+                  className={`p-4 sm:p-5 rounded-2xl border cursor-pointer transition-all relative overflow-hidden ${
+                    isUnread
+                      ? 'bg-[#0F0F13] border-[#C5A880]/30 shadow-lg shadow-[#C5A880]/5'
+                      : 'bg-[#0F0F13]/60 border-white/[0.04] hover:border-white/10'
+                  }`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="p-2.5 rounded-xl bg-[#14141A] border border-white/[0.04] shrink-0 mt-0.5">
+                      {getNotificationIcon(notification.type)}
                     </div>
-                    <p className="text-sm text-slate-600 line-clamp-2">{notification.message}</p>
-                    <div className="flex items-center gap-2 mt-2 text-xs text-slate-400">
-                      <Clock size={12} />
-                      {new Date(notification.createdAt).toLocaleString()}
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-3 mb-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-bold text-sm sm:text-base text-[#F5F5F7] tracking-tight">
+                            {notification.title}
+                          </h3>
+                          {isUnread && (
+                            <span className="w-2 h-2 rounded-full bg-[#C5A880] shrink-0" />
+                          )}
+                        </div>
+
+                        {isUnread && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              markAsRead(notification.notificationId || notification.id);
+                            }}
+                            className="p-1 text-[#8E8E93] hover:text-white transition-colors"
+                            title="Dismiss Alert"
+                          >
+                            <X size={14} />
+                          </button>
+                        )}
+                      </div>
+
+                      <p className="text-xs sm:text-sm text-[#8E8E93] leading-relaxed line-clamp-2">
+                        {notification.message}
+                      </p>
+
+                      <div className="flex items-center gap-3 mt-3 text-[11px] font-mono text-[#52525B]">
+                        <span className="flex items-center gap-1.5">
+                          <Clock size={11} />
+                          {new Date(notification.createdAt).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                        <span>•</span>
+                        <span className="uppercase text-[#8E8E93]">{notification.priority}</span>
+                      </div>
                     </div>
                   </div>
-
-                  {notification.status !== 'READ' && !notification.read && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleMarkAsRead(notification.notificationId || notification.id);
-                      }}
-                      className="p-2 text-slate-400 hover:text-slate-600 transition"
-                    >
-                      <X size={16} />
-                    </button>
-                  )}
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
 
           {filteredNotifications.length === 0 && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-slate-200"
+              transition={SPRING_TRANSITION}
+              className="text-center py-20 bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-8"
             >
-              <Bell size={48} className="mx-auto text-slate-300 mb-4" />
-              <h3 className="text-xl font-bold text-slate-900 mb-2">No Notifications</h3>
-              <p className="text-slate-500">
-                {filter === 'unread' ? 'No unread notifications' : 'You\'re all caught up!'}
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#8E8E93]">
+                <Bell size={28} />
+              </div>
+              <h3 className="text-base font-bold text-[#F5F5F7] mb-1">
+                Telemetry Pipeline Clear
+              </h3>
+              <p className="text-xs text-[#8E8E93] max-w-sm mx-auto leading-relaxed">
+                {filter === 'unread'
+                  ? 'All pending system signals and notifications have been cleared.'
+                  : 'No active events or system broadcasts found in the telemetry stream.'}
               </p>
             </motion.div>
           )}

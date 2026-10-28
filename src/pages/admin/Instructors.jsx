@@ -363,7 +363,7 @@ const Instructors = () => {
               {/* Profile Section */}
               <div className="border border-gray-200 rounded-xl overflow-hidden">
                 <div className="p-6 flex items-start gap-6">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white font-bold text-2xl border-4 border-purple-100">
+                  <div className="w-20 h-20 rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] font-bold text-2xl shadow-sm">
                     {selectedInstructor.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1">

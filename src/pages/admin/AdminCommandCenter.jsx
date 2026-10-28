@@ -46,7 +46,7 @@ import {
   Line,
 } from 'recharts';
 import { adminApi } from '../../api/adminApi';
-import { useAuth } from '../../context/AuthContext';
+import { useAdminUsers, useAdminSystemHealth } from '../../hooks/useAdmin';
 import Button from '../../design-system/primitives/Button';
 import Badge from '../../design-system/primitives/Badge';
 import EmptyState from '../../design-system/feedback/EmptyState';
@@ -90,15 +90,31 @@ const SEED_TENANTS = [
 
 export const AdminCommandCenter = () => {
   const { user } = useAuth();
+  const { data: liveUsers = [] } = useAdminUsers({ page: 0, size: 20 });
+  const { data: liveHealth = [] } = useAdminSystemHealth();
 
   // Control Grid States
   const [velocityData, setVelocityData] = useState(INITIAL_VELOCITY_DATA);
   const [servicesList, setServicesList] = useState(INITIAL_SERVICE_HEALTH);
   const [tenantsList, setTenantsList] = useState(SEED_TENANTS);
+
+  // Sync with live microservice feeds upon query resolution
+  useEffect(() => {
+    if (liveUsers.length > 0) {
+      setTenantsList(liveUsers);
+    }
+  }, [liveUsers]);
+
+  useEffect(() => {
+    if (Array.isArray(liveHealth) && liveHealth.length > 0) {
+      setServicesList(liveHealth);
+    }
+  }, [liveHealth]);
   const [searchQuery, setSearchQuery] = useState('');
   const [tenantFilter, setTenantFilter] = useState('ALL');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [autoRefreshActive, setAutoRefreshActive] = useState(true);
+  const [activeDonutIndex, setActiveDonutIndex] = useState(null);
 
   // System Warning Banner State
   const [warningBanner, setWarningBanner] = useState({
@@ -160,13 +176,18 @@ export const AdminCommandCenter = () => {
     return () => clearInterval(interval);
   }, [autoRefreshActive]);
 
-  // Toggle User Status in Security Grid
-  const handleToggleUserStatus = async (userId, currentStatus) => {
-    const nextStatus = currentStatus === 'ACTIVE' ? 'QUARANTINED' : 'ACTIVE';
+  const [tenantToConfirm, setTenantToConfirm] = useState(null);
+
+  // Execute User Status in Security Grid after confirmation
+  const executeToggleStatus = async (targetTenant) => {
+    if (!targetTenant) return;
+    const userId = targetTenant.id;
+    const nextStatus = targetTenant.status === 'ACTIVE' ? 'QUARANTINED' : 'ACTIVE';
 
     setTenantsList((prev) =>
       prev.map((t) => (t.id === userId ? { ...t, status: nextStatus } : t))
     );
+    setTenantToConfirm(null);
 
     try {
       if (adminApi.updateUserStatus) {
@@ -501,9 +522,18 @@ export const AdminCommandCenter = () => {
                   outerRadius={75}
                   paddingAngle={5}
                   dataKey="share"
+                  activeIndex={activeDonutIndex}
+                  onMouseEnter={(_, index) => setActiveDonutIndex(index)}
+                  onMouseLeave={() => setActiveDonutIndex(null)}
                 >
                   {REVENUE_DISTRIBUTION_DATA.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={entry.color}
+                      stroke={activeDonutIndex === index ? '#FFF' : 'transparent'}
+                      strokeWidth={activeDonutIndex === index ? 2 : 0}
+                      className="transition-all duration-300 cursor-pointer"
+                    />
                   ))}
                 </Pie>
                 <Tooltip
@@ -557,10 +587,10 @@ export const AdminCommandCenter = () => {
             {servicesList.map((svc) => (
               <div
                 key={svc.id}
-                className="p-3.5 rounded-xl bg-obsidian-950 border border-obsidian-850 flex items-center justify-between text-xs font-mono"
+                className="p-3.5 rounded-xl bg-obsidian-950 border border-white/[0.04] flex items-center justify-between text-xs font-mono"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-glow shadow-emerald-400/50" />
+                  <div className="w-2 h-2 rounded-full bg-emerald-400" />
                   <span className="text-ink-100 font-bold">{svc.name}</span>
                 </div>
 
@@ -573,8 +603,8 @@ export const AdminCommandCenter = () => {
           </div>
         </div>
 
-        {/* Real-time Rolling Session Audit Logs */}
-        <div className="p-6 rounded-2xl bg-obsidian-900/40 border border-obsidian-800/80 backdrop-blur-md space-y-4">
+        {/* Real-time Rolling Session Audit Logs with Ingest Pause/Play Switch */}
+        <div className="p-6 rounded-2xl bg-obsidian-900/40 border border-white/[0.04] backdrop-blur-md space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-obsidian-800">
             <div>
               <span className="text-[10px] font-mono tracking-widest text-cyan-400 uppercase font-bold">
@@ -584,33 +614,50 @@ export const AdminCommandCenter = () => {
                 <Terminal className="w-4 h-4 text-cyan-400" /> Active User Session Ingest Logs
               </h3>
             </div>
-            <span className="text-[10px] font-mono text-ink-500">Auto-Rolling Buffer</span>
+            
+            {/* Live Stream Pause / Play Switch */}
+            <button
+              type="button"
+              onClick={() => setAutoRefreshActive(!autoRefreshActive)}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-[10px] font-mono text-[#E5E5E7] hover:text-white hover:border-[#C5A880]/30 transition-colors"
+              title={autoRefreshActive ? 'Pause live audit ingest' : 'Resume live audit ingest'}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${autoRefreshActive ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+              <span>{autoRefreshActive ? 'LIVE STREAMING' : 'PAUSED'}</span>
+            </button>
           </div>
 
           <div className="space-y-2 max-h-64 overflow-y-auto custom-scrollbar font-mono text-[11px]">
-            {telemetryLogs.map((log) => (
-              <div
-                key={log.id}
-                className="p-2.5 rounded-lg bg-obsidian-950 border border-obsidian-850 flex items-center justify-between gap-3"
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-ink-500 shrink-0">{log.time}</span>
-                  <span
-                    className={`font-bold px-1.5 py-0.5 rounded text-[10px] shrink-0 ${
-                      log.level === 'SUCCESS'
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : log.level === 'WARN'
-                        ? 'bg-amber-500/20 text-amber-400'
-                        : 'bg-cyan-500/20 text-cyan-400'
-                    }`}
-                  >
-                    {log.event}
-                  </span>
-                  <span className="text-ink-300 truncate">{log.user}</span>
-                </div>
-                <span className="text-ink-600 text-[10px] shrink-0 hidden sm:block">{log.ip}</span>
-              </div>
-            ))}
+            <AnimatePresence initial={false}>
+              {telemetryLogs.map((log) => (
+                <motion.div
+                  key={log.id}
+                  layout
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  className="p-2.5 rounded-lg bg-obsidian-950 border border-white/[0.04] flex items-center justify-between gap-3"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-ink-500 shrink-0">{log.time}</span>
+                    <span
+                      className={`font-bold px-1.5 py-0.5 rounded text-[10px] shrink-0 ${
+                        log.level === 'SUCCESS'
+                          ? 'bg-emerald-500/20 text-emerald-400'
+                          : log.level === 'WARN'
+                          ? 'bg-amber-500/20 text-amber-400'
+                          : 'bg-cyan-500/20 text-cyan-400'
+                      }`}
+                    >
+                      {log.event}
+                    </span>
+                    <span className="text-ink-300 truncate">{log.user}</span>
+                  </div>
+                  <span className="text-ink-600 text-[10px] shrink-0 hidden sm:block">{log.ip}</span>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         </div>
       </div>
@@ -703,7 +750,7 @@ export const AdminCommandCenter = () => {
                     <Button
                       variant={t.status === 'ACTIVE' ? 'danger' : 'cyan'}
                       size="sm"
-                      onClick={() => handleToggleUserStatus(t.id, t.status)}
+                      onClick={() => setTenantToConfirm(t)}
                       className="text-xs"
                     >
                       {t.status === 'ACTIVE' ? 'Quarantine Access' : 'Restore Access'}
@@ -818,6 +865,56 @@ export const AdminCommandCenter = () => {
                   </Button>
                 </div>
               </form>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Role Capability Warning Modal */}
+        {tenantToConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="w-full max-w-md bg-[#0F0F13] border border-white/[0.08] rounded-3xl p-6 space-y-4 shadow-2xl relative"
+            >
+              <div className="w-10 h-10 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                <ShieldAlert className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#F5F5F7]">
+                  {tenantToConfirm.status === 'ACTIVE'
+                    ? 'Confirm Security Quarantine'
+                    : 'Restore Tenant Capabilities'}
+                </h3>
+                <p className="text-xs text-[#8E8E93] mt-1.5 leading-relaxed">
+                  {tenantToConfirm.status === 'ACTIVE'
+                    ? `Are you sure you want to quarantine runtime capabilities for tenant "${tenantToConfirm.name}" (${tenantToConfirm.email})? This immediately invalidates active sessions, revokes API keys, and restricts access to platform microservices.`
+                    : `Restore full platform capabilities for tenant "${tenantToConfirm.name}" (${tenantToConfirm.email})? The user will regain access to enrolled curriculums and live microservice clusters.`}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setTenantToConfirm(null)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant={tenantToConfirm.status === 'ACTIVE' ? 'danger' : 'primary'}
+                  size="sm"
+                  onClick={() => executeToggleStatus(tenantToConfirm)}
+                >
+                  {tenantToConfirm.status === 'ACTIVE' ? 'Quarantine Tenant' : 'Restore Access'}
+                </Button>
+              </div>
             </motion.div>
           </motion.div>
         )}

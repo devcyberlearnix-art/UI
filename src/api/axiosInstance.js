@@ -5,9 +5,7 @@ import { authApi } from "./authApi";
 // The browser talks to the API Gateway only; never call internal services directly.
 // In development, use empty string to leverage Vite proxy
 // In production, use the environment variable or fallback to ngrok
-const BASE_URL = import.meta.env.DEV
-  ? ""
-  : (import.meta.env.VITE_API_BASE_URL || "https://matted-ascent-specimen.ngrok-free.dev").replace(/\/+$/, "");
+const BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
 
 // Token refresh state management
 let isRefreshing = false;
@@ -50,10 +48,12 @@ axiosInstance.interceptors.request.use(
       '/auth/password/forgot',
       '/auth/password/verify-otp',
       '/auth/password/reset',
-      '/auth/refresh'
+      '/auth/refresh',
+      '/courses',
+      '/categories'
     ];
 
-    const isPublicEndpoint = publicEndpoints.some(endpoint => config.url.includes(endpoint));
+    const isPublicEndpoint = publicEndpoints.some(endpoint => config.url?.includes(endpoint));
 
     if (!isPublicEndpoint) {
       const getCookie = (name) => {
@@ -183,9 +183,18 @@ axiosInstance.interceptors.response.use(
           sessionStorage.removeItem('authToken');
           sessionStorage.removeItem('lms_token');
 
-          if (!window.location.pathname.includes('/login') &&
-            !window.location.pathname.includes('/register') &&
-            !window.location.pathname.includes('/otp-verify')) {
+          // Only redirect if user is currently trying to browse a protected route
+          const isProtectedRoute = () => {
+            const p = window.location.pathname;
+            return p.startsWith('/student') ||
+                   p.startsWith('/instructor') ||
+                   p.startsWith('/admin') ||
+                   p === '/profile' ||
+                   p.startsWith('/classroom') ||
+                   p.startsWith('/checkout');
+          };
+
+          if (isProtectedRoute()) {
             window.location.href = '/login';
           }
 
@@ -206,9 +215,17 @@ axiosInstance.interceptors.response.use(
         sessionStorage.removeItem('authToken');
         sessionStorage.removeItem('lms_token');
 
-        if (!window.location.pathname.includes('/login') &&
-          !window.location.pathname.includes('/register') &&
-          !window.location.pathname.includes('/otp-verify')) {
+        const isProtectedRoute = () => {
+          const p = window.location.pathname;
+          return p.startsWith('/student') ||
+                 p.startsWith('/instructor') ||
+                 p.startsWith('/admin') ||
+                 p === '/profile' ||
+                 p.startsWith('/classroom') ||
+                 p.startsWith('/checkout');
+        };
+
+        if (isProtectedRoute()) {
           window.location.href = '/login';
         }
       }
