@@ -45,6 +45,7 @@ const InstructorDashboard = () => {
     let isMounted = true;
 
     const loadDashboard = async () => {
+      if (!instructorId || instructorId === 'me') return;
       setLoading(true);
       setError('');
 

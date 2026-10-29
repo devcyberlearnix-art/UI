@@ -1,3 +1,13 @@
+
+const resolveInstructorId = (id) => {
+  if (id && id !== 'me') return id;
+  try {
+    const u = JSON.parse(localStorage.getItem('lms_user') || '{}');
+    if (u.id) return u.id;
+    if (u.userId) return u.userId;
+  } catch (e) {}
+  return id;
+};
 import axiosInstance from "./axiosInstance";
 
 export const instructorApi = {
@@ -8,16 +18,11 @@ export const instructorApi = {
   // Returns the current instructor's profile
   getProfile: async () => {
     try {
-      const response = await axiosInstance.get("/api/v1/instructors/me");
+      const response = await axiosInstance.get("/api/v1/users/me");
       return response.data;
     } catch (err) {
-      console.warn('[instructorApi] GET /api/v1/instructors/me failed, trying fallback endpoints...');
-      try {
-        const fallback1 = await axiosInstance.get("/api/v1/users/me");
-        return fallback1.data;
-      } catch (err1) {
-        throw err;
-      }
+      console.warn("[instructorApi] GET /api/v1/users/me failed:", err);
+      throw err;
     }
   },
 
@@ -26,7 +31,7 @@ export const instructorApi = {
   // POST /api/v1/instructors/{instructorId}/courses
   // Body: { title, description, price }
   createCourse: async (instructorId, courseData) => {
-    const id = instructorId || "me";
+    const id = resolveInstructorId(instructorId);
     try {
       const response = await axiosInstance.post(
         `/api/v1/instructors/${id}/courses`,
@@ -43,7 +48,7 @@ export const instructorApi = {
   // GET /api/v1/instructors/{instructorId}/courses
   // Returns all courses created by the instructor
   getCourses: async (instructorId) => {
-    const id = instructorId || "me";
+    const id = resolveInstructorId(instructorId);
     try {
       const response = await axiosInstance.get(
         `/api/v1/instructors/${id}/courses`
@@ -63,7 +68,7 @@ export const instructorApi = {
   // GET /api/v1/instructors/{instructorId}/courses/{courseId}
   // Returns a single course by ID
   getCourseById: async (instructorId, courseId) => {
-    const id = instructorId || "me";
+    const id = resolveInstructorId(instructorId);
     try {
       const response = await axiosInstance.get(
         `/api/v1/instructors/${id}/courses/${courseId}`
@@ -265,7 +270,7 @@ export const instructorApi = {
    * Get instructor dashboard
    */
   getDashboard: async (instructorId) => {
-    const id = instructorId || "me";
+    const id = resolveInstructorId(instructorId);
     try {
       const response = await axiosInstance.get(`/api/v1/instructors/${id}/dashboard`);
       return response.data;
@@ -282,7 +287,7 @@ export const instructorApi = {
    * Assign/update grade
    */
   assignGrade: async (instructorId, courseId, gradeData) => {
-    const id = instructorId || "me";
+    const id = resolveInstructorId(instructorId);
     try {
       const response = await axiosInstance.post(
         `/api/v1/instructors/${id}/courses/${courseId}/grades`,
@@ -300,7 +305,7 @@ export const instructorApi = {
    * Get grades by course
    */
   getCourseGrades: async (instructorId, courseId) => {
-    const id = instructorId || "me";
+    const id = resolveInstructorId(instructorId);
     try {
       const response = await axiosInstance.get(
         `/api/v1/instructors/${id}/courses/${courseId}/grades`
@@ -310,6 +315,91 @@ export const instructorApi = {
       console.warn(`[instructorApi] GET /api/v1/instructors/${id}/courses/${courseId}/grades failed`);
       throw err;
     }
+  },
+
+  // ======================== ANNOUNCEMENTS ========================
+  createAnnouncement: async (instructorId, courseId, data) => {
+    const id = resolveInstructorId(instructorId);
+    const response = await axiosInstance.post(
+      `/api/v1/instructors/${id}/courses/${courseId}/announcements`,
+      data
+    );
+    return response.data;
+  },
+
+  // ======================== COURSE MESSAGES ========================
+  sendCourseMessage: async (instructorId, courseId, data) => {
+    const id = resolveInstructorId(instructorId);
+    const response = await axiosInstance.post(
+      `/api/v1/instructors/${id}/courses/${courseId}/messages`,
+      data
+    );
+    return response.data;
+  },
+
+  // ======================== MODULES & RESOURCES ========================
+  addModule: async (instructorId, courseId, data) => {
+    const id = resolveInstructorId(instructorId);
+    const response = await axiosInstance.post(
+      `/api/v1/instructors/${id}/courses/${courseId}/modules`,
+      data
+    );
+    return response.data;
+  },
+
+  updateModule: async (instructorId, courseId, moduleId, data) => {
+    const id = resolveInstructorId(instructorId);
+    const response = await axiosInstance.put(
+      `/api/v1/instructors/${id}/courses/${courseId}/modules/${moduleId}`,
+      data
+    );
+    return response.data;
+  },
+
+  deleteModule: async (instructorId, courseId, moduleId) => {
+    const id = resolveInstructorId(instructorId);
+    const response = await axiosInstance.delete(
+      `/api/v1/instructors/${id}/courses/${courseId}/modules/${moduleId}`
+    );
+    return response.data;
+  },
+
+  uploadModuleResource: async (instructorId, courseId, file, type = "PDF") => {
+    const id = resolveInstructorId(instructorId);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("type", type);
+    const response = await axiosInstance.post(
+      `/api/v1/instructors/${id}/courses/${courseId}/modules/upload`,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+    return response.data;
+  },
+
+  // ======================== CONTENT PUBLISHING ========================
+  publishContent: async (instructorId, contentId, publish = true) => {
+    const id = resolveInstructorId(instructorId);
+    const response = await axiosInstance.patch(
+      `/api/v1/instructors/${id}/content/${contentId}/publish`,
+      { publish }
+    );
+    return response.data;
+  },
+
+  // ======================== INSTRUCTOR PROFILE ========================
+  getInstructorProfile: async (instructorId) => {
+    const id = resolveInstructorId(instructorId);
+    const response = await axiosInstance.get(
+      `/api/v1/instructors/${id}/profile`
+    );
+    return response.data;
+  },
+
+  // ======================== PUBLIC COURSE ========================
+  getPublicCourseById: async (courseId) => {
+    const response = await axiosInstance.get(`/api/v1/courses/${courseId}`);
+    return response.data;
   },
 };
 

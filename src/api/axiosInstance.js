@@ -40,17 +40,13 @@ axiosInstance.interceptors.request.use(
     }
     // Skip auth header for public endpoints
     const publicEndpoints = [
-      '/auth/register',
-      '/auth/verify-email',
       '/auth/login',
       '/auth/login/otp/request',
       '/auth/login/otp/verify',
       '/auth/password/forgot',
       '/auth/password/verify-otp',
       '/auth/password/reset',
-      '/auth/refresh',
-      '/courses',
-      '/categories'
+      '/auth/refresh'
     ];
 
     const isPublicEndpoint = publicEndpoints.some(endpoint => config.url?.includes(endpoint));
@@ -242,3 +238,4 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance;
+

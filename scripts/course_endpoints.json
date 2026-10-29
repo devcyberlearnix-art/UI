@@ -1,0 +1,860 @@
+[
+  {
+    "controller": "AssignmentController.java",
+    "method": "POST",
+    "path": "/api/v1/assignments",
+    "signature": "public ResponseEntity<ApiResponse<AssignmentResponse>> createAssignment(@RequestBody AssignmentRequest request)"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "PUT",
+    "path": "/api/v1/assignments/{assignmentId}",
+    "signature": "public ResponseEntity<ApiResponse<AssignmentResponse>> updateAssignment("
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "GET",
+    "path": "/api/v1/assignments/{assignmentId}",
+    "signature": "public ResponseEntity<ApiResponse<AssignmentResponse>> getAssignment(@PathVariable Long assignmentId)"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "DELETE",
+    "path": "/api/v1/assignments/{assignmentId}",
+    "signature": "public ResponseEntity<ApiResponse<Void>> deleteAssignment(@PathVariable Long assignmentId)"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "PATCH",
+    "path": "/api/v1/assignments/{assignmentId}/publish",
+    "signature": "public ResponseEntity<ApiResponse<AssignmentResponse>> publishAssignment(@PathVariable Long assignmentId)"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "PATCH",
+    "path": "/api/v1/assignments/{assignmentId}/unpublish",
+    "signature": "public ResponseEntity<ApiResponse<AssignmentResponse>> unpublishAssignment(@PathVariable Long assignmentId)"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "GET",
+    "path": "/api/v1/assignments/course/{courseId}",
+    "signature": "public ResponseEntity<ApiResponse<List<AssignmentResponse>>> getAssignmentsByCourse(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "GET",
+    "path": "/api/v1/assignments/section/{sectionId}",
+    "signature": "public ResponseEntity<ApiResponse<List<AssignmentResponse>>> getAssignmentsBySection(@PathVariable Long sectionId)"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "GET",
+    "path": "/api/v1/assignments/course/{courseId}/published",
+    "signature": "public ResponseEntity<ApiResponse<List<AssignmentResponse>>> getPublishedAssignmentsByCourse(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "POST",
+    "path": "/api/v1/assignments/{assignmentId}/submission",
+    "signature": "public ResponseEntity<ApiResponse<SubmissionResponse>> createOrUpdateSubmission("
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "POST",
+    "path": "/api/v1/assignments/{assignmentId}/submission/submit",
+    "signature": "public ResponseEntity<ApiResponse<SubmissionResponse>> submitAssignment(@PathVariable Long assignmentId)"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "GET",
+    "path": "/api/v1/assignments/{assignmentId}/submission",
+    "signature": "public ResponseEntity<ApiResponse<SubmissionResponse>> getSubmission(@PathVariable Long assignmentId)"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "GET",
+    "path": "/api/v1/assignments/{assignmentId}/result",
+    "signature": "public ResponseEntity<ApiResponse<SubmissionResultResponse>> getSubmissionResult(@PathVariable Long assignmentId)"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "GET",
+    "path": "/api/v1/assignments/student/submissions",
+    "signature": "public ResponseEntity<ApiResponse<List<SubmissionResponse>>> getSubmissionsByStudent()"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "GET",
+    "path": "/api/v1/assignments/{assignmentId}/submissions",
+    "signature": "public ResponseEntity<ApiResponse<List<SubmissionResponse>>> getSubmissionsByAssignment(@PathVariable Long assignmentId)"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "GET",
+    "path": "/api/v1/assignments/submissions/{submissionId}",
+    "signature": "public ResponseEntity<ApiResponse<SubmissionResponse>> getSubmissionById(@PathVariable Long submissionId)"
+  },
+  {
+    "controller": "AssignmentController.java",
+    "method": "PATCH",
+    "path": "/api/v1/assignments/submissions/{submissionId}/grade",
+    "signature": "public ResponseEntity<ApiResponse<SubmissionResponse>> gradeSubmission("
+  },
+  {
+    "controller": "BannerController.java",
+    "method": "POST",
+    "path": "/api/v1/admin/banners",
+    "signature": "public ResponseEntity<ApiResponse<BannerResponse>> createBanner("
+  },
+  {
+    "controller": "BannerController.java",
+    "method": "POST",
+    "path": "/api/v1/admin/banners/upload-image",
+    "signature": "public ResponseEntity<ApiResponse<BannerImageUploadRequest>> uploadBannerImage("
+  },
+  {
+    "controller": "BannerController.java",
+    "method": "POST",
+    "path": "/api/v1/admin/banners/validate-image",
+    "signature": "public ResponseEntity<ApiResponse<ImageValidationResult>> validateBannerImage("
+  },
+  {
+    "controller": "BannerController.java",
+    "method": "GET",
+    "path": "/api/v1/admin/banners",
+    "signature": "public ResponseEntity<ApiResponse<List<BannerResponse>>> getAllBanners()"
+  },
+  {
+    "controller": "BannerController.java",
+    "method": "GET",
+    "path": "/api/v1/admin/banners/deleted",
+    "signature": "public ResponseEntity<ApiResponse<List<BannerResponse>>> getDeletedBanners()"
+  },
+  {
+    "controller": "BannerController.java",
+    "method": "GET",
+    "path": "/api/v1/admin/banners/{id}",
+    "signature": "public ResponseEntity<ApiResponse<BannerResponse>> getBannerById(@PathVariable Long id)"
+  },
+  {
+    "controller": "BannerController.java",
+    "method": "PUT",
+    "path": "/api/v1/admin/banners/{id}",
+    "signature": "public ResponseEntity<ApiResponse<BannerResponse>> updateBanner("
+  },
+  {
+    "controller": "BannerController.java",
+    "method": "PATCH",
+    "path": "/api/v1/admin/banners/{id}",
+    "signature": "public ResponseEntity<ApiResponse<BannerResponse>> partialUpdateBanner("
+  },
+  {
+    "controller": "BannerController.java",
+    "method": "PATCH",
+    "path": "/api/v1/admin/banners/{id}/status",
+    "signature": "public ResponseEntity<ApiResponse<BannerResponse>> updateBannerStatus("
+  },
+  {
+    "controller": "BannerController.java",
+    "method": "PATCH",
+    "path": "/api/v1/admin/banners/reorder",
+    "signature": "public ResponseEntity<ApiResponse<List<BannerResponse>>> reorderBanners("
+  },
+  {
+    "controller": "BannerController.java",
+    "method": "DELETE",
+    "path": "/api/v1/admin/banners/{id}",
+    "signature": "public ResponseEntity<ApiResponse<Void>> deleteBanner("
+  },
+  {
+    "controller": "BannerController.java",
+    "method": "POST",
+    "path": "/api/v1/admin/banners/{id}/restore",
+    "signature": "public ResponseEntity<ApiResponse<BannerResponse>> restoreBanner("
+  },
+  {
+    "controller": "BannerController.java",
+    "method": "GET",
+    "path": "/api/v1/admin/banners/{id}/analytics",
+    "signature": "public ResponseEntity<ApiResponse<BannerAnalyticsResponse>> getBannerAnalytics(@PathVariable Long id)"
+  },
+  {
+    "controller": "CertificateController.java",
+    "method": "GET",
+    "path": "/api/v1/certificates/courses/{courseId}",
+    "signature": "public ResponseEntity<ApiResponse<CertificateResponse>> getCourseCertificate(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "CertificateController.java",
+    "method": "GET",
+    "path": "/api/v1/certificates/{certificateId}",
+    "signature": "public ResponseEntity<ApiResponse<CertificateResponse>> getCertificateById(@PathVariable Long certificateId)"
+  },
+  {
+    "controller": "CertificateController.java",
+    "method": "GET",
+    "path": "/api/v1/certificates/my",
+    "signature": "public ResponseEntity<ApiResponse<List<CertificateResponse>>> getMyCertificates()"
+  },
+  {
+    "controller": "CertificateController.java",
+    "method": "GET",
+    "path": "/api/v1/certificates/verify/{verificationCode}",
+    "signature": "public ResponseEntity<ApiResponse<CertificateVerificationResponse>> verifyCertificate("
+  },
+  {
+    "controller": "CertificateController.java",
+    "method": "GET",
+    "path": "/api/v1/certificates/admin/courses/{courseId}",
+    "signature": "public ResponseEntity<ApiResponse<List<CertificateResponse>>> getCertificatesByCourse("
+  },
+  {
+    "controller": "CertificateController.java",
+    "method": "PATCH",
+    "path": "/api/v1/certificates/admin/{certificateId}/revoke",
+    "signature": "public ResponseEntity<ApiResponse<Void>> revokeCertificate("
+  },
+  {
+    "controller": "CloudinaryController.java",
+    "method": "POST",
+    "path": "/video",
+    "signature": "public ResponseEntity<Map<String, Object>> uploadVideo("
+  },
+  {
+    "controller": "CloudinaryController.java",
+    "method": "POST",
+    "path": "/admin/banners/upload-image",
+    "signature": "public ResponseEntity<Map<String, Object>> uploadBannerImage("
+  },
+  {
+    "controller": "CourseContentController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/{courseId}/content",
+    "signature": "public ResponseEntity<ApiResponse<CourseContentResponse>> getCourseContent("
+  },
+  {
+    "controller": "CourseContentController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/lectures/{lectureId}/learn",
+    "signature": "public ResponseEntity<ApiResponse<LectureDetailResponse>> getLectureDetail("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "POST",
+    "path": "/api/v1/courses",
+    "signature": "public ResponseEntity<ApiResponse<Course>> createCourse(@Valid @RequestBody CourseRequestDTO courseRequest)"
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "GET",
+    "path": "/api/v1/courses",
+    "signature": "public ResponseEntity<org.springframework.data.domain.Page<Course>> getAllCourses("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/list",
+    "signature": "public ResponseEntity<CourseListResponse> getCourseList("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/stats",
+    "signature": "public Map<String, Object> getCourseStats()"
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/featured",
+    "signature": "public List<FeaturedCourseResponse> getFeaturedCourses(@RequestParam(defaultValue = \"6\") int limit)"
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/trending",
+    "signature": "public ResponseEntity<TrendingCoursesResponse> getTrendingCourses("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "POST",
+    "path": "/api/v1/courses/{courseId}/impressions",
+    "signature": "public ResponseEntity<ApiResponse<Void>> trackCourseImpression("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/{id}",
+    "signature": "public CourseByIdResponse getCourse("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "PUT",
+    "path": "/api/v1/courses/{id}",
+    "signature": "public Course updateCourse(@PathVariable Long id, @RequestBody Course course)"
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "PATCH",
+    "path": "/api/v1/courses/{id}",
+    "signature": "public Course updateCoursePartial(@PathVariable Long id, @RequestBody Course course)"
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "PATCH",
+    "path": "/api/v1/courses/{id}/status",
+    "signature": "public Course updateCourseStatus(@PathVariable Long id, @RequestBody Course statusUpdate)"
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "DELETE",
+    "path": "/api/v1/courses/{id}",
+    "signature": "public DeleteCourseResponse deleteCourse(@PathVariable Long id)"
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/{courseId}/students",
+    "signature": "public EnrolledStudentsResponse getStudents(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "POST",
+    "path": "/api/v1/courses/{courseId}/enroll",
+    "signature": "public EnrollCourseResponse enroll(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "CourseDetailsController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/{courseId}/details",
+    "signature": "public ResponseEntity<ApiResponse<CourseDetailsDTO>> getCourseDetails("
+  },
+  {
+    "controller": "CourseFAQController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/{courseId}/faqs",
+    "signature": "public ResponseEntity<List<CourseFAQDTO>> getFAQs(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "CourseFAQController.java",
+    "method": "POST",
+    "path": "/api/v1/courses/{courseId}/faqs",
+    "signature": "public ResponseEntity<CourseFAQResponse> createFAQ("
+  },
+  {
+    "controller": "CourseFAQController.java",
+    "method": "PUT",
+    "path": "/api/v1/courses/faqs/{faqId}",
+    "signature": "public ResponseEntity<CourseFAQResponse> updateFAQ("
+  },
+  {
+    "controller": "CourseFAQController.java",
+    "method": "PATCH",
+    "path": "/api/v1/courses/faqs/{faqId}",
+    "signature": "public ResponseEntity<CourseFAQResponse> updateFAQPartial("
+  },
+  {
+    "controller": "CourseFAQController.java",
+    "method": "DELETE",
+    "path": "/api/v1/courses/faqs/{faqId}",
+    "signature": "public ResponseEntity<CourseFAQResponse> deleteFAQ("
+  },
+  {
+    "controller": "CourseMaterialsController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/{courseId}/materials",
+    "signature": "public ResponseEntity<List<CourseMaterialsDTO>> getMaterials(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "CourseMaterialsController.java",
+    "method": "POST",
+    "path": "/api/v1/courses/{courseId}/materials",
+    "signature": "public ResponseEntity<CourseMaterialsResponse> createMaterial("
+  },
+  {
+    "controller": "CourseMaterialsController.java",
+    "method": "PUT",
+    "path": "/api/v1/courses/materials/{materialId}",
+    "signature": "public ResponseEntity<CourseMaterialsResponse> updateMaterial("
+  },
+  {
+    "controller": "CourseMaterialsController.java",
+    "method": "PATCH",
+    "path": "/api/v1/courses/materials/{materialId}",
+    "signature": "public ResponseEntity<CourseMaterialsResponse> updateMaterialPartial("
+  },
+  {
+    "controller": "CourseMaterialsController.java",
+    "method": "DELETE",
+    "path": "/api/v1/courses/materials/{materialId}",
+    "signature": "public ResponseEntity<CourseMaterialsResponse> deleteMaterial("
+  },
+  {
+    "controller": "CoursePreviewController.java",
+    "method": "POST",
+    "path": "/api/v1/courses/{courseId}/preview",
+    "signature": "public CreatePreviewResponse createPreview(@PathVariable Long courseId,"
+  },
+  {
+    "controller": "CoursePreviewController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/{courseId}/preview",
+    "signature": "public ResponseEntity<GetPreviewResponse> getPreview(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "CoursePreviewController.java",
+    "method": "PATCH",
+    "path": "/api/v1/courses/{courseId}/preview",
+    "signature": "public ResponseEntity<CreatePreviewResponse> updatePreview("
+  },
+  {
+    "controller": "CourseRequirementsController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/{courseId}/requirements",
+    "signature": "public ResponseEntity<List<CourseRequirementsDTO>> getRequirements(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "CourseRequirementsController.java",
+    "method": "POST",
+    "path": "/api/v1/courses/{courseId}/requirements",
+    "signature": "public ResponseEntity<CourseRequirementsResponse> createRequirement("
+  },
+  {
+    "controller": "CourseRequirementsController.java",
+    "method": "PUT",
+    "path": "/api/v1/courses/requirements/{requirementId}",
+    "signature": "public ResponseEntity<CourseRequirementsResponse> updateRequirement("
+  },
+  {
+    "controller": "CourseRequirementsController.java",
+    "method": "PATCH",
+    "path": "/api/v1/courses/requirements/{requirementId}",
+    "signature": "public ResponseEntity<CourseRequirementsResponse> updateRequirementPartial("
+  },
+  {
+    "controller": "CourseRequirementsController.java",
+    "method": "DELETE",
+    "path": "/api/v1/courses/requirements/{requirementId}",
+    "signature": "public ResponseEntity<CourseRequirementsResponse> deleteRequirement("
+  },
+  {
+    "controller": "CurriculumController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/{courseId}/curriculum",
+    "signature": "public ResponseEntity<ApiResponse<CourseDetailsDTO.CourseCurriculumDTO>> getCourseCurriculum("
+  },
+  {
+    "controller": "DashboardController.java",
+    "method": "GET",
+    "path": "/api/v1/dashboard/student",
+    "signature": "public ResponseEntity<ApiResponse<StudentDashboardResponse>> getStudentDashboard()"
+  },
+  {
+    "controller": "DashboardController.java",
+    "method": "GET",
+    "path": "/api/v1/dashboard/student/courses",
+    "signature": "public ResponseEntity<ApiResponse<DashboardCourseResponse>> getStudentCourses()"
+  },
+  {
+    "controller": "DashboardController.java",
+    "method": "GET",
+    "path": "/api/v1/dashboard/student/courses/{courseId}",
+    "signature": "public ResponseEntity<ApiResponse<DashboardCourseDetailResponse>> getCourseDashboard("
+  },
+  {
+    "controller": "EnrollmentController.java",
+    "method": "POST",
+    "path": "/api/v1/enrollments/internal/enroll",
+    "signature": "public EnrollCourseResponse enrollStudentInternal(@RequestBody EnrollmentRequest request)"
+  },
+  {
+    "controller": "EnrollmentController.java",
+    "method": "GET",
+    "path": "/api/v1/enrollments/check/{courseId}",
+    "signature": "public EnrollmentCheckDetailResponse checkEnrollment(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "EnrollmentController.java",
+    "method": "GET",
+    "path": "/api/v1/enrollments/users/{userId}",
+    "signature": "public List<EnrollmentInfo> getEnrollmentsByUserId(@PathVariable UUID userId)"
+  },
+  {
+    "controller": "EnrollmentController.java",
+    "method": "GET",
+    "path": "/api/v1/enrollments/course/{courseId}/students",
+    "signature": "public List<UUID> getEnrolledStudentsByCourseId(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "LearningOutcomesController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/{courseId}/outcomes",
+    "signature": "public ResponseEntity<List<LearningOutcomesDTO>> getOutcomes(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "LearningOutcomesController.java",
+    "method": "POST",
+    "path": "/api/v1/courses/{courseId}/outcomes",
+    "signature": "public ResponseEntity<LearningOutcomesResponse> createOutcome("
+  },
+  {
+    "controller": "LearningOutcomesController.java",
+    "method": "PUT",
+    "path": "/api/v1/courses/outcomes/{outcomeId}",
+    "signature": "public ResponseEntity<LearningOutcomesResponse> updateOutcome("
+  },
+  {
+    "controller": "LearningOutcomesController.java",
+    "method": "PATCH",
+    "path": "/api/v1/courses/outcomes/{outcomeId}",
+    "signature": "public ResponseEntity<LearningOutcomesResponse> updateOutcomePartial("
+  },
+  {
+    "controller": "LearningOutcomesController.java",
+    "method": "DELETE",
+    "path": "/api/v1/courses/outcomes/{outcomeId}",
+    "signature": "public ResponseEntity<LearningOutcomesResponse> deleteOutcome("
+  },
+  {
+    "controller": "LectureController.java",
+    "method": "POST",
+    "path": "/api/v1/sections/{sectionId}/lectures",
+    "signature": "public CreateLectureResponse createLecture(@PathVariable Long sectionId,"
+  },
+  {
+    "controller": "LectureController.java",
+    "method": "PATCH",
+    "path": "/api/v1/sections/{sectionId}/lectures/{lectureId}",
+    "signature": "public Lecture updateLecture(@PathVariable Long sectionId,"
+  },
+  {
+    "controller": "LectureController.java",
+    "method": "DELETE",
+    "path": "/api/v1/sections/{sectionId}/lectures/{lectureId}",
+    "signature": "public DeleteLectureResponse deleteLecture(@PathVariable Long sectionId,"
+  },
+  {
+    "controller": "LectureController.java",
+    "method": "GET",
+    "path": "/api/v1/sections/{sectionId}/lectures",
+    "signature": "public List<Lecture> getLectures(@PathVariable Long sectionId)"
+  },
+  {
+    "controller": "LectureController.java",
+    "method": "GET",
+    "path": "/api/v1/sections/lectures/{lectureId}",
+    "signature": "public Lecture getLecture(@PathVariable Long lectureId)"
+  },
+  {
+    "controller": "LiveClassAttendanceController.java",
+    "method": "POST",
+    "path": "/api/v1/live-classes/{liveClassId}/attendance/join",
+    "signature": "public ResponseEntity<ApiResponse<LiveClassAttendanceResponse>> joinLiveClass(@PathVariable Long liveClassId)"
+  },
+  {
+    "controller": "LiveClassAttendanceController.java",
+    "method": "PATCH",
+    "path": "/api/v1/live-classes/{liveClassId}/attendance/leave",
+    "signature": "public ResponseEntity<ApiResponse<LiveClassAttendanceResponse>> leaveLiveClass(@PathVariable Long liveClassId)"
+  },
+  {
+    "controller": "LiveClassAttendanceController.java",
+    "method": "GET",
+    "path": "/api/v1/live-classes/{liveClassId}/attendance/me",
+    "signature": "public ResponseEntity<ApiResponse<LiveClassAttendanceResponse>> getMyAttendance(@PathVariable Long liveClassId)"
+  },
+  {
+    "controller": "LiveClassAttendanceController.java",
+    "method": "GET",
+    "path": "/api/v1/live-classes/{liveClassId}/attendance",
+    "signature": "public ResponseEntity<ApiResponse<List<LiveClassAttendanceResponse>>> getAttendanceByLiveClass(@PathVariable Long liveClassId)"
+  },
+  {
+    "controller": "LiveClassAttendanceController.java",
+    "method": "GET",
+    "path": "/api/v1/live-classes/{liveClassId}/attendance/summary",
+    "signature": "public ResponseEntity<ApiResponse<LiveClassAttendanceSummaryResponse>> getAttendanceSummary(@PathVariable Long liveClassId)"
+  },
+  {
+    "controller": "LiveClassController.java",
+    "method": "POST",
+    "path": "/api/v1/live-classes",
+    "signature": "public ResponseEntity<ApiResponse<LiveClassResponse>> createLiveClass(@RequestBody LiveClassRequest request)"
+  },
+  {
+    "controller": "LiveClassController.java",
+    "method": "PUT",
+    "path": "/api/v1/live-classes/{liveClassId}",
+    "signature": "public ResponseEntity<ApiResponse<LiveClassResponse>> updateLiveClass("
+  },
+  {
+    "controller": "LiveClassController.java",
+    "method": "GET",
+    "path": "/api/v1/live-classes/{liveClassId}",
+    "signature": "public ResponseEntity<ApiResponse<LiveClassResponse>> getLiveClassById(@PathVariable Long liveClassId)"
+  },
+  {
+    "controller": "LiveClassController.java",
+    "method": "GET",
+    "path": "/api/v1/live-classes/course/{courseId}",
+    "signature": "public ResponseEntity<ApiResponse<List<LiveClassResponse>>> getLiveClassesByCourse(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "LiveClassController.java",
+    "method": "GET",
+    "path": "/api/v1/live-classes/section/{sectionId}",
+    "signature": "public ResponseEntity<ApiResponse<List<LiveClassResponse>>> getLiveClassesBySection(@PathVariable Long sectionId)"
+  },
+  {
+    "controller": "LiveClassController.java",
+    "method": "GET",
+    "path": "/api/v1/live-classes/course/{courseId}/upcoming",
+    "signature": "public ResponseEntity<ApiResponse<List<LiveClassResponse>>> getUpcomingLiveClassesByCourse(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "LiveClassController.java",
+    "method": "PATCH",
+    "path": "/api/v1/live-classes/{liveClassId}/start",
+    "signature": "public ResponseEntity<ApiResponse<Void>> startLiveClass(@PathVariable Long liveClassId)"
+  },
+  {
+    "controller": "LiveClassController.java",
+    "method": "PATCH",
+    "path": "/api/v1/live-classes/{liveClassId}/complete",
+    "signature": "public ResponseEntity<ApiResponse<Void>> completeLiveClass("
+  },
+  {
+    "controller": "LiveClassController.java",
+    "method": "PATCH",
+    "path": "/api/v1/live-classes/{liveClassId}/cancel",
+    "signature": "public ResponseEntity<ApiResponse<Void>> cancelLiveClass(@PathVariable Long liveClassId)"
+  },
+  {
+    "controller": "LiveClassController.java",
+    "method": "DELETE",
+    "path": "/api/v1/live-classes/{liveClassId}",
+    "signature": "public ResponseEntity<ApiResponse<Void>> deleteLiveClass(@PathVariable Long liveClassId)"
+  },
+  {
+    "controller": "LiveClassController.java",
+    "method": "GET",
+    "path": "/api/v1/live-classes/{liveClassId}/join",
+    "signature": "public ResponseEntity<ApiResponse<LiveClassJoinResponse>> joinLiveClass(@PathVariable Long liveClassId)"
+  },
+  {
+    "controller": "ProgressController.java",
+    "method": "POST",
+    "path": "/api/v1/progress/lectures/{lectureId}/start",
+    "signature": "public ResponseEntity<ApiResponse<LectureProgressResponse>> startLecture(@PathVariable Long lectureId)"
+  },
+  {
+    "controller": "ProgressController.java",
+    "method": "PATCH",
+    "path": "/api/v1/progress/lectures/{lectureId}",
+    "signature": "public ResponseEntity<ApiResponse<LectureProgressResponse>> updateProgress("
+  },
+  {
+    "controller": "ProgressController.java",
+    "method": "PATCH",
+    "path": "/api/v1/progress/lectures/{lectureId}/complete",
+    "signature": "public ResponseEntity<ApiResponse<LectureProgressResponse>> completeLecture(@PathVariable Long lectureId)"
+  },
+  {
+    "controller": "ProgressController.java",
+    "method": "GET",
+    "path": "/api/v1/progress/lectures/{lectureId}",
+    "signature": "public ResponseEntity<ApiResponse<LectureProgressResponse>> getLectureProgress(@PathVariable Long lectureId)"
+  },
+  {
+    "controller": "ProgressController.java",
+    "method": "GET",
+    "path": "/api/v1/progress/courses/{courseId}",
+    "signature": "public ResponseEntity<ApiResponse<CourseProgressResponse>> getCourseProgress(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "ProgressController.java",
+    "method": "GET",
+    "path": "/api/v1/progress/courses/{courseId}/resume",
+    "signature": "public ResponseEntity<ApiResponse<ResumeLearningResponse>> resumeLearning(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "PublicBannerController.java",
+    "method": "GET",
+    "path": "/api/v1/banners",
+    "signature": "public ResponseEntity<ApiResponse<List<PublicBannerResponse>>> getActiveBanners()"
+  },
+  {
+    "controller": "PublicBannerController.java",
+    "method": "GET",
+    "path": "/api/v1/banners/target/{targetType}",
+    "signature": "public ResponseEntity<ApiResponse<List<PublicBannerResponse>>> getActiveBannersByTargetType("
+  },
+  {
+    "controller": "PublicBannerController.java",
+    "method": "POST",
+    "path": "/api/v1/banners/{id}/impression",
+    "signature": "public ResponseEntity<ApiResponse<Void>> trackImpression(@PathVariable Long id)"
+  },
+  {
+    "controller": "PublicBannerController.java",
+    "method": "POST",
+    "path": "/api/v1/banners/{id}/click",
+    "signature": "public ResponseEntity<ApiResponse<Void>> trackClick(@PathVariable Long id)"
+  },
+  {
+    "controller": "PublicBannerController.java",
+    "method": "POST",
+    "path": "/api/v1/banners/{id}/conversion",
+    "signature": "public ResponseEntity<ApiResponse<Void>> trackConversion(@PathVariable Long id)"
+  },
+  {
+    "controller": "QuizAttemptController.java",
+    "method": "GET",
+    "path": "/api/v1/quizzes/{quizId}/student",
+    "signature": "public ResponseEntity<ApiResponse<StudentQuizResponse>> getStudentQuiz(@PathVariable Long quizId)"
+  },
+  {
+    "controller": "QuizAttemptController.java",
+    "method": "GET",
+    "path": "/api/v1/quizzes/{quizId}/student/questions",
+    "signature": "public ResponseEntity<ApiResponse<StudentQuizResponse>> getStudentQuizWithQuestions(@PathVariable Long quizId)"
+  },
+  {
+    "controller": "QuizAttemptController.java",
+    "method": "POST",
+    "path": "/api/v1/quizzes/{quizId}/attempts",
+    "signature": "public ResponseEntity<ApiResponse<QuizAttemptResponse>> startQuizAttempt(@PathVariable Long quizId)"
+  },
+  {
+    "controller": "QuizAttemptController.java",
+    "method": "GET",
+    "path": "/api/v1/quizzes/{quizId}/attempts/current",
+    "signature": "public ResponseEntity<ApiResponse<QuizAttemptResponse>> getCurrentAttempt(@PathVariable Long quizId)"
+  },
+  {
+    "controller": "QuizAttemptController.java",
+    "method": "POST",
+    "path": "/api/v1/quizzes/{quizId}/attempts/{attemptId}/answers",
+    "signature": "public ResponseEntity<ApiResponse<QuizAttemptResponse>> submitAnswer("
+  },
+  {
+    "controller": "QuizAttemptController.java",
+    "method": "POST",
+    "path": "/api/v1/quizzes/{quizId}/attempts/{attemptId}/submit",
+    "signature": "public ResponseEntity<ApiResponse<QuizAttemptResponse>> submitQuizAttempt("
+  },
+  {
+    "controller": "QuizAttemptController.java",
+    "method": "GET",
+    "path": "/api/v1/quizzes/{quizId}/attempts/{attemptId}/result",
+    "signature": "public ResponseEntity<ApiResponse<QuizResultResponse>> getAttemptResult("
+  },
+  {
+    "controller": "QuizAttemptController.java",
+    "method": "GET",
+    "path": "/api/v1/quizzes/{quizId}/attempts",
+    "signature": "public ResponseEntity<ApiResponse<List<QuizAttemptResponse>>> getStudentAttempts(@PathVariable Long quizId)"
+  },
+  {
+    "controller": "QuizController.java",
+    "method": "POST",
+    "path": "/api/v1/quizzes",
+    "signature": "public ResponseEntity<ApiResponse<QuizResponse>> createQuiz(@RequestBody QuizRequest request)"
+  },
+  {
+    "controller": "QuizController.java",
+    "method": "PUT",
+    "path": "/api/v1/quizzes/{quizId}",
+    "signature": "public ResponseEntity<ApiResponse<QuizResponse>> updateQuiz("
+  },
+  {
+    "controller": "QuizController.java",
+    "method": "GET",
+    "path": "/api/v1/quizzes/{quizId}",
+    "signature": "public ResponseEntity<ApiResponse<QuizResponse>> getQuiz(@PathVariable Long quizId)"
+  },
+  {
+    "controller": "QuizController.java",
+    "method": "DELETE",
+    "path": "/api/v1/quizzes/{quizId}",
+    "signature": "public ResponseEntity<ApiResponse<Void>> deleteQuiz(@PathVariable Long quizId)"
+  },
+  {
+    "controller": "QuizController.java",
+    "method": "PATCH",
+    "path": "/api/v1/quizzes/{quizId}/publish",
+    "signature": "public ResponseEntity<ApiResponse<QuizResponse>> publishQuiz(@PathVariable Long quizId)"
+  },
+  {
+    "controller": "QuizController.java",
+    "method": "PATCH",
+    "path": "/api/v1/quizzes/{quizId}/unpublish",
+    "signature": "public ResponseEntity<ApiResponse<QuizResponse>> unpublishQuiz(@PathVariable Long quizId)"
+  },
+  {
+    "controller": "QuizController.java",
+    "method": "GET",
+    "path": "/api/v1/quizzes/course/{courseId}",
+    "signature": "public ResponseEntity<ApiResponse<List<QuizResponse>>> getQuizzesByCourse(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "QuizController.java",
+    "method": "GET",
+    "path": "/api/v1/quizzes/section/{sectionId}",
+    "signature": "public ResponseEntity<ApiResponse<List<QuizResponse>>> getQuizzesBySection(@PathVariable Long sectionId)"
+  },
+  {
+    "controller": "QuizController.java",
+    "method": "GET",
+    "path": "/api/v1/quizzes/course/{courseId}/published",
+    "signature": "public ResponseEntity<ApiResponse<List<StudentQuizResponse>>> getPublishedQuizzesByCourse(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "QuizController.java",
+    "method": "POST",
+    "path": "/api/v1/quizzes/{quizId}/questions",
+    "signature": "public ResponseEntity<ApiResponse<QuestionResponse>> addQuestion("
+  },
+  {
+    "controller": "QuizController.java",
+    "method": "PUT",
+    "path": "/api/v1/quizzes/questions/{questionId}",
+    "signature": "public ResponseEntity<ApiResponse<QuestionResponse>> updateQuestion("
+  },
+  {
+    "controller": "QuizController.java",
+    "method": "DELETE",
+    "path": "/api/v1/quizzes/questions/{questionId}",
+    "signature": "public ResponseEntity<ApiResponse<Void>> deleteQuestion(@PathVariable Long questionId)"
+  },
+  {
+    "controller": "SectionController.java",
+    "method": "POST",
+    "path": "/api/v1/courses/{courseId}/sections",
+    "signature": "public CreateSectionResponse createSection(@PathVariable Long courseId,"
+  },
+  {
+    "controller": "SectionController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/{courseId}/sections",
+    "signature": "public List<Section> getSections(@PathVariable Long courseId)"
+  },
+  {
+    "controller": "SectionController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/sections/{sectionId}",
+    "signature": "public Section getSection(@PathVariable Long sectionId)"
+  },
+  {
+    "controller": "SectionController.java",
+    "method": "PATCH",
+    "path": "/api/v1/courses/sections/{sectionId}",
+    "signature": "public Section updateSection(@PathVariable Long sectionId,"
+  },
+  {
+    "controller": "SectionController.java",
+    "method": "DELETE",
+    "path": "/api/v1/courses/sections/{sectionId}",
+    "signature": "public DeleteSectionResponse deleteSection(@PathVariable Long sectionId)"
+  }
+]

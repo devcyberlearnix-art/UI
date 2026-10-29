@@ -120,6 +120,12 @@ export const adminApi = {
     return response.data;
   },
 
+  getInstructorApplicationsByStatus: async (status, params = {}) => {
+    const response = await axiosInstance.get(`/api/v1/admin/instructors/applications/status/${status}`, { params });
+    return response.data;
+  },
+
+
   approveInstructorApplication: async (userId, reason = "") => {
     const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/approve`, { reason });
     return response.data;

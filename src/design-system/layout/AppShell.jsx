@@ -29,6 +29,7 @@ import {
   ShoppingCart,
   Bell,
   CheckCheck,
+  Tag,
 } from 'lucide-react';
 import { useAuth, normalizeRole } from '../../context/AuthContext';
 import { useOrder } from '../../context/OrderContext';
@@ -139,6 +140,7 @@ export const AppShell = ({ children }) => {
         { label: 'Curriculum Audit', href: '/admin/courses', icon: BookOpen },
         { label: 'Order Ledger', href: '/admin/orders', icon: CreditCard },
         { label: 'Marketing Banners', href: '/admin/banners', icon: Image },
+        { label: 'Promotions & Coupons', href: '/admin/coupons', icon: Tag },
       ];
     }
 

@@ -1,0 +1,128 @@
+[
+  {
+    "controller": "AnnouncementController.java",
+    "method": "POST",
+    "path": "/api/v1/instructors/{id}/courses/{courseId}/announcements",
+    "signature": "public ResponseEntity<AnnouncementResponse> createAnnouncement("
+  },
+  {
+    "controller": "ContentController.java",
+    "method": "PATCH",
+    "path": "/api/v1/instructors/{instructorId}/content/{contentId}/publish",
+    "signature": "public ResponseEntity<ContentResponse> publishContent("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "POST",
+    "path": "/api/v1/instructors/{id}/courses",
+    "signature": "public ResponseEntity<ApiResponse<CourseFullResponseDTO>> createCourse("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "GET",
+    "path": "/api/v1/instructors/{id}/courses",
+    "signature": "public ResponseEntity<ApiResponse<List<CourseResponseDTO>>> getCoursesByInstructor("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "GET",
+    "path": "/api/v1/instructors/{id}/courses/{courseId}",
+    "signature": "public ResponseEntity<ApiResponse<CourseResponseDTO>> getCourseById("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "PUT",
+    "path": "/api/v1/instructors/{id}/courses/{courseId}",
+    "signature": "public ResponseEntity<ApiResponse<CourseResponseDTO>> updateCourse("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "DELETE",
+    "path": "/api/v1/instructors/{id}/courses/{courseId}",
+    "signature": "public ResponseEntity<ApiResponse<CourseResponseDTO>> deleteCourse("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "GET",
+    "path": "/api/v1/instructors/{id}/courses/{courseId}/students",
+    "signature": "public ResponseEntity<ApiResponse<List<StudentResponseDTO.StudentData>>> getEnrolledStudents("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "GET",
+    "path": "/api/v1/instructors/{id}/courses/{courseId}/students/{studentId}",
+    "signature": "public ResponseEntity<ApiResponse<StudentProgressResponseDTO>> getStudentProgress("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "POST",
+    "path": "/api/v1/instructors/{id}/courses/{courseId}/grades",
+    "signature": "public ResponseEntity<ApiResponse<GradeResponseDTO>> assignOrUpdateGrade("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "GET",
+    "path": "/api/v1/instructors/{id}/courses/{courseId}/grades",
+    "signature": "public ResponseEntity<ApiResponse<List<GradeResponseDTO>>> getGradesByCourse("
+  },
+  {
+    "controller": "CourseController.java",
+    "method": "GET",
+    "path": "/api/v1/instructors/{id}/courses/{courseId}/analytics",
+    "signature": "public ResponseEntity<ApiResponse<CourseFullResponseDTO>> getCourseAnalytics("
+  },
+  {
+    "controller": "CourseMessageController.java",
+    "method": "POST",
+    "path": "/api/v1/instructors/{id}/courses/{courseId}/messages",
+    "signature": "public ResponseEntity<CourseMessageResponse> sendMessage("
+  },
+  {
+    "controller": "DashboardController.java",
+    "method": "GET",
+    "path": "/api/v1/instructors/{id}/dashboard",
+    "signature": "public ResponseEntity<DashboardResponseDTO> getInstructorDashboard("
+  },
+  {
+    "controller": "DashboardController.java",
+    "method": "GET",
+    "path": "/api/v1/instructors/{id}/earnings",
+    "signature": "public ResponseEntity<ApiResponse<InstructorEarningsResponse>> getInstructorEarnings("
+  },
+  {
+    "controller": "ModuleController.java",
+    "method": "POST",
+    "path": "/api/v1/instructors/{instructorId}/courses/{courseId}/modules",
+    "signature": "public ResponseEntity<ModuleResponse> addModule("
+  },
+  {
+    "controller": "ModuleController.java",
+    "method": "PUT",
+    "path": "/api/v1/instructors/{instructorId}/courses/{courseId}/modules/{moduleId}",
+    "signature": "public ResponseEntity<ModuleResponse> updateModule("
+  },
+  {
+    "controller": "ModuleController.java",
+    "method": "DELETE",
+    "path": "/api/v1/instructors/{instructorId}/courses/{courseId}/modules/{moduleId}",
+    "signature": "public ResponseEntity<ModuleResponse> deleteModule("
+  },
+  {
+    "controller": "ModuleController.java",
+    "method": "POST",
+    "path": "/api/v1/instructors/{instructorId}/courses/{courseId}/modules/upload",
+    "signature": "public ResponseEntity<ResourceResponse> uploadResource("
+  },
+  {
+    "controller": "PublicCourseController.java",
+    "method": "GET",
+    "path": "/api/v1/courses/{courseId}",
+    "signature": "public ResponseEntity<ApiResponse<CourseResponseDTO>> getCourseById("
+  },
+  {
+    "controller": "InstructorProfileController.java",
+    "method": "GET",
+    "path": "/api/v1/instructors/{instructorId}/profile",
+    "signature": "public ResponseEntity<ApiResponse<InstructorProfileDTO>> getInstructorProfile("
+  }
+]

@@ -10,6 +10,7 @@ import { authApi } from "../api/authApi";
 import { getDashboardPath } from "../context/AuthContext";
 import { parseApiError } from "../utils/apiErrorParser";
 import { validateEmail as isValidEmail } from "../utils/validation";
+import SocialAuthButtons from "../components/ui/SocialAuthButtons";
 
 const SPRING_TRANSITION = {
   type: "spring",
@@ -474,6 +475,8 @@ const Login = () => {
             )}
           </div>
         )}
+
+        <SocialAuthButtons mode="signin" />
 
         {/* Footer Navigation */}
         <div className="pt-4 border-t border-white/[0.04] text-center space-y-2">

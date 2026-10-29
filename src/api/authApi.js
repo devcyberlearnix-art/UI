@@ -361,6 +361,10 @@ export const authApi = {
       throw error;
     }
   },
+  getSessions: async () => authApi.listSessions(),
+  revokeSession: async (sessionId) => authApi.logoutDevice(sessionId),
+  logoutSession: async (sessionId) => authApi.logoutDevice(sessionId),
+  revokeAllSessions: async () => authApi.logoutAllSessions(),
 
   // ======================== EMAIL CHANGE ========================
   // Email change is a 3-step flow:
@@ -435,6 +439,123 @@ export const authApi = {
       return response.data;
     } catch (error) {
       console.error('[Auth] Get email change session error:', error);
+      throw error;
+    }
+  },
+
+  // ======================== OAUTH & SOCIAL AUTHENTICATION ========================
+  getOAuthProviders: async () => {
+    try {
+      const response = await axiosInstance.get('/api/v1/auth/oauth/providers');
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Get OAuth providers error:', error);
+      throw error;
+    }
+  },
+
+  socialLogin: async (payload) => {
+    try {
+      const response = await axiosInstance.post('/api/v1/auth/social-login', payload);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Social login error:', error);
+      throw error;
+    }
+  },
+
+  socialLoginWithProvider: async (provider, payload) => {
+    try {
+      const response = await axiosInstance.post('/api/v1/auth/social-login/' + provider, payload);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Social login for ' + provider + ' error:', error);
+      throw error;
+    }
+  },
+
+  oauthContinue: async (payload) => {
+    try {
+      const response = await axiosInstance.post('/api/v1/auth/oauth/continue', payload);
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] OAuth continue error:', error);
+      throw error;
+    }
+  },
+
+  resendPasswordOtp: async ({ email, otpSessionId }) => {
+    try {
+      const response = await axiosInstance.post('/api/v1/auth/password/otp/resend', { email, otpSessionId });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Resend password OTP error:', error);
+      throw error;
+    }
+  },
+
+  // ======================== USER MANAGEMENT & ADMINISTRATION ========================
+  getUserStats: async () => {
+    try {
+      const response = await axiosInstance.get('/api/v1/users/stats');
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Get user stats error:', error);
+      throw error;
+    }
+  },
+
+  deleteAccount: async () => {
+    try {
+      const response = await axiosInstance.delete('/api/v1/users/me');
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Delete account error:', error);
+      throw error;
+    }
+  },
+
+  getPhotoUrl: (fileId) => {
+    if (!fileId) return null;
+    return `/api/v1/users/photo/${fileId}`;
+  },
+
+  getAllUsers: async (params = {}) => {
+    try {
+      const response = await axiosInstance.get('/api/v1/users', { params });
+      return response.data;
+    } catch (error) {
+      console.error('[Auth] Get all users error:', error);
+      throw error;
+    }
+  },
+
+  getUserById: async (id) => {
+    try {
+      const response = await axiosInstance.get(`/api/v1/users/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`[Auth] Get user ${id} error:`, error);
+      throw error;
+    }
+  },
+
+  updateUserStatus: async (id, status) => {
+    try {
+      const response = await axiosInstance.put(`/api/v1/users/${id}/status`, { status });
+      return response.data;
+    } catch (error) {
+      console.error(`[Auth] Update user ${id} status error:`, error);
+      throw error;
+    }
+  },
+
+  deleteUserById: async (id) => {
+    try {
+      const response = await axiosInstance.delete(`/api/v1/users/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`[Auth] Delete user ${id} error:`, error);
       throw error;
     }
   },

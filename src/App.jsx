@@ -95,6 +95,7 @@ const OrderDetails = withFallback(() => import('./pages/admin/OrderDetails'));
 const Reports = withFallback(() => import('./pages/admin/Reports'));
 const InstructorApplications = withFallback(() => import('./pages/admin/InstructorApplications'));
 const BannerManagement = withFallback(() => import('./pages/admin/BannerManagement'));
+const Coupons = withFallback(() => import('./pages/admin/Coupons'));
 
 import { useWebSocketNotifications } from './hooks/useWebSocketNotifications';
 
@@ -248,6 +249,7 @@ export default function App() {
               <Route path="/admin/reviews" element={<Reviews />} />
               <Route path="/admin/notifications" element={<Notifications />} />
               <Route path="/admin/banners" element={<BannerManagement />} />
+              <Route path="/admin/coupons" element={<Coupons />} />
               <Route path="/admin/admins" element={<AdminManagement />} />
               <Route path="/admin/register" element={<AdminRegister />} />
               <Route path="/admin/moderation" element={<Moderation />} />

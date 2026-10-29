@@ -95,27 +95,6 @@ export const ClassroomView = () => {
   const [quizSubmitting, setQuizSubmitting] = useState(false);
   const [showQuizExitModal, setShowQuizExitModal] = useState(false);
 
-  // Hotkey answer selection (1, 2, 3, 4) in Quiz mode
-  useEffect(() => {
-    if (!quizModeActive || quizCompleted) return;
-    const handleKeyDown = (e) => {
-      const currentQ = questionsData[currentQuestionIndex];
-      if (!currentQ || !currentQ.options) return;
-      const key = e.key;
-      let optIdx = -1;
-      if (key === '1') optIdx = 0;
-      else if (key === '2') optIdx = 1;
-      else if (key === '3') optIdx = 2;
-      else if (key === '4') optIdx = 3;
-
-      if (optIdx >= 0 && optIdx < currentQ.options.length) {
-        handleSelectOption(currentQ.id, currentQ.options[optIdx].id);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [quizModeActive, quizCompleted, currentQuestionIndex, questionsData]);
-
   // Discussion state
   const [questionsList, setQuestionsList] = useState([
     {
@@ -149,19 +128,33 @@ export const ClassroomView = () => {
       setLoading(true);
       setError('');
       try {
-        const id = courseId || '1';
-        const [courseRes, sectionsRes, assignmentsRes] = await Promise.allSettled([
+        const id = courseId || '4';
+        const [contentRes, courseRes, assignmentsRes] = await Promise.allSettled([
+          courseApi.getCourseContent(id),
           courseApi.getCourseById(id),
-          courseApi.getSections(id),
           assignmentApi.getAssignments(id),
         ]);
 
         if (!isMounted) return;
 
-        const courseData =
+        const contentPayload =
+          contentRes.status === 'fulfilled'
+            ? contentRes.value?.data || contentRes.value
+            : null;
+
+        let courseData =
           courseRes.status === 'fulfilled'
             ? courseRes.value?.course || courseRes.value?.data || courseRes.value
             : null;
+
+        if (!courseData && contentPayload) {
+          courseData = {
+            id: contentPayload.courseId,
+            title: contentPayload.courseTitle,
+            description: contentPayload.courseDescription,
+            thumbnail: contentPayload.courseThumbnail,
+          };
+        }
 
         setCourse(
           courseData || {
@@ -172,11 +165,33 @@ export const ClassroomView = () => {
           }
         );
 
-        // Parse curriculum sections or construct fallback curriculum
-        let rawSections =
-          sectionsRes.status === 'fulfilled'
-            ? sectionsRes.value?.sections || sectionsRes.value?.data || sectionsRes.value
-            : [];
+        // Parse curriculum sections from live backend course content
+        let rawSections = [];
+        if (contentPayload?.sections && Array.isArray(contentPayload.sections) && contentPayload.sections.length > 0) {
+          rawSections = contentPayload.sections.map((s) => ({
+            id: s.sectionId || s.id,
+            title: s.title,
+            orderIndex: s.orderIndex,
+            duration: s.sectionDuration,
+            lectures: (s.lectures || []).map((l) => ({
+              id: l.lectureId || l.id,
+              title: l.title,
+              description: l.description,
+              duration: l.duration ? `${Math.floor(l.duration / 60)}:${String(l.duration % 60).padStart(2, '0')}` : '15:00',
+              videoUrl: l.videoUrl || SAMPLE_STREAM,
+              completed: Boolean(l.progress?.isCompleted || l.completed),
+              progressPercentage: l.progress?.progressPercentage || 0,
+            })),
+          }));
+
+          const initialCompleted = new Set();
+          rawSections.forEach((s) => {
+            (s.lectures || []).forEach((l) => {
+              if (l.completed) initialCompleted.add(String(l.id));
+            });
+          });
+          setCompletedLectures(initialCompleted);
+        }
 
         if (!Array.isArray(rawSections) || rawSections.length === 0) {
           rawSections = [
@@ -588,6 +603,27 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
       [questionId]: optionId,
     }));
   };
+
+  // Hotkey answer selection (1, 2, 3, 4) in Quiz mode
+  useEffect(() => {
+    if (!quizModeActive || quizCompleted) return;
+    const handleKeyDown = (e) => {
+      const currentQ = questionsData[currentQuestionIndex];
+      if (!currentQ || !currentQ.options) return;
+      const key = e.key;
+      let optIdx = -1;
+      if (key === '1') optIdx = 0;
+      else if (key === '2') optIdx = 1;
+      else if (key === '3') optIdx = 2;
+      else if (key === '4') optIdx = 3;
+
+      if (optIdx >= 0 && optIdx < currentQ.options.length) {
+        handleSelectOption(currentQ.id, currentQ.options[optIdx].id);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [quizModeActive, quizCompleted, currentQuestionIndex, questionsData]);
 
   // Auto-submit when timer expires
   const handleAutoSubmitQuiz = useCallback(() => {

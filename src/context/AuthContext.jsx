@@ -274,6 +274,65 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const socialLogin = async (socialData) => {
+    try {
+      setError(null);
+      setLoading(true);
+
+      const response = await authApi.socialLogin(socialData);
+      let tokenData = null;
+      let refreshTokenData = null;
+      let userData = null;
+
+      if (response && typeof response === 'object') {
+        const payload = response.data && typeof response.data === 'object' ? response.data : response;
+        tokenData = payload.authentication?.accessToken ||
+                    payload.authentication?.token ||
+                    payload.accessToken ||
+                    payload.token ||
+                    payload.access_token;
+
+        refreshTokenData = payload.authentication?.refreshToken || payload.refreshToken || payload.refresh_token || null;
+
+        const userInfo = payload.user || payload;
+        const profilePhoto = userInfo.profilePhoto || userInfo.photoURL || userInfo.avatar || null;
+        const normalizedPhotoUrl = normalizePhotoUrl(profilePhoto);
+
+        userData = {
+          id: userInfo.id || userInfo.userId,
+          firstName: userInfo.firstName || userInfo.name || '',
+          lastName: userInfo.lastName || '',
+          name: userInfo.firstName ? `${userInfo.firstName} ${userInfo.lastName || ''}`.trim() : userInfo.name || '',
+          email: userInfo.email || socialData.email || '',
+          mobileNumber: userInfo.mobileNumber || userInfo.mobile || '',
+          role: normalizeRole(userInfo.role || userInfo.role1 || userInfo.userRole || userInfo.effectiveRole || 'student'),
+          permissions: userInfo.permissions || [],
+          assignedService: userInfo.assignedService || '',
+          profilePhoto: normalizedPhotoUrl,
+        };
+      }
+
+      if (!tokenData) {
+        throw new Error('No authentication token received from OAuth provider');
+      }
+
+      syncSession(userData, tokenData, refreshTokenData);
+
+      const userName = userData?.firstName || userData?.name || 'User';
+      toast.success(response.message || `Welcome, ${userName}!`);
+
+      return { success: true, user: userData, token: tokenData };
+    } catch (error) {
+      const { message: errorMessage } = parseApiError(error, 'Social sign-in failed. Please try again.');
+      setError(errorMessage);
+      toast.error(errorMessage);
+      return { success: false, error: errorMessage, originalError: error };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   const logout = async () => {
     try {
       await authApi.logout();
@@ -301,6 +360,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     error,
     login,
+    socialLogin,
     logout,
     syncSession,
     isAuthenticated: !!token,

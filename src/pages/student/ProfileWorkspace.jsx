@@ -17,6 +17,7 @@ import courseApi from '../../api/courseApi';
 import axiosInstance from '../../api/axiosInstance';
 import { normalizePhotoUrl } from '../../config/api';
 import ProfilePhotoModal from '../../components/ProfilePhotoModal';
+import EmailChangeModal from '../../components/EmailChangeModal';
 import toast from 'react-hot-toast';
 
 const SPRING = { type: 'spring', stiffness: 280, damping: 26 };
@@ -37,6 +38,7 @@ export default function ProfileWorkspace() {
   const [photoBlobUrl, setPhotoBlobUrl] = useState(null);
   const [coverPhotoUrl, setCoverPhotoUrl] = useState(null);
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [newSkillInput, setNewSkillInput] = useState('');
 
   // Learning Telemetry
@@ -461,7 +463,16 @@ export default function ProfileWorkspace() {
             Hydrating Identity Matrix...
           </p>
         </div>
-      </GlobalLayoutWrapper>
+        <EmailChangeModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        currentEmail={profile.email || temp?.email}
+        onEmailUpdated={(newMail) => {
+          setProfile(p => ({ ...p, email: newMail }));
+          setTemp(t => ({ ...t, email: newMail }));
+        }}
+      />
+    </GlobalLayoutWrapper>
     );
   }
 
@@ -708,35 +719,18 @@ export default function ProfileWorkspace() {
                 {editMode ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
-                        First Name *
-                      </label>
-                      <input
-                        type="text"
-                        value={temp?.firstName || ''}
-                        onChange={e => setTemp({ ...temp, firstName: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none transition font-sans"
-                        placeholder="First Name"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
-                        Last Name *
-                      </label>
-                      <input
-                        type="text"
-                        value={temp?.lastName || ''}
-                        onChange={e => setTemp({ ...temp, lastName: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none transition font-sans"
-                        placeholder="Last Name"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
-                        Email Address
-                      </label>
+                      <div className="flex items-center justify-between">
+                        <label className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
+                          Email Address
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => setIsEmailModalOpen(true)}
+                          className="text-[10px] font-bold text-[#C5A880] hover:text-[#D4BC98] transition-colors"
+                        >
+                          Change Email
+                        </button>
+                      </div>
                       <input
                         type="email"
                         disabled

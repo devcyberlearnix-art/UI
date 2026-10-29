@@ -34,3 +34,8 @@ scratch/
 .codex/
 .impeccable/
 telemetry_snapshots/
+
+# Environment files
+.env
+.env.*
+!.env.example

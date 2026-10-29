@@ -100,12 +100,24 @@ export default function ShoppingCartWorkspace() {
     mutationFn: async (code) => await cartApi.applyCoupon(code),
     onSuccess: (data) => {
       toast.success('Promotional hash applied successfully.');
+      setCouponCode('');
       queryClient.invalidateQueries({ queryKey: cartQueryKey });
     },
     onError: (err) => {
       toast.error(
         err?.response?.data?.message || 'Invalid promotional hash code.'
       );
+    },
+  });
+
+  const removeCouponMutation = useMutation({
+    mutationFn: async () => await cartApi.removeCoupon(),
+    onSuccess: () => {
+      toast.success('Coupon removed.');
+      queryClient.invalidateQueries({ queryKey: cartQueryKey });
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message || 'Failed to remove coupon.');
     },
   });
 
@@ -324,32 +336,70 @@ export default function ShoppingCartWorkspace() {
               </div>
 
               {/* Promo Code Submission Engine */}
-              <form onSubmit={handleApplyCoupon} className="space-y-2">
+              <div className="space-y-2">
                 <span className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
                   Apply Promo Hash
                 </span>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="ENTER_PROMO_CODE"
-                    disabled={applyCouponMutation.isPending}
-                    className="flex-1 bg-[#14141A] border border-white/5 rounded-xl px-3 py-2 text-xs font-mono text-[#F5F5F7] placeholder-white/20 focus:outline-none focus:border-[#C5A880]/40 transition-colors uppercase disabled:opacity-40"
-                  />
-                  <button
-                    type="submit"
-                    disabled={applyCouponMutation.isPending || !couponCode.trim()}
-                    className="px-4 bg-[#14141A] border border-white/10 hover:border-[#C5A880]/40 text-xs font-mono font-bold text-[#E5E5E7] hover:text-[#F5F5F7] rounded-xl transition-all duration-200 disabled:opacity-30 flex items-center justify-center cursor-pointer"
-                  >
-                    {applyCouponMutation.isPending ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-[#C5A880]" />
-                    ) : (
-                      'Apply'
-                    )}
-                  </button>
-                </div>
-              </form>
+
+                {cart.couponCode ? (
+                  <div className="flex items-center justify-between p-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                    <div className="flex items-center gap-2">
+                      <Tag className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-xs font-mono font-bold text-emerald-400">{cart.couponCode}</span>
+                      <span className="text-[10px] text-emerald-300">(-₹{Number(cart.discount || 0).toFixed(2)})</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeCouponMutation.mutate()}
+                      disabled={removeCouponMutation.isPending}
+                      className="text-xs text-red-400 hover:text-red-300 font-mono underline cursor-pointer"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleApplyCoupon} className="space-y-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                        placeholder="e.g. WELCOME50"
+                        disabled={applyCouponMutation.isPending}
+                        className="flex-1 bg-[#14141A] border border-white/5 rounded-xl px-3 py-2 text-xs font-mono text-[#F5F5F7] placeholder-white/20 focus:outline-none focus:border-[#C5A880]/40 transition-colors uppercase disabled:opacity-40"
+                      />
+                      <button
+                        type="submit"
+                        disabled={applyCouponMutation.isPending || !couponCode.trim()}
+                        className="px-4 bg-[#14141A] border border-white/10 hover:border-[#C5A880]/40 text-xs font-mono font-bold text-[#E5E5E7] hover:text-[#F5F5F7] rounded-xl transition-all duration-200 disabled:opacity-30 flex items-center justify-center cursor-pointer"
+                      >
+                        {applyCouponMutation.isPending ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-[#C5A880]" />
+                        ) : (
+                          'Apply'
+                        )}
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-1.5 pt-1">
+                      <span className="text-[10px] text-[#8E8E93]">Popular:</span>
+                      <button
+                        type="button"
+                        onClick={() => { setCouponCode('WELCOME50'); applyCouponMutation.mutate('WELCOME50'); }}
+                        className="text-[10px] font-mono text-[#C5A880] hover:underline cursor-pointer bg-white/[0.03] px-2 py-0.5 rounded border border-white/5"
+                      >
+                        WELCOME50
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setCouponCode('SPRING20'); applyCouponMutation.mutate('SPRING20'); }}
+                        className="text-[10px] font-mono text-[#C5A880] hover:underline cursor-pointer bg-white/[0.03] px-2 py-0.5 rounded border border-white/5"
+                      >
+                        SPRING20
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
 
               {/* Secure Checkout Activation Node */}
               <div className="space-y-3 pt-2">

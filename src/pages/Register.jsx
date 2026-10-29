@@ -7,6 +7,7 @@ import AuthShell from "../components/ui/AuthShell";
 import { authApi } from "../api/authApi";
 import { parseApiError } from "../utils/apiErrorParser";
 import { getPasswordChecks, isStrongPassword, validateEmail } from "../utils/validation";
+import SocialAuthButtons from "../components/ui/SocialAuthButtons";
 
 const SPRING_TRANSITION = {
   type: "spring",
@@ -248,6 +249,8 @@ const Register = () => {
             {loading ? "Provisioning account..." : "Create Account"} <ArrowRight size={15} />
           </button>
         </form>
+
+        <SocialAuthButtons mode="signup" />
 
         <div className="pt-4 border-t border-white/[0.04] text-center">
           <p className="text-xs text-[#8E8E93]">

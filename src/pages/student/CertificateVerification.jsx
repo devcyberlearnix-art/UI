@@ -58,7 +58,7 @@ export const CertificateVerification = () => {
   const { user } = useAuth();
   const certificateFrameRef = useRef(null);
 
-  const courseId = paramCourseId || '1';
+  const courseId = paramCourseId || '4';
   const verificationCode =
     paramCertId || `CERT-FD-${courseId.toString().padStart(4, '0')}-X89`;
 
