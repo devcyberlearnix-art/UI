@@ -385,7 +385,7 @@ export const AdminCommandCenter = () => {
 
           {/* System Notification Ping */}
           <Button
-            variant="cyan"
+            variant="primary"
             size="sm"
             onClick={() => setIsPingModalOpen(true)}
             leftIcon={Bell}
@@ -459,40 +459,40 @@ export const AdminCommandCenter = () => {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={velocityData}>
                 <defs>
-                  <linearGradient id="cyanGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.0} />
+                  <linearGradient id="plumGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#5B3E57" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#5B3E57" stopOpacity={0.0} />
                   </linearGradient>
                   <linearGradient id="indigoGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0.0} />
+                    <stop offset="5%" stopColor="#9A6B56" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#9A6B56" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1f293d" vertical={false} />
-                <XAxis dataKey="time" stroke="#64748b" fontSize={11} fontFamily="monospace" />
-                <YAxis stroke="#64748b" fontSize={11} fontFamily="monospace" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E3DCD3" vertical={false} />
+                <XAxis dataKey="time" stroke="#756E64" fontSize={11} fontFamily="monospace" />
+                <YAxis stroke="#756E64" fontSize={11} fontFamily="monospace" />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#070a11',
-                    borderColor: '#1e293b',
+                    backgroundColor: '#FFFEFA',
+                    borderColor: '#E3DCD3',
                     borderRadius: '12px',
                     fontFamily: 'monospace',
                     fontSize: '12px',
-                    color: '#fff',
+                    color: '#282521',
                   }}
                 />
                 <Area
                   type="monotone"
                   dataKey="enrollments"
-                  stroke="#06b6d4"
+                  stroke="#5B3E57"
                   strokeWidth={2.5}
                   fillOpacity={1}
-                  fill="url(#cyanGradient)"
+                  fill="url(#plumGradient)"
                 />
                 <Area
                   type="monotone"
                   dataKey="p95Latency"
-                  stroke="#6366f1"
+                  stroke="#9A6B56"
                   strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#indigoGradient)"
@@ -685,7 +685,7 @@ export const AdminCommandCenter = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search tenant by ID, name, email..."
-                className="pl-8 pr-3 py-1.5 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] placeholder:text-[#756E64] dark:placeholder-[#7A7368] focus:outline-none focus:border-cyan-500/50 w-56"
+                className="pl-8 pr-3 py-1.5 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] placeholder:text-[#756E64] dark:placeholder-[#7A7368] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] w-56"
               />
             </div>
 
@@ -748,7 +748,7 @@ export const AdminCommandCenter = () => {
                   <td className="py-3.5 text-[#756E64] dark:text-[#7A7368]">{t.lastActive}</td>
                   <td className="py-3.5 text-right">
                     <Button
-                      variant={t.status === 'ACTIVE' ? 'danger' : 'cyan'}
+                      variant={t.status === 'ACTIVE' ? 'danger' : 'primary'}
                       size="sm"
                       onClick={() => setTenantToConfirm(t)}
                       className="text-xs"
@@ -800,7 +800,7 @@ export const AdminCommandCenter = () => {
                     type="text"
                     value={pingPayload.title}
                     onChange={(e) => setPingPayload((p) => ({ ...p, title: e.target.value }))}
-                    className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-cyan-500/60"
+                    className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC]"
                     required
                   />
                 </div>
@@ -811,7 +811,7 @@ export const AdminCommandCenter = () => {
                     <select
                       value={pingPayload.audience}
                       onChange={(e) => setPingPayload((p) => ({ ...p, audience: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-cyan-500/60 font-mono"
+                      className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] font-mono"
                     >
                       <option value="ALL">All Active Tenants</option>
                       <option value="STUDENTS">Students Only</option>
@@ -824,7 +824,7 @@ export const AdminCommandCenter = () => {
                     <select
                       value={pingPayload.severity}
                       onChange={(e) => setPingPayload((p) => ({ ...p, severity: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-cyan-500/60 font-mono"
+                      className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] font-mono"
                     >
                       <option value="HIGH">CRITICAL / HIGH</option>
                       <option value="MEDIUM">ADVISORY / MEDIUM</option>
@@ -839,7 +839,7 @@ export const AdminCommandCenter = () => {
                     rows={3}
                     value={pingPayload.message}
                     onChange={(e) => setPingPayload((p) => ({ ...p, message: e.target.value }))}
-                    className="w-full p-3 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-cyan-500/60 resize-none font-light leading-relaxed"
+                    className="w-full p-3 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] resize-none font-light leading-relaxed"
                     required
                   />
                 </div>
@@ -855,7 +855,7 @@ export const AdminCommandCenter = () => {
                   </Button>
                   <Button
                     type="submit"
-                    variant="cyan"
+                    variant="primary"
                     size="sm"
                     isLoading={isDispatchingPing}
                     rightIcon={Send}
