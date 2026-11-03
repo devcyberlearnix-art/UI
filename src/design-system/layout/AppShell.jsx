@@ -519,7 +519,7 @@ export const AppShell = ({ children }) => {
                 <button
                   type="button"
                   onClick={() => handleNavigate('/courses')}
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] text-xs font-semibold text-[#A1A1AA] hover:text-white transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] text-xs font-semibold text-[#A1A1AA] hover:text-white transition-colors cursor-pointer"
                 >
                   <Search className="w-3.5 h-3.5 text-[#C5A880]" />
                   <span>Catalog</span>

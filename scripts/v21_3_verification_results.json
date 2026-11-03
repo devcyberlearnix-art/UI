@@ -1,0 +1,603 @@
+{
+  "version": "21.3",
+  "timestamp": "2026-11-01T14:20:06.619Z",
+  "viewports": [
+    "small-mobile-320 (320x700)",
+    "mobile-360 (360x740)",
+    "mobile-375 (375x667)",
+    "mobile-390 (390x844)",
+    "large-mobile-430 (430x932)",
+    "tablet-768 (768x1024)",
+    "laptop-1024 (1024x768)",
+    "desktop-1280 (1280x800)",
+    "desktop-1440 (1440x900)",
+    "large-desktop-1920 (1920x1080)"
+  ],
+  "testCases": [
+    {
+      "id": "TC-RESP-01",
+      "name": "Multi-Viewport Responsive Verification (10 Breakpoints, 0 Overflow)",
+      "status": "PASS",
+      "details": {
+        "viewportsTested": 10,
+        "overflowViolations": [],
+        "audits": [
+          {
+            "viewport": "small-mobile-320",
+            "width": 320,
+            "height": 700,
+            "overflow": false,
+            "ctaHeight": 44,
+            "cardWidth": 272
+          },
+          {
+            "viewport": "mobile-360",
+            "width": 360,
+            "height": 740,
+            "overflow": false,
+            "ctaHeight": 44,
+            "cardWidth": 312
+          },
+          {
+            "viewport": "mobile-375",
+            "width": 375,
+            "height": 667,
+            "overflow": false,
+            "ctaHeight": 44,
+            "cardWidth": 327
+          },
+          {
+            "viewport": "mobile-390",
+            "width": 390,
+            "height": 844,
+            "overflow": false,
+            "ctaHeight": 44,
+            "cardWidth": 342
+          },
+          {
+            "viewport": "large-mobile-430",
+            "width": 430,
+            "height": 932,
+            "overflow": false,
+            "ctaHeight": 44,
+            "cardWidth": 382
+          },
+          {
+            "viewport": "tablet-768",
+            "width": 768,
+            "height": 1024,
+            "overflow": false,
+            "ctaHeight": 44,
+            "cardWidth": 460
+          },
+          {
+            "viewport": "laptop-1024",
+            "width": 1024,
+            "height": 768,
+            "overflow": false,
+            "ctaHeight": 44,
+            "cardWidth": 416
+          },
+          {
+            "viewport": "desktop-1280",
+            "width": 1280,
+            "height": 800,
+            "overflow": false,
+            "ctaHeight": 44,
+            "cardWidth": 460
+          },
+          {
+            "viewport": "desktop-1440",
+            "width": 1440,
+            "height": 900,
+            "overflow": false,
+            "ctaHeight": 44,
+            "cardWidth": 460
+          },
+          {
+            "viewport": "large-desktop-1920",
+            "width": 1920,
+            "height": 1080,
+            "overflow": false,
+            "ctaHeight": 44,
+            "cardWidth": 460
+          }
+        ]
+      },
+      "timestamp": "2026-11-01T14:20:35.499Z"
+    },
+    {
+      "id": "TC-VISUAL-01",
+      "name": "Seven Mandated Visual Regression Screenshots Captured Individually",
+      "status": "PASS",
+      "details": {
+        "desktopLoginPass": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\desktop_login_password_mode.png",
+        "desktopLoginOtp": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\desktop_login_otp_mode.png",
+        "desktopReg": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\desktop_registration.png",
+        "mobileLogin": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\mobile_login.png",
+        "mobileLoginOtp": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\mobile_otp_mode.png",
+        "mobileReg": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\mobile_registration.png",
+        "tabletLogin": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\tablet_login.png"
+      },
+      "timestamp": "2026-11-01T14:20:40.876Z"
+    },
+    {
+      "id": "TC-CONTRAST-01",
+      "name": "Segmented-Control High Contrast, Gold Pill & Inactive Readability",
+      "status": "PASS",
+      "details": {
+        "activeTabPixel": "RGB(128, 197, 168)",
+        "inactiveTabPixel": "RGB(26, 20, 20)",
+        "passwordActiveText": "rgb(7, 7, 9)",
+        "otpInactiveText": "rgb(212, 212, 216)",
+        "passwordInactiveText": "rgb(212, 212, 216)",
+        "otpActiveText": "rgb(7, 7, 9)",
+        "keyboardArrowNavWorked": true
+      },
+      "timestamp": "2026-11-01T14:20:42.890Z"
+    },
+    {
+      "id": "TC-MOBILE-BRAND-01",
+      "name": "Mobile Logo Emblem 1:1 Rendering & Wordmark Vertical Alignment",
+      "status": "PASS",
+      "details": {
+        "badgeDimensions": "40x40px",
+        "imgDimensions": "24x24px",
+        "hasTitle": true,
+        "hasSub": true,
+        "badgeY": 24,
+        "wordmarkY": 28
+      },
+      "timestamp": "2026-11-01T14:20:43.226Z"
+    },
+    {
+      "id": "TC-SOCIAL-01",
+      "name": "Social Auth Provider Labels, Accessible Names & Honest Disabled States",
+      "status": "PASS",
+      "details": {
+        "google": {
+          "ariaLabel": "Sign in with Google",
+          "title": "Sign in with Google",
+          "text": "Google",
+          "disabled": false
+        },
+        "github": {
+          "ariaLabel": "Sign in with GitHub (Unavailable)",
+          "title": "GitHub authentication is unavailable in this environment",
+          "text": "GitHub",
+          "disabled": true,
+          "ariaDisabled": "true"
+        },
+        "linkedin": {
+          "ariaLabel": "Sign in with LinkedIn (Unavailable)",
+          "title": "LinkedIn authentication is unavailable in this environment",
+          "text": "LinkedIn",
+          "disabled": true,
+          "ariaDisabled": "true"
+        }
+      },
+      "timestamp": "2026-11-01T14:20:43.241Z"
+    },
+    {
+      "id": "TC-ALIGN-01",
+      "name": "Left Panel Alignment Precision Between Login & Registration (0px Delta)",
+      "status": "PASS",
+      "details": {
+        "logoDiffPx": 0,
+        "badgeDiffPx": 0,
+        "heroDiffPx": 0,
+        "benefitsDiffPx": 0,
+        "loginPositions": {
+          "logoY": 56,
+          "heroY": 194
+        },
+        "registerPositions": {
+          "logoY": 56,
+          "heroY": 194
+        }
+      },
+      "timestamp": "2026-11-01T14:20:43.941Z"
+    },
+    {
+      "id": "TC-REG-01",
+      "name": "Registration Form Feedback, MailHog Delivery, Activation & Direct Sign In",
+      "status": "PASS",
+      "details": {
+        "registeredEmail": "student.v21_3.1793542843995@asivo.io",
+        "prefilledEmail": "student.v21_3.1793542843995@asivo.io",
+        "mismatchIndicatorWorked": true,
+        "matchIndicatorWorked": true,
+        "strengthChecklistWorked": true,
+        "finalDashboard": "http://127.0.0.1:5173/student/dashboard"
+      },
+      "timestamp": "2026-11-01T14:20:49.595Z"
+    },
+    {
+      "id": "TC-REG-02",
+      "name": "Duplicate Registration 409 Conflict Rejection & Input Field Preservation",
+      "status": "PASS",
+      "details": {
+        "errorText": "This email address is already registered. Please sign in or use another email.",
+        "preservedFirstname": "Grace"
+      },
+      "timestamp": "2026-11-01T14:20:51.321Z"
+    },
+    {
+      "id": "TC-LOGIN-03",
+      "name": "Passwordless OTP Sign In, MailHog Delivery & Dashboard Sync",
+      "status": "PASS",
+      "details": {
+        "email": "anjali.mukherjee@cyberlearnix.test",
+        "otpCode": "651621",
+        "destination": "http://127.0.0.1:5173/student/dashboard"
+      },
+      "timestamp": "2026-11-01T14:20:55.131Z"
+    },
+    {
+      "id": "TC-RESET-01",
+      "name": "3-Step Password Recovery E2E with MailHog & Re-Authentication",
+      "status": "PASS",
+      "details": {
+        "recoveryOtp": "443655",
+        "loginRedirect": "http://127.0.0.1:5173/login",
+        "finalDashboard": "http://127.0.0.1:5173/student/dashboard"
+      },
+      "timestamp": "2026-11-01T14:20:58.294Z"
+    }
+  ],
+  "screenshots": [
+    {
+      "page": "login-password",
+      "viewport": "small-mobile-320",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_small-mobile-320.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "small-mobile-320",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_otp_mode_small-mobile-320.png"
+    },
+    {
+      "page": "register",
+      "viewport": "small-mobile-320",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_register_small-mobile-320.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "small-mobile-320",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_forgot_password_small-mobile-320.png"
+    },
+    {
+      "page": "login-password",
+      "viewport": "mobile-360",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_mobile-360.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "mobile-360",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_otp_mode_mobile-360.png"
+    },
+    {
+      "page": "register",
+      "viewport": "mobile-360",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_register_mobile-360.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "mobile-360",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_forgot_password_mobile-360.png"
+    },
+    {
+      "page": "login-password",
+      "viewport": "mobile-375",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_mobile-375.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "mobile-375",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_otp_mode_mobile-375.png"
+    },
+    {
+      "page": "register",
+      "viewport": "mobile-375",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_register_mobile-375.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "mobile-375",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_forgot_password_mobile-375.png"
+    },
+    {
+      "page": "login-password",
+      "viewport": "mobile-390",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_mobile-390.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "mobile-390",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_otp_mode_mobile-390.png"
+    },
+    {
+      "page": "register",
+      "viewport": "mobile-390",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_register_mobile-390.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "mobile-390",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_forgot_password_mobile-390.png"
+    },
+    {
+      "page": "login-password",
+      "viewport": "large-mobile-430",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_large-mobile-430.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "large-mobile-430",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_otp_mode_large-mobile-430.png"
+    },
+    {
+      "page": "register",
+      "viewport": "large-mobile-430",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_register_large-mobile-430.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "large-mobile-430",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_forgot_password_large-mobile-430.png"
+    },
+    {
+      "page": "login-password",
+      "viewport": "tablet-768",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_tablet-768.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "tablet-768",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_otp_mode_tablet-768.png"
+    },
+    {
+      "page": "register",
+      "viewport": "tablet-768",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_register_tablet-768.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "tablet-768",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_forgot_password_tablet-768.png"
+    },
+    {
+      "page": "login-password",
+      "viewport": "laptop-1024",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_laptop-1024.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "laptop-1024",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_otp_mode_laptop-1024.png"
+    },
+    {
+      "page": "register",
+      "viewport": "laptop-1024",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_register_laptop-1024.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "laptop-1024",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_forgot_password_laptop-1024.png"
+    },
+    {
+      "page": "login-password",
+      "viewport": "desktop-1280",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_desktop-1280.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "desktop-1280",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_otp_mode_desktop-1280.png"
+    },
+    {
+      "page": "register",
+      "viewport": "desktop-1280",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_register_desktop-1280.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "desktop-1280",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_forgot_password_desktop-1280.png"
+    },
+    {
+      "page": "login-password",
+      "viewport": "desktop-1440",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_desktop-1440.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "desktop-1440",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_otp_mode_desktop-1440.png"
+    },
+    {
+      "page": "register",
+      "viewport": "desktop-1440",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_register_desktop-1440.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "desktop-1440",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_forgot_password_desktop-1440.png"
+    },
+    {
+      "page": "login-password",
+      "viewport": "large-desktop-1920",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_large-desktop-1920.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "large-desktop-1920",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_login_otp_mode_large-desktop-1920.png"
+    },
+    {
+      "page": "register",
+      "viewport": "large-desktop-1920",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_register_large-desktop-1920.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "large-desktop-1920",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_3_screenshots\\v21_3_forgot_password_large-desktop-1920.png"
+    }
+  ],
+  "viewportAudits": [
+    {
+      "viewport": "small-mobile-320",
+      "width": 320,
+      "height": 700,
+      "overflow": false,
+      "ctaHeight": 44,
+      "cardWidth": 272
+    },
+    {
+      "viewport": "mobile-360",
+      "width": 360,
+      "height": 740,
+      "overflow": false,
+      "ctaHeight": 44,
+      "cardWidth": 312
+    },
+    {
+      "viewport": "mobile-375",
+      "width": 375,
+      "height": 667,
+      "overflow": false,
+      "ctaHeight": 44,
+      "cardWidth": 327
+    },
+    {
+      "viewport": "mobile-390",
+      "width": 390,
+      "height": 844,
+      "overflow": false,
+      "ctaHeight": 44,
+      "cardWidth": 342
+    },
+    {
+      "viewport": "large-mobile-430",
+      "width": 430,
+      "height": 932,
+      "overflow": false,
+      "ctaHeight": 44,
+      "cardWidth": 382
+    },
+    {
+      "viewport": "tablet-768",
+      "width": 768,
+      "height": 1024,
+      "overflow": false,
+      "ctaHeight": 44,
+      "cardWidth": 460
+    },
+    {
+      "viewport": "laptop-1024",
+      "width": 1024,
+      "height": 768,
+      "overflow": false,
+      "ctaHeight": 44,
+      "cardWidth": 416
+    },
+    {
+      "viewport": "desktop-1280",
+      "width": 1280,
+      "height": 800,
+      "overflow": false,
+      "ctaHeight": 44,
+      "cardWidth": 460
+    },
+    {
+      "viewport": "desktop-1440",
+      "width": 1440,
+      "height": 900,
+      "overflow": false,
+      "ctaHeight": 44,
+      "cardWidth": 460
+    },
+    {
+      "viewport": "large-desktop-1920",
+      "width": 1920,
+      "height": 1080,
+      "overflow": false,
+      "ctaHeight": 44,
+      "cardWidth": 460
+    }
+  ],
+  "contrastAudit": {
+    "activeTabPixel": "RGB(128, 197, 168)",
+    "inactiveTabPixel": "RGB(26, 20, 20)",
+    "passwordActiveText": "rgb(7, 7, 9)",
+    "otpInactiveText": "rgb(212, 212, 216)",
+    "passwordInactiveText": "rgb(212, 212, 216)",
+    "otpActiveText": "rgb(7, 7, 9)",
+    "keyboardArrowNavWorked": true
+  },
+  "mobileBrandingAudit": {
+    "badgeDimensions": "40x40px",
+    "imgDimensions": "24x24px",
+    "hasTitle": true,
+    "hasSub": true,
+    "badgeY": 24,
+    "wordmarkY": 28
+  },
+  "socialAuthAudit": {
+    "google": {
+      "ariaLabel": "Sign in with Google",
+      "title": "Sign in with Google",
+      "text": "Google",
+      "disabled": false
+    },
+    "github": {
+      "ariaLabel": "Sign in with GitHub (Unavailable)",
+      "title": "GitHub authentication is unavailable in this environment",
+      "text": "GitHub",
+      "disabled": true,
+      "ariaDisabled": "true"
+    },
+    "linkedin": {
+      "ariaLabel": "Sign in with LinkedIn (Unavailable)",
+      "title": "LinkedIn authentication is unavailable in this environment",
+      "text": "LinkedIn",
+      "disabled": true,
+      "ariaDisabled": "true"
+    }
+  },
+  "consoleErrors": [
+    {
+      "text": "Failed to load resource: the server responded with a status of 409 (Conflict)",
+      "location": {
+        "url": "http://127.0.0.1:5173/api/v1/auth/register",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "text": "[API Response Error] AxiosError: Request failed with status code 409\n    at settle (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=400bdf02:1523:12)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5173/node_modules/.vite/deps/axios.js?v=400bdf02:1977:7)",
+      "location": {
+        "url": "http://127.0.0.1:5173/src/api/axiosInstance.js",
+        "line": 104,
+        "column": 12,
+        "lineNumber": 104,
+        "columnNumber": 12
+      }
+    },
+    {
+      "text": "[API] Error details: {status: 409, message: Email already registered, path: /api/v1/auth/register}",
+      "location": {
+        "url": "http://127.0.0.1:5173/src/api/axiosInstance.js",
+        "line": 268,
+        "column": 14,
+        "lineNumber": 268,
+        "columnNumber": 14
+      }
+    }
+  ]
+}

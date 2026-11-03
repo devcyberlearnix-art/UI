@@ -1,0 +1,164 @@
+{
+  "timestamp": "2026-11-01T09:15:54.266Z",
+  "viewports": [
+    {
+      "name": "small-mobile-320",
+      "width": 320,
+      "height": 640,
+      "overflowCheck": {
+        "scrollWidth": 320,
+        "innerWidth": 320,
+        "hasHorizontalOverflow": false,
+        "overflowDelta": 0
+      },
+      "gridColumns": {
+        "courses": "288px",
+        "stats": "138px 138px",
+        "instructors": "288px",
+        "testimonials": "288px",
+        "paths": "288px"
+      },
+      "headerDetails": {
+        "isHamburgerVisible": true,
+        "isDesktopNavVisible": false,
+        "cartHeight": 34
+      },
+      "screenshot": "scripts\\v16_screenshots\\v16_small-mobile-320_fullpage.png"
+    },
+    {
+      "name": "mobile-375",
+      "width": 375,
+      "height": 812,
+      "overflowCheck": {
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "hasHorizontalOverflow": false,
+        "overflowDelta": 0
+      },
+      "gridColumns": {
+        "courses": "343px",
+        "stats": "165.5px 165.5px",
+        "instructors": "343px",
+        "testimonials": "343px",
+        "paths": "343px"
+      },
+      "headerDetails": {
+        "isHamburgerVisible": true,
+        "isDesktopNavVisible": false,
+        "cartHeight": 34
+      },
+      "screenshot": "scripts\\v16_screenshots\\v16_mobile-375_fullpage.png"
+    },
+    {
+      "name": "large-mobile-430",
+      "width": 430,
+      "height": 932,
+      "overflowCheck": {
+        "scrollWidth": 430,
+        "innerWidth": 430,
+        "hasHorizontalOverflow": false,
+        "overflowDelta": 0
+      },
+      "gridColumns": {
+        "courses": "398px",
+        "stats": "193px 193px",
+        "instructors": "398px",
+        "testimonials": "398px",
+        "paths": "398px"
+      },
+      "headerDetails": {
+        "isHamburgerVisible": true,
+        "isDesktopNavVisible": false,
+        "cartHeight": 34
+      },
+      "screenshot": "scripts\\v16_screenshots\\v16_large-mobile-430_fullpage.png"
+    },
+    {
+      "name": "tablet-768",
+      "width": 768,
+      "height": 1024,
+      "overflowCheck": {
+        "scrollWidth": 768,
+        "innerWidth": 768,
+        "hasHorizontalOverflow": false,
+        "overflowDelta": 0
+      },
+      "gridColumns": {
+        "courses": "348px 348px",
+        "stats": "168px 168px 168px 168px",
+        "instructors": "348px 348px",
+        "testimonials": "224px 224px 224px",
+        "paths": "348px 348px"
+      },
+      "headerDetails": {
+        "isHamburgerVisible": false,
+        "isDesktopNavVisible": true,
+        "cartHeight": 34
+      },
+      "screenshot": "scripts\\v16_screenshots\\v16_tablet-768_fullpage.png"
+    },
+    {
+      "name": "laptop-1024",
+      "width": 1024,
+      "height": 768,
+      "overflowCheck": {
+        "scrollWidth": 1024,
+        "innerWidth": 1024,
+        "hasHorizontalOverflow": false,
+        "overflowDelta": 0
+      },
+      "gridColumns": {
+        "courses": "304px 304px 304px",
+        "stats": "212px 212px 212px 212px",
+        "instructors": "222px 222px 222px 222px",
+        "testimonials": "304px 304px 304px",
+        "paths": "468px 468px"
+      },
+      "headerDetails": {
+        "isHamburgerVisible": false,
+        "isDesktopNavVisible": true,
+        "cartHeight": 34
+      },
+      "screenshot": "scripts\\v16_screenshots\\v16_laptop-1024_fullpage.png"
+    },
+    {
+      "name": "desktop-1440",
+      "width": 1440,
+      "height": 900,
+      "overflowCheck": {
+        "scrollWidth": 1440,
+        "innerWidth": 1440,
+        "hasHorizontalOverflow": false,
+        "overflowDelta": 0
+      },
+      "gridColumns": {
+        "courses": "286px 286px 286px 286px",
+        "stats": "212px 212px 212px 212px",
+        "instructors": "286px 286px 286px 286px",
+        "testimonials": "389.328px 389.328px 389.344px",
+        "paths": "596px 596px"
+      },
+      "headerDetails": {
+        "isHamburgerVisible": false,
+        "isDesktopNavVisible": true,
+        "cartHeight": 34
+      },
+      "screenshot": "scripts\\v16_screenshots\\v16_desktop-1440_fullpage.png"
+    }
+  ],
+  "sections": {},
+  "courseCards": [],
+  "discrepancyResolution": {
+    "desktopV15Dimensions": {
+      "width": 1440,
+      "height": 7579
+    },
+    "mobileV15Dimensions": {
+      "width": 375,
+      "height": 18325
+    },
+    "analysis": "The user examined an image of 365 x 2048px. That image was a scaled-down thumbnail of the 1440px desktop render (aspect ratio 1440 / 7579 = 0.1899; 0.1899 * 2048 ≈ 389px, cropped/downscaled). Native mobile 375px renders with height 18325px, exactly 1 column per course card (343px width), 1 column per instructor, 2 columns for telemetry statistics, and a hidden desktop nav bar replaced with a touch hamburger drawer."
+  },
+  "accessibility": {},
+  "performance": {}
+}

@@ -1,0 +1,171 @@
+{
+  "results": [
+    {
+      "path": "/",
+      "roleName": "Guest",
+      "currentUrl": "http://localhost:4173/",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 2,
+      "totalExpected": 2,
+      "snippet": "FD_LMS Asivo ARCHITECTING ENTERPRISE EXCELLENCE Explore Courses Certifications For Instructors Sign In Get Started CURRICULUM FOR ADVANCING ENGINEERS "
+    },
+    {
+      "path": "/courses",
+      "roleName": "Guest",
+      "currentUrl": "http://localhost:4173/courses",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 2,
+      "totalExpected": 2,
+      "snippet": "Skip to main content FD_LMS ENTERPRISE Explore Courses Certifications Teach on FD_LMS Sign In Get Started Verified Technical Curriculum • 2026 Edition"
+    },
+    {
+      "path": "/courses/6",
+      "roleName": "Guest",
+      "currentUrl": "http://localhost:4173/courses/6",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 1,
+      "totalExpected": 1,
+      "snippet": "Return to Catalog SOFTWARE ENGINEERING BEGINNER Clean Code and Refactoring  Clean Code Principles  Write maintainable, readable, and clean code  5.0 ("
+    },
+    {
+      "path": "/cart",
+      "roleName": "Guest",
+      "currentUrl": "http://localhost:4173/cart",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 1,
+      "totalExpected": 1,
+      "snippet": "Shopping Cart Matrix  Review your selected architecture tracks before compilation initialization.  Single Seat Node License Cart Matrix Empty  No acti"
+    },
+    {
+      "path": "/login",
+      "roleName": "Guest",
+      "currentUrl": "http://localhost:4173/login",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 2,
+      "totalExpected": 2,
+      "snippet": "FD_LMS ENTERPRISE ARCHITECTURE INK & ONYX ARCHITECTURE Learn Skills. Build Scalable Futures.  Master enterprise system design, cloud-native pipelines,"
+    },
+    {
+      "path": "/profile",
+      "roleName": "Student",
+      "currentUrl": "http://localhost:4173/profile",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 0,
+      "totalExpected": 0,
+      "snippet": "Skip to main content FD_LMS STUDENT RAIL My Learning Hub My Active Courses Live Classrooms Assignments Desk Saved Wishlist Billing & Orders Account Se"
+    },
+    {
+      "path": "/my-courses",
+      "roleName": "Student",
+      "currentUrl": "http://localhost:4173/student/dashboard",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 0,
+      "totalExpected": 0,
+      "snippet": "Skip to main content FD_LMS STUDENT RAIL My Learning Hub My Active Courses Live Classrooms Assignments Desk Saved Wishlist Billing & Orders Account Se"
+    },
+    {
+      "path": "/cart",
+      "roleName": "Student",
+      "currentUrl": "http://localhost:4173/cart",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 0,
+      "totalExpected": 0,
+      "snippet": "Shopping Cart Matrix  Review your selected architecture tracks before compilation initialization.  Single Seat Node License Kubernetes for Production "
+    },
+    {
+      "path": "/admin/dashboard",
+      "roleName": "Admin",
+      "currentUrl": "http://localhost:4173/admin/dashboard",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 0,
+      "totalExpected": 0,
+      "snippet": "Skip to main content FD_LMS ADMIN RAIL Global Telemetry User Governance Curriculum Audit Order Ledger Marketing Banners Promotions & Coupons M  Main A"
+    },
+    {
+      "path": "/admin/courses",
+      "roleName": "Admin",
+      "currentUrl": "http://localhost:4173/admin/courses",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 0,
+      "totalExpected": 0,
+      "snippet": "Skip to main content FD_LMS ADMIN RAIL Global Telemetry User Governance Curriculum Audit Order Ledger Marketing Banners Promotions & Coupons M  Main A"
+    },
+    {
+      "path": "/admin/users",
+      "roleName": "Admin",
+      "currentUrl": "http://localhost:4173/admin/users",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 0,
+      "totalExpected": 0,
+      "snippet": "Skip to main content FD_LMS ADMIN RAIL Global Telemetry User Governance Curriculum Audit Order Ledger Marketing Banners Promotions & Coupons M  Main A"
+    },
+    {
+      "path": "/admin/instructors",
+      "roleName": "Admin",
+      "currentUrl": "http://localhost:4173/admin/instructors",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 0,
+      "totalExpected": 0,
+      "snippet": "Skip to main content FD_LMS ADMIN RAIL Global Telemetry User Governance Curriculum Audit Order Ledger Marketing Banners Promotions & Coupons M  Main A"
+    },
+    {
+      "path": "/admin/coupons",
+      "roleName": "Admin",
+      "currentUrl": "http://localhost:4173/admin/coupons",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 0,
+      "totalExpected": 0,
+      "snippet": "Skip to main content FD_LMS ADMIN RAIL Global Telemetry User Governance Curriculum Audit Order Ledger Marketing Banners Promotions & Coupons M  Main A"
+    },
+    {
+      "path": "/admin/banners",
+      "roleName": "Admin",
+      "currentUrl": "http://localhost:4173/admin/banners",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 0,
+      "totalExpected": 0,
+      "snippet": "Skip to main content FD_LMS ADMIN RAIL Global Telemetry User Governance Curriculum Audit Order Ledger Marketing Banners Promotions & Coupons M  Main A"
+    },
+    {
+      "path": "/admin/website-management",
+      "roleName": "Admin",
+      "currentUrl": "http://localhost:4173/admin/website-management",
+      "title": "Asivo | High-Stakes Engineering & Microservices Learning Platform",
+      "pass": true,
+      "hasCrashed": false,
+      "foundSelectors": 0,
+      "totalExpected": 0,
+      "snippet": "Skip to main content FD_LMS ADMIN RAIL Global Telemetry User Governance Curriculum Audit Order Ledger Marketing Banners Promotions & Coupons M  Main A"
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": []
+}

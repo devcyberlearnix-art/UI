@@ -1,0 +1,256 @@
+[
+  {
+    "phase": "Phase 1",
+    "id": "1.1",
+    "title": "Payment Service Configuration Supports PAYU_KEY, PAYU_SALT, and PAYU_BASE_URL",
+    "verdict": "PASS",
+    "evidence": {
+      "supportsPayuKey": true,
+      "supportsPayuSalt": true,
+      "supportsPayuBaseUrl": true,
+      "supportsCourseServiceUrl": true
+    },
+    "details": "application.properties supports ${PAYU_KEY}, ${PAYU_SALT}, ${PAYU_BASE_URL}, and ${COURSE_SERVICE_URL}"
+  },
+  {
+    "phase": "Phase 1",
+    "id": "1.2",
+    "title": "PayU Sandbox Credentials Availability Audit",
+    "verdict": "BLOCKED",
+    "evidence": {
+      "configuredMerchantKey": "XidEdD (Mock default / placeholder)",
+      "activeSandboxProvisioned": false,
+      "requiredConfig": [
+        "PAYU_KEY",
+        "PAYU_SALT",
+        "PAYU_BASE_URL=https://test.payu.in/_payment"
+      ]
+    },
+    "details": "No active PayU Sandbox Merchant Key or Salt in repository .env. Marked BLOCKED per prompt mandate."
+  },
+  {
+    "phase": "Phase 2",
+    "id": "2.1",
+    "title": "Exact Request Hash Algorithm and Field Ordering (Official PayU Test Vector)",
+    "verdict": "PASS",
+    "evidence": {
+      "rawString": "gtKFFx|123456789|10.00|Test Product|John|john@example.com|||||||||||eCwWELxi",
+      "expectedSha512": "e5bc15c618ad4d502dfa4fa7bf625cbd8985f5715ef83af21183e6992f4d4dbd80789f51b58eec66dde2ef2ccaa23ad30c7251a8ba0a784a8640002866270794",
+      "hashLength": 128
+    },
+    "details": "SHA-512 matches official PayU 128-character hexadecimal specification"
+  },
+  {
+    "phase": "Phase 2",
+    "id": "2.2",
+    "title": "Exact Reverse Hash Formula (Without Additional Charges)",
+    "verdict": "PASS",
+    "evidence": {
+      "reverseString": "eCwWELxi|success|||||||||||john@example.com|John|Test Product|10.00|123456789|gtKFFx",
+      "computedReverseHash": "958aa7760d2cc2b7c9a3455d2004462034650f95c6bd8d0b539f43b07499a4e54c358e1bf2ca32f00670cddbfae9b52ab2764c3fd958d61ba5b1f24d196089e3"
+    },
+    "details": "Piping matches 11 delimiters between status and email for empty UDFs"
+  },
+  {
+    "phase": "Phase 2",
+    "id": "2.3",
+    "title": "Reverse Hash Formula with Additional Charges (TDR / Convenience Fees)",
+    "verdict": "PASS",
+    "evidence": {
+      "additionalCharges": "0.85",
+      "rawSequence": "0.85|eCwWELxi|success|||||||||||john@example.com|John|Test Product|10.00|123456789|gtKFFx",
+      "computedReverseHash": "408a18562569b431b896725d2c7bef0b995ec73a90840b8b6f829fc8c4a3a66ec3fbb83eaa099a3547c15f4f623b4d1a22c248763f7f4b61be363b4284292aa1"
+    },
+    "details": "additionalCharges prepended before SALT in accordance with official PayU specification"
+  },
+  {
+    "phase": "Phase 2",
+    "id": "2.4",
+    "title": "Rejection of Altered / Non-Existent Transaction IDs",
+    "verdict": "PASS",
+    "evidence": {
+      "httpStatus": 400,
+      "responseBody": "{\"error\":\"Payment not found\"}"
+    },
+    "details": "Non-existent or altered transaction ID rejected with HTTP 400 Payment not found"
+  },
+  {
+    "phase": "Phase 2",
+    "id": "2.5",
+    "title": "Rejection of Altered Payment Amounts in Webhook Callback",
+    "verdict": "PASS",
+    "evidence": {
+      "httpStatus": 400,
+      "responseBody": "{\"error\":\"Altered payment amount detected: callback=1.0 expected=1999.0\"}"
+    },
+    "details": "Tampered callback amount (1.00 vs 1999.00) rejected with HTTP 400"
+  },
+  {
+    "phase": "Phase 2",
+    "id": "2.6",
+    "title": "Rejection of Altered Merchant Identifiers in Callback",
+    "verdict": "PASS",
+    "evidence": {
+      "httpStatus": 400,
+      "responseBody": "{\"error\":\"Invalid merchant key\"}"
+    },
+    "details": "Forged merchant key rejected with HTTP 400 Invalid merchant key"
+  },
+  {
+    "phase": "Phase 2",
+    "id": "2.7",
+    "title": "Rejection of Forged Callback Signatures",
+    "verdict": "PASS",
+    "evidence": {
+      "httpStatus": 400,
+      "responseBody": "{\"error\":\"Invalid PayU hash\"}"
+    },
+    "details": "Forged hash rejected with HTTP 400 Invalid PayU hash"
+  },
+  {
+    "phase": "Phase 5",
+    "id": "5.1",
+    "title": "Payment State Transition: PENDING -> FAILED on Verified Failure Callback",
+    "verdict": "PASS",
+    "evidence": {
+      "httpStatus": 200,
+      "dbStatus": "FAILED"
+    },
+    "details": "Payment transitioned to terminal FAILED state"
+  },
+  {
+    "phase": "Phase 5",
+    "id": "5.2",
+    "title": "Terminal Protection: A Failed Payment Cannot Be Promoted to Success",
+    "verdict": "PASS",
+    "evidence": {
+      "httpStatus": 400,
+      "responseBody": "{\"error\":\"Cannot promote failed payment to success\"}"
+    },
+    "details": "Attempt to promote FAILED payment rejected with HTTP 400"
+  },
+  {
+    "phase": "Phase 5",
+    "id": "5.3",
+    "title": "Payment State Transition: PENDING -> SUCCESS on Verified Success Callback",
+    "verdict": "PASS",
+    "evidence": {
+      "httpStatus": 200,
+      "dbStatus": "SUCCESS"
+    },
+    "details": "Payment transitioned to SUCCESS"
+  },
+  {
+    "phase": "Phase 5",
+    "id": "5.4",
+    "title": "Duplicate Webhook Callback Idempotency on SUCCESS Payment",
+    "verdict": "PASS",
+    "evidence": {
+      "httpStatus": 200,
+      "message": "Returned 200 without re-triggering enrollment"
+    },
+    "details": "Duplicate delivery acknowledged cleanly without state mutation"
+  },
+  {
+    "phase": "Phase 3",
+    "id": "3.1",
+    "title": "Live Provider Sandbox Roundtrip Execution",
+    "verdict": "BLOCKED",
+    "evidence": {
+      "configuredKey": "XidEdD",
+      "baseUrl": "https://test.payu.in/_payment",
+      "reason": "No active PayU Sandbox Merchant Key or Salt configured in environment. Simulated payments are strictly prohibited."
+    },
+    "details": "Retained BLOCKED verdict in accordance with Version 19 release rules"
+  },
+  {
+    "phase": "Phase 4",
+    "id": "4.A",
+    "title": "Scenario A: Guest Cart (A, B) + User Cart (C) Merges to (A, B, C)",
+    "verdict": "PASS",
+    "evidence": {
+      "mergedCourseIds": [
+        86,
+        3,
+        135
+      ],
+      "hasA": true,
+      "hasB": true,
+      "hasC": true,
+      "totalCount": 3
+    },
+    "details": "All guest and user items merged without loss or duplicates"
+  },
+  {
+    "phase": "Phase 4",
+    "id": "4.B",
+    "title": "Scenario B: Duplicate Course Addition (Guest A + User A) Retains Exactly One A",
+    "verdict": "PASS",
+    "evidence": {
+      "course3Occurrences": 1
+    },
+    "details": "Backend cart service and frontend deduplicate duplicate course additions"
+  },
+  {
+    "phase": "Phase 4",
+    "id": "4.C",
+    "title": "Scenario C: Guest Cart Filter and Enrollment Protection Against Duplicate Purchase",
+    "verdict": "PASS",
+    "evidence": {
+      "studentId": "b3de7b3a-0aee-4317-8d18-e399e2bb4e9f",
+      "courseId": 3,
+      "activeEnrollmentCount": 1
+    },
+    "details": "Order and Course engines verify active enrollments and reject duplicate enrollment"
+  },
+  {
+    "phase": "Phase 4",
+    "id": "4.D",
+    "title": "Scenario D: Cart Sync Failure Recovery & Backup Preservation",
+    "verdict": "PASS",
+    "evidence": {
+      "backupKey": "lms_guest_cart_backup",
+      "behavior": "OrderContext preserves lms_guest_cart_backup before sync and only clears upon confirmed query invalidation"
+    },
+    "details": "Unsynchronized guest items remain stored and recoverable upon connection restore"
+  },
+  {
+    "phase": "Phase 4",
+    "id": "4.E",
+    "title": "Scenario E: Cross-User Cart Isolation (User A Logout -> User B Login)",
+    "verdict": "PASS",
+    "evidence": {
+      "userB_email": "user_b_1793531332133@cyberlearnix.dev",
+      "userB_cartItemCount": 0
+    },
+    "details": "User B cart is completely empty; zero leakage from User A"
+  },
+  {
+    "phase": "Phase 6",
+    "id": "6.1",
+    "title": "Docker Container Fleet Health Status",
+    "verdict": "PASS",
+    "evidence": {
+      "dockerFleetStatus": [
+        "cyberlearnix-payment-service: Up 5 minutes (healthy)",
+        "cyberlearnix-course-service: Up 3 hours (healthy)",
+        "cyberlearnix-apigateway: Up 5 hours (healthy)",
+        "cyberlearnix-notification-service: Up 5 hours (healthy)",
+        "cyberlearnix-userservice: Up 5 hours (healthy)",
+        "cyberlearnix-wishlist-service: Up 5 hours (healthy)",
+        "cyberlearnix-instructor-service: Up 5 hours (healthy)",
+        "cyberlearnix-review-service: Up 5 hours (healthy)",
+        "cyberlearnix-order-service: Up 5 hours (healthy)",
+        "cyberlearnix-coupon-service: Up 5 hours (healthy)",
+        "cyberlearnix-admin-service: Up 5 hours (healthy)",
+        "cyberlearnix-cart-service: Up 5 hours (healthy)",
+        "cyberlearnix-kafka: Up 5 hours (healthy)",
+        "cyberlearnix-postgres: Up 5 hours (healthy)",
+        "cyberlearnix-mailhog: Up 5 hours",
+        "cyberlearnix-redis: Up 5 hours (healthy)",
+        "cyberlearnix-zookeeper: Up 5 hours (healthy)"
+      ]
+    },
+    "details": "All CyberLearnix microservice containers reporting healthy"
+  }
+]

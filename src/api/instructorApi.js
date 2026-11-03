@@ -121,6 +121,59 @@ export const instructorApi = {
 
   // ======================== APPLICATION ========================
 
+  // GET /api/v1/instructors/subjects
+  // Returns taxonomy of teaching subjects
+  getTeachingSubjects: async () => {
+    try {
+      const response = await axiosInstance.get("/api/v1/instructors/subjects");
+      return response.data?.data || response.data || [];
+    } catch (err) {
+      console.warn("[instructorApi] GET /api/v1/instructors/subjects failed, using taxonomy fallback:", err);
+      return [
+        { id: "web-development", name: "Web Development", category: "Development", description: "Full-Stack, React, Node.js, Spring Boot & APIs" },
+        { id: "data-science-ai", name: "Data Science & AI", category: "AI & Data", description: "Machine Learning, Deep Learning, Big Data & Python" },
+        { id: "cybersecurity", name: "Cybersecurity & InfoSec", category: "Security", description: "Ethical Hacking, Network Security, SOC & Pentesting" },
+        { id: "cloud-devops", name: "Cloud Computing & DevOps", category: "Cloud Infrastructure", description: "AWS, Azure, Docker, Kubernetes & CI/CD Pipelines" },
+        { id: "mobile-app-dev", name: "Mobile App Development", category: "Development", description: "Android (Kotlin), iOS (Swift), React Native & Flutter" },
+        { id: "ui-ux-design", name: "UI/UX & Product Design", category: "Design", description: "Figma, User Research, Wireframing & Design Systems" },
+        { id: "business-finance", name: "Business & Finance", category: "Business", description: "Financial Modeling, Product Management, Growth & Analytics" },
+        { id: "software-architecture", name: "Software Architecture", category: "Architecture", description: "System Design, Microservices, Event-Driven & Scalability" }
+      ];
+    }
+  },
+
+  // POST /api/v1/instructors/applications/draft
+  // Save application draft before final submission
+  saveDraft: async (draftData) => {
+    const response = await axiosInstance.post(
+      "/api/v1/instructors/applications/draft",
+      draftData
+    );
+    return response.data;
+  },
+
+  // POST /api/v1/instructors/applications/documents/{docType}
+  // Upload a single document
+  uploadDocument: async (docType, file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await axiosInstance.post(
+      `/api/v1/instructors/applications/documents/${docType}`,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+    return response.data;
+  },
+
+  // DELETE /api/v1/instructors/applications/documents/{docType}
+  // Remove uploaded document
+  removeDocument: async (docType) => {
+    const response = await axiosInstance.delete(
+      `/api/v1/instructors/applications/documents/${docType}`
+    );
+    return response.data;
+  },
+
   // POST /api/v1/instructors/applications
   // Apply to become an instructor (student flow)
   applyForInstructor: async (formData) => {
@@ -133,26 +186,18 @@ export const instructorApi = {
 
   // GET /api/v1/instructors/applications/me
   // Returns the current logged-in user's instructor application details
-  // Curl reference: GET https://matted-ascent-specimen.ngrok-free.dev/api/v1/instructors/applications/me
   getMyApplication: async () => {
     try {
       const response = await axiosInstance.get("/api/v1/instructors/applications/me");
       return response.data;
     } catch (err) {
-      console.warn('[instructorApi] GET /api/v1/instructors/applications/me failed, trying /my-status and /applications fallbacks...');
-      try {
-        const fallback1 = await axiosInstance.get("/api/v1/instructors/applications/my-status");
-        return fallback1.data;
-      } catch (err1) {
-        const fallback2 = await axiosInstance.get("/api/v1/instructors/applications");
-        return fallback2.data;
-      }
+      console.warn('[instructorApi] GET /api/v1/instructors/applications/me failed:', err);
+      throw err;
     }
   },
 
   // GET /api/v1/instructors/applications/my-status
   // Returns the current logged-in student's instructor application status
-  // Response shape: { success, data: { applicationId, status, submittedAt, reviewMessage } }
   getMyApplicationStatus: async () => {
     try {
       const response = await axiosInstance.get("/api/v1/instructors/applications/me");
@@ -173,6 +218,16 @@ export const instructorApi = {
       const response = await axiosInstance.get("/api/v1/instructors/applications");
       return response.data;
     }
+  },
+
+  // GET /api/v1/instructors/applications/{applicationId}/documents/{docType}
+  // Download or stream document blob for preview
+  getDocumentBlob: async (applicationId, docType) => {
+    const response = await axiosInstance.get(
+      `/api/v1/instructors/applications/${applicationId}/documents/${docType}`,
+      { responseType: "blob" }
+    );
+    return response.data;
   },
 
   // ======================== MEDIA UPLOADS ========================

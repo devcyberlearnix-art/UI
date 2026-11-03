@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-11-01T06:40:34.503Z",
+  "environment": "Docker Microservices (11 services)",
+  "tests": [
+    {
+      "testName": "Admin Authentication",
+      "category": "RBAC & Security",
+      "status": "PASS",
+      "expected": "HTTP 200 with MAIN_ADMIN JWT",
+      "actual": "HTTP 200 MAIN_ADMIN authenticated",
+      "notes": "",
+      "timestamp": "2026-11-01T06:40:36.788Z"
+    },
+    {
+      "testName": "Unauthenticated Statistics Mutation Protection",
+      "category": "Security",
+      "status": "PASS",
+      "expected": "HTTP 401/403 Forbidden",
+      "actual": "HTTP 401 Rejected",
+      "notes": "",
+      "timestamp": "2026-11-01T06:40:36.807Z"
+    },
+    {
+      "testName": "Get Admin Statistics Draft",
+      "category": "CMS API",
+      "status": "PASS",
+      "expected": "Array of statistics records",
+      "actual": "1 records retrieved",
+      "notes": "",
+      "timestamp": "2026-11-01T06:40:36.870Z"
+    },
+    {
+      "testName": "Update Statistics Draft Configuration",
+      "category": "CMS Mutation",
+      "status": "PASS",
+      "expected": "HTTP 200 with 4 saved records",
+      "actual": "Saved 4 records successfully",
+      "notes": "",
+      "timestamp": "2026-11-01T06:40:37.000Z"
+    },
+    {
+      "testName": "Publish Draft to Production",
+      "category": "CMS Publishing",
+      "status": "PASS",
+      "expected": "HTTP 200 with new revision version",
+      "actual": "Published revision v12",
+      "notes": "",
+      "timestamp": "2026-11-01T06:40:37.211Z"
+    },
+    {
+      "testName": "Public Landing Page Serves Published Statistics",
+      "category": "Public Delivery",
+      "status": "PASS",
+      "expected": "Published statistics array matching v12",
+      "actual": "Verified: 4 stats delivered under v12",
+      "notes": "",
+      "timestamp": "2026-11-01T06:40:37.392Z"
+    },
+    {
+      "testName": "Public Website Stats Endpoint Integrity",
+      "category": "Public Delivery",
+      "status": "PASS",
+      "expected": "HTTP 200 with 4 published items",
+      "actual": "Retrieved 4 metrics",
+      "notes": "",
+      "timestamp": "2026-11-01T06:40:37.458Z"
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0
+  }
+}

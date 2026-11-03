@@ -22,7 +22,7 @@ export default defineConfig({
     open: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8079',
         changeOrigin: true,
         secure: false
       }
@@ -32,7 +32,7 @@ export default defineConfig({
     port: 4173,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8079',
         changeOrigin: true,
         secure: false
       }

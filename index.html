@@ -4,11 +4,64 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Asivo | Next-Gen Learning Ecosystem</title>
+    <title>Asivo | High-Stakes Engineering & Microservices Learning Platform</title>
+    <meta name="description" content="Master production backend systems, microservices, distributed cloud architecture, and application security through practical engineering projects and verifiable credentials." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://asivo.io/" />
+
+    <!-- Open Graph Metadata -->
+    <meta property="og:site_name" content="Asivo" />
+    <meta property="og:title" content="Asivo | High-Stakes Engineering & Microservices Learning Platform" />
+    <meta property="og:description" content="Production-ready engineering courses in Java, Spring Boot, distributed microservices, cloud infrastructure, and enterprise security." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://asivo.io/" />
+    <meta property="og:image" content="/asivo-logo.png" />
+
+    <!-- Twitter Card Metadata -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Asivo | High-Stakes Engineering Learning Ecosystem" />
+    <meta name="twitter:description" content="Master production backend systems, microservices, cloud infrastructure, and application security with verifiable credentials." />
+    <meta name="twitter:image" content="/asivo-logo.png" />
+
     <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Schema.org EducationalOrganization Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "EducationalOrganization",
+          "@id": "https://asivo.io/#organization",
+          "name": "Asivo Learning Ecosystem",
+          "url": "https://asivo.io/",
+          "logo": "https://asivo.io/asivo-logo.png",
+          "description": "Enterprise engineering platform offering high-stakes learning in microservices, cloud architecture, and system security.",
+          "sameAs": [
+            "https://github.com/asivo-org",
+            "https://twitter.com/asivo_learning"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://asivo.io/#website",
+          "url": "https://asivo.io/",
+          "name": "Asivo",
+          "publisher": {
+            "@id": "https://asivo.io/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://asivo.io/courses?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

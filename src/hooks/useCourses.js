@@ -7,17 +7,19 @@ import { courseApi } from '../api/courseApi';
 export const normalizeCoursePayload = (item, index = 0) => {
   if (!item) return null;
   const id = item.id || item.courseId || index + 1;
-  const title = item.title || item.name || 'Untitled Course';
+  const rawTitle = item.title || item.name || 'Untitled Course';
+  const title = rawTitle.replace(/^\[CYBERLEARNIX-SEED-[0-9]+\]\s*/i, '').replace(/#\d+/g, '').trim();
   const category = item.category || item.categoryName || 'General';
   const price = Number(item.price || item.amount || 0);
-  const rating = Number(item.rating || item.avgRating || 4.8);
+  const rating = Number(item.rating || item.avgRating || 0);
   const totalReviews = Number(item.totalReviews || item.reviewCount || 0);
   const students = Number(item.students || item.enrolledStudents || item.enrollmentCount || 0);
   const duration = item.duration || item.estimatedDuration || 'Self-paced';
   const level = item.level || item.difficultyLevel || 'All Levels';
   const instructor = item.instructor || item.instructorName || item.creator || 'Lead Instructor';
   const description = item.description || item.summary || 'Comprehensive masterclass designed by industry practitioners.';
-  const thumbnail = item.image || item.thumbnail || item.banner || null;
+  const rawThumbnail = item.image || item.thumbnail || item.banner || null;
+  const thumbnail = (rawThumbnail && !rawThumbnail.includes('placehold.co')) ? rawThumbnail : null;
 
   return {
     id,
@@ -88,5 +90,38 @@ export function useCourseDetail(courseId) {
     },
     enabled: Boolean(courseId),
     staleTime: 1000 * 60 * 5,
+  });
+}
+
+
+/**
+ * Hook: Query courses with live backend full search and filtering
+ */
+export function useCourseSearch({ search = '', category = '', level = '', sort = 'POPULAR', page = 0, size = 20 } = {}) {
+  return useQuery({
+    queryKey: ['courses-search', { search, category, level, sort, page, size }],
+    queryFn: async () => {
+      const params = {
+        search: search.trim() || undefined,
+        category: category && category !== 'All' && category !== 'ALL' ? category : undefined,
+        level: level && level !== 'All Levels' && level !== 'ALL' ? level : undefined,
+        sort: sort || 'POPULAR',
+        page,
+        size,
+      };
+      const response = await courseApi.getCourseList(params);
+      const data = response?.data || response;
+      const list = data?.courses || (Array.isArray(data) ? data : []);
+      const pagination = data?.pagination || {};
+
+      return {
+        courses: list.map(normalizeCoursePayload),
+        totalElements: pagination.totalElements ?? list.length,
+        totalPages: pagination.totalPages ?? 1,
+        hasNext: Boolean(pagination.hasNext),
+        hasPrevious: Boolean(pagination.hasPrevious),
+      };
+    },
+    staleTime: 1000 * 60 * 3,
   });
 }

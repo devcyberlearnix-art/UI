@@ -7,58 +7,30 @@ import {
 } from "lucide-react";
 import Portal from "../../components/ui/Portal";
 
-// ---------- Mock Data (stored in localStorage) ----------
+// ---------- Instructor Local State Persistence ----------
 const getCourses = () => {
   const stored = localStorage.getItem("instructor_courses");
-  if (stored) return JSON.parse(stored);
-  const defaultCourses = [
-    { id: "c1", title: "React Masterclass", description: "Learn React from scratch", price: 49, status: "published", createdAt: "2025-04-01", modules: [
-        { id: "m1", title: "Introduction", content: "Video intro", type: "video" },
-        { id: "m2", title: "React Hooks", content: "PDF notes", type: "pdf" }
-      ] },
-    { id: "c2", title: "UI/UX Design", description: "Figma prototyping", price: 39, status: "draft", createdAt: "2025-04-10", modules: [] }
-  ];
-  localStorage.setItem("instructor_courses", JSON.stringify(defaultCourses));
-  return defaultCourses;
+  return stored ? JSON.parse(stored) : [];
 };
 
 const getEnrollments = () => {
   const stored = localStorage.getItem("instructor_enrollments");
-  if (stored) return JSON.parse(stored);
-  const defaultEnrollments = [
-    { id: "e1", courseId: "c1", studentName: "John Doe", studentEmail: "john@example.com", progress: 65, grade: "A", enrolledAt: "2025-04-15" },
-    { id: "e2", courseId: "c1", studentName: "Jane Smith", studentEmail: "jane@example.com", progress: 40, grade: "B+", enrolledAt: "2025-04-20" }
-  ];
-  localStorage.setItem("instructor_enrollments", JSON.stringify(defaultEnrollments));
-  return defaultEnrollments;
+  return stored ? JSON.parse(stored) : [];
 };
 
 const getEarnings = () => {
   const stored = localStorage.getItem("instructor_earnings");
-  if (stored) return JSON.parse(stored);
-  const defaultEarnings = { total: 2450, monthly: [320, 450, 580, 620, 480], pending: 150 };
-  localStorage.setItem("instructor_earnings", JSON.stringify(defaultEarnings));
-  return defaultEarnings;
+  return stored ? JSON.parse(stored) : { total: 0, monthly: [], pending: 0 };
 };
 
 const getAnnouncements = () => {
   const stored = localStorage.getItem("instructor_announcements");
-  if (stored) return JSON.parse(stored);
-  const defaultAnnouncements = [
-    { id: "a1", courseId: "c1", title: "Welcome to React course", content: "Please complete the introduction module.", date: "2025-04-16" }
-  ];
-  localStorage.setItem("instructor_announcements", JSON.stringify(defaultAnnouncements));
-  return defaultAnnouncements;
+  return stored ? JSON.parse(stored) : [];
 };
 
 const getMessages = () => {
   const stored = localStorage.getItem("instructor_messages");
-  if (stored) return JSON.parse(stored);
-  const defaultMessages = [
-    { id: "m1", courseId: "c1", from: "John Doe", message: "When is the deadline?", date: "2025-04-18" }
-  ];
-  localStorage.setItem("instructor_messages", JSON.stringify(defaultMessages));
-  return defaultMessages;
+  return stored ? JSON.parse(stored) : [];
 };
 
 // ---------- Helper Functions ----------
@@ -233,14 +205,14 @@ const InstructorDashboard = () => {
 
   // ----- Messages -----
   const handleReplyMessage = (msgId, reply) => {
-    alert(`Reply sent: ${reply} (mock)`);
+    alert(`Reply sent: ${reply}`);
     setShowMessageModal(false);
   };
 
   // ----- Earnings & Analytics -----
   const totalStudents = enrollments.length;
   const completedCourses = courses.filter(c => c.status === "published").length;
-  const avgRating = 4.7;
+  const avgRating = courses.length > 0 ? (courses.reduce((acc, c) => acc + (Number(c.rating) || 0), 0) / courses.length).toFixed(1) : "0.0";
 
   // Loading skeleton
   if (loading) {

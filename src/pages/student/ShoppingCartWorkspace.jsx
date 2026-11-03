@@ -1,5 +1,5 @@
 // src/pages/student/ShoppingCartWorkspace.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShoppingBag,
@@ -30,21 +30,53 @@ const SPRING = { type: 'spring', stiffness: 280, damping: 26 };
 export default function ShoppingCartWorkspace() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const isAuth = Boolean(!authLoading && isAuthenticated && user?.id && user?.id !== 'guest');
   const [couponCode, setCouponCode] = useState('');
   const [isStaging, setIsStaging] = useState(false);
 
-  const cartQueryKey = ['cart', user?.id || 'guest'];
+  const cartQueryKey = ['cart', isAuth ? user.id : 'guest'];
+
+  // Local guest cart state
+  const [guestCart, setGuestCart] = useState(() => {
+    const local = typeof window !== 'undefined' ? (JSON.parse(localStorage.getItem('lms_cart') || '[]')) : [];
+    const subtotal = local.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
+    return {
+      courses: local,
+      subtotal,
+      discount: 0,
+      tax: 0,
+      total: subtotal,
+    };
+  });
+
+  useEffect(() => {
+    if (isAuth) return;
+    const handleUpdate = () => {
+      const local = typeof window !== 'undefined' ? (JSON.parse(localStorage.getItem('lms_cart') || '[]')) : [];
+      const subtotal = local.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
+      setGuestCart({
+        courses: local,
+        subtotal,
+        discount: 0,
+        tax: 0,
+        total: subtotal,
+      });
+    };
+    window.addEventListener('cartUpdated', handleUpdate);
+    return () => window.removeEventListener('cartUpdated', handleUpdate);
+  }, [isAuth]);
 
   // =========================================================================
-  // 1. DATA INGESTION: Connect with Microservice Gateway Registers
+  // 1. DATA INGESTION: Connect with Microservice Gateway Registers (Auth only)
   // =========================================================================
   const {
-    data: cart = { courses: [], subtotal: 0, discount: 0, tax: 0, total: 0 },
-    isLoading,
+    data: remoteCart,
+    isLoading: isRemoteLoading,
     isFetching,
   } = useQuery({
     queryKey: cartQueryKey,
+    enabled: isAuth,
     queryFn: async () => {
       const response = await cartApi.getCart();
       return normalizeCart(response?.data || response);
@@ -52,11 +84,23 @@ export default function ShoppingCartWorkspace() {
     staleTime: 1000 * 60 * 2,
   });
 
+  const cart = isAuth ? (remoteCart || guestCart) : guestCart;
+  const isLoading = isAuth ? isRemoteLoading : false;
+
   // =========================================================================
   // 2. DATA MUTATION: Optimistic Removal Pipeline
   // =========================================================================
   const removeItemMutation = useMutation({
-    mutationFn: async (courseId) => await cartApi.removeFromCart(courseId),
+    mutationFn: async (courseId) => {
+      if (!isAuth) {
+        const local = JSON.parse(localStorage.getItem('lms_cart') || '[]');
+        const updated = local.filter((c) => String(c.id || c.courseId) !== String(courseId));
+        localStorage.setItem('lms_cart', JSON.stringify(updated));
+        window.dispatchEvent(new Event('cartUpdated'));
+        return { success: true };
+      }
+      return await cartApi.removeFromCart(courseId);
+    },
     onMutate: async (courseId) => {
       await queryClient.cancelQueries({ queryKey: cartQueryKey });
       const previousCart = queryClient.getQueryData(cartQueryKey);
@@ -131,6 +175,11 @@ export default function ShoppingCartWorkspace() {
   // 4. CHECKOUT STAGING TRIGGER: Post queue to /api/v1/orders/stage
   // =========================================================================
   const handleProceedToCheckout = async () => {
+    if (!isAuth) {
+      toast('Please sign in or register to complete your purchase.', { icon: '🔑' });
+      navigate('/login?redirect=/cart');
+      return;
+    }
     if (!cart?.courses || cart.courses.length === 0) {
       toast.error('Cannot checkout with an empty cart.');
       return;

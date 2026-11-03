@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { cartApi, normalizeCart, normalizeCartItem, getSharedCart, syncSharedCart } from '../api/cartApi';
+import axiosInstance from '../api/axiosInstance';
 import { orderApi } from '../api/orderApi';
 import { useSafeAuth } from './AuthContext';
 import toast from 'react-hot-toast';
@@ -8,57 +9,132 @@ import toast from 'react-hot-toast';
 const OrderContext = createContext(null);
 
 export const OrderProvider = ({ children }) => {
-  const { user } = useSafeAuth();
+  const { user, isAuthenticated, loading: authLoading } = useSafeAuth();
   const queryClient = useQueryClient();
+  const isAuth = Boolean(!authLoading && isAuthenticated && user?.id && user?.id !== 'guest');
 
   // =========================================================================
-  // 1. QUERY: Cart State with Fallback
+  // 1. LOCAL GUEST CART & AUTH-AWARE QUERY
   // =========================================================================
-  const {
-    data: cart = {
-      cartId: null,
-      totalCourses: 0,
-      courses: [],
-      subtotal: 0,
+  const [localCart, setLocalCart] = useState(() => {
+    const localItems = getSharedCart();
+    const subtotal = localItems.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 1), 0);
+    return {
+      cartId: 'local-cart',
+      totalCourses: localItems.length,
+      courses: localItems.map(normalizeCartItem),
+      subtotal,
       discount: 0,
       tax: 0,
-      total: 0,
+      total: subtotal,
       couponCode: null,
-    },
+    };
+  });
+
+  // Keep guest cart synchronized across browser tabs and actions
+  useEffect(() => {
+    if (isAuth) return;
+    const handleCartUpdated = () => {
+      const localItems = getSharedCart();
+      const subtotal = localItems.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 1), 0);
+      setLocalCart({
+        cartId: 'local-cart',
+        totalCourses: localItems.length,
+        courses: localItems.map(normalizeCartItem),
+        subtotal,
+        discount: 0,
+        tax: 0,
+        total: subtotal,
+        couponCode: null,
+      });
+    };
+
+    window.addEventListener('cartUpdated', handleCartUpdated);
+    window.addEventListener('storage', handleCartUpdated);
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdated);
+      window.removeEventListener('storage', handleCartUpdated);
+    };
+  }, [isAuth]);
+
+  // Query only fires for verified authenticated users
+  const {
+    data: remoteCart,
     isLoading: isCartLoading,
     isFetching: isCartFetching,
     refetch: refetchCart,
   } = useQuery({
-    queryKey: ['cart', user?.id || 'guest'],
+    queryKey: ['cart', isAuth ? user.id : 'guest'],
+    enabled: isAuth,
     queryFn: async () => {
-      try {
-        const response = await cartApi.getCart();
-        return normalizeCart(response?.data || response);
-      } catch (err) {
-        // Fallback to shared localStorage cart for guest or offline mode
-        const localItems = getSharedCart();
-        const subtotal = localItems.reduce((acc, item) => acc + (item.price || 0), 0);
-        return {
-          cartId: 'local-cart',
-          totalCourses: localItems.length,
-          courses: localItems.map(normalizeCartItem),
-          subtotal,
-          discount: 0,
-          tax: 0,
-          total: subtotal,
-          couponCode: null,
-        };
-      }
+      const response = await cartApi.getCart();
+      return normalizeCart(response?.data || response);
     },
     staleTime: 1000 * 60 * 2, // 2 minutes fresh
   });
 
-  // Keep localStorage & other tabs synchronized
+  const cart = isAuth ? (remoteCart || localCart) : localCart;
+
+  const mergedForUserRef = useRef(null);
+
+  // Automatic Guest Cart Merge on Authentication (Phase 4)
   useEffect(() => {
-    if (cart?.courses) {
-      syncSharedCart(cart.courses);
+    if (!isAuth || !user?.id) {
+      mergedForUserRef.current = null;
+      return;
     }
-  }, [cart]);
+
+    if (mergedForUserRef.current === user.id) {
+      return;
+    }
+
+    const mergeGuestCart = async () => {
+      const guestItems = getSharedCart();
+      if (!guestItems || guestItems.length === 0) {
+        mergedForUserRef.current = user.id;
+        return;
+      }
+
+      // Preserve guest items backup before sync (Scenario D)
+      try {
+        localStorage.setItem('lms_guest_cart_backup', JSON.stringify(guestItems));
+      } catch (storageErr) {
+        console.warn('Backup storage error', storageErr);
+      }
+
+      try {
+        // Fetch student's enrolled courses to filter out duplicates (Scenario C)
+        let enrolledIds = [];
+        try {
+          const coursesRes = await axiosInstance.get('/api/v1/dashboard/student/courses');
+          const list = coursesRes?.data?.data || coursesRes?.data || [];
+          enrolledIds = (Array.isArray(list) ? list : []).map(c => String(c.id || c.courseId));
+        } catch {
+          // If check fails, continue with cart merge
+        }
+
+        await cartApi.mergeGuestCart(guestItems, enrolledIds);
+        mergedForUserRef.current = user.id;
+        try {
+          localStorage.removeItem('lms_guest_cart_backup');
+        } catch {}
+        // Refresh authenticated cart from server
+        queryClient.invalidateQueries({ queryKey: ['cart', user.id] });
+      } catch (err) {
+        console.warn('[OrderContext] Guest cart merge failed; preserving local items for recovery:', err);
+        // Scenario D: Guest items remain preserved in localStorage and backup
+      }
+    };
+
+    mergeGuestCart();
+  }, [isAuth, user?.id, queryClient]);
+
+  // Keep localStorage & other tabs synchronized for authenticated users (only after merge check)
+  useEffect(() => {
+    if (isAuth && remoteCart?.courses && mergedForUserRef.current === user?.id) {
+      syncSharedCart(remoteCart.courses);
+    }
+  }, [isAuth, remoteCart, user?.id]);
 
   // =========================================================================
   // 2. QUERY: User Orders
@@ -69,6 +145,7 @@ export const OrderProvider = ({ children }) => {
     refetch: loadUserOrders,
   } = useQuery({
     queryKey: ['orders', user?.id],
+    enabled: Boolean(user && user.id && user.id !== 'guest'),
     queryFn: async () => {
       if (!user) return [];
       try {
@@ -92,7 +169,6 @@ export const OrderProvider = ({ children }) => {
         return [];
       }
     },
-    enabled: Boolean(user?.id),
     staleTime: 1000 * 60 * 3,
   });
 

@@ -1,0 +1,88 @@
+{
+  "timestamp": "2026-10-31T18:43:41.059Z",
+  "viewports": {
+    "desktop": {
+      "resolution": "1440x900",
+      "heroHeading": "Architect Distributed Systems for Real Production #1793470832",
+      "ctaCount": 3,
+      "navVisible": true,
+      "status": "PASS"
+    },
+    "tablet": {
+      "resolution": "768x1024",
+      "heroHeading": "Architect Distributed Systems for Real Production #1793470832",
+      "status": "PASS"
+    },
+    "mobile": {
+      "resolution": "375x667",
+      "heroHeading": "Architect Distributed Systems for Real Production #1793470832",
+      "hamburgerVisible": true,
+      "status": "PASS"
+    }
+  },
+  "editors": {
+    "WebsiteManagementHub": {
+      "path": "/admin/website-management",
+      "status": "PASS",
+      "details": "Inputs: 0, Buttons: 32, Matched Text: true"
+    },
+    "HeroEditor": {
+      "path": "/admin/website-management/hero",
+      "status": "PASS",
+      "details": "Inputs: 11, Buttons: 24, Matched Text: true"
+    },
+    "NavigationEditor": {
+      "path": "/admin/website-management/navigation",
+      "status": "PASS",
+      "details": "Inputs: 0, Buttons: 49, Matched Text: true"
+    },
+    "SectionManager": {
+      "path": "/admin/website-management/sections",
+      "status": "PASS",
+      "details": "Inputs: 0, Buttons: 44, Matched Text: true"
+    },
+    "FooterEditor": {
+      "path": "/admin/website-management/footer",
+      "status": "PASS",
+      "details": "Inputs: 8, Buttons: 21, Matched Text: true"
+    },
+    "TestimonialEditor": {
+      "path": "/admin/website-management/testimonials",
+      "status": "PASS",
+      "details": "Inputs: 0, Buttons: 20, Matched Text: true"
+    },
+    "StatisticsEditor": {
+      "path": "/admin/website-management/statistics",
+      "status": "PASS",
+      "details": "Inputs: 12, Buttons: 23, Matched Text: true"
+    },
+    "SiteSettingsEditor": {
+      "path": "/admin/website-management/settings",
+      "status": "PASS",
+      "details": "Inputs: 9, Buttons: 18, Matched Text: true"
+    },
+    "SEOEditor": {
+      "path": "/admin/website-management/seo",
+      "status": "PASS",
+      "details": "Inputs: 7, Buttons: 18, Matched Text: true"
+    },
+    "MediaLibrary": {
+      "path": "/admin/website-management/media",
+      "status": "PASS",
+      "details": "Inputs: 1, Buttons: 17, Matched Text: true"
+    },
+    "RevisionHistory": {
+      "path": "/admin/website-management/revisions",
+      "status": "PASS",
+      "details": "Inputs: 0, Buttons: 35, Matched Text: true"
+    }
+  },
+  "cwv": {
+    "lcp": 732,
+    "cls": 0.029929784170883073,
+    "fcp": 76,
+    "inp": 0
+  },
+  "consoleErrors": [],
+  "networkErrors": []
+}

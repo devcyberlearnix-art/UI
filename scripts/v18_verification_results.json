@@ -1,0 +1,255 @@
+[
+  {
+    "phase": "Phase 1",
+    "title": "Payment Service Actuator Health Endpoint",
+    "verdict": "PASS",
+    "evidence": {
+      "status": 200,
+      "body": {
+        "status": "UP",
+        "components": {
+          "db": {
+            "status": "UP",
+            "details": {
+              "database": "PostgreSQL",
+              "validationQuery": "isValid()"
+            }
+          },
+          "diskSpace": {
+            "status": "UP",
+            "details": {
+              "total": 1081101176832,
+              "free": 990429843456,
+              "threshold": 10485760,
+              "path": "/app/.",
+              "exists": true
+            }
+          },
+          "livenessState": {
+            "status": "UP"
+          },
+          "ping": {
+            "status": "UP"
+          },
+          "readinessState": {
+            "status": "UP"
+          }
+        },
+        "groups": [
+          "liveness",
+          "readiness"
+        ]
+      }
+    },
+    "details": "Status: UP, DB: UP (PostgreSQL)"
+  },
+  {
+    "phase": "Phase 1",
+    "title": "Container Internal Healthcheck (curl inside container)",
+    "verdict": "PASS",
+    "evidence": "{\"status\":\"UP\",\"components\":{\"db\":{\"status\":\"UP\",\"details\":{\"database\":\"PostgreSQL\",\"validationQuery\":\"isValid()\"}},\"diskSpace\":{\"status\":\"UP\",\"details\":{\"total\":1081101176832,\"free\":990429843456,\"threshold\":10485760,\"path\":\"/app/.\",\"exists\":true}},\"livenessState\":{\"status\":\"UP\"},\"ping\":{\"status\":\"UP\"},\"readinessState\":{\"status\":\"UP\"}},\"groups\":[\"liveness\",\"readiness\"]}",
+    "details": "Container curl returned valid UP response"
+  },
+  {
+    "phase": "Phase 1",
+    "title": "Docker Engine Container Health Status",
+    "verdict": "PASS",
+    "evidence": "docker inspect reports: healthy",
+    "details": "Docker officially marks container as \"healthy\""
+  },
+  {
+    "phase": "Phase 1",
+    "title": "Actuator Exposure Security Boundary (No sensitive env/beans exposed)",
+    "verdict": "PASS",
+    "evidence": {
+      "envStatus": 500,
+      "envBody": {
+        "error": "No static resource actuator/env."
+      },
+      "beansStatus": 500,
+      "healthHasPassword": false
+    },
+    "details": "Sensitive actuator endpoints (/env, /beans) rejected with No static resource; health response contains zero credentials"
+  },
+  {
+    "phase": "Phase 2",
+    "title": "Order Creation in PENDING State",
+    "verdict": "PASS",
+    "evidence": {
+      "orderId": "ba6069f8-3f33-49e3-825c-69fce923ddb1",
+      "orderInitialStatus": "PENDING",
+      "dbOrderInitial": "ba6069f8-3f33-49e3-825c-69fce923ddb1|PENDING"
+    },
+    "details": "Order ba6069f8-3f33-49e3-825c-69fce923ddb1 initialized in PENDING state in DB with authoritative total ₹1999.00"
+  },
+  {
+    "phase": "Phase 2",
+    "title": "Payment Initiation & Authoritative Price Guard",
+    "verdict": "PASS",
+    "evidence": {
+      "isTamperBlocked": true,
+      "txnId": "134d2ce7520746f299f48efe6ddeec131793529734531",
+      "dbPaymentInitial": "134d2ce7520746f299f48efe6ddeec131793529734531|1999|PENDING"
+    },
+    "details": "Client price tampering rejected (HTTP 400); authoritative payment created with PENDING in DB"
+  },
+  {
+    "phase": "Phase 2",
+    "title": "Webhook Signature Verification (Tampered Hash Rejection)",
+    "verdict": "PASS",
+    "evidence": {
+      "status": 400,
+      "body": {
+        "error": "Invalid PayU hash"
+      }
+    },
+    "details": "Forged/tampered hash callback returned HTTP 400 Bad Request"
+  },
+  {
+    "phase": "Phase 2",
+    "title": "Payment Failure Callback Transition",
+    "verdict": "PASS",
+    "evidence": {
+      "status": 200,
+      "dbPaymentFailed": "134d2ce7520746f299f48efe6ddeec131793529734531|FAILED"
+    },
+    "details": "Payment record transitioned to FAILED in lms_payment_db"
+  },
+  {
+    "phase": "Phase 2",
+    "title": "Duplicate Webhook Delivery Idempotency",
+    "verdict": "PASS",
+    "evidence": {
+      "status": 200,
+      "dbPaymentDup": "134d2ce7520746f299f48efe6ddeec131793529734531|FAILED"
+    },
+    "details": "Duplicate callback processed idempotently with HTTP 200; state remained stable"
+  },
+  {
+    "phase": "Phase 2",
+    "title": "Order Status State Machine & Security (Cancellation + Illegal Transition Guard)",
+    "verdict": "PASS",
+    "evidence": {
+      "cancelStatus": 200,
+      "dbOrderCancelled": "ba6069f8-3f33-49e3-825c-69fce923ddb1|CANCELLED",
+      "illegalStatus": 403
+    },
+    "details": "Order cancellation succeeded; unprivileged student status overwrite strictly forbidden (HTTP 403)"
+  },
+  {
+    "phase": "Phase 2",
+    "title": "Enrollment Creation Safety (No premature or unpaid enrollments)",
+    "verdict": "PASS",
+    "evidence": {
+      "dbEnrollment": "(empty - zero premature records)"
+    },
+    "details": "No enrollment record created in course database for unpaid / failed transaction"
+  },
+  {
+    "phase": "Phase 2",
+    "title": "Abandoned Checkout Session Isolation",
+    "verdict": "PASS",
+    "evidence": {
+      "abandonedOrderId": "e5b4b2b2-e3e7-4116-a5fd-576d7e7f392d",
+      "dbAbandoned": "e5b4b2b2-e3e7-4116-a5fd-576d7e7f392d|PENDING"
+    },
+    "details": "Abandoned staged order remains in PENDING state; zero financial charge or course access granted"
+  },
+  {
+    "phase": "Phase 2",
+    "title": "Payment Provider Sandbox End-to-End Live Execution",
+    "verdict": "BLOCKED",
+    "evidence": {
+      "configuredPayuBaseUrl": "\"NOT_SET\"",
+      "verifyStatus": "FAILED",
+      "reason": "No active PayU Sandbox Merchant Key/Salt or Sandbox Base URL configured in environment (.env)."
+    },
+    "details": "BLOCKED per release requirements: external sandbox credentials unavailable. Simulated payments are strictly prohibited."
+  },
+  {
+    "phase": "Phase 3",
+    "title": "Backend Protected Cart Boundary (GET /api/v1/cart requires token)",
+    "verdict": "PASS",
+    "evidence": {
+      "status": 401
+    },
+    "details": "Backend strictly guards /api/v1/cart with HTTP 401 when no Bearer token is provided"
+  },
+  {
+    "phase": "Phase 3",
+    "title": "User Isolation: Cross-Account Order Access Prevention",
+    "verdict": "PASS",
+    "evidence": {
+      "userB_email": "student_acc_1792164997416@cyberlearnix.dev",
+      "accessedOrder": "ba6069f8-3f33-49e3-825c-69fce923ddb1",
+      "status": 404
+    },
+    "details": "User B querying User A's order receives 404 Not Found"
+  },
+  {
+    "phase": "Phase 3",
+    "title": "RBAC Security: Student Access to Admin Orders Guarded",
+    "verdict": "PASS",
+    "evidence": {
+      "status": 403
+    },
+    "details": "Student access to /api/v1/orders/admin returned HTTP 403 Forbidden"
+  },
+  {
+    "phase": "Phase 3",
+    "title": "Token Refresh Single Operation (POST /api/v1/auth/refresh)",
+    "verdict": "PASS",
+    "evidence": {
+      "status": 200,
+      "hasNewToken": true
+    },
+    "details": "Refresh endpoint returns fresh access token when presented with valid refresh token"
+  },
+  {
+    "phase": "Phase 3",
+    "title": "Invalid Refresh Token Rejection (HTTP 401)",
+    "verdict": "PASS",
+    "evidence": {
+      "status": 401,
+      "message": "Invalid refresh token"
+    },
+    "details": "Invalid refresh token rejected with HTTP 401; cleans up invalid session"
+  },
+  {
+    "phase": "Phase 3",
+    "title": "Anonymous 401 Isolation (Code Audit in axiosInstance.js)",
+    "verdict": "PASS",
+    "evidence": "axiosInstance.js lines 118-130 check hadAuthHeader && hasRefreshToken before triggering refresh or clearing tokens",
+    "details": "Unauthenticated public requests receiving 401 do not wipe active sessions"
+  },
+  {
+    "phase": "Phase 3",
+    "title": "403 Forbidden Session Preservation (Code Audit in axiosInstance.js)",
+    "verdict": "PASS",
+    "evidence": "axiosInstance.js line 266: 403 Forbidden is intentionally NOT handled as expired session",
+    "details": "Permission denials (403) preserve authentication and do not trigger logout"
+  },
+  {
+    "phase": "Phase 3",
+    "title": "Concurrent Request Queueing (Code Audit in axiosInstance.js)",
+    "verdict": "PASS",
+    "evidence": "axiosInstance.js lines 131-141: isRefreshing flag queues concurrent requests in failedQueue to prevent loops",
+    "details": "Concurrent 401s coalesce into a single refresh call with queued retries"
+  },
+  {
+    "phase": "Phase 3",
+    "title": "Guest Cart Merge Behavior Analysis",
+    "verdict": "PARTIAL",
+    "evidence": "OrderContext.jsx lines 79-82 syncs remoteCart into lms_cart upon login; backend cart-service has no automated merge endpoint",
+    "details": "Upon login, authenticated remote cart takes precedence and synchronizes into storage; guest items are replaced by authenticated state."
+  },
+  {
+    "phase": "Phase 4",
+    "title": "Credential Hygiene in Payment Service Logs",
+    "verdict": "PASS",
+    "evidence": {
+      "hasCredentialLeaks": false
+    },
+    "details": "No raw database passwords or secret salts exposed in recent container logs"
+  }
+]

@@ -1,8 +1,10 @@
+import { queryClient } from '../core/queryClient';
 // src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authApi } from '../api/authApi';
 import { studentApi } from '../api/studentApi';
 import { instructorApi } from '../api/instructorApi';
+import { adminApi } from '../api/adminApi';
 import toast from 'react-hot-toast';
 import { parseApiError } from '../utils/apiErrorParser';
 import { normalizePhotoUrl } from '../config/api';
@@ -157,6 +159,23 @@ export const AuthProvider = ({ children }) => {
 
     restoreSession();
   }, []);
+  // Listen for session expiration events dispatched by axios interceptors
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      setToken(null);
+      setUser(null);
+      try {
+        queryClient.removeQueries({ queryKey: ['cart'] });
+        queryClient.removeQueries({ queryKey: ['orders'] });
+        queryClient.removeQueries({ queryKey: ['enrolled-courses'] });
+        queryClient.removeQueries({ queryKey: ['wishlist'] });
+      } catch (err) {}
+    };
+
+    window.addEventListener('authSessionExpired', handleSessionExpired);
+    return () => window.removeEventListener('authSessionExpired', handleSessionExpired);
+  }, []);
+
 
   // Listen for profile photo changes from other components
   useEffect(() => {
@@ -191,10 +210,9 @@ export const AuthProvider = ({ children }) => {
     };
   }, [user]);
 
-  const login = async (email, password) => {
+  const login = async (email, password, isAdmin = false) => {
     try {
       setError(null);
-      setLoading(true);
       
       const emailStr = typeof email === 'string' ? email : String(email || '');
       const passwordStr = typeof password === 'string' ? password : String(password || '');
@@ -206,7 +224,12 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Password is required');
       }
       
-      const response = await authApi.login(emailStr.trim(), passwordStr);
+      let response;
+      if (isAdmin) {
+        response = await adminApi.loginDirect(emailStr.trim(), passwordStr);
+      } else {
+        response = await authApi.login(emailStr.trim(), passwordStr);
+      }
       
       let tokenData = null;
       let refreshTokenData = null;
@@ -225,7 +248,7 @@ export const AuthProvider = ({ children }) => {
         refreshTokenData = payload.authentication?.refreshToken || payload.refreshToken || payload.refresh_token || null;
 
         // ✅ Extract user data from response
-        const userInfo = payload.user || payload;
+        const userInfo = payload.admin || payload.user || payload;
         const profilePhoto = userInfo.profilePhoto || userInfo.photoURL || userInfo.avatar || userInfo.profilePhotoUrl || userInfo.photoUrl || null;
 
         // Normalize photo URL to work in both development and production
@@ -269,15 +292,12 @@ export const AuthProvider = ({ children }) => {
       toast.error(errorMessage);
       
       return { success: false, error: errorMessage, originalError: error };
-    } finally {
-      setLoading(false);
     }
   };
 
   const socialLogin = async (socialData) => {
     try {
       setError(null);
-      setLoading(true);
 
       const response = await authApi.socialLogin(socialData);
       let tokenData = null;
@@ -327,8 +347,6 @@ export const AuthProvider = ({ children }) => {
       setError(errorMessage);
       toast.error(errorMessage);
       return { success: false, error: errorMessage, originalError: error };
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -339,12 +357,23 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('[AuthProvider] Logout error:', error);
     } finally {
+      // Immediately cancel and clear all cached queries to prevent authenticated queries from re-fetching
+      try {
+        queryClient.cancelQueries();
+        queryClient.clear();
+      } catch (qErr) {
+        console.warn('[AuthProvider] QueryClient clear warning:', qErr);
+      }
+
       localStorage.removeItem('lms_token');
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       localStorage.removeItem('lms_user');
+      localStorage.removeItem('lms_cart');
+      localStorage.removeItem('lms_guest_cart_backup');
       sessionStorage.removeItem('lms_token');
       sessionStorage.removeItem('lms_user');
+      window.dispatchEvent(new Event('cartUpdated'));
       
       setToken(null);
       setUser(null);
@@ -363,7 +392,7 @@ export const AuthProvider = ({ children }) => {
     socialLogin,
     logout,
     syncSession,
-    isAuthenticated: !!token,
+    isAuthenticated: Boolean(!loading && token && user && user.id && user.id !== 'guest'),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,0 +1,288 @@
+[
+  {
+    "moduleName": "User/Auth",
+    "endpoint": "/api/v1/auth/login",
+    "method": "POST",
+    "role": "ADMIN",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Admin authenticated"
+  },
+  {
+    "moduleName": "User/Auth",
+    "endpoint": "/api/v1/auth/login",
+    "method": "POST",
+    "role": "INSTRUCTOR",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Instructor authenticated"
+  },
+  {
+    "moduleName": "User/Auth",
+    "endpoint": "/api/v1/auth/login",
+    "method": "POST",
+    "role": "STUDENT",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Student authenticated"
+  },
+  {
+    "moduleName": "User Service",
+    "endpoint": "/api/v1/users/me",
+    "method": "GET",
+    "role": "STUDENT",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Profile: student_browser_1792166505208@cyberlearnix.dev"
+  },
+  {
+    "moduleName": "User Service",
+    "endpoint": "/api/v1/users/me",
+    "method": "PUT",
+    "role": "STUDENT",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Updated student profile metadata"
+  },
+  {
+    "moduleName": "User Service",
+    "endpoint": "/api/v1/users/me/sessions",
+    "method": "GET",
+    "role": "STUDENT",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Active sessions count: OK"
+  },
+  {
+    "moduleName": "Course Service",
+    "endpoint": "/api/v1/courses",
+    "method": "GET",
+    "role": "ANONYMOUS",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Retrieved 5 courses catalog page"
+  },
+  {
+    "moduleName": "Course Service",
+    "endpoint": "/api/v1/courses/2",
+    "method": "GET",
+    "role": "ANONYMOUS",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Details for: Clean Code and Refactoring"
+  },
+  {
+    "moduleName": "Course Service",
+    "endpoint": "/api/v1/courses/search/typeahead",
+    "method": "GET",
+    "role": "ANONYMOUS",
+    "status": 401,
+    "expected": 200,
+    "passed": false,
+    "details": "Request failed with status code 401"
+  },
+  {
+    "moduleName": "Course Service",
+    "endpoint": "/api/v1/banners",
+    "method": "GET",
+    "role": "ANONYMOUS",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Public active banners: OK"
+  },
+  {
+    "moduleName": "Course Service",
+    "endpoint": "/api/v1/dashboard/student/courses",
+    "method": "GET",
+    "role": "STUDENT",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Enrolled courses count: 0"
+  },
+  {
+    "moduleName": "Course Service",
+    "endpoint": "/api/v1/progress/2",
+    "method": "GET",
+    "role": "STUDENT",
+    "status": 403,
+    "expected": [
+      200,
+      404
+    ],
+    "passed": false,
+    "details": "Insufficient permissions"
+  },
+  {
+    "moduleName": "Cart Service",
+    "endpoint": "/api/v1/cart",
+    "method": "GET",
+    "role": "STUDENT",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Cart items: 0"
+  },
+  {
+    "moduleName": "Cart Service",
+    "endpoint": "/api/v1/cart",
+    "method": "POST",
+    "role": "STUDENT",
+    "status": 201,
+    "expected": 200,
+    "passed": true,
+    "details": "Item added to authenticated cart"
+  },
+  {
+    "moduleName": "Coupon Service",
+    "endpoint": "/api/v1/coupons/validate",
+    "method": "POST",
+    "role": "STUDENT",
+    "status": 400,
+    "expected": [
+      200,
+      400
+    ],
+    "passed": true,
+    "details": "Required request body is missing or malformed"
+  },
+  {
+    "moduleName": "Coupon Service",
+    "endpoint": "/api/v1/coupons",
+    "method": "GET",
+    "role": "ADMIN",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Coupons count: 0"
+  },
+  {
+    "moduleName": "Wishlist Service",
+    "endpoint": "/api/v1/wishlist",
+    "method": "GET",
+    "role": "STUDENT",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Wishlist items: 0"
+  },
+  {
+    "moduleName": "Order Service",
+    "endpoint": "/api/v1/orders/my-orders",
+    "method": "GET",
+    "role": "STUDENT",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Orders count: 0"
+  },
+  {
+    "moduleName": "Review Service",
+    "endpoint": "/api/v1/reviews/course/2",
+    "method": "GET",
+    "role": "ANONYMOUS",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Reviews count: 7"
+  },
+  {
+    "moduleName": "Notification Service",
+    "endpoint": "/api/v1/users/me/notifications",
+    "method": "GET",
+    "role": "STUDENT",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "User notifications retrieved"
+  },
+  {
+    "moduleName": "Notification Service",
+    "endpoint": "/api/v1/users/me/unread",
+    "method": "GET",
+    "role": "STUDENT",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Unread count: 0"
+  },
+  {
+    "moduleName": "Instructor Service",
+    "endpoint": "/api/v1/instructors/6c43288f-a454-4abf-b946-b5abc5d99ee5/courses",
+    "method": "GET",
+    "role": "INSTRUCTOR",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Instructor courses: OK"
+  },
+  {
+    "moduleName": "Instructor Service",
+    "endpoint": "/api/v1/instructors/6c43288f-a454-4abf-b946-b5abc5d99ee5/dashboard",
+    "method": "GET",
+    "role": "INSTRUCTOR",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Instructor dashboard metrics retrieved"
+  },
+  {
+    "moduleName": "Admin Service",
+    "endpoint": "/api/v1/admin/dashboard",
+    "method": "GET",
+    "role": "ADMIN",
+    "status": 404,
+    "expected": 200,
+    "passed": false,
+    "details": "Request failed with status code 404"
+  },
+  {
+    "moduleName": "Admin Service",
+    "endpoint": "/api/v1/admin/users",
+    "method": "GET",
+    "role": "ADMIN",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Admin users list count: 0"
+  },
+  {
+    "moduleName": "Admin Service (CMS)",
+    "endpoint": "/api/v1/public/landing-page",
+    "method": "GET",
+    "role": "ANONYMOUS",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Public CMS title: CyberLearnix"
+  },
+  {
+    "moduleName": "Payment Service",
+    "endpoint": "/actuator/health",
+    "method": "GET",
+    "role": "SYSTEM",
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "details": "Health: UP (Commercial payment blocked pending PayU credentials)"
+  },
+  {
+    "moduleName": "Security / RBAC",
+    "endpoint": "/api/v1/admin/users",
+    "method": "GET",
+    "role": "STUDENT (BLOCKED)",
+    "status": 403,
+    "expected": 403,
+    "passed": true,
+    "details": "Protected: Student rejected with 403/401"
+  }
+]

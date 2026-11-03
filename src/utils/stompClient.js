@@ -219,6 +219,11 @@ export class StompClient {
 let stompInstance = null;
 
 export const getStompClient = () => {
+  // Check if WebSocket telemetry is explicitly enabled
+  const isWsEnabled = import.meta.env?.VITE_WS_ENABLED === 'true';
+  if (!isWsEnabled) {
+    return null;
+  }
   if (!stompInstance && typeof window !== 'undefined') {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     // Connect through the Spring Cloud API Gateway on 8080 or current host

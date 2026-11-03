@@ -45,6 +45,7 @@ import Checkout from './pages/student/Checkout';
 import ResilientCheckout from './pages/student/ResilientCheckout';
 import Orders from './pages/student/Orders';
 import StudentCourseDetail from './pages/student/StudentCourseDetail';
+import TermsAndPolicies from './pages/TermsAndPolicies';
 
 // Code-split Student & Classroom Workspaces
 const ClassroomView = withFallback(() => import('./pages/student/ClassroomView'));
@@ -71,7 +72,6 @@ const InstructorAssignments = withFallback(() => import('./pages/instructor/Assi
 // Code-split Admin Command Center
 const AdminDashboard = withFallback(() => import('./pages/admin/Dashboard'));
 const AdminCommandCenter = withFallback(() => import('./pages/admin/AdminCommandCenter'));
-const SubDashboard = withFallback(() => import('./pages/admin/SubDashboard'));
 const ManageUsers = withFallback(() => import('./pages/admin/Users'));
 const ManageCourses = withFallback(() => import('./pages/admin/Courses'));
 const Instructors = withFallback(() => import('./pages/admin/Instructors'));
@@ -81,7 +81,6 @@ const Certificates = withFallback(() => import('./pages/admin/Certificates'));
 const Notifications = withFallback(() => import('./pages/admin/Notifications'));
 const Moderation = withFallback(() => import('./pages/admin/Moderation'));
 const Support = withFallback(() => import('./pages/admin/Support'));
-const CMS = withFallback(() => import('./pages/admin/CMS'));
 const Settings = withFallback(() => import('./pages/admin/Settings'));
 const Roles = withFallback(() => import('./pages/admin/Roles'));
 const AIFeatures = withFallback(() => import('./pages/admin/AIFeatures'));
@@ -96,6 +95,20 @@ const Reports = withFallback(() => import('./pages/admin/Reports'));
 const InstructorApplications = withFallback(() => import('./pages/admin/InstructorApplications'));
 const BannerManagement = withFallback(() => import('./pages/admin/BannerManagement'));
 const Coupons = withFallback(() => import('./pages/admin/Coupons'));
+const SubDashboard = withFallback(() => import('./pages/admin/SubDashboard'));
+
+// Code-split Website Management (CMS) pages
+const WebsiteManagementHub = withFallback(() => import('./pages/admin/website-management/WebsiteManagementHub'));
+const HeroEditor = withFallback(() => import('./pages/admin/website-management/HeroEditor'));
+const NavigationEditor = withFallback(() => import('./pages/admin/website-management/NavigationEditor'));
+const SectionManager = withFallback(() => import('./pages/admin/website-management/SectionManager'));
+const FooterEditor = withFallback(() => import('./pages/admin/website-management/FooterEditor'));
+const TestimonialEditor = withFallback(() => import('./pages/admin/website-management/TestimonialEditor'));
+const StatisticsEditor = withFallback(() => import('./pages/admin/website-management/StatisticsEditor'));
+const SiteSettingsEditor = withFallback(() => import('./pages/admin/website-management/SiteSettingsEditor'));
+const SEOEditor = withFallback(() => import('./pages/admin/website-management/SEOEditor'));
+const MediaLibrary = withFallback(() => import('./pages/admin/website-management/MediaLibrary'));
+const RevisionHistory = withFallback(() => import('./pages/admin/website-management/RevisionHistory'));
 
 import { useWebSocketNotifications } from './hooks/useWebSocketNotifications';
 
@@ -169,6 +182,10 @@ export default function App() {
             <Route path="/instructor/apply" element={<InstructorApplication />} />
             <Route path="/student/instructor-application" element={<InstructorApplication />} />
             <Route path="/my-learning" element={<Navigate to="/student/my-learning" replace />} />
+            <Route path="/terms" element={<TermsAndPolicies initialTab="terms" />} />
+            <Route path="/privacy" element={<TermsAndPolicies initialTab="privacy" />} />
+            <Route path="/refund" element={<TermsAndPolicies initialTab="refund" />} />
+            <Route path="/security" element={<TermsAndPolicies initialTab="security" />} />
 
             {/* =========================================================================
                 AUTHENTICATED SECURE TIERS: Student Role Guard Network
@@ -254,13 +271,25 @@ export default function App() {
               <Route path="/admin/register" element={<AdminRegister />} />
               <Route path="/admin/moderation" element={<Moderation />} />
               <Route path="/admin/support" element={<Support />} />
-              <Route path="/admin/cms" element={<CMS />} />
+              <Route path="/admin/cms" element={<WebsiteManagementHub />} />
               <Route path="/admin/settings" element={<Settings />} />
               <Route path="/admin/roles" element={<Roles />} />
               <Route path="/admin/ai-features" element={<AIFeatures />} />
               <Route path="/admin/gamification" element={<Gamification />} />
               <Route path="/admin/profile" element={<AdminProfile />} />
               <Route path="/profile" element={<ProfileWorkspace />} />
+              {/* ── Website Management (CMS) Routes ── */}
+              <Route path="/admin/website-management" element={<WebsiteManagementHub />} />
+              <Route path="/admin/website-management/hero" element={<HeroEditor />} />
+              <Route path="/admin/website-management/navigation" element={<NavigationEditor />} />
+              <Route path="/admin/website-management/sections" element={<SectionManager />} />
+              <Route path="/admin/website-management/footer" element={<FooterEditor />} />
+              <Route path="/admin/website-management/testimonials" element={<TestimonialEditor />} />
+              <Route path="/admin/website-management/statistics" element={<StatisticsEditor />} />
+              <Route path="/admin/website-management/settings" element={<SiteSettingsEditor />} />
+              <Route path="/admin/website-management/seo" element={<SEOEditor />} />
+              <Route path="/admin/website-management/media" element={<MediaLibrary />} />
+              <Route path="/admin/website-management/revisions" element={<RevisionHistory />} />
             </Route>
 
             {/* =========================================================================

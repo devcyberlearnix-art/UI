@@ -1,0 +1,1307 @@
+{
+  "backendEndpoints": [
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/banners",
+      "methodName": "createBanner",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 32
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/banners",
+      "methodName": "getAllBanners",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 55
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/banners/{bannerId}",
+      "methodName": "getBannerById",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 71
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/banners/{bannerId}",
+      "methodName": "updateBanner",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 90
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "PATCH",
+      "path": "/api/v1/admin/banners/{bannerId}",
+      "methodName": "partialUpdateBanner",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 113
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "PATCH",
+      "path": "/api/v1/admin/banners/{bannerId}/status",
+      "methodName": "updateBannerStatus",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 136
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "PATCH",
+      "path": "/api/v1/admin/banners/reorder",
+      "methodName": "reorderBanners",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 159
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/banners/{bannerId}",
+      "methodName": "deleteBanner",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 175
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/banners/{bannerId}/analytics",
+      "methodName": "getBannerAnalytics",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 194
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/banners/upload-image",
+      "methodName": "uploadBannerImage",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 213
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/banners/validate-image",
+      "methodName": "validateBannerImage",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 244
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/banners/deleted",
+      "methodName": "getDeletedBanners",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 273
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/banners/{bannerId}/restore",
+      "methodName": "restoreBanner",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 289
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/banners/target/{targetType}",
+      "methodName": "getActiveBannersByTargetType",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 308
+    },
+    {
+      "controller": "AdminBannerController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/banners/{bannerId}/conversion",
+      "methodName": "trackBannerConversion",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 324
+    },
+    {
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/register",
+      "methodName": "unknown",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 25
+    },
+    {
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/login",
+      "methodName": "login",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 42
+    },
+    {
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/login/otp/request",
+      "methodName": "requestLoginOtp",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 56
+    },
+    {
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/login/otp/verify",
+      "methodName": "verifyLoginOtp",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 75
+    },
+    {
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/login/otp/resend",
+      "methodName": "resendLoginOtp",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 89
+    },
+    {
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/password/forgot",
+      "methodName": "forgotPassword",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 106
+    },
+    {
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/password/verify-otp",
+      "methodName": "verifyPasswordOtp",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 125
+    },
+    {
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/password/otp/resend",
+      "methodName": "resendPasswordOtp",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 144
+    },
+    {
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/password/reset",
+      "methodName": "resetPassword",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 161
+    },
+    {
+      "controller": "AdminController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/profile",
+      "methodName": "getProfile",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 200
+    },
+    {
+      "controller": "AdminCourseController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/courses",
+      "methodName": "getAllCourses",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 34
+    },
+    {
+      "controller": "AdminCourseController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/courses/{courseId}",
+      "methodName": "getCourseById",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 51
+    },
+    {
+      "controller": "AdminCourseController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/content/{courseId}",
+      "methodName": "getCourseContent",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 68
+    },
+    {
+      "controller": "AdminCourseController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/courses/{courseId}/approve",
+      "methodName": "approveCourse",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 88
+    },
+    {
+      "controller": "AdminCourseController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/courses/{courseId}/reject",
+      "methodName": "rejectCourse",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 115
+    },
+    {
+      "controller": "AdminCourseController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/courses/{courseId}",
+      "methodName": "deleteCourse",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 135
+    },
+    {
+      "controller": "AdminCourseController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/courses/{courseId}/sections",
+      "methodName": "createSection",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 152
+    },
+    {
+      "controller": "AdminCourseController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/sections/{sectionId}",
+      "methodName": "deleteSection",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 172
+    },
+    {
+      "controller": "AdminCourseController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/sections/{sectionId}/lectures",
+      "methodName": "createLecture",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 189
+    },
+    {
+      "controller": "AdminCourseController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/sections/{sectionId}/lectures/{lectureId}/approve",
+      "methodName": "approveLecture",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 209
+    },
+    {
+      "controller": "AdminCourseController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/sections/{sectionId}/lectures/{lectureId}/reject",
+      "methodName": "rejectLecture",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 225
+    },
+    {
+      "controller": "AdminCourseController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/sections/{sectionId}/lectures/{lectureId}",
+      "methodName": "deleteLecture",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 241
+    },
+    {
+      "controller": "AdminCourseController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/instructors/{instructorId}/courses",
+      "methodName": "getCoursesByInstructor",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 260
+    },
+    {
+      "controller": "AdminEmailChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/email/change-request",
+      "methodName": "initiateEmailChange",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 86
+    },
+    {
+      "controller": "AdminEmailChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/email/verify-old",
+      "methodName": "verifyOldEmail",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 124
+    },
+    {
+      "controller": "AdminEmailChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/email/verify-new",
+      "methodName": "verifyNewEmail",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 169
+    },
+    {
+      "controller": "AdminEmailChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/email/resend-otp",
+      "methodName": "resendEmailChangeOtp",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 207
+    },
+    {
+      "controller": "AdminEmailChangeController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/email/change-request/{sessionId}",
+      "methodName": "getEmailChangeSession",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 238
+    },
+    {
+      "controller": "AdminOrderController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/orders",
+      "methodName": "getAllOrders",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 19
+    },
+    {
+      "controller": "AdminOrderController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/orders/{id}",
+      "methodName": "getOrderById",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 31
+    },
+    {
+      "controller": "AdminOrderController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/orders/{id}/status",
+      "methodName": "updateOrderStatus",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 43
+    },
+    {
+      "controller": "AdminOrderController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/orders/{id}/refund",
+      "methodName": "processRefund",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 56
+    },
+    {
+      "controller": "AdminPasswordChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/change-password",
+      "methodName": "initiatePasswordChange",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 43
+    },
+    {
+      "controller": "AdminPasswordChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/change-password/verify-otp",
+      "methodName": "verifyPasswordOtp",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 64
+    },
+    {
+      "controller": "AdminPasswordChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/change-password/resend-otp",
+      "methodName": "resendPasswordOtp",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 85
+    },
+    {
+      "controller": "AdminPaymentController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/payments",
+      "methodName": "getAllPayments",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 19
+    },
+    {
+      "controller": "AdminPaymentController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/payments/{id}",
+      "methodName": "getPaymentById",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 31
+    },
+    {
+      "controller": "AdminReportController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/reports/users",
+      "methodName": "unknown",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 28
+    },
+    {
+      "controller": "AdminReportController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/reports/courses",
+      "methodName": "unknown",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 44
+    },
+    {
+      "controller": "AdminReportController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/reports/revenue",
+      "methodName": "unknown",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 60
+    },
+    {
+      "controller": "AdminReportController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/reports/orders",
+      "methodName": "unknown",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 75
+    },
+    {
+      "controller": "AdminReportController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/settings/platform",
+      "methodName": "unknown",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 90
+    },
+    {
+      "controller": "AdminReportController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/settings/payment",
+      "methodName": "unknown",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 113
+    },
+    {
+      "controller": "AdminReportController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/settings/notifications",
+      "methodName": "unknown",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 136
+    },
+    {
+      "controller": "AdminReviewController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/reviews",
+      "methodName": "getAllReviews",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 19
+    },
+    {
+      "controller": "AdminReviewController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/reviews/{id}",
+      "methodName": "deleteReview",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 31
+    },
+    {
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/internal/users/{id}/refresh-eligibility",
+      "methodName": "unknown",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 29
+    },
+    {
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/users",
+      "methodName": "getAllUsers",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 60
+    },
+    {
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/users/{id}",
+      "methodName": "getUserById",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 80
+    },
+    {
+      "controller": "AdminUserController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/users/{id}/status",
+      "methodName": "updateUserStatus",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 96
+    },
+    {
+      "controller": "AdminUserController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/users/{id}",
+      "methodName": "deleteUser",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 107
+    },
+    {
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/instructors",
+      "methodName": "getAllInstructors",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 121
+    },
+    {
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/instructors/{id}",
+      "methodName": "unknown",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 132
+    },
+    {
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/instructors/applications",
+      "methodName": "getAllInstructorApplicationsDetailed",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 145
+    },
+    {
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/instructors/applications/status/{status}",
+      "methodName": "getInstructorApplicationsByStatusLegacy",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 189
+    },
+    {
+      "controller": "AdminUserController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/instructors/applications/{applicationId}/approve",
+      "methodName": "approveInstructorApplicationByApplicationId",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 199
+    },
+    {
+      "controller": "AdminUserController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/instructors/applications/{applicationId}/reject",
+      "methodName": "rejectInstructorApplicationByApplicationId",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 209
+    },
+    {
+      "controller": "AdminUserController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/instructors/{id}",
+      "methodName": "deleteInstructor",
+      "preAuthorize": "",
+      "isTransactional": false,
+      "line": 219
+    }
+  ],
+  "sdkMethods": [
+    {
+      "name": "login",
+      "line": 8,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/auth/login",
+      "rawText": "  login: async (email, password) => {\r\n    const response = await axiosInstance.post('/api/v1/auth/login', { email, password });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getAdminProfile",
+      "line": 14,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/me",
+      "rawText": "  getAdminProfile: async () => {\r\n    const response = await axiosInstance.get('/api/v1/admin/me');\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "updateAdminProfile",
+      "line": 19,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/me",
+      "rawText": "  updateAdminProfile: async (profileData) => {\r\n    const response = await axiosInstance.put('/api/v1/admin/me', profileData);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getSubAdminProfile",
+      "line": 24,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/me",
+      "rawText": "  getSubAdminProfile: async () => {\r\n    const response = await axiosInstance.get('/api/v1/admin/me');\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "updateSubAdminProfile",
+      "line": 29,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/me",
+      "rawText": "  updateSubAdminProfile: async (profileData) => {\r\n    const response = await axiosInstance.put('/api/v1/admin/me', profileData);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getUsers",
+      "line": 35,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/users?page=${page}&size=${size}",
+      "rawText": "  getUsers: async (page = 0, size = 10) => {\r\n    const response = await axiosInstance.get(`/api/v1/admin/users?page=${page}&size=${size}`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getInstructors",
+      "line": 40,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/instructors?page=${page}&size=${size}",
+      "rawText": "  getInstructors: async (page = 0, size = 10) => {\r\n    const response = await axiosInstance.get(`/api/v1/admin/instructors?page=${page}&size=${size}`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "registerSubAdmin",
+      "line": 45,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/register",
+      "rawText": "  registerSubAdmin: async (adminData) => {\r\n    // Backend expects singular 'admin' in the register path\r\n    const response = await axiosInstance.post('/api/v1/admin/register', adminData);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getUsersReport",
+      "line": 52,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/reports/users",
+      "rawText": "  getUsersReport: async (params = {}) => {\r\n    const response = await axiosInstance.get('/api/v1/admin/reports/users', { params });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getOrdersReport",
+      "line": 57,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/reports/orders",
+      "rawText": "  getOrdersReport: async (params = {}) => {\r\n    const response = await axiosInstance.get('/api/v1/admin/reports/orders', { params });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getRevenueReport",
+      "line": 62,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/reports/revenue",
+      "rawText": "  getRevenueReport: async (params = {}) => {\r\n    const response = await axiosInstance.get('/api/v1/admin/reports/revenue', { params });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getCoursesReport",
+      "line": 67,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/reports/courses",
+      "rawText": "  getCoursesReport: async (params = {}) => {\r\n    const response = await axiosInstance.get('/api/v1/admin/reports/courses', { params });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "users",
+      "line": 73,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/reports/users",
+      "rawText": "    users: async (params = {}) => {\r\n      const response = await axiosInstance.get('/api/v1/admin/reports/users', { params });\r\n      return response.data;\r\n    },\r"
+    },
+    {
+      "name": "courses",
+      "line": 77,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/reports/courses",
+      "rawText": "    courses: async (params = {}) => {\r\n      const response = await axiosInstance.get('/api/v1/admin/reports/courses', { params });\r\n      return response.data;\r\n    },\r"
+    },
+    {
+      "name": "revenue",
+      "line": 81,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/reports/revenue",
+      "rawText": "    revenue: async (params = {}) => {\r\n      const response = await axiosInstance.get('/api/v1/admin/reports/revenue', { params });\r\n      return response.data;\r\n    },\r"
+    },
+    {
+      "name": "orders",
+      "line": 85,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/reports/orders",
+      "rawText": "    orders: async (params = {}) => {\r\n      const response = await axiosInstance.get('/api/v1/admin/reports/orders', { params });\r\n      return response.data;\r\n    },\r"
+    },
+    {
+      "name": "getUsers",
+      "line": 92,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/users",
+      "rawText": "  getUsers: async (params = {}) => {\r\n    const response = await axiosInstance.get('/api/v1/admin/users', { params });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getUserById",
+      "line": 97,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/users/${userId}",
+      "rawText": "  getUserById: async (userId) => {\r\n    const response = await axiosInstance.get(`/api/v1/admin/users/${userId}`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "updateUserStatus",
+      "line": 102,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/users/${userId}/status",
+      "rawText": "  updateUserStatus: async (userId, status) => {\r\n    const response = await axiosInstance.put(`/api/v1/admin/users/${userId}/status`, { status });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "deleteUser",
+      "line": 107,
+      "httpMethod": "DELETE",
+      "urlPattern": "/api/v1/admin/users/${userId}",
+      "rawText": "  deleteUser: async (userId) => {\r\n    const response = await axiosInstance.delete(`/api/v1/admin/users/${userId}`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getInstructors",
+      "line": 113,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/instructors",
+      "rawText": "  getInstructors: async (params = {}) => {\r\n    const response = await axiosInstance.get('/api/v1/admin/instructors', { params });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getInstructorApplications",
+      "line": 118,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/instructors/applications",
+      "rawText": "  getInstructorApplications: async (params = {}) => {\r\n    const response = await axiosInstance.get('/api/v1/admin/instructors/applications', { params });\r\n    return response.data;\r\n  },"
+    },
+    {
+      "name": "getInstructorApplicationsByStatus",
+      "line": 123,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/instructors/applications/status/${status}",
+      "rawText": "  getInstructorApplicationsByStatus: async (status, params = {}) => {\n    const response = await axiosInstance.get(`/api/v1/admin/instructors/applications/status/${status}`, { params });\n    return response.data;\n  },"
+    },
+    {
+      "name": "approveInstructorApplication",
+      "line": 129,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/instructors/applications/${userId}/approve",
+      "rawText": "  approveInstructorApplication: async (userId, reason = \"\") => {\r\n    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/approve`, { reason });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "rejectInstructorApplication",
+      "line": 134,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/instructors/applications/${userId}/reject",
+      "rawText": "  rejectInstructorApplication: async (userId, reason) => {\r\n    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/reject`, { reason });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getInstructorCourses",
+      "line": 139,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/instructors/${instructorId}/courses",
+      "rawText": "  getInstructorCourses: async (instructorId) => {\r\n    const response = await axiosInstance.get(`/api/v1/admin/instructors/${instructorId}/courses`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getCourses",
+      "line": 145,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/courses",
+      "rawText": "  getCourses: async (params = {}) => {\r\n    const response = await axiosInstance.get('/api/v1/admin/courses', { params });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getCourseById",
+      "line": 150,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/courses/${courseId}",
+      "rawText": "  getCourseById: async (courseId) => {\r\n    const response = await axiosInstance.get(`/api/v1/admin/courses/${courseId}`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getCourseContent",
+      "line": 155,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/content/${courseId}",
+      "rawText": "  getCourseContent: async (courseId) => {\r\n    const response = await axiosInstance.get(`/api/v1/admin/content/${courseId}`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "approveCourse",
+      "line": 160,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/courses/${courseId}/approve",
+      "rawText": "  approveCourse: async (courseId) => {\r\n    const response = await axiosInstance.put(`/api/v1/admin/courses/${courseId}/approve`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "rejectCourse",
+      "line": 165,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/courses/${courseId}/reject",
+      "rawText": "  rejectCourse: async (courseId) => {\r\n    const response = await axiosInstance.put(`/api/v1/admin/courses/${courseId}/reject`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "deleteCourse",
+      "line": 170,
+      "httpMethod": "DELETE",
+      "urlPattern": "/api/v1/admin/courses/${courseId}",
+      "rawText": "  deleteCourse: async (courseId) => {\r\n    const response = await axiosInstance.delete(`/api/v1/admin/courses/${courseId}`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "createSection",
+      "line": 176,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/courses/${courseId}/sections",
+      "rawText": "  createSection: async (courseId, sectionData) => {\r\n    const response = await axiosInstance.post(`/api/v1/admin/courses/${courseId}/sections`, sectionData);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "deleteSection",
+      "line": 181,
+      "httpMethod": "DELETE",
+      "urlPattern": "/api/v1/admin/sections/${sectionId}",
+      "rawText": "  deleteSection: async (sectionId) => {\r\n    const response = await axiosInstance.delete(`/api/v1/admin/sections/${sectionId}`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "createLecture",
+      "line": 186,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/sections/${sectionId}/lectures",
+      "rawText": "  createLecture: async (sectionId, lectureData) => {\r\n    const response = await axiosInstance.post(`/api/v1/admin/sections/${sectionId}/lectures`, lectureData);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "approveLecture",
+      "line": 191,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/sections/${sectionId}/lectures/${lectureId}/approve",
+      "rawText": "  approveLecture: async (sectionId, lectureId) => {\r\n    const response = await axiosInstance.put(`/api/v1/admin/sections/${sectionId}/lectures/${lectureId}/approve`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "rejectLecture",
+      "line": 196,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/sections/${sectionId}/lectures/${lectureId}/reject",
+      "rawText": "  rejectLecture: async (sectionId, lectureId) => {\r\n    const response = await axiosInstance.put(`/api/v1/admin/sections/${sectionId}/lectures/${lectureId}/reject`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "deleteLecture",
+      "line": 201,
+      "httpMethod": "DELETE",
+      "urlPattern": "/api/v1/admin/sections/${sectionId}/lectures/${lectureId}",
+      "rawText": "  deleteLecture: async (sectionId, lectureId) => {\r\n    const response = await axiosInstance.delete(`/api/v1/admin/sections/${sectionId}/lectures/${lectureId}`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getOrders",
+      "line": 207,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/orders",
+      "rawText": "  getOrders: async (params = {}) => {\r\n    const response = await axiosInstance.get('/api/v1/admin/orders', { params });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getOrderById",
+      "line": 212,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/orders/${orderId}",
+      "rawText": "  getOrderById: async (orderId) => {\r\n    const response = await axiosInstance.get(`/api/v1/admin/orders/${orderId}`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "updateOrderStatus",
+      "line": 217,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/orders/${orderId}/status",
+      "rawText": "  updateOrderStatus: async (orderId, status) => {\r\n    const response = await axiosInstance.put(`/api/v1/admin/orders/${orderId}/status`, { status });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "processOrderRefund",
+      "line": 222,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/orders/${orderId}/refund",
+      "rawText": "  processOrderRefund: async (orderId, refundData) => {\r\n    const response = await axiosInstance.post(`/api/v1/admin/orders/${orderId}/refund`, refundData);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getPayments",
+      "line": 227,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/payments",
+      "rawText": "  getPayments: async (params = {}) => {\r\n    const response = await axiosInstance.get('/api/v1/admin/payments', { params });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getPaymentById",
+      "line": 232,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/payments/${paymentId}",
+      "rawText": "  getPaymentById: async (paymentId) => {\r\n    const response = await axiosInstance.get(`/api/v1/admin/payments/${paymentId}`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getReviews",
+      "line": 238,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/reviews",
+      "rawText": "  getReviews: async (params = {}) => {\r\n    const response = await axiosInstance.get('/api/v1/admin/reviews', { params });\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "deleteReview",
+      "line": 243,
+      "httpMethod": "DELETE",
+      "urlPattern": "/api/v1/admin/reviews/${reviewId}",
+      "rawText": "  deleteReview: async (reviewId) => {\r\n    const response = await axiosInstance.delete(`/api/v1/admin/reviews/${reviewId}`);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "updatePlatformSettings",
+      "line": 249,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/settings/platform",
+      "rawText": "  updatePlatformSettings: async (settingsData) => {\r\n    const response = await axiosInstance.put('/api/v1/admin/settings/platform', settingsData);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "updatePaymentSettings",
+      "line": 254,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/settings/payment",
+      "rawText": "  updatePaymentSettings: async (settingsData) => {\r\n    const response = await axiosInstance.put('/api/v1/admin/settings/payment', settingsData);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "updateNotificationSettings",
+      "line": 259,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/settings/notifications",
+      "rawText": "  updateNotificationSettings: async (settingsData) => {\r\n    const response = await axiosInstance.put('/api/v1/admin/settings/notifications', settingsData);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "broadcastNotification",
+      "line": 265,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/broadcast",
+      "rawText": "  broadcastNotification: async (notificationData) => {\r\n    const response = await axiosInstance.post('/api/v1/admin/broadcast', notificationData);\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "reprocessDLQ",
+      "line": 270,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/reprocess-dlq",
+      "rawText": "  reprocessDLQ: async () => {\r\n    const response = await axiosInstance.post('/api/v1/admin/reprocess-dlq');\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "getSystemHealth",
+      "line": 275,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/system-health",
+      "rawText": "  getSystemHealth: async () => {\r\n    const response = await axiosInstance.get('/api/v1/admin/system-health');\r\n    return response.data;\r\n  },\r"
+    },
+    {
+      "name": "createBanner",
+      "line": 281,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/banners",
+      "rawText": "  createBanner: async (bannerPayload) => {\n    const response = await axiosInstance.post('/api/v1/admin/banners', bannerPayload);\n    return response.data;\n  },"
+    },
+    {
+      "name": "getAllBanners",
+      "line": 286,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/banners",
+      "rawText": "  getAllBanners: async () => {\n    const response = await axiosInstance.get('/api/v1/admin/banners');\n    return response.data;\n  },"
+    },
+    {
+      "name": "getBanners",
+      "line": 291,
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "rawText": "  getBanners: async () => {\n    return adminApi.getAllBanners();\n  },"
+    },
+    {
+      "name": "getBannerById",
+      "line": 295,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/banners/${bannerId}",
+      "rawText": "  getBannerById: async (bannerId) => {\n    const response = await axiosInstance.get(`/api/v1/admin/banners/${bannerId}`);\n    return response.data;\n  },"
+    },
+    {
+      "name": "updateBanner",
+      "line": 300,
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/banners/${bannerId}",
+      "rawText": "  updateBanner: async (bannerId, bannerPayload) => {\n    const response = await axiosInstance.put(`/api/v1/admin/banners/${bannerId}`, bannerPayload);\n    return response.data;\n  },"
+    },
+    {
+      "name": "patchBanner",
+      "line": 305,
+      "httpMethod": "PATCH",
+      "urlPattern": "/api/v1/admin/banners/${bannerId}",
+      "rawText": "  patchBanner: async (bannerId, bannerPayload) => {\n    const response = await axiosInstance.patch(`/api/v1/admin/banners/${bannerId}`, bannerPayload);\n    return response.data;\n  },"
+    },
+    {
+      "name": "updateBannerStatus",
+      "line": 310,
+      "httpMethod": "PATCH",
+      "urlPattern": "/api/v1/admin/banners/${bannerId}/status",
+      "rawText": "  updateBannerStatus: async (bannerId, statusPayload) => {\n    const payload = typeof statusPayload === 'string' ? { status: statusPayload } : statusPayload;\n    const response = await axiosInstance.patch(`/api/v1/admin/banners/${bannerId}/status`, payload);\n    return response.data;\n  },"
+    },
+    {
+      "name": "reorderBanners",
+      "line": 316,
+      "httpMethod": "PATCH",
+      "urlPattern": "/api/v1/admin/banners/reorder",
+      "rawText": "  reorderBanners: async (reorderPayload) => {\n    const response = await axiosInstance.patch('/api/v1/admin/banners/reorder', reorderPayload);\n    return response.data;\n  },"
+    },
+    {
+      "name": "deleteBanner",
+      "line": 321,
+      "httpMethod": "DELETE",
+      "urlPattern": "/api/v1/admin/banners/${bannerId}",
+      "rawText": "  deleteBanner: async (bannerId) => {\n    const response = await axiosInstance.delete(`/api/v1/admin/banners/${bannerId}`);\n    return response.data;\n  },"
+    },
+    {
+      "name": "getBannerAnalytics",
+      "line": 326,
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "rawText": "  getBannerAnalytics: async (bannerId) => {\n    const path = bannerId ? `/api/v1/admin/banners/${bannerId}/analytics` : '/api/v1/admin/banners/analytics';\n    const response = await axiosInstance.get(path);\n    return response.data;\n  },"
+    },
+    {
+      "name": "uploadBannerImage",
+      "line": 332,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/banners/upload-image",
+      "rawText": "  uploadBannerImage: async (file, imageType = 'desktop') => {\n    const formData = new FormData();\n    formData.append('file', file);\n    formData.append('imageType', imageType);\n    const response = await axiosInstance.post('/api/v1/admin/banners/upload-image', formData, {\n      headers: { 'Content-Type': 'multipart/form-data' }\n    });\n    return response.data;\n  },"
+    },
+    {
+      "name": "validateBannerImage",
+      "line": 342,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/banners/validate-image",
+      "rawText": "  validateBannerImage: async (file) => {\n    const formData = new FormData();\n    formData.append('file', file);\n    const response = await axiosInstance.post('/api/v1/admin/banners/validate-image', formData, {\n      headers: { 'Content-Type': 'multipart/form-data' }\n    });\n    return response.data;\n  },"
+    },
+    {
+      "name": "getDeletedBanners",
+      "line": 351,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/banners/deleted",
+      "rawText": "  getDeletedBanners: async () => {\n    const response = await axiosInstance.get('/api/v1/admin/banners/deleted');\n    return response.data;\n  },"
+    },
+    {
+      "name": "restoreBanner",
+      "line": 356,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/banners/${bannerId}/restore",
+      "rawText": "  restoreBanner: async (bannerId) => {\n    const response = await axiosInstance.post(`/api/v1/admin/banners/${bannerId}/restore`);\n    return response.data;\n  },"
+    },
+    {
+      "name": "getBannersByTarget",
+      "line": 361,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/banners/target/${targetType}",
+      "rawText": "  getBannersByTarget: async (targetType) => {\n    const response = await axiosInstance.get(`/api/v1/admin/banners/target/${targetType}`);\n    return response.data;\n  },"
+    },
+    {
+      "name": "trackBannerConversion",
+      "line": 366,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/banners/${bannerId}/conversion",
+      "rawText": "  trackBannerConversion: async (bannerId) => {\n    const response = await axiosInstance.post(`/api/v1/admin/banners/${bannerId}/conversion`);\n    return response.data;\n  },"
+    },
+    {
+      "name": "loginDirect",
+      "line": 372,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/login",
+      "rawText": "  loginDirect: async (email, password) => {\n    const response = await axiosInstance.post('/api/v1/admin/login', { email, password });\n    return response.data;\n  },"
+    },
+    {
+      "name": "requestLoginOtp",
+      "line": 377,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/login/otp/request",
+      "rawText": "  requestLoginOtp: async (email) => {\n    const response = await axiosInstance.post('/api/v1/admin/login/otp/request', { email });\n    return response.data;\n  },"
+    },
+    {
+      "name": "verifyLoginOtp",
+      "line": 382,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/login/otp/verify",
+      "rawText": "  verifyLoginOtp: async (email, otp) => {\n    const response = await axiosInstance.post('/api/v1/admin/login/otp/verify', { email, otp });\n    return response.data;\n  },"
+    },
+    {
+      "name": "resendLoginOtp",
+      "line": 387,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/login/otp/resend",
+      "rawText": "  resendLoginOtp: async (email) => {\n    const response = await axiosInstance.post('/api/v1/admin/login/otp/resend', { email });\n    return response.data;\n  },"
+    },
+    {
+      "name": "forgotPassword",
+      "line": 392,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/password/forgot",
+      "rawText": "  forgotPassword: async (email) => {\n    const response = await axiosInstance.post('/api/v1/admin/password/forgot', { email });\n    return response.data;\n  },"
+    },
+    {
+      "name": "verifyPasswordOtp",
+      "line": 397,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/password/verify-otp",
+      "rawText": "  verifyPasswordOtp: async (email, otp) => {\n    const response = await axiosInstance.post('/api/v1/admin/password/verify-otp', { email, otp });\n    return response.data;\n  },"
+    },
+    {
+      "name": "resendPasswordOtp",
+      "line": 402,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/password/otp/resend",
+      "rawText": "  resendPasswordOtp: async (email) => {\n    const response = await axiosInstance.post('/api/v1/admin/password/otp/resend', { email });\n    return response.data;\n  },"
+    },
+    {
+      "name": "resetPassword",
+      "line": 407,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/password/reset",
+      "rawText": "  resetPassword: async (email, otp, newPassword) => {\n    const response = await axiosInstance.post('/api/v1/admin/password/reset', { email, otp, newPassword });\n    return response.data;\n  },"
+    },
+    {
+      "name": "initiateEmailChange",
+      "line": 413,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/email/change-request",
+      "rawText": "  initiateEmailChange: async (payload) => {\n    const response = await axiosInstance.post('/api/v1/admin/email/change-request', payload);\n    return response.data;\n  },"
+    },
+    {
+      "name": "verifyOldEmailOtp",
+      "line": 418,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/email/verify-old",
+      "rawText": "  verifyOldEmailOtp: async (sessionId, otp) => {\n    const response = await axiosInstance.post('/api/v1/admin/email/verify-old', { sessionId, otp });\n    return response.data;\n  },"
+    },
+    {
+      "name": "verifyNewEmailOtp",
+      "line": 423,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/email/verify-new",
+      "rawText": "  verifyNewEmailOtp: async (sessionId, otp) => {\n    const response = await axiosInstance.post('/api/v1/admin/email/verify-new', { sessionId, otp });\n    return response.data;\n  },"
+    },
+    {
+      "name": "resendEmailChangeOtp",
+      "line": 428,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/email/resend-otp",
+      "rawText": "  resendEmailChangeOtp: async (sessionId, type = 'old') => {\n    const response = await axiosInstance.post('/api/v1/admin/email/resend-otp', { sessionId, type });\n    return response.data;\n  },"
+    },
+    {
+      "name": "getEmailChangeSession",
+      "line": 433,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/email/change-request/${sessionId}",
+      "rawText": "  getEmailChangeSession: async (sessionId) => {\n    const response = await axiosInstance.get(`/api/v1/admin/email/change-request/${sessionId}`);\n    return response.data;\n  },"
+    },
+    {
+      "name": "initiatePasswordChange",
+      "line": 438,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/change-password",
+      "rawText": "  initiatePasswordChange: async (payload) => {\n    const response = await axiosInstance.post('/api/v1/admin/change-password', payload);\n    return response.data;\n  },"
+    },
+    {
+      "name": "verifyChangePasswordOtp",
+      "line": 443,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/change-password/verify-otp",
+      "rawText": "  verifyChangePasswordOtp: async (otp) => {\n    const response = await axiosInstance.post('/api/v1/admin/change-password/verify-otp', { otp });\n    return response.data;\n  },"
+    },
+    {
+      "name": "resendChangePasswordOtp",
+      "line": 448,
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/change-password/resend-otp",
+      "rawText": "  resendChangePasswordOtp: async () => {\n    const response = await axiosInstance.post('/api/v1/admin/change-password/resend-otp');\n    return response.data;\n  },"
+    },
+    {
+      "name": "deleteInstructor",
+      "line": 454,
+      "httpMethod": "DELETE",
+      "urlPattern": "/api/v1/admin/instructors/${instructorId}",
+      "rawText": "  deleteInstructor: async (instructorId) => {\n    const response = await axiosInstance.delete(`/api/v1/admin/instructors/${instructorId}`);\n    return response.data;\n  },"
+    },
+    {
+      "name": "getAdminProfileDirect",
+      "line": 459,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/profile",
+      "rawText": "  getAdminProfileDirect: async () => {\n    const response = await axiosInstance.get('/api/v1/admin/profile');\n    return response.data;\n  },"
+    },
+    {
+      "name": "refreshUserEligibility",
+      "line": 464,
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/internal/users/${userId}/refresh-eligibility",
+      "rawText": "  refreshUserEligibility: async (userId) => {\n    const response = await axiosInstance.get(`/api/v1/admin/internal/users/${userId}/refresh-eligibility`);\n    return response.data;\n  },"
+    },
+    {
+      "name": "getAllUsers",
+      "line": 471,
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "rawText": "  getAllUsers: async (params = {}) => {\r\n    return adminApi.getUsers(params);\r\n  },\r"
+    },
+    {
+      "name": "getAllCourses",
+      "line": 475,
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "rawText": "  getAllCourses: async (params = {}) => {\r\n    return adminApi.getCourses(params);\r\n  },\r"
+    },
+    {
+      "name": "approveInstructor",
+      "line": 479,
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "rawText": "  approveInstructor: async (instructorId) => {\r\n    return adminApi.approveInstructorApplication(instructorId);\r\n  },\r"
+    },
+    {
+      "name": "rejectInstructor",
+      "line": 483,
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "rawText": "  rejectInstructor: async (instructorId) => {\r\n    return adminApi.rejectInstructorApplication(instructorId);\r\n  },\r"
+    },
+    {
+      "name": "updateCourseStatus",
+      "line": 487,
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "rawText": "  updateCourseStatus: async (courseId, status) => {\r\n    if (status === 'approved') return adminApi.approveCourse(courseId);\r\n    if (status === 'rejected') return adminApi.rejectCourse(courseId);\r\n    throw new Error('Invalid status. Use approve or reject.');\r\n  },\r"
+    }
+  ]
+}

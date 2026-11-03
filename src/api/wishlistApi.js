@@ -28,6 +28,10 @@ export const wishlistApi = {
       const response = await axiosInstance.post('/api/v1/wishlist', payload);
       return response.data;
     } catch (err) {
+      if (err.response?.status === 409) {
+        // Course is already in wishlist - treat as idempotent success
+        return { success: true, status: 'SUCCESS', alreadyExists: true, message: 'Course is already in your wishlist', data: err.response.data?.data || null };
+      }
       console.warn('[wishlistApi] POST /api/v1/wishlist failed', err);
       throw err;
     }
@@ -134,6 +138,10 @@ export const wishlistApi = {
       const response = await axiosInstance.delete(`/api/v1/wishlist/${courseId}`);
       return response.data;
     } catch (err) {
+      if (err.response?.status === 404) {
+        // Course already removed or not found - treat as idempotent success
+        return { success: true, status: 'SUCCESS', notFound: true, message: 'Item not in wishlist', data: null };
+      }
       console.warn(`[wishlistApi] DELETE /api/v1/wishlist/${courseId} failed`);
       throw err;
     }

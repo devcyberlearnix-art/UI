@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -60,6 +61,9 @@ export const CourseDetail = () => {
   const [activeTab, setActiveTab] = useState('curriculum');
   const [expandedSections, setExpandedSections] = useState({});
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [cartLoading, setCartLoading] = useState(false);
+  const queryClient = useQueryClient();
 
   // Fetch comprehensive course details
   const fetchCourseDetails = useCallback(async () => {
@@ -98,14 +102,10 @@ export const CourseDetail = () => {
       }
 
       const materialsData = await courseApi.getCourseMaterials(courseId);
-      if (materialsData?.data) {
-        setMaterials(materialsData);
-      }
+      setMaterials(Array.isArray(materialsData?.data) ? materialsData.data : (Array.isArray(materialsData) ? materialsData : []));
 
       const faqsData = await courseApi.getCourseFAQs(courseId);
-      if (faqsData?.data) {
-        setFaqs(faqsData);
-      }
+      setFaqs(Array.isArray(faqsData?.data) ? faqsData.data : (Array.isArray(faqsData) ? faqsData : []));
 
       const reviewsData = await reviewApi.getCourseReviews(courseId, { page: 0, size: 10 });
       if (reviewsData?.content) {
@@ -153,21 +153,34 @@ export const CourseDetail = () => {
       return;
     }
 
+    if (wishlistLoading) return;
+    setWishlistLoading(true);
+
+    const targetWishlistedState = !isWishlisted;
+    // Optimistic UI state
+    setIsWishlisted(targetWishlistedState);
+
     try {
-      if (isWishlisted) {
+      if (!targetWishlistedState) {
         await wishlistApi.removeFromWishlist(courseId);
-        setIsWishlisted(false);
         toast.success('Removed from wishlist');
       } else {
         await wishlistApi.addToWishlist({
           courseId: parseInt(courseId),
           instructorId: course?.instructorId,
         });
-        setIsWishlisted(true);
         toast.success('Saved to wishlist');
       }
+      try {
+        queryClient.invalidateQueries({ queryKey: ['wishlist'] });
+        queryClient.invalidateQueries({ queryKey: ['wishlist-check', courseId] });
+      } catch (_) {}
     } catch (err) {
+      // Revert optimistic state on genuine failure
+      setIsWishlisted(!targetWishlistedState);
       toast.error('Failed to update wishlist');
+    } finally {
+      setWishlistLoading(false);
     }
   };
 
@@ -177,6 +190,9 @@ export const CourseDetail = () => {
       navigate('/login');
       return;
     }
+
+    if (cartLoading) return;
+    setCartLoading(true);
 
     try {
       await cartApi.addToCart({
@@ -188,7 +204,14 @@ export const CourseDetail = () => {
       toast.success('Added to order cart');
       navigate('/cart');
     } catch (err) {
+      if (err.response?.status === 409) {
+        toast('Course is already in your cart', { icon: '🛒' });
+        navigate('/cart');
+        return;
+      }
       toast.error('Failed to add to cart');
+    } finally {
+      setCartLoading(false);
     }
   };
 
@@ -235,7 +258,7 @@ export const CourseDetail = () => {
   }
 
   const isEnrolled = enrollmentStatus?.isEnrolled;
-  const isFree = course.price === 0;
+  const isFree = Number(course.price || 0) === 0 || course.isFree === true;
 
   return (
     <div className="min-h-screen bg-[#070709] text-[#F5F5F7] font-sans selection:bg-[#C5A880]/30 selection:text-white">
@@ -289,28 +312,28 @@ export const CourseDetail = () => {
                 <div className="flex items-center gap-1.5">
                   <Star className="w-4 h-4 text-[#C5A880] fill-[#C5A880]" />
                   <span className="font-bold text-[#F5F5F7] font-mono">
-                    {ratingSummary?.averageRating?.toFixed(1) || course.rating?.toFixed(1) || '4.8'}
+                    {ratingSummary?.averageRating != null ? ratingSummary.averageRating.toFixed(1) : (course.rating != null ? Number(course.rating).toFixed(1) : '5.0')}
                   </span>
                   <span className="text-[#71717A]">
-                    ({ratingSummary?.totalReviews || course.reviewsCount || 42} reviews)
+                    ({ratingSummary?.totalReviews ?? course.reviewsCount ?? 0} reviews)
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
                   <Clock className="w-4 h-4 text-[#71717A]" />
                   <span className="font-mono">
-                    {curriculum?.totalDuration ? `${Math.floor(curriculum.totalDuration / 60)}h ${curriculum.totalDuration % 60}m` : '18.5 hours'}
+                    {curriculum?.totalDuration ? `${Math.floor(curriculum.totalDuration / 60)}h ${curriculum.totalDuration % 60}m` : (course.duration || 'Self-paced')}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
                   <BookOpen className="w-4 h-4 text-[#71717A]" />
-                  <span>{curriculum?.totalLectures || 48} Lectures</span>
+                  <span>{curriculum?.totalLectures ?? 0} Lectures</span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-[#71717A]" />
-                  <span>{course.enrollmentsCount || 1240} Engineers Enrolled</span>
+                  <span>{course.enrollmentsCount ?? 0} Engineers Enrolled</span>
                 </div>
               </div>
             </div>
@@ -342,7 +365,7 @@ export const CourseDetail = () => {
               <div className="flex items-baseline justify-between pt-1">
                 <div>
                   <span className="text-2xl font-black text-[#F5F5F7] font-mono tracking-tight">
-                    {isFree ? 'Complimentary' : `$${course.price}`}
+                    {isFree ? 'Free' : `₹${Number(course.price || 0).toLocaleString('en-IN')}`}
                   </span>
                   {course.originalPrice && course.originalPrice > course.price && (
                     <span className="text-xs line-through text-[#71717A] ml-2 font-mono">
@@ -351,7 +374,7 @@ export const CourseDetail = () => {
                   )}
                 </div>
                 <Badge variant="gold" dot>
-                  Full Access
+                  Lifetime Access
                 </Badge>
               </div>
 
@@ -364,7 +387,7 @@ export const CourseDetail = () => {
                     className="w-full justify-center"
                     onClick={() => navigate(`/student/courses/${courseId}`)}
                   >
-                    Enter Classroom
+                    Continue Learning
                   </Button>
                 ) : (
                   <>
@@ -374,7 +397,7 @@ export const CourseDetail = () => {
                       className="w-full justify-center"
                       onClick={isFree ? enrollInCourse : addToCart}
                     >
-                      {isFree ? 'Enroll Now' : 'Enroll in Track'}
+                      {isFree ? 'Enroll Now (Free)' : 'Enroll Now'}
                     </Button>
                     {!isFree && (
                       <Button
@@ -384,7 +407,7 @@ export const CourseDetail = () => {
                         onClick={addToCart}
                         leftIcon={ShoppingCart}
                       >
-                        Add to Order Cart
+                        Add to Cart
                       </Button>
                     )}
                   </>
@@ -394,14 +417,17 @@ export const CourseDetail = () => {
                   <button
                     type="button"
                     onClick={toggleWishlist}
+                    disabled={wishlistLoading}
                     className={`flex-1 py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer ${
+                      wishlistLoading ? 'opacity-60 cursor-not-allowed' : ''
+                    } ${
                       isWishlisted
                         ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
                         : 'bg-[#0F0F13] border-white/[0.04] text-[#8E8E93] hover:text-white'
                     }`}
                   >
                     <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-current' : ''}`} />
-                    <span>{isWishlisted ? 'Saved' : 'Wishlist'}</span>
+                    <span>{wishlistLoading ? 'Syncing...' : (isWishlisted ? 'Saved' : 'Wishlist')}</span>
                   </button>
 
                   <button
@@ -488,63 +514,69 @@ export const CourseDetail = () => {
 
                 <div className="space-y-3">
                   {curriculum?.sections && curriculum.sections.length > 0 ? (
-                    curriculum.sections.map((section, idx) => (
-                      <div
-                        key={section.id}
-                        className="rounded-xl bg-[#14141A]/70 border border-white/[0.04] overflow-hidden"
-                      >
-                        <button
-                          type="button"
-                          onClick={() => toggleSection(section.id)}
-                          className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/[0.02] transition-colors cursor-pointer text-left"
+                    curriculum.sections.map((section, idx) => {
+                      const sectionKey = section.id ?? section.sectionId ?? `section-${idx}`;
+                      return (
+                        <div
+                          key={sectionKey}
+                          className="rounded-xl bg-[#14141A]/70 border border-white/[0.04] overflow-hidden"
                         >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <span className="w-6 h-6 rounded-lg bg-[#0F0F13] border border-white/[0.04] text-[#C5A880] flex items-center justify-center text-xs font-bold shrink-0">
-                              {idx + 1}
-                            </span>
-                            <span className="text-xs font-bold text-[#F5F5F7] truncate">
-                              {section.title}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-3 shrink-0">
-                            <span className="text-[11px] text-[#71717A] font-mono">
-                              {section.lectures?.length || 0} lessons
-                            </span>
-                            {expandedSections[section.id] ? (
-                              <ChevronUp className="w-4 h-4 text-[#71717A]" />
-                            ) : (
-                              <ChevronDown className="w-4 h-4 text-[#71717A]" />
-                            )}
-                          </div>
-                        </button>
+                          <button
+                            type="button"
+                            onClick={() => toggleSection(sectionKey)}
+                            className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/[0.02] transition-colors cursor-pointer text-left"
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <span className="w-6 h-6 rounded-lg bg-[#0F0F13] border border-white/[0.04] text-[#C5A880] flex items-center justify-center text-xs font-bold shrink-0">
+                                {idx + 1}
+                              </span>
+                              <span className="text-xs font-bold text-[#F5F5F7] truncate">
+                                {section.title}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-3 shrink-0">
+                              <span className="text-[11px] text-[#71717A] font-mono">
+                                {section.lectures?.length || 0} lessons
+                              </span>
+                              {expandedSections[sectionKey] ? (
+                                <ChevronUp className="w-4 h-4 text-[#71717A]" />
+                              ) : (
+                                <ChevronDown className="w-4 h-4 text-[#71717A]" />
+                              )}
+                            </div>
+                          </button>
 
-                        <AnimatePresence>
-                          {expandedSections[section.id] && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              className="border-t border-white/[0.04] divide-y divide-white/[0.04]"
-                            >
-                              {section.lectures?.map((lecture) => (
-                                <div
-                                  key={lecture.id}
-                                  className="px-4 py-2.5 flex items-center justify-between text-xs hover:bg-white/[0.01]"
-                                >
-                                  <div className="flex items-center gap-2.5">
-                                    <Play className="w-3.5 h-3.5 text-[#C5A880]" />
-                                    <span className="text-[#E5E5E7]">{lecture.title}</span>
-                                  </div>
-                                  <span className="text-[11px] font-mono text-[#71717A]">
-                                    {lecture.durationMinutes || 12}m
-                                  </span>
-                                </div>
-                              ))}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    ))
+                          <AnimatePresence>
+                            {expandedSections[sectionKey] && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="border-t border-white/[0.04] divide-y divide-white/[0.04]"
+                              >
+                                {section.lectures?.map((lecture, lIdx) => {
+                                  const lectureKey = lecture.id ?? lecture.lectureId ?? `lecture-${lIdx}`;
+                                  return (
+                                    <div
+                                      key={lectureKey}
+                                      className="px-4 py-2.5 flex items-center justify-between text-xs hover:bg-white/[0.01]"
+                                    >
+                                      <div className="flex items-center gap-2.5">
+                                        <Play className="w-3.5 h-3.5 text-[#C5A880]" />
+                                        <span className="text-[#E5E5E7]">{lecture.title}</span>
+                                      </div>
+                                      <span className="text-[11px] font-mono text-[#71717A]">
+                                        {lecture.durationMinutes || lecture.duration || 0}m
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })
                   ) : (
                     <div className="p-8 text-center text-xs text-[#71717A]">
                       Detailed lecture syllabus is currently synchronizing with the gateway.
@@ -568,9 +600,9 @@ export const CourseDetail = () => {
                 </h3>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {outcomes.length > 0 ? (
-                    outcomes.map((outcome) => (
+                    outcomes.map((outcome, oIdx) => (
                       <div
-                        key={outcome.id || outcome}
+                        key={outcome.id ?? outcome.outcomeId ?? (typeof outcome === 'string' ? `outcome-${outcome}-${oIdx}` : `outcome-${oIdx}`)}
                         className="flex items-start gap-3 p-3.5 rounded-xl bg-[#14141A]/70 border border-white/[0.04]"
                       >
                         <Target className="w-4 h-4 text-[#C5A880] mt-0.5 shrink-0" />
@@ -636,7 +668,7 @@ export const CourseDetail = () => {
                   <div className="flex items-center gap-1.5 text-xs text-[#C5A880]">
                     <Star className="w-4 h-4 fill-current" />
                     <span className="font-mono font-bold">
-                      {ratingSummary?.averageRating?.toFixed(1) || '4.8'}
+                      {(ratingSummary?.averageRating || 0).toFixed(1)}
                     </span>
                     <span className="text-[#71717A]">
                       ({reviews.length} total reviews)
@@ -646,9 +678,9 @@ export const CourseDetail = () => {
 
                 <div className="space-y-3">
                   {reviews.length > 0 ? (
-                    reviews.map((rev) => (
+                    reviews.map((rev, revIdx) => (
                       <div
-                        key={rev.id}
+                        key={rev.id ?? rev.reviewId ?? `rev-${revIdx}-${rev.createdAt || ''}`}
                         className="p-4 rounded-xl bg-[#14141A]/70 border border-white/[0.04] space-y-2"
                       >
                         <div className="flex items-center justify-between text-xs">
@@ -684,9 +716,9 @@ export const CourseDetail = () => {
                   Frequently Asked Questions
                 </h3>
                 {faqs.length > 0 ? (
-                  faqs.map((faq) => (
+                  faqs.map((faq, faqIdx) => (
                     <div
-                      key={faq.id}
+                      key={faq.id ?? faq.faqId ?? `faq-${faqIdx}`}
                       className="rounded-xl bg-[#14141A]/70 border border-white/[0.04] p-4 space-y-1.5 text-xs"
                     >
                       <h4 className="font-bold text-[#F5F5F7]">{faq.question}</h4>

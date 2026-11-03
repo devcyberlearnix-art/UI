@@ -806,38 +806,21 @@ export const CreateCourse = ({ isEditing: propIsEditing = false }) => {
         enrolledCount: courseState.enrolledCount || 0,
       };
 
-      // 1. Send to Microservice Gateway (if online)
-      let backendCourse = null;
-      try {
-        if (instructorApi.createCourse) {
-          const res = await instructorApi.createCourse(instructorId, completePayload);
-          backendCourse = res?.data || res;
-        }
-      } catch (apiErr) {
-        console.warn('Microservice fallback pathway active, caching locally:', apiErr);
-      }
+      // 1. Direct authoritative creation on live microservice gateway
+      const res = await instructorApi.createCourse(instructorId, completePayload);
+      const backendCourse = res?.data || res;
 
-      // 2. Cascade create curriculum sections if API is accessible
-      try {
-        if (courseApi.createSection && backendCourse?.id) {
-          for (let i = 0; i < courseState.modules.length; i++) {
-            const mod = courseState.modules[i];
-            await courseApi.createSection(backendCourse.id, {
-              title: mod.title,
-              description: mod.description,
-              orderIndex: i + 1,
-            });
-          }
+      // 2. Cascade create curriculum sections if specified
+      if (courseApi.createSection && backendCourse?.id) {
+        for (let i = 0; i < courseState.modules.length; i++) {
+          const mod = courseState.modules[i];
+          await courseApi.createSection(backendCourse.id, {
+            title: mod.title,
+            description: mod.description,
+            orderIndex: i + 1,
+          });
         }
-      } catch (sectionErr) {
-        console.warn('Section microservice write skipped/cached');
       }
-
-      // 3. Persist into High-Fidelity Local Custom Storage Engine `lms_custom_courses`
-      const existing = JSON.parse(localStorage.getItem('lms_custom_courses') || '[]');
-      const filtered = existing.filter((c) => String(c.id) !== String(completePayload.id));
-      const updatedCache = [completePayload, ...filtered];
-      localStorage.setItem('lms_custom_courses', JSON.stringify(updatedCache));
 
       toast.success(
         publishImmediate

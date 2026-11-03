@@ -32,12 +32,13 @@ export const adminApi = {
   },
 
   // ======================== USERS MANAGEMENT ========================
-  getUsers: async (page = 0, size = 10) => {
+  // Legacy paginated helpers
+  getUsersPaged: async (page = 0, size = 10) => {
     const response = await axiosInstance.get(`/api/v1/admin/users?page=${page}&size=${size}`);
     return response.data;
   },
 
-  getInstructors: async (page = 0, size = 10) => {
+  getInstructorsPaged: async (page = 0, size = 10) => {
     const response = await axiosInstance.get(`/api/v1/admin/instructors?page=${page}&size=${size}`);
     return response.data;
   },
@@ -89,7 +90,13 @@ export const adminApi = {
   },
 
   // ======================== USER MANAGEMENT ========================
-  getUsers: async (params = {}) => {
+  getUsers: async (pageOrParams = {}, maybeSize) => {
+    let params = {};
+    if (typeof pageOrParams === 'object' && pageOrParams !== null) {
+      params = pageOrParams;
+    } else if (typeof pageOrParams === 'number') {
+      params = { page: pageOrParams, size: maybeSize ?? 10 };
+    }
     const response = await axiosInstance.get('/api/v1/admin/users', { params });
     return response.data;
   },
@@ -110,7 +117,13 @@ export const adminApi = {
   },
 
   // ======================== INSTRUCTOR MANAGEMENT ========================
-  getInstructors: async (params = {}) => {
+  getInstructors: async (pageOrParams = {}, maybeSize) => {
+    let params = {};
+    if (typeof pageOrParams === 'object' && pageOrParams !== null) {
+      params = pageOrParams;
+    } else if (typeof pageOrParams === 'number') {
+      params = { page: pageOrParams, size: maybeSize ?? 10 };
+    }
     const response = await axiosInstance.get('/api/v1/admin/instructors', { params });
     return response.data;
   },
@@ -120,19 +133,28 @@ export const adminApi = {
     return response.data;
   },
 
+  getInstructorApplicationById: async (applicationId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/instructors/applications/${applicationId}`);
+    return response.data;
+  },
+
   getInstructorApplicationsByStatus: async (status, params = {}) => {
     const response = await axiosInstance.get(`/api/v1/admin/instructors/applications/status/${status}`, { params });
     return response.data;
   },
 
-
-  approveInstructorApplication: async (userId, reason = "") => {
-    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/approve`, { reason });
+  approveInstructorApplication: async (applicationId, reason = "") => {
+    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${applicationId}/approve`, { reason });
     return response.data;
   },
 
-  rejectInstructorApplication: async (userId, reason) => {
-    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${userId}/reject`, { reason });
+  rejectInstructorApplication: async (applicationId, reason) => {
+    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${applicationId}/reject`, { reason });
+    return response.data;
+  },
+
+  requestAdditionalInfo: async (applicationId, requestedInfo) => {
+    const response = await axiosInstance.put(`/api/v1/admin/instructors/applications/${applicationId}/request-info`, { requestedInfo });
     return response.data;
   },
 
@@ -169,6 +191,11 @@ export const adminApi = {
 
   deleteCourse: async (courseId) => {
     const response = await axiosInstance.delete(`/api/v1/admin/courses/${courseId}`);
+    return response.data;
+  },
+
+  getCourseStudents: async (courseId) => {
+    const response = await axiosInstance.get(`/api/v1/courses/${courseId}/students`);
     return response.data;
   },
 
@@ -234,6 +261,48 @@ export const adminApi = {
     return response.data;
   },
 
+
+  // ======================== COUPON MANAGEMENT ========================
+  getCoupons: async () => {
+    const response = await axiosInstance.get('/api/v1/coupons');
+    return response.data?.data || response.data || [];
+  },
+
+  getCouponById: async (couponId) => {
+    const response = await axiosInstance.get(`/api/v1/coupons/${couponId}`);
+    return response.data?.data || response.data;
+  },
+
+  createCoupon: async (couponPayload) => {
+    const response = await axiosInstance.post('/api/v1/coupons', couponPayload);
+    return response.data?.data || response.data;
+  },
+
+  updateCoupon: async (couponId, couponPayload) => {
+    const response = await axiosInstance.put(`/api/v1/coupons/${couponId}`, couponPayload);
+    return response.data?.data || response.data;
+  },
+
+  deleteCoupon: async (couponId) => {
+    const response = await axiosInstance.delete(`/api/v1/coupons/${couponId}`);
+    return response.data?.data || response.data;
+  },
+
+  activateCoupon: async (couponId) => {
+    const response = await axiosInstance.patch(`/api/v1/coupons/${couponId}/activate`);
+    return response.data?.data || response.data;
+  },
+
+  deactivateCoupon: async (couponId) => {
+    const response = await axiosInstance.patch(`/api/v1/coupons/${couponId}/deactivate`);
+    return response.data?.data || response.data;
+  },
+
+  validateCoupon: async (code) => {
+    const response = await axiosInstance.get(`/api/v1/coupons/validate/${code}`);
+    return response.data;
+  },
+
   // ======================== REVIEWS ====================
   getReviews: async (params = {}) => {
     const response = await axiosInstance.get('/api/v1/admin/reviews', { params });
@@ -274,6 +343,195 @@ export const adminApi = {
 
   getSystemHealth: async () => {
     const response = await axiosInstance.get('/api/v1/admin/system-health');
+    return response.data;
+  },
+
+  // ======================== BANNER MANAGEMENT (15 ENDPOINTS) ========================
+  createBanner: async (bannerPayload) => {
+    const response = await axiosInstance.post('/api/v1/admin/banners', bannerPayload);
+    return response.data;
+  },
+
+  getAllBanners: async () => {
+    const response = await axiosInstance.get('/api/v1/admin/banners');
+    return response.data;
+  },
+
+  getBanners: async () => {
+    return adminApi.getAllBanners();
+  },
+
+  getBannerById: async (bannerId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/banners/${bannerId}`);
+    return response.data;
+  },
+
+  updateBanner: async (bannerId, bannerPayload) => {
+    const response = await axiosInstance.put(`/api/v1/admin/banners/${bannerId}`, bannerPayload);
+    return response.data;
+  },
+
+  patchBanner: async (bannerId, bannerPayload) => {
+    const response = await axiosInstance.patch(`/api/v1/admin/banners/${bannerId}`, bannerPayload);
+    return response.data;
+  },
+
+  updateBannerStatus: async (bannerId, statusPayload) => {
+    const payload = typeof statusPayload === 'string' ? { status: statusPayload } : statusPayload;
+    const response = await axiosInstance.patch(`/api/v1/admin/banners/${bannerId}/status`, payload);
+    return response.data;
+  },
+
+  reorderBanners: async (reorderPayload) => {
+    const response = await axiosInstance.patch('/api/v1/admin/banners/reorder', reorderPayload);
+    return response.data;
+  },
+
+  deleteBanner: async (bannerId) => {
+    const response = await axiosInstance.delete(`/api/v1/admin/banners/${bannerId}`);
+    return response.data;
+  },
+
+  getBannerAnalytics: async (bannerId) => {
+    const path = bannerId ? `/api/v1/admin/banners/${bannerId}/analytics` : '/api/v1/admin/banners/analytics';
+    const response = await axiosInstance.get(path);
+    return response.data;
+  },
+
+  uploadBannerImage: async (file, imageType = 'desktop') => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('imageType', imageType);
+    const response = await axiosInstance.post('/api/v1/admin/banners/upload-image', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+
+  validateBannerImage: async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await axiosInstance.post('/api/v1/admin/banners/validate-image', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+
+  getDeletedBanners: async () => {
+    const response = await axiosInstance.get('/api/v1/admin/banners/deleted');
+    return response.data;
+  },
+
+  restoreBanner: async (bannerId) => {
+    const response = await axiosInstance.post(`/api/v1/admin/banners/${bannerId}/restore`);
+    return response.data;
+  },
+
+  getBannersByTarget: async (targetType) => {
+    const response = await axiosInstance.get(`/api/v1/admin/banners/target/${targetType}`);
+    return response.data;
+  },
+
+  trackBannerConversion: async (bannerId) => {
+    const response = await axiosInstance.post(`/api/v1/admin/banners/${bannerId}/conversion`);
+    return response.data;
+  },
+
+  // ======================== ADMIN AUTH & PASSWORD RECOVERY (8 ENDPOINTS) ========================
+  loginDirect: async (email, password) => {
+    const response = await axiosInstance.post('/api/v1/admin/login', { email, password });
+    return response.data;
+  },
+
+  requestLoginOtp: async (email) => {
+    const response = await axiosInstance.post('/api/v1/admin/login/otp/request', { email });
+    return response.data;
+  },
+
+  verifyLoginOtp: async (email, otp) => {
+    const response = await axiosInstance.post('/api/v1/admin/login/otp/verify', { email, otp });
+    return response.data;
+  },
+
+  resendLoginOtp: async (email) => {
+    const response = await axiosInstance.post('/api/v1/admin/login/otp/resend', { email });
+    return response.data;
+  },
+
+  forgotPassword: async (email) => {
+    const response = await axiosInstance.post('/api/v1/admin/password/forgot', { email });
+    return response.data;
+  },
+
+  verifyPasswordOtp: async (email, otp) => {
+    const response = await axiosInstance.post('/api/v1/admin/password/verify-otp', { email, otp });
+    return response.data;
+  },
+
+  resendPasswordOtp: async (email) => {
+    const response = await axiosInstance.post('/api/v1/admin/password/otp/resend', { email });
+    return response.data;
+  },
+
+  resetPassword: async (email, otp, newPassword) => {
+    const response = await axiosInstance.post('/api/v1/admin/password/reset', { email, otp, newPassword });
+    return response.data;
+  },
+
+  // ======================== ADMIN 2FA & SECURITY MUTATIONS (8 ENDPOINTS) ========================
+  initiateEmailChange: async (payload) => {
+    const response = await axiosInstance.post('/api/v1/admin/email/change-request', payload);
+    return response.data;
+  },
+
+  verifyOldEmailOtp: async (sessionId, otp) => {
+    const response = await axiosInstance.post('/api/v1/admin/email/verify-old', { sessionId, otp });
+    return response.data;
+  },
+
+  verifyNewEmailOtp: async (sessionId, otp) => {
+    const response = await axiosInstance.post('/api/v1/admin/email/verify-new', { sessionId, otp });
+    return response.data;
+  },
+
+  resendEmailChangeOtp: async (sessionId, type = 'old') => {
+    const response = await axiosInstance.post('/api/v1/admin/email/resend-otp', { sessionId, type });
+    return response.data;
+  },
+
+  getEmailChangeSession: async (sessionId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/email/change-request/${sessionId}`);
+    return response.data;
+  },
+
+  initiatePasswordChange: async (payload) => {
+    const response = await axiosInstance.post('/api/v1/admin/change-password', payload);
+    return response.data;
+  },
+
+  verifyChangePasswordOtp: async (otp) => {
+    const response = await axiosInstance.post('/api/v1/admin/change-password/verify-otp', { otp });
+    return response.data;
+  },
+
+  resendChangePasswordOtp: async () => {
+    const response = await axiosInstance.post('/api/v1/admin/change-password/resend-otp');
+    return response.data;
+  },
+
+  // ======================== LIFECYCLE & SERVICE HEALTH (3 ENDPOINTS) ========================
+  deleteInstructor: async (instructorId) => {
+    const response = await axiosInstance.delete(`/api/v1/admin/instructors/${instructorId}`);
+    return response.data;
+  },
+
+  getAdminProfileDirect: async () => {
+    const response = await axiosInstance.get('/api/v1/admin/profile');
+    return response.data;
+  },
+
+  refreshUserEligibility: async (userId) => {
+    const response = await axiosInstance.get(`/api/v1/admin/internal/users/${userId}/refresh-eligibility`);
     return response.data;
   },
 

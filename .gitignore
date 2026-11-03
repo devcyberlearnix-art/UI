@@ -34,3 +34,5 @@ scratch/
 .codex/
 .impeccable/
 telemetry_snapshots/
+scripts/**/*.png
+scripts/*.png

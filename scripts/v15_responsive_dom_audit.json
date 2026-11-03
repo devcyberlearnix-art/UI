@@ -1,0 +1,299 @@
+{
+  "timestamp": "2026-11-01T08:37:52.447Z",
+  "viewports": [
+    {
+      "viewport": "small-mobile",
+      "dimensions": "320x640",
+      "noOverflow": true,
+      "scrollInfo": {
+        "scrollWidth": 320,
+        "innerWidth": 320,
+        "hasHorizontalOverflow": false,
+        "overflowDelta": 0
+      },
+      "heroCtas": {
+        "hasExploreCourses": true,
+        "hasGetStarted": true,
+        "hasDuplicateLoginInHero": false,
+        "allHeroButtons": [
+          {
+            "text": "Explore Courses",
+            "role": "button"
+          },
+          {
+            "text": "Get Started",
+            "role": "button"
+          },
+          {
+            "text": "Search",
+            "role": "button"
+          },
+          {
+            "text": "All Levels",
+            "role": "button"
+          },
+          {
+            "text": "Beginner",
+            "role": "button"
+          }
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": "mobile-375",
+      "dimensions": "375x812",
+      "noOverflow": true,
+      "scrollInfo": {
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "hasHorizontalOverflow": false,
+        "overflowDelta": 0
+      },
+      "heroCtas": {
+        "hasExploreCourses": true,
+        "hasGetStarted": true,
+        "hasDuplicateLoginInHero": false,
+        "allHeroButtons": [
+          {
+            "text": "Explore Courses",
+            "role": "button"
+          },
+          {
+            "text": "Get Started",
+            "role": "button"
+          },
+          {
+            "text": "Search",
+            "role": "button"
+          },
+          {
+            "text": "All Levels",
+            "role": "button"
+          },
+          {
+            "text": "Beginner",
+            "role": "button"
+          }
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": "large-mobile-430",
+      "dimensions": "430x932",
+      "noOverflow": true,
+      "scrollInfo": {
+        "scrollWidth": 430,
+        "innerWidth": 430,
+        "hasHorizontalOverflow": false,
+        "overflowDelta": 0
+      },
+      "heroCtas": {
+        "hasExploreCourses": true,
+        "hasGetStarted": true,
+        "hasDuplicateLoginInHero": false,
+        "allHeroButtons": [
+          {
+            "text": "Explore Courses",
+            "role": "button"
+          },
+          {
+            "text": "Get Started",
+            "role": "button"
+          },
+          {
+            "text": "Search",
+            "role": "button"
+          },
+          {
+            "text": "All Levels",
+            "role": "button"
+          },
+          {
+            "text": "Beginner",
+            "role": "button"
+          }
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": "tablet-768",
+      "dimensions": "768x1024",
+      "noOverflow": true,
+      "scrollInfo": {
+        "scrollWidth": 768,
+        "innerWidth": 768,
+        "hasHorizontalOverflow": false,
+        "overflowDelta": 0
+      },
+      "heroCtas": {
+        "hasExploreCourses": true,
+        "hasGetStarted": true,
+        "hasDuplicateLoginInHero": false,
+        "allHeroButtons": [
+          {
+            "text": "Explore Courses",
+            "role": "button"
+          },
+          {
+            "text": "Get Started",
+            "role": "button"
+          },
+          {
+            "text": "Search",
+            "role": "button"
+          },
+          {
+            "text": "All Levels",
+            "role": "button"
+          },
+          {
+            "text": "Beginner",
+            "role": "button"
+          }
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": "desktop-1024",
+      "dimensions": "1024x768",
+      "noOverflow": true,
+      "scrollInfo": {
+        "scrollWidth": 1024,
+        "innerWidth": 1024,
+        "hasHorizontalOverflow": false,
+        "overflowDelta": 0
+      },
+      "heroCtas": {
+        "hasExploreCourses": true,
+        "hasGetStarted": true,
+        "hasDuplicateLoginInHero": false,
+        "allHeroButtons": [
+          {
+            "text": "Explore Courses",
+            "role": "button"
+          },
+          {
+            "text": "Get Started",
+            "role": "button"
+          },
+          {
+            "text": "Search",
+            "role": "button"
+          },
+          {
+            "text": "All Levels",
+            "role": "button"
+          },
+          {
+            "text": "Beginner",
+            "role": "button"
+          }
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "viewport": "desktop-1440",
+      "dimensions": "1440x900",
+      "noOverflow": true,
+      "scrollInfo": {
+        "scrollWidth": 1440,
+        "innerWidth": 1440,
+        "hasHorizontalOverflow": false,
+        "overflowDelta": 0
+      },
+      "heroCtas": {
+        "hasExploreCourses": true,
+        "hasGetStarted": true,
+        "hasDuplicateLoginInHero": false,
+        "allHeroButtons": [
+          {
+            "text": "Explore Courses",
+            "role": "button"
+          },
+          {
+            "text": "Get Started",
+            "role": "button"
+          },
+          {
+            "text": "Search",
+            "role": "button"
+          },
+          {
+            "text": "All Levels",
+            "role": "button"
+          },
+          {
+            "text": "Beginner",
+            "role": "button"
+          }
+        ]
+      },
+      "status": "PASS"
+    }
+  ],
+  "domEvidence": {
+    "statsCards": [
+      {
+        "number": "228",
+        "label": "Active Courses",
+        "description": "Published courses",
+        "rawText": "228\nActive Courses\nPublished courses"
+      },
+      {
+        "number": "90+",
+        "label": "Enrolled Engineers",
+        "description": "Verified enrollments",
+        "rawText": "90+\nEnrolled Engineers\nVerified enrollments"
+      },
+      {
+        "number": "★ 4.4",
+        "label": "Average Rating",
+        "description": "Genuine student reviews",
+        "rawText": "★ 4.4\nAverage Rating\nGenuine student reviews"
+      },
+      {
+        "number": "16",
+        "label": "Lead Instructors",
+        "description": "Active approved instructors",
+        "rawText": "16\nLead Instructors\nActive approved instructors"
+      }
+    ],
+    "heroCtas": {
+      "hasExploreCourses": true,
+      "hasGetStarted": true,
+      "hasDuplicateLoginInHero": false,
+      "allHeroButtons": [
+        {
+          "text": "Explore Courses",
+          "role": "button"
+        },
+        {
+          "text": "Get Started",
+          "role": "button"
+        },
+        {
+          "text": "Search",
+          "role": "button"
+        },
+        {
+          "text": "All Levels",
+          "role": "button"
+        },
+        {
+          "text": "Beginner",
+          "role": "button"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total": 6,
+    "passed": 6,
+    "failed": 0
+  }
+}

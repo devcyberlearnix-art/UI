@@ -1,0 +1,287 @@
+[
+  {
+    "viewport": "Mobile (375px)",
+    "path": "/",
+    "overflow": {
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": true,
+      "hasNav": true,
+      "hasHeader": true,
+      "totalButtons": 100,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 1,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Mobile (375px)",
+    "path": "/courses",
+    "overflow": {
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": false,
+      "hasNav": true,
+      "hasHeader": false,
+      "totalButtons": 60,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 1,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Mobile (375px)",
+    "path": "/courses/6",
+    "overflow": {
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": true,
+      "hasNav": false,
+      "hasHeader": false,
+      "totalButtons": 14,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 0,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Mobile (375px)",
+    "path": "/cart",
+    "overflow": {
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": false,
+      "hasNav": false,
+      "hasHeader": false,
+      "totalButtons": 1,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 0,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Mobile (375px)",
+    "path": "/login",
+    "overflow": {
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": true,
+      "hasNav": false,
+      "hasHeader": false,
+      "totalButtons": 7,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 2,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Tablet (768px)",
+    "path": "/",
+    "overflow": {
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": true,
+      "hasNav": true,
+      "hasHeader": true,
+      "totalButtons": 100,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 1,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Tablet (768px)",
+    "path": "/courses",
+    "overflow": {
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": false,
+      "hasNav": true,
+      "hasHeader": false,
+      "totalButtons": 60,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 1,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Tablet (768px)",
+    "path": "/courses/6",
+    "overflow": {
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": true,
+      "hasNav": false,
+      "hasHeader": false,
+      "totalButtons": 14,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 0,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Tablet (768px)",
+    "path": "/cart",
+    "overflow": {
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": false,
+      "hasNav": false,
+      "hasHeader": false,
+      "totalButtons": 1,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 0,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Tablet (768px)",
+    "path": "/login",
+    "overflow": {
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": true,
+      "hasNav": false,
+      "hasHeader": false,
+      "totalButtons": 7,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 2,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Desktop (1440px)",
+    "path": "/",
+    "overflow": {
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": true,
+      "hasNav": true,
+      "hasHeader": true,
+      "totalButtons": 100,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 1,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Desktop (1440px)",
+    "path": "/courses",
+    "overflow": {
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": false,
+      "hasNav": true,
+      "hasHeader": false,
+      "totalButtons": 60,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 1,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Desktop (1440px)",
+    "path": "/courses/6",
+    "overflow": {
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": true,
+      "hasNav": false,
+      "hasHeader": false,
+      "totalButtons": 14,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 0,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Desktop (1440px)",
+    "path": "/cart",
+    "overflow": {
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": false,
+      "hasNav": false,
+      "hasHeader": false,
+      "totalButtons": 1,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 0,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  },
+  {
+    "viewport": "Desktop (1440px)",
+    "path": "/login",
+    "overflow": {
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "hasHorizontalOverflow": false
+    },
+    "a11y": {
+      "hasMain": true,
+      "hasNav": false,
+      "hasHeader": false,
+      "totalButtons": 7,
+      "buttonsWithoutAccessibleName": 0,
+      "totalInputs": 2,
+      "inputsWithoutLabels": 0
+    },
+    "pass": true
+  }
+]

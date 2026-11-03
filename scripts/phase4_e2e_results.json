@@ -1,0 +1,177 @@
+{
+  "startTime": "2026-10-31T16:28:53.904Z",
+  "flows": {
+    "Banner Lifecycle": [
+      {
+        "stepName": "POST /banners (Create Banner)",
+        "success": true,
+        "details": {
+          "status": 201,
+          "bannerId": 23,
+          "order": 183
+        }
+      },
+      {
+        "stepName": "GET /banners (List Active Banners)",
+        "success": true,
+        "details": {
+          "status": 200,
+          "count": 2
+        }
+      },
+      {
+        "stepName": "PATCH /banners/reorder (Catalog Reorder)",
+        "success": true,
+        "details": {
+          "status": 200
+        }
+      },
+      {
+        "stepName": "DELETE /banners/23 (Soft-Delete)",
+        "success": true,
+        "details": {
+          "status": 200
+        }
+      },
+      {
+        "stepName": "GET /banners/deleted (Audit Deleted List)",
+        "success": false,
+        "details": {
+          "status": 200,
+          "foundInDeleted": false
+        }
+      },
+      {
+        "stepName": "POST /banners/23/restore (Restore)",
+        "success": false,
+        "details": {
+          "status": 404
+        }
+      },
+      {
+        "stepName": "GET /api/v1/banners (Storefront Public Sync)",
+        "success": true,
+        "details": {
+          "status": 200,
+          "activeCount": 1
+        }
+      }
+    ],
+    "User Operations": [
+      {
+        "stepName": "GET /users (Paginated Query)",
+        "success": true,
+        "details": {
+          "status": 200,
+          "totalUsers": 253
+        }
+      },
+      {
+        "stepName": "PUT /users/67026582-e69b-458e-82a4-25c46927dd8a/status (Status Toggle)",
+        "success": true,
+        "details": {
+          "status": 200,
+          "toggledTo": "INACTIVE"
+        }
+      }
+    ],
+    "Instructor Operations": [
+      {
+        "stepName": "GET /instructors (Query Instructors)",
+        "success": true,
+        "details": {
+          "status": 200
+        }
+      },
+      {
+        "stepName": "GET /instructors/applications (Applications Ledger)",
+        "success": true,
+        "details": {
+          "status": 200
+        }
+      },
+      {
+        "stepName": "DELETE /instructors/{id} (Negative Rejection Test)",
+        "success": true,
+        "details": {
+          "status": 500,
+          "handledCleanly": true
+        }
+      }
+    ],
+    "Financial Operations": [
+      {
+        "stepName": "GET /payments (Paginated Ledger)",
+        "success": true,
+        "details": {
+          "status": 200
+        }
+      },
+      {
+        "stepName": "GET /orders (Paginated Ledger)",
+        "success": true,
+        "details": {
+          "status": 200
+        }
+      },
+      {
+        "stepName": "POST /orders/999999/refund (Transactional Integrity Negative Test)",
+        "success": true,
+        "details": {
+          "status": 404
+        }
+      }
+    ],
+    "Reports & System": [
+      {
+        "stepName": "GET /reports/users (User Statistics)",
+        "success": true,
+        "details": {
+          "status": 200
+        }
+      },
+      {
+        "stepName": "GET /reports/courses (Curriculum Statistics)",
+        "success": true,
+        "details": {
+          "status": 200
+        }
+      },
+      {
+        "stepName": "GET /reports/revenue (Financial Telemetry)",
+        "success": true,
+        "details": {
+          "status": 200
+        }
+      },
+      {
+        "stepName": "GET /reports/orders (Order Analytics)",
+        "success": true,
+        "details": {
+          "status": 200
+        }
+      },
+      {
+        "stepName": "POST /broadcast (Multi-User Notification Dispatch)",
+        "success": true,
+        "details": {
+          "status": 200,
+          "message": "Broadcast sent to 7 users"
+        }
+      }
+    ]
+  },
+  "logAudit": {
+    "zeroUnhandledNPEs": true,
+    "sensitiveDataScrubbedInFilter": true,
+    "correlationIdPropagated": true,
+    "adminLogsTailSnippet": "ecurity.SharedJwtValidator          : [SharedJwtValidator] Token validated successfully, subject: 00000000-0000-0000-0000-000000000001, issuer: cyberlearnix, audience: [cyberlearnix-clients]\n2026-10-31T21:58:56.446+05:30 DEBUG 1 --- [admin-service] [cat-handler-426] com.example.admin.security.JwtService    : [JwtService] Extracted assignedService: COURSE_SERVICE\n[JwtAuthFilter] Extracted assignedService: COURSE_SERVICE\n[JwtAuthFilter] Final role: MAIN_ADMIN, adminType: MAIN_ADMIN\n[JwtAuthFilter] Creating AdminPrincipal and setting authentication\n[JwtAuthFilter] Authentication set successfully\n",
+    "gatewayLogsTailSnippet": "], map=[class io.micrometer.core.instrument.Timer$Sample='io.micrometer.core.instrument.Timer$Sample@d45756b', class io.micrometer.core.instrument.LongTaskTimer$Sample='SampleImpl{duration(seconds)=0.010618939, duration(nanos)=1.0618939E7, startTimeNanos=6045442575419}'], parentObservation=org.springframework.security.web.server.ObservationWebFilterChainDecorator$PhasedObservation@4d69c954}\n2026-10-31 21:58:56.491 [reactor-http-epoll-8] INFO  c.s.a.filter.TraceIdGlobalFilter - [traceId=6d1436ce-14b3-4563-a643-22ef8477dee0] Gateway completed POST /api/v1/admin/broadcast with status 200 in 17ms\n"
+  },
+  "summary": {
+    "total": 20,
+    "passed": 18,
+    "failed": 2
+  },
+  "endTime": "2026-10-31T16:28:56.720Z"
+}

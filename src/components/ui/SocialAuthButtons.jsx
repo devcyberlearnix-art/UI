@@ -1,13 +1,10 @@
 // src/components/ui/SocialAuthButtons.jsx
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth, getDashboardPath } from "../../context/AuthContext";
-import { authApi } from "../../api/authApi";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 // Vector brand SVGs
 const GoogleIcon = () => (
-  <svg className="w-4 h-4" viewBox="0 0 24 24">
+  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
     <path
       fill="#4285F4"
       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -28,7 +25,7 @@ const GoogleIcon = () => (
 );
 
 const GitHubIcon = () => (
-  <svg className="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
+  <svg className="w-4 h-4 shrink-0 fill-current text-white" viewBox="0 0 24 24" aria-hidden="true">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -38,127 +35,89 @@ const GitHubIcon = () => (
 );
 
 const LinkedInIcon = () => (
-  <svg className="w-4 h-4 fill-current text-[#0A66C2]" viewBox="0 0 24 24">
+  <svg className="w-4 h-4 shrink-0 fill-current text-[#0A66C2]" viewBox="0 0 24 24" aria-hidden="true">
     <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
   </svg>
 );
 
-const DEFAULT_PROVIDERS = [
-  { id: "google", name: "Google", icon: GoogleIcon, color: "hover:border-[#4285F4]/40" },
-  { id: "github", name: "GitHub", icon: GitHubIcon, color: "hover:border-white/30" },
-  { id: "linkedin", name: "LinkedIn", icon: LinkedInIcon, color: "hover:border-[#0A66C2]/40" },
-];
-
 export const SocialAuthButtons = ({ mode = "signin" }) => {
-  const [activeProvider, setActiveProvider] = useState(null);
-  const [providers, setProviders] = useState(DEFAULT_PROVIDERS);
-  const { socialLogin } = useAuth();
-  const navigate = useNavigate();
-
-  // Load configured OAuth providers from backend
-  useEffect(() => {
-    let isMounted = true;
-    const fetchProviders = async () => {
-      try {
-        const res = await authApi.getOAuthProviders();
-        if (isMounted && res?.providers && Array.isArray(res.providers)) {
-          const mapped = res.providers
-            .filter((p) => p.enabled !== false)
-            .map((p) => {
-              const matched = DEFAULT_PROVIDERS.find((dp) => dp.id.toLowerCase() === p.id.toLowerCase());
-              return {
-                ...p,
-                icon: matched?.icon || GoogleIcon,
-                color: matched?.color || "hover:border-[#C5A880]/40",
-              };
-            });
-          if (mapped.length > 0) setProviders(mapped);
-        }
-      } catch {
-        // Fallback to default providers gracefully
-      }
-    };
-    fetchProviders();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const handleSocialAuth = async (provider) => {
-    setActiveProvider(provider.id);
-    try {
-      // In production with registered apps, user can be redirected to /oauth2/authorization/{provider}
-      // For instant frontend testing and unified social authentication:
-      // We pass the verified social payload to /api/v1/auth/social-login
-      const providerId = `${provider.id}-user-${Date.now().toString(36)}`;
-      const mockEmail = `${provider.id}.engineer@cyberlearnix.io`;
-      
-      const payload = {
-        provider: provider.id.toLowerCase(),
-        email: mockEmail,
-        firstName: provider.name,
-        lastName: "Engineer",
-        profilePhoto: provider.id === "google" 
-          ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" 
-          : provider.id === "github" 
-          ? "https://avatars.githubusercontent.com/u/9919" 
-          : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
-        providerId: providerId,
-      };
-
-      const result = await socialLogin(payload);
-      if (result?.success) {
-        navigate(getDashboardPath(result.user?.role), { replace: true });
-      }
-    } catch (err) {
-      console.error("[SocialAuth] Error during OAuth login:", err);
-      toast.error(`Authentication with ${provider.name} failed`);
-    } finally {
-      setActiveProvider(null);
-    }
-  };
+  const [redirecting, setRedirecting] = useState(false);
 
   const actionText = mode === "signup" ? "Sign up" : "Sign in";
+
+  const handleGoogleAuth = () => {
+    setRedirecting(true);
+    // Real OAuth redirection through API Gateway OAuth2 authorization route
+    // The Gateway proxies /oauth2/** directly to user-service:8091
+    window.location.href = "/oauth2/authorization/google";
+  };
+
+  const handleUnconfiguredAuth = (providerName) => {
+    toast.error(
+      `${providerName} OAuth credentials are not configured in this environment. Please sign in with Google or Email.`,
+      { duration: 4000 }
+    );
+  };
 
   return (
     <div className="w-full space-y-3 pt-2">
       <div className="relative flex items-center justify-center">
         <div className="w-full border-t border-white/[0.06]" />
-        <span className="absolute bg-[#0C0C0F] px-3 text-[10px] uppercase font-mono tracking-wider text-[#71717A]">
+        <span className="absolute bg-[#0F0F13] px-3 text-[10px] uppercase font-mono tracking-wider text-[#71717A]">
           Or continue with
         </span>
       </div>
 
-      <div className="grid grid-cols-3 gap-2.5 pt-1">
-        {providers.map((p) => {
-          const Icon = p.icon;
-          const isLoading = activeProvider === p.id;
+      <div className="grid grid-cols-3 gap-2 sm:gap-2.5 pt-1">
+        {/* Google — Configured Provider */}
+        <button
+          type="button"
+          onClick={handleGoogleAuth}
+          disabled={redirecting}
+          title={`${actionText} with Google`}
+          aria-label={`${actionText} with Google`}
+          className="group relative flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border border-white/[0.08] bg-[#14141A]/80 py-2.5 px-2 sm:px-3 text-xs font-medium text-[#D4D4D8] transition-all duration-200 hover:bg-[#1A1A22] hover:border-[#4285F4]/50 hover:text-[#F5F5F7] hover:shadow-md cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A880] focus-visible:ring-offset-1 focus-visible:ring-offset-[#14141A]"
+        >
+          {redirecting ? (
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#C5A880] border-t-transparent" />
+          ) : (
+            <>
+              <GoogleIcon />
+              <span className="font-sans font-medium text-[11px] sm:text-xs">Google</span>
+            </>
+          )}
+        </button>
 
-          return (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => handleSocialAuth(p)}
-              disabled={!!activeProvider}
-              title={`${actionText} with ${p.name}`}
-              aria-label={`${actionText} with ${p.name}`}
-              className={`group relative flex items-center justify-center gap-2 rounded-xl border border-white/[0.08] bg-[#14141A]/80 py-2.5 px-3 text-xs font-medium text-[#D4D4D8] transition-all duration-200 hover:bg-[#1A1A22] hover:text-[#F5F5F7] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 ${p.color}`}
-            >
-              {isLoading ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#C5A880] border-t-transparent" />
-              ) : (
-                <>
-                  <Icon />
-                  <span className="hidden sm:inline font-sans font-medium text-[12px]">{p.name}</span>
-                </>
-              )}
-            </button>
-          );
-        })}
+        {/* GitHub — Unconfigured in this environment (Marked Unavailable) */}
+        <button
+          type="button"
+          disabled
+          aria-disabled="true"
+          title="GitHub authentication is unavailable in this environment"
+          aria-label={`${actionText} with GitHub (Unavailable)`}
+          className="group relative flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border border-dashed border-white/[0.06] bg-[#14141A]/30 py-2.5 px-2 sm:px-3 text-xs font-medium text-[#71717A] opacity-50 cursor-not-allowed"
+        >
+          <GitHubIcon />
+          <span className="font-sans text-[11px] sm:text-xs text-[#71717A]">GitHub</span>
+          <span className="sr-only">(Unavailable)</span>
+        </button>
+
+        {/* LinkedIn — Unconfigured in this environment (Marked Unavailable) */}
+        <button
+          type="button"
+          disabled
+          aria-disabled="true"
+          title="LinkedIn authentication is unavailable in this environment"
+          aria-label={`${actionText} with LinkedIn (Unavailable)`}
+          className="group relative flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border border-dashed border-white/[0.06] bg-[#14141A]/30 py-2.5 px-2 sm:px-3 text-xs font-medium text-[#71717A] opacity-50 cursor-not-allowed"
+        >
+          <LinkedInIcon />
+          <span className="font-sans text-[11px] sm:text-xs text-[#71717A]">LinkedIn</span>
+          <span className="sr-only">(Unavailable)</span>
+        </button>
       </div>
     </div>
   );
 };
 
 export default SocialAuthButtons;
-

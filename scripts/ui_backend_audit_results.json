@@ -1,0 +1,1089 @@
+[
+  {
+    "file": "src/pages/admin/AdminCommandCenter.jsx",
+    "lines": 933,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.updateUserStatus",
+      "adminApi.broadcastNotification"
+    ],
+    "hooks": [
+      "useAdminUsers",
+      "useAdminSystemHealth",
+      "useAdmin",
+      "useAuth",
+      "useEnter",
+      "useLeave"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/AdminLogin.jsx",
+    "lines": 384,
+    "hasApiImport": true,
+    "apis": [
+      "authApi.requestLoginOtp",
+      "authApi.verifyLoginOtp",
+      "authApi.resendOtp"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/AdminManagement.jsx",
+    "lines": 379,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.getAdmins",
+      "adminApi.deleteSubAdmin",
+      "adminApi.toggleAdminStatus"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/AdminRegister.jsx",
+    "lines": 686,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.registerSubAdmin"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "fallback"
+    ]
+  },
+  {
+    "file": "src/pages/admin/AIFeatures.jsx",
+    "lines": 9,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": true,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Analytics.jsx",
+    "lines": 316,
+    "hasApiImport": true,
+    "apis": [],
+    "hooks": [
+      "useAdminDashboardStats",
+      "useAdminReports",
+      "useAdmin"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/BannerManagement.jsx",
+    "lines": 1055,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.getAllBanners",
+      "adminApi.getBannerAnalytics",
+      "adminApi.getDeletedBanners",
+      "adminApi.uploadBannerImage",
+      "adminApi.updateBanner",
+      "adminApi.createBanner",
+      "adminApi.updateBannerStatus",
+      "adminApi.deleteBanner",
+      "adminApi.restoreBanner",
+      "adminApi.reorderBanners"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "fallback"
+    ]
+  },
+  {
+    "file": "src/pages/admin/Certificates.jsx",
+    "lines": 296,
+    "hasApiImport": true,
+    "apis": [
+      "courseApi.getMyCertificates",
+      "courseApi.getAllCourses"
+    ],
+    "hooks": [
+      "useQuery",
+      "useMutation",
+      "useQueryClient"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "fallback"
+    ]
+  },
+  {
+    "file": "src/pages/admin/CMS.jsx",
+    "lines": 9,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Coupons.jsx",
+    "lines": 733,
+    "hasApiImport": true,
+    "apis": [
+      "couponApi.getAllCoupons",
+      "couponApi.getCampaigns",
+      "couponApi.deactivateCoupon",
+      "couponApi.activateCoupon",
+      "couponApi.deleteCoupon",
+      "couponApi.createCoupon",
+      "couponApi.bulkGenerate",
+      "couponApi.validateCoupon",
+      "couponApi.getBestDiscount"
+    ],
+    "hooks": [
+      "useQuery",
+      "useMutation",
+      "useQueryClient"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/CourseContentModal.jsx",
+    "lines": 1,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Courses.jsx",
+    "lines": 943,
+    "hasApiImport": true,
+    "apis": [
+      "courseApi.patchCourse",
+      "adminApi.getCourses",
+      "instructorApi.createCourse",
+      "courseApi.updateCourse",
+      "adminApi.updateCourse",
+      "courseApi.updateCourseStatus",
+      "adminApi.approveCourse",
+      "adminApi.rejectCourse",
+      "adminApi.deleteCourse",
+      "adminApi.getCourseContent"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "mock",
+      "fallback"
+    ]
+  },
+  {
+    "file": "src/pages/admin/Dashboard.jsx",
+    "lines": 449,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.getDashboardStats",
+      "adminApi.getAllUsers",
+      "adminApi.getAllCourses",
+      "adminApi.getOrders"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Gamification.jsx",
+    "lines": 9,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": true,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/InstructorApplications.jsx",
+    "lines": 447,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.getInstructorApplications",
+      "adminApi.approveInstructorApplication",
+      "adminApi.rejectInstructorApplication"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Instructors.jsx",
+    "lines": 443,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.getInstructors",
+      "adminApi.approveInstructorApplication",
+      "adminApi.rejectInstructorApplication",
+      "adminApi.deleteInstructor"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Moderation.jsx",
+    "lines": 9,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": true,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Notifications.jsx",
+    "lines": 445,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.broadcastNotification"
+    ],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/OrderDetails.jsx",
+    "lines": 122,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.getOrderDetails"
+    ],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Orders.jsx",
+    "lines": 573,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.getOrders",
+      "adminApi.deleteOrder"
+    ],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Payments.jsx",
+    "lines": 278,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.getPayments"
+    ],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Profile.jsx",
+    "lines": 606,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.getAdminProfile",
+      "adminApi.updateAdminProfile",
+      "authApi.uploadProfilePhoto",
+      "authApi.removeProfilePhoto"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/RegistrationSuccess.jsx",
+    "lines": 100,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Reports.jsx",
+    "lines": 599,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.getUsersReport",
+      "adminApi.getOrdersReport",
+      "adminApi.getRevenueReport",
+      "adminApi.getCoursesReport"
+    ],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Reviews.jsx",
+    "lines": 233,
+    "hasApiImport": true,
+    "apis": [],
+    "hooks": [
+      "useAdminReviews",
+      "useDeleteReviewAdmin",
+      "useAdmin"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Roles.jsx",
+    "lines": 626,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.getRoles",
+      "adminApi.updateRole",
+      "adminApi.createRole",
+      "adminApi.deleteRole"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "mock",
+      "mockroles",
+      "fallback"
+    ]
+  },
+  {
+    "file": "src/pages/admin/Settings.jsx",
+    "lines": 314,
+    "hasApiImport": true,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/SubDashboard.jsx",
+    "lines": 363,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.getAllUsers",
+      "adminApi.getAllCourses",
+      "adminApi.getOrders"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Support.jsx",
+    "lines": 9,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": true,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/Users.jsx",
+    "lines": 1028,
+    "hasApiImport": true,
+    "apis": [
+      "adminApi.getUsers",
+      "adminApi.deleteUser",
+      "adminApi.getUserById",
+      "adminApi.updateUser",
+      "adminApi.createUser",
+      "adminApi.updateUserStatus"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/admin/VerifyEmail.jsx",
+    "lines": 153,
+    "hasApiImport": true,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/Certifications.jsx",
+    "lines": 61,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/CourseDetail.jsx",
+    "lines": 743,
+    "hasApiImport": true,
+    "apis": [
+      "courseApi.getCourseDetails",
+      "courseApi.getCourseCurriculum",
+      "courseApi.getCourseRequirements",
+      "courseApi.getLearningOutcomes",
+      "courseApi.getCourseMaterials",
+      "courseApi.getCourseFAQs",
+      "reviewApi.getCourseReviews",
+      "reviewApi.getRatingSummary",
+      "wishlistApi.checkWishlist",
+      "wishlistApi.removeFromWishlist",
+      "wishlistApi.addToWishlist",
+      "cartApi.addToCart",
+      "courseApi.enrollCourse"
+    ],
+    "hooks": [
+      "useQueryClient",
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/Courses.jsx",
+    "lines": 1401,
+    "hasApiImport": true,
+    "apis": [
+      "courseApi.getCourseList",
+      "courseApi.getTrendingCourses",
+      "courseApi.getAllCourses",
+      "courseApi.getFeaturedCourses",
+      "courseApi.trackCourseImpression"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "fallback"
+    ]
+  },
+  {
+    "file": "src/pages/ForgotPassword.jsx",
+    "lines": 384,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/instructor/Analytics.jsx",
+    "lines": 133,
+    "hasApiImport": true,
+    "apis": [],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/instructor/Assignments.jsx",
+    "lines": 245,
+    "hasApiImport": true,
+    "apis": [
+      "assignmentApi.createAssignment",
+      "assignmentApi.gradeSubmission",
+      "assignmentApi.getAssignments"
+    ],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/instructor/CourseDetail.jsx",
+    "lines": 298,
+    "hasApiImport": true,
+    "apis": [
+      "courseApi.getCourseById",
+      "instructorApi.getCourseById",
+      "instructorApi.deleteCourse",
+      "courseApi.updateCourseStatus"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "mock",
+      "fallback"
+    ]
+  },
+  {
+    "file": "src/pages/instructor/CourseStudents.jsx",
+    "lines": 363,
+    "hasApiImport": true,
+    "apis": [
+      "courseApi.getCourseStudents",
+      "instructorApi.getCourseStudents",
+      "instructorApi.getStudentDetail"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/instructor/CreateCourse.jsx",
+    "lines": 2108,
+    "hasApiImport": true,
+    "apis": [
+      "courseApi.getCourseById",
+      "instructorApi.createCourse",
+      "courseApi.createSection"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "sample_video_stream",
+      "sample",
+      "fallback",
+      "mock"
+    ]
+  },
+  {
+    "file": "src/pages/instructor/Dashboard.jsx",
+    "lines": 434,
+    "hasApiImport": true,
+    "apis": [
+      "instructorApi.getDashboard",
+      "instructorApi.getCourses",
+      "instructorApi.getEarnings"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/instructor/EditCourse.jsx",
+    "lines": 9,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/instructor/InstructorDashboard.jsx",
+    "lines": 662,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": [
+      "mock"
+    ]
+  },
+  {
+    "file": "src/pages/instructor/MyCourses.jsx",
+    "lines": 435,
+    "hasApiImport": true,
+    "apis": [
+      "instructorApi.getCourses",
+      "instructorApi.createCourse",
+      "instructorApi.deleteCourse"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/Landing.jsx",
+    "lines": 66,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/LandingDashboard.jsx",
+    "lines": 505,
+    "hasApiImport": true,
+    "apis": [],
+    "hooks": [
+      "useCourses"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "mocks"
+    ]
+  },
+  {
+    "file": "src/pages/Login.jsx",
+    "lines": 496,
+    "hasApiImport": true,
+    "apis": [
+      "authApi.requestLoginOtp",
+      "authApi.verifyLoginOtp",
+      "authApi.resendOtp"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/OtpLogin.jsx",
+    "lines": 90,
+    "hasApiImport": true,
+    "apis": [
+      "authApi.requestLoginOtp"
+    ],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/OtpVerify.jsx",
+    "lines": 254,
+    "hasApiImport": true,
+    "apis": [
+      "authApi.verifyOtp",
+      "authApi.resendOtp"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/Profile.jsx",
+    "lines": 7,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/Register.jsx",
+    "lines": 269,
+    "hasApiImport": true,
+    "apis": [
+      "authApi.register"
+    ],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": [
+      "fallback"
+    ]
+  },
+  {
+    "file": "src/pages/ResetOtp.jsx",
+    "lines": 358,
+    "hasApiImport": true,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/Assignments.jsx",
+    "lines": 322,
+    "hasApiImport": true,
+    "apis": [],
+    "hooks": [
+      "useCourseAssignments",
+      "useSubmitAssignment",
+      "useAssessments"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/Cart.jsx",
+    "lines": 7,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/CertificatePage.jsx",
+    "lines": 9,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/CertificateVerification.jsx",
+    "lines": 609,
+    "hasApiImport": true,
+    "apis": [
+      "courseApi.getCourseProgress",
+      "courseApi.getCourseById",
+      "courseApi.getCourseCertificate"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/Checkout.jsx",
+    "lines": 243,
+    "hasApiImport": true,
+    "apis": [
+      "cartApi.getCart",
+      "orderApi.createOrder"
+    ],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/CheckoutContainer.jsx",
+    "lines": 584,
+    "hasApiImport": true,
+    "apis": [
+      "orderApi.getStagedOrder",
+      "orderApi.createOrder"
+    ],
+    "hooks": [
+      "useQuery",
+      "useQueryClient",
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "fallback"
+    ]
+  },
+  {
+    "file": "src/pages/student/ClassroomView.jsx",
+    "lines": 1512,
+    "hasApiImport": true,
+    "apis": [
+      "courseApi.getCourseContent",
+      "courseApi.getCourseById",
+      "assignmentApi.getAssignments",
+      "courseApi.completeLecture",
+      "quizApi.startQuizAttempt",
+      "quizApi.submitQuizAttempt"
+    ],
+    "hooks": [
+      "useAuth",
+      "useMovePlayer",
+      "useMove"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "sample",
+      "sample_stream"
+    ]
+  },
+  {
+    "file": "src/pages/student/Dashboard.jsx",
+    "lines": 12,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/InstructorApplication.jsx",
+    "lines": 772,
+    "hasApiImport": true,
+    "apis": [
+      "instructorApi.applyForInstructor"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "samples"
+    ]
+  },
+  {
+    "file": "src/pages/student/LiveClassPage.jsx",
+    "lines": 287,
+    "hasApiImport": true,
+    "apis": [
+      "liveClassApi.getLiveClassesByCourse",
+      "liveClassApi.joinLiveClass",
+      "liveClassApi.joinAttendance",
+      "liveClassApi.leaveAttendance"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/LiveClassrooms.jsx",
+    "lines": 541,
+    "hasApiImport": true,
+    "apis": [
+      "courseApi.getStudentCourses",
+      "liveClassApi.getUpcomingLiveClasses",
+      "liveClassApi.getLiveClassesByCourse",
+      "liveClassApi.joinAttendance",
+      "liveClassApi.joinLiveClass"
+    ],
+    "hooks": [
+      "useQuery",
+      "useMutation",
+      "useQueryClient",
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "fallback"
+    ]
+  },
+  {
+    "file": "src/pages/student/MyLearning.jsx",
+    "lines": 430,
+    "hasApiImport": true,
+    "apis": [
+      "courseApi.getStudentCourses"
+    ],
+    "hooks": [
+      "useQuery",
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "fallback"
+    ]
+  },
+  {
+    "file": "src/pages/student/NotificationPage.jsx",
+    "lines": 281,
+    "hasApiImport": true,
+    "apis": [],
+    "hooks": [
+      "useAuth",
+      "useNotifications",
+      "useMarkNotificationAsRead",
+      "useMarkAllNotificationsAsRead"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/NotificationPreferences.jsx",
+    "lines": 237,
+    "hasApiImport": true,
+    "apis": [],
+    "hooks": [
+      "useNotificationPreferences",
+      "useNotifications"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/Orders.jsx",
+    "lines": 177,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [
+      "useOrders"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/ProfileWorkspace.jsx",
+    "lines": 1280,
+    "hasApiImport": true,
+    "apis": [
+      "authApi.getUserProfile",
+      "courseApi.getStudentCourses",
+      "courseApi.getStudentDashboard",
+      "authApi.getSessions",
+      "authApi.uploadProfilePhoto",
+      "authApi.removeProfilePhoto",
+      "authApi.uploadCoverPhoto",
+      "authApi.updateUserProfile",
+      "authApi.logoutSession",
+      "authApi.logoutAllSessions"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": [
+      "fallback",
+      "mock"
+    ]
+  },
+  {
+    "file": "src/pages/student/QuizPage.jsx",
+    "lines": 263,
+    "hasApiImport": true,
+    "apis": [
+      "quizApi.startAttempt"
+    ],
+    "hooks": [
+      "useQuizSession",
+      "useAssessments"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/ResilientCheckout.jsx",
+    "lines": 114,
+    "hasApiImport": true,
+    "apis": [
+      "orderApi.getStagedOrder"
+    ],
+    "hooks": [
+      "useQuery",
+      "useOrder"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/ReviewPage.jsx",
+    "lines": 387,
+    "hasApiImport": true,
+    "apis": [
+      "reviewApi.getCourseReviews",
+      "reviewApi.getRatingSummary",
+      "reviewApi.getMyReview",
+      "reviewApi.updateReview",
+      "reviewApi.createReview",
+      "reviewApi.deleteReview"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/ShoppingCartWorkspace.jsx",
+    "lines": 438,
+    "hasApiImport": true,
+    "apis": [
+      "cartApi.getCart",
+      "cartApi.removeFromCart",
+      "cartApi.applyCoupon",
+      "cartApi.removeCoupon",
+      "orderApi.stageOrder"
+    ],
+    "hooks": [
+      "useQuery",
+      "useMutation",
+      "useQueryClient",
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/StudentCourseDetail.jsx",
+    "lines": 685,
+    "hasApiImport": true,
+    "apis": [
+      "courseApi.getCourseById",
+      "courseApi.getCourseCurriculum",
+      "courseApi.getCourseProgress",
+      "wishlistApi.checkWishlist",
+      "wishlistApi.removeFromWishlist",
+      "wishlistApi.addToWishlist",
+      "courseApi.startLecture",
+      "courseApi.updateLectureProgress",
+      "courseApi.completeLecture"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/StudentDashboard.jsx",
+    "lines": 1018,
+    "hasApiImport": true,
+    "apis": [
+      "courseApi.getStudentDashboard",
+      "courseApi.getStudentCourses",
+      "courseApi.getCourseById",
+      "courseApi.getCourseList",
+      "courseApi.getTrendingCourses",
+      "courseApi.resumeLearning"
+    ],
+    "hooks": [
+      "useAuth"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/student/Wishlist.jsx",
+    "lines": 94,
+    "hasApiImport": true,
+    "apis": [],
+    "hooks": [
+      "useStudentWishlist",
+      "useStudentData"
+    ],
+    "isStub": false,
+    "mockHints": []
+  },
+  {
+    "file": "src/pages/Subscription.jsx",
+    "lines": 176,
+    "hasApiImport": false,
+    "apis": [],
+    "hooks": [],
+    "isStub": false,
+    "mockHints": []
+  }
+]

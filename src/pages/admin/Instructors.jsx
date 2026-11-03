@@ -39,7 +39,7 @@ const Instructors = () => {
     setError("");
     try {
       console.log('[Instructors] Fetching instructors from API endpoint with pagination:', { page, size });
-      const response = await adminApi.getInstructors(page, size);
+      const response = await adminApi.getInstructors({ page, size });
       console.log('[Instructors] API Response:', response);
       
       // Handle different response structures
@@ -165,19 +165,17 @@ const Instructors = () => {
 
   if (loading) {
     return (
-      <div className="bg-gray-50 min-h-screen p-6 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading instructors...</p>
-        </div>
-      </div>
+      <div className="bg-[#070709] min-h-screen p-6 flex flex-col items-center justify-center space-y-4">
+    <Loader2 className="w-10 h-10 text-[#C5A880] animate-spin" />
+    <p className="text-sm font-medium text-[#8E8E93]">Loading faculty governance roster...</p>
+  </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-gray-50 min-h-screen p-6 flex items-center justify-center">
-        <div className="bg-white rounded-2xl shadow-sm border border-red-200 p-8 text-center max-w-md">
+      <div className="bg-[#070709] min-h-screen p-6 flex items-center justify-center">
+        <div className="bg-[#0F0F13] border border-red-500/20 rounded-3xl p-8 text-center max-w-md space-y-4 shadow-2xl">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Instructors</h3>
           <p className="text-gray-500 mb-4">{error}</p>
@@ -193,34 +191,37 @@ const Instructors = () => {
   }
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen p-8">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#070709] text-[#F5F5F7] p-6 lg:p-10 space-y-8 font-sans selection:bg-[#C5A880]/30 selection:text-white">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Instructor Management</h1>
-          <p className="text-gray-600 text-lg">Approve, reject, and manage instructors</p>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14141A] border border-[#C5A880]/30 text-xs font-semibold text-[#C5A880] mb-2">
+            <span className="tracking-wider uppercase text-[10px] font-bold">Faculty Governance</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F5F5F7] tracking-tight">Instructor Management</h1>
+          <p className="text-xs sm:text-sm text-[#8E8E93]">Approve, review, and govern certified course authors</p>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-        <p className="text-sm font-semibold text-gray-700 mb-4">📊 Overview</p>
+      <div className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-wider text-[#C5A880] mb-4">Faculty Overview</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-gray-50 rounded-lg p-4 text-center">
+          <div className="bg-[#14141A] border border-white/[0.04] rounded-2xl p-4 text-center">
             <p className="text-2xl font-bold text-gray-900">👥</p>
-            <p className="text-xl font-bold text-gray-900 mt-1">{instructors.length}</p>
+            <p className="text-xl font-extrabold font-mono text-[#F5F5F7] mt-1">{instructors.length}</p>
             <p className="text-xs text-gray-500 mt-1">All</p>
           </div>
-          <div className="bg-green-50 rounded-lg p-4 text-center">
+          <div className="bg-[#14141A] border border-emerald-500/20 rounded-2xl p-4 text-center">
             <p className="text-2xl font-bold text-green-600">✅</p>
             <p className="text-xl font-bold text-green-600 mt-1">{instructors.filter(i => i.status?.toUpperCase() === 'ACTIVE').length}</p>
             <p className="text-xs text-gray-500 mt-1">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'ACTIVE').length / instructors.length) * 100).toFixed(1) : 0}%</p>
           </div>
-          <div className="bg-yellow-50 rounded-lg p-4 text-center">
+          <div className="bg-[#14141A] border border-amber-500/20 rounded-2xl p-4 text-center">
             <p className="text-2xl font-bold text-yellow-600">⚠️</p>
             <p className="text-xl font-bold text-yellow-600 mt-1">{instructors.filter(i => i.status?.toUpperCase() === 'SUSPENDED').length}</p>
             <p className="text-xs text-gray-500 mt-1">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'SUSPENDED').length / instructors.length) * 100).toFixed(1) : 0}%</p>
           </div>
-          <div className="bg-red-50 rounded-lg p-4 text-center">
+          <div className="bg-[#14141A] border border-red-500/20 rounded-2xl p-4 text-center">
             <p className="text-2xl font-bold text-red-600">⏳</p>
             <p className="text-xl font-bold text-red-600 mt-1">{instructors.filter(i => i.status?.toUpperCase() === 'PENDING_VERIFICATION').length}</p>
             <p className="text-xs text-gray-500 mt-1">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'PENDING_VERIFICATION').length / instructors.length) * 100).toFixed(1) : 0}%</p>
@@ -228,8 +229,8 @@ const Instructors = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
+      <div className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-white/[0.04] bg-[#14141A]/50">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex-1 w-full md:w-auto">
               <div className="relative">
@@ -238,7 +239,7 @@ const Instructors = () => {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search..."
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#14141A] border border-white/[0.08] rounded-xl text-sm text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880]"
                 />
               </div>
             </div>
@@ -246,7 +247,7 @@ const Instructors = () => {
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
+                className="px-4 py-2.5 bg-[#14141A] border border-white/[0.08] rounded-xl text-xs text-[#F5F5F7] focus:outline-none focus:border-[#C5A880]"
               >
                 <option value="All">All Status ▼</option>
                 <option value="ACTIVE">Active</option>
@@ -265,13 +266,13 @@ const Instructors = () => {
             {filteredInstructors
               .slice((currentPage - 1) * instructorsPerPage, currentPage * instructorsPerPage)
               .map((instructor) => (
-              <div key={instructor.id} className="bg-gray-50 rounded-xl p-4 hover:shadow-md transition-shadow border border-gray-200">
+              <div key={instructor.id} className="bg-[#14141A] rounded-2xl p-5 hover:border-[#C5A880]/30 transition-all border border-white/[0.04] group">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold">
                     👤
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm truncate">{instructor.name}</p>
+                    <p className="font-semibold text-[#F5F5F7] text-sm group-hover:text-[#C5A880] transition-colors">{instructor.name}</p>
                     <p className="text-xs text-gray-400">────────</p>
                   </div>
                 </div>
@@ -287,7 +288,7 @@ const Instructors = () => {
                      instructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? '🔴 PENDING' : instructor.status}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 mb-2">📧 {instructor.email.slice(0, 8)}...</p>
+                <p className="text-xs text-[#8E8E93] mb-2 font-mono break-all">{instructor.email}</p>
                 <p className="text-xs text-gray-500 mb-3">📅 {instructor.createdAt}</p>
                 <p className="text-xs text-gray-400 mb-3">────────</p>
                 <div className="flex gap-2">
@@ -310,130 +311,103 @@ const Instructors = () => {
         </div>
         
         {/* Pagination */}
-        <div className="flex items-center justify-center gap-4 px-4 py-3 bg-white border-t border-gray-200">
-          <p className="text-sm text-gray-600">
-            Showing {(currentPage - 1) * instructorsPerPage + 1}-{Math.min(currentPage * instructorsPerPage, filteredInstructors.length)} of {filteredInstructors.length} instructors
+        <div className="flex items-center justify-between px-6 py-4 bg-[#14141A]/50 border-t border-white/[0.04] text-xs">
+          <p className="text-[#8E8E93]">
+            Showing <strong className="text-white">{(currentPage - 1) * instructorsPerPage + 1}</strong> to <strong className="text-white">{Math.min(currentPage * instructorsPerPage, filteredInstructors.length)}</strong> of <strong className="text-white">{filteredInstructors.length}</strong> faculty members
           </p>
-          <button
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            &lt; Prev
-          </button>
-          <span className="text-sm text-gray-600">
-            Page {currentPage} of {Math.ceil(filteredInstructors.length / instructorsPerPage)}
-          </span>
-          <button
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredInstructors.length / instructorsPerPage)))}
-            disabled={currentPage === Math.ceil(filteredInstructors.length / instructorsPerPage)}
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next &gt;
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1.5 bg-[#14141A] border border-white/10 hover:border-white/20 text-[#8E8E93] hover:text-white rounded-lg disabled:opacity-30 disabled:pointer-events-none transition"
+            >
+              Previous
+            </button>
+            <span className="font-mono text-[#F5F5F7] px-2">
+              Page {currentPage} of {Math.ceil(filteredInstructors.length / instructorsPerPage) || 1}
+            </span>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredInstructors.length / instructorsPerPage)))}
+              disabled={currentPage === Math.ceil(filteredInstructors.length / instructorsPerPage)}
+              className="px-3 py-1.5 bg-[#14141A] border border-white/10 hover:border-white/20 text-[#8E8E93] hover:text-white rounded-lg disabled:opacity-30 disabled:pointer-events-none transition"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Instructor Details Modal */}
+      {/* Instructor Details Modal (Ink & Onyx) */}
       {showModal && selectedInstructor && (
         <Portal>
-          <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
-            <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <button
-                onClick={() => setShowModal(false)}
-                className="text-gray-500 hover:text-gray-700 flex items-center gap-2 text-sm font-medium"
-              >
-                ← Back to Instructors
-              </button>
-              <h2 className="font-bold text-xl text-gray-900">Instructor Details</h2>
-              <div className="flex gap-2">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setShowModal(false)}>
+            <div className="bg-[#0F0F13] border border-white/10 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden text-left" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6 border-b border-white/5 flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-lg text-[#F5F5F7]">Faculty Profile Inspection</h3>
+                  <p className="text-xs text-[#8E8E93]">Federated microservice instructor record</p>
+                </div>
                 <button
-                  onClick={() => handleApprove(selectedInstructor.id)}
-                  className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors font-medium"
+                  onClick={() => setShowModal(false)}
+                  className="p-2 rounded-xl bg-[#14141A] border border-white/10 text-[#8E8E93] hover:text-white"
                 >
-                  Edit
-                </button>
-                <button className="px-3 py-1.5 text-sm bg-gray-50 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors font-medium">
-                  Actions ▼
+                  ✕
                 </button>
               </div>
-            </div>
-            <div className="p-6 space-y-6">
-              {/* Profile Section */}
-              <div className="border border-gray-200 rounded-xl overflow-hidden">
-                <div className="p-6 flex items-start gap-6">
-                  <div className="w-20 h-20 rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] font-bold text-2xl shadow-sm">
+              <div className="p-6 space-y-4 text-xs">
+                {/* Profile Section */}
+                <div className="p-4 rounded-2xl bg-[#14141A] border border-white/5 flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-[#0F0F13] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] font-bold text-2xl shadow-sm shrink-0">
                     {selectedInstructor.name.charAt(0).toUpperCase()}
                   </div>
-                  <div className="flex-1">
-                    <p className="font-bold text-xl text-gray-900">{selectedInstructor.name}</p>
-                    <p className="text-sm text-gray-600 mt-1">📧 {selectedInstructor.email}</p>
-                    <p className="text-sm text-gray-600 mt-1">🎓 INSTRUCTOR</p>
-                    <span className={`inline-block mt-2 px-2 py-1 text-xs font-medium rounded-full ${
-                      selectedInstructor.status?.toUpperCase() === 'ACTIVE' ? 'bg-green-100 text-green-700' :
-                      selectedInstructor.status?.toUpperCase() === 'SUSPENDED' ? 'bg-yellow-100 text-yellow-700' :
-                      selectedInstructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? 'bg-red-100 text-red-700' :
-                      'bg-gray-100 text-gray-700'
-                    }`}>
-                      {selectedInstructor.status}
-                    </span>
-                    <p className="text-sm text-gray-500 mt-2">📅 Joined: {selectedInstructor.createdAt}</p>
-                    <p className="text-sm text-gray-500">🆔 ID: {selectedInstructor.id}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-bold text-base text-white truncate">{selectedInstructor.name}</p>
+                    <p className="text-xs font-mono text-[#C5A880] truncate mt-0.5">{selectedInstructor.email}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#C5A880]/10 text-[#C5A880] border border-[#C5A880]/30">
+                        INSTRUCTOR
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        {selectedInstructor.status}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Stats Cards */}
-              <div className="grid grid-cols-4 gap-4">
-                <div className="bg-gray-50 p-4 rounded-xl text-center">
-                  <p className="text-2xl font-bold text-gray-900">{selectedInstructor.courses}</p>
-                  <p className="text-xs text-gray-500 mt-1">Courses</p>
+                {/* Details Grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3.5 rounded-2xl bg-[#14141A] border border-white/5 space-y-1">
+                    <span className="text-[#8E8E93] block text-[11px]">Assigned Role</span>
+                    <span className="font-bold text-white text-sm">Faculty Member</span>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-[#14141A] border border-white/5 space-y-1">
+                    <span className="text-[#8E8E93] block text-[11px]">Verification</span>
+                    <span className="font-bold text-emerald-400 text-sm">Certified Author</span>
+                  </div>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-xl text-center">
-                  <p className="text-2xl font-bold text-gray-900">{selectedInstructor.students}</p>
-                  <p className="text-xs text-gray-500 mt-1">Students</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-xl text-center">
-                  <p className="text-2xl font-bold text-gray-900">4.8</p>
-                  <p className="text-xs text-gray-500 mt-1">Rating</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-xl text-center">
-                  <p className="text-2xl font-bold text-gray-900">3</p>
-                  <p className="text-xs text-gray-500 mt-1">Reviews</p>
-                </div>
-              </div>
 
-              {/* Account Information */}
-              <div className="border border-gray-200 rounded-xl overflow-hidden">
-                <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-                  <p className="font-semibold text-sm text-gray-700">📋 Account Information</p>
+                <div className="p-3.5 rounded-2xl bg-[#14141A] border border-white/5 space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-[#8E8E93]">Faculty Identifier</span>
+                    <span className="font-mono text-[#A1A1AA]">{selectedInstructor.id}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#8E8E93]">Induction Timestamp</span>
+                    <span className="font-mono text-[#71717A]">{selectedInstructor.createdAt}</span>
+                  </div>
                 </div>
-                <div className="divide-y divide-gray-200">
-                  <div className="px-4 py-3 flex justify-between items-center">
-                    <p className="text-sm text-gray-500">Account Status</p>
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      selectedInstructor.status?.toUpperCase() === 'ACTIVE' ? 'bg-green-100 text-green-700' :
-                      selectedInstructor.status?.toUpperCase() === 'SUSPENDED' ? 'bg-yellow-100 text-yellow-700' :
-                      selectedInstructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? 'bg-red-100 text-red-700' :
-                      'bg-gray-100 text-gray-700'
-                    }`}>
-                      {selectedInstructor.status}
-                    </span>
-                  </div>
-                  <div className="px-4 py-3 flex justify-between items-center">
-                    <p className="text-sm text-gray-500">Role</p>
-                    <p className="text-sm text-gray-900">INSTRUCTOR</p>
-                  </div>
-                  <div className="px-4 py-3 flex justify-between items-center">
-                    <p className="text-sm text-gray-500">Created</p>
-                    <p className="text-sm text-gray-900">{selectedInstructor.createdAt}</p>
-                  </div>
+
+                <div className="flex justify-end pt-2">
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="px-5 py-2.5 bg-[#C5A880] hover:bg-[#B3936A] text-[#070709] rounded-xl text-xs font-bold transition-all shadow-lg shadow-[#C5A880]/10"
+                  >
+                    Close Inspection
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
         </Portal>
       )}
     </motion.div>

@@ -12,12 +12,11 @@ export const buildApiUrl = (path = "") => {
 
 // Normalize photo URLs to work in both development and production
 // Backend returns Google Drive URLs: https://drive.google.com/uc?id=FILE_ID
-// Convert to preview format that works in img tags: https://drive.google.com/thumbnail?id=FILE_ID&sz=w1280-h1280
-// The proxy endpoint /api/v1/users/photo/{fileId} has issues with service account downloads
+// Convert to backend proxy endpoint which authenticates with Google Drive service account
 export const normalizePhotoUrl = (photoUrl) => {
   if (!photoUrl) return null;
 
-  // Handle Google Drive URLs - convert to thumbnail/preview format for img tags
+  // Handle Google Drive URLs - route through backend proxy endpoint
   if (photoUrl.includes('drive.google.com')) {
     // Extract file ID from Google Drive URL
     const idMatch = photoUrl.match(/id=([^&]+)/);
@@ -25,8 +24,8 @@ export const normalizePhotoUrl = (photoUrl) => {
     const fileId = idMatch ? idMatch[1] : (fileMatch ? fileMatch[1] : null);
 
     if (fileId) {
-      // Use thumbnail format that works in img tags with size parameters
-      return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1280-h1280`;
+      // Use proxy endpoint that serves directly from service account
+      return `/api/v1/users/photo/${fileId}`;
     }
     // If we can't extract file ID, return as-is
     return photoUrl;

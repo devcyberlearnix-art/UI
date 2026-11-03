@@ -1,0 +1,366 @@
+{
+  "passedCount": 32,
+  "failedCount": 0,
+  "total": 32,
+  "results": [
+    {
+      "group": "AdminPaymentController",
+      "endpoint": "GET /api/v1/admin/payments",
+      "role": "anonymous",
+      "statusCode": 401,
+      "expected": [
+        401
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminPaymentController",
+      "endpoint": "GET /api/v1/admin/payments",
+      "role": "student",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminPaymentController",
+      "endpoint": "GET /api/v1/admin/payments",
+      "role": "instructor",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminPaymentController",
+      "endpoint": "GET /api/v1/admin/payments",
+      "role": "courseSubAdmin",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": "Scoped sub-admin blocked from payments"
+    },
+    {
+      "group": "AdminPaymentController",
+      "endpoint": "GET /api/v1/admin/payments",
+      "role": "mainAdmin",
+      "statusCode": 200,
+      "expected": [
+        200
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminPaymentController",
+      "endpoint": "GET /api/v1/admin/payments/00000000-0000-0000-0000-000000000000",
+      "role": "student",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminPaymentController",
+      "endpoint": "GET /api/v1/admin/payments/00000000-0000-0000-0000-000000000000",
+      "role": "mainAdmin",
+      "statusCode": 400,
+      "expected": [
+        200,
+        400,
+        404
+      ],
+      "passed": true,
+      "note": "Rejects non-existent payment safely"
+    },
+    {
+      "group": "AdminOrderController",
+      "endpoint": "GET /api/v1/admin/orders",
+      "role": "anonymous",
+      "statusCode": 401,
+      "expected": [
+        401
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminOrderController",
+      "endpoint": "GET /api/v1/admin/orders",
+      "role": "student",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminOrderController",
+      "endpoint": "GET /api/v1/admin/orders",
+      "role": "instructor",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminOrderController",
+      "endpoint": "GET /api/v1/admin/orders",
+      "role": "courseSubAdmin",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": "Scoped sub-admin blocked from orders"
+    },
+    {
+      "group": "AdminOrderController",
+      "endpoint": "GET /api/v1/admin/orders",
+      "role": "mainAdmin",
+      "statusCode": 200,
+      "expected": [
+        200
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminOrderController",
+      "endpoint": "POST /api/v1/admin/orders/00000000-0000-0000-0000-000000000000/refund",
+      "role": "anonymous",
+      "statusCode": 401,
+      "expected": [
+        401
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminOrderController",
+      "endpoint": "POST /api/v1/admin/orders/00000000-0000-0000-0000-000000000000/refund",
+      "role": "student",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminOrderController",
+      "endpoint": "POST /api/v1/admin/orders/00000000-0000-0000-0000-000000000000/refund",
+      "role": "mainAdmin",
+      "statusCode": 404,
+      "expected": [
+        400,
+        404,
+        500
+      ],
+      "passed": true,
+      "note": "Rejects invalid refund with clean status"
+    },
+    {
+      "group": "AdminUserController",
+      "endpoint": "GET /api/v1/admin/users",
+      "role": "anonymous",
+      "statusCode": 401,
+      "expected": [
+        401
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminUserController",
+      "endpoint": "GET /api/v1/admin/users",
+      "role": "student",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminUserController",
+      "endpoint": "GET /api/v1/admin/users",
+      "role": "instructor",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminUserController",
+      "endpoint": "GET /api/v1/admin/users",
+      "role": "courseSubAdmin",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": "Course sub-admin cannot list all users"
+    },
+    {
+      "group": "AdminUserController",
+      "endpoint": "GET /api/v1/admin/users",
+      "role": "mainAdmin",
+      "statusCode": 200,
+      "expected": [
+        200
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminUserController",
+      "endpoint": "PUT /api/v1/admin/users/00000000-0000-0000-0000-000000000000/status",
+      "role": "anonymous",
+      "statusCode": 401,
+      "expected": [
+        401
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminUserController",
+      "endpoint": "PUT /api/v1/admin/users/00000000-0000-0000-0000-000000000000/status",
+      "role": "student",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminUserController",
+      "endpoint": "PUT /api/v1/admin/users/00000000-0000-0000-0000-000000000000/status",
+      "role": "mainAdmin",
+      "statusCode": 400,
+      "expected": [
+        200,
+        400,
+        404
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "Privilege Escalation Guard",
+      "endpoint": "POST /api/v1/admin/register",
+      "role": "anonymous",
+      "statusCode": 401,
+      "expected": [
+        401,
+        403
+      ],
+      "passed": true,
+      "note": "Anonymous cannot register sub-admin"
+    },
+    {
+      "group": "Privilege Escalation Guard",
+      "endpoint": "POST /api/v1/admin/register",
+      "role": "student",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "Privilege Escalation Guard",
+      "endpoint": "POST /api/v1/admin/register",
+      "role": "courseSubAdmin",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": "Sub-admin cannot create other sub-admins"
+    },
+    {
+      "group": "AdminBannerController",
+      "endpoint": "GET /api/v1/admin/banners",
+      "role": "anonymous",
+      "statusCode": 401,
+      "expected": [
+        401
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminBannerController",
+      "endpoint": "GET /api/v1/admin/banners",
+      "role": "student",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminBannerController",
+      "endpoint": "GET /api/v1/admin/banners",
+      "role": "mainAdmin",
+      "statusCode": 200,
+      "expected": [
+        200
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminReportController",
+      "endpoint": "GET /api/v1/admin/reports/users",
+      "role": "anonymous",
+      "statusCode": 401,
+      "expected": [
+        401
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminReportController",
+      "endpoint": "GET /api/v1/admin/reports/users",
+      "role": "student",
+      "statusCode": 403,
+      "expected": [
+        403
+      ],
+      "passed": true,
+      "note": ""
+    },
+    {
+      "group": "AdminReportController",
+      "endpoint": "GET /api/v1/admin/reports/users",
+      "role": "mainAdmin",
+      "statusCode": 200,
+      "expected": [
+        200
+      ],
+      "passed": true,
+      "note": ""
+    }
+  ]
+}

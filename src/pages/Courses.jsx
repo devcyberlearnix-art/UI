@@ -41,16 +41,32 @@ import { courseApi } from "../api/courseApi";
 import { useAuth } from "../context/AuthContext";
 import Portal from "../components/ui/Portal";
 import Navbar from "../layouts/Navbar";
+import AdvancedTypeaheadSearch from "../components/search/AdvancedTypeaheadSearch";
 
 const CATEGORY_OPTIONS = [
   "All",
   "Programming",
   "Web Development",
+  "Backend Development",
+  "Frontend Development",
+  "Mobile Development",
+  "Cyber Security",
+  "Cloud Computing",
+  "DevOps",
   "Data Science",
-  "Cloud & DevOps",
   "Artificial Intelligence",
-  "Design",
-  "Business",
+  "Machine Learning",
+  "Database",
+  "Software Engineering",
+  "Networking",
+  "Computer Science",
+  "Testing",
+  "System Design",
+  "Blockchain",
+  "UI/UX",
+  "Business/Technology",
+  "Architecture",
+  "Cloud",
 ];
 
 const LEVEL_OPTIONS = ["All Levels", "Beginner", "Intermediate", "Advanced"];
@@ -65,146 +81,58 @@ const SORT_OPTIONS = [
 const CATEGORY_COLORS = {
   Programming: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30",
   "Web Development": "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
+  "Backend Development": "bg-blue-500/15 text-blue-300 border-blue-500/30",
+  "Frontend Development": "bg-teal-500/15 text-teal-300 border-teal-500/30",
+  "Mobile Development": "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+  "Cyber Security": "bg-red-500/15 text-red-300 border-red-500/30",
+  "Cloud Computing": "bg-sky-500/15 text-sky-300 border-sky-500/30",
+  DevOps: "bg-orange-500/15 text-orange-300 border-orange-500/30",
   "Data Science": "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-  "Cloud & DevOps": "bg-sky-500/15 text-sky-300 border-sky-500/30",
   "Artificial Intelligence": "bg-purple-500/15 text-purple-300 border-purple-500/30",
-  Design: "bg-rose-500/15 text-rose-300 border-rose-500/30",
-  Business: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+  "Machine Learning": "bg-violet-500/15 text-violet-300 border-violet-500/30",
+  Database: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+  "Software Engineering": "bg-blue-600/15 text-blue-300 border-blue-600/30",
+  Networking: "bg-green-500/15 text-green-300 border-green-500/30",
+  "Computer Science": "bg-indigo-600/15 text-indigo-300 border-indigo-600/30",
+  Testing: "bg-pink-500/15 text-pink-300 border-pink-500/30",
+  "System Design": "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30",
+  Blockchain: "bg-yellow-500/15 text-yellow-300 border-yellow-500/30",
+  "UI/UX": "bg-rose-500/15 text-rose-300 border-rose-500/30",
+  "Business/Technology": "bg-amber-500/15 text-amber-300 border-amber-500/30",
+  Architecture: "bg-purple-600/15 text-purple-300 border-purple-600/30",
+  Cloud: "bg-sky-600/15 text-sky-300 border-sky-600/30",
 };
 
-const DEFAULT_COURSES = [
-  {
-    id: 253,
-    title: "Full-Stack Cloud Architecture & Distributed Systems",
-    category: "Cloud & DevOps",
-    level: "Intermediate",
-    price: 899,
-    originalPrice: 1499,
-    rating: 4.9,
-    students: 1240,
-    duration: "14 Weeks",
-    instructor: "Alex Rivera",
-    instructorRole: "Principal Systems Architect",
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80",
-    description: "Architect, deploy, and scale resilient microservices on Kubernetes, Terraform, and AWS cloud infrastructure.",
-    modulesCount: 12,
-    lessonsCount: 48,
-  },
-  {
-    id: 254,
-    title: "Modern React 19, Next.js & Production TypeScript",
-    category: "Web Development",
-    level: "Beginner",
-    price: 649,
-    originalPrice: 999,
-    rating: 4.8,
-    students: 2310,
-    duration: "10 Weeks",
-    instructor: "Sarah Chen",
-    instructorRole: "Staff Frontend Engineer",
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80",
-    description: "Master React Server Components, server actions, state machines, and high-performance Web apps.",
-    modulesCount: 10,
-    lessonsCount: 42,
-  },
-  {
-    id: 255,
-    title: "Deep Learning, LLM Fine-Tuning & Generative AI",
-    category: "Artificial Intelligence",
-    level: "Advanced",
-    price: 1199,
-    originalPrice: 1999,
-    rating: 4.95,
-    students: 980,
-    duration: "16 Weeks",
-    instructor: "Dr. Marcus Vance",
-    instructorRole: "AI Research Lead",
-    image: "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&auto=format&fit=crop&q=80",
-    description: "Train transformer models, implement LoRA fine-tuning, build multi-agent RAG pipelines with PyTorch.",
-    modulesCount: 14,
-    lessonsCount: 56,
-  },
-  {
-    id: 256,
-    title: "Applied Data Engineering with Apache Spark & Kafka",
-    category: "Data Science",
-    level: "Intermediate",
-    price: 799,
-    originalPrice: 1299,
-    rating: 4.75,
-    students: 840,
-    duration: "12 Weeks",
-    instructor: "Elena Rostova",
-    instructorRole: "Data Infrastructure Lead",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80",
-    description: "Build robust real-time data streaming pipelines, lakehouse architectures, and distributed analytics engines.",
-    modulesCount: 11,
-    lessonsCount: 38,
-  },
-  {
-    id: 257,
-    title: "Enterprise Cybersecurity & Ethical Penetration Testing",
-    category: "Programming",
-    level: "Advanced",
-    price: 949,
-    originalPrice: 1599,
-    rating: 4.88,
-    students: 1120,
-    duration: "14 Weeks",
-    instructor: "David Miller",
-    instructorRole: "Senior Security Specialist",
-    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=80",
-    description: "Learn offensive security, network forensics, OWASP top vulnerabilities, and real-world penetration test labs.",
-    modulesCount: 13,
-    lessonsCount: 45,
-  },
-  {
-    id: 258,
-    title: "UI/UX Design Systems & High-Fidelity Prototyping",
-    category: "Design",
-    level: "Beginner",
-    price: 499,
-    originalPrice: 799,
-    rating: 4.82,
-    students: 1560,
-    duration: "8 Weeks",
-    instructor: "Jessica Taylor",
-    instructorRole: "Head of Product Design",
-    image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80",
-    description: "Craft enterprise design tokens, responsive component libraries, and interactive Figma prototypes.",
-    modulesCount: 8,
-    lessonsCount: 32,
-  },
-];
+const DEFAULT_COURSES = [];
 
 const normalizeCourseItem = (c, index) => {
+  const rawTitle = c.title || c.courseName || c.name || "Untitled Course";
+  const title = rawTitle.replace(/^\[CYBERLEARNIX-SEED-[0-9]+\]\s*/i, '').replace(/#\d+/g, '').trim();
+  const rawImg = c.image || c.thumbnail || c.coverImage || c.banner || "";
+  const image = (rawImg && !rawImg.includes('placehold.co')) ? rawImg : "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80";
+
   return {
-    id: c.id || c.courseId || c._id || (253 + index),
-    title: c.title || c.courseName || c.name || "Technical Specialization",
-    category: c.category || c.categoryName || "Programming",
-    level: c.level || c.difficultyLevel || "Beginner",
-    price: c.price != null ? Number(c.price) : (c.amount != null ? Number(c.amount) : 599),
-    originalPrice: c.originalPrice != null ? Number(c.originalPrice) : 999,
-    rating: Number(c.rating || c.avgRating || 4.8),
-    students: Number(c.students || c.enrollmentCount || c.enrolledStudents || 120),
-    duration: c.duration || c.estimatedDuration || "10 Weeks",
+    id: c.id || c.courseId || c._id,
+    title,
+    category: c.category || c.categoryName || "General",
+    level: c.level || c.difficultyLevel || "All Levels",
+    price: c.price != null ? Number(c.price) : (c.amount != null ? Number(c.amount) : 0),
+    originalPrice: c.originalPrice != null ? Number(c.originalPrice) : null,
+    rating: Number(c.rating || c.avgRating || 0),
+    students: Number(c.students || c.enrollmentCount || c.enrolledStudents || 0),
+    duration: c.duration || c.estimatedDuration || "Self-paced",
     instructor:
       c.instructor?.name ||
       c.instructorName ||
-      (typeof c.instructor === "string" ? c.instructor : "Asivo Faculty"),
-    instructorRole: c.instructorRole || c.instructor?.role || "Senior Specialist",
-    image:
-      c.image ||
-      c.thumbnail ||
-      c.coverImage ||
-      c.banner ||
-      `https://images.unsplash.com/photo-${1516321318423 + index * 1000}?w=800&auto=format&fit=crop&q=80`,
+      (typeof c.instructor === "string" ? c.instructor : "Instructor"),
+    instructorRole: c.instructorRole || c.instructor?.role || "Instructor",
+    image,
     description:
       c.description ||
       c.summary ||
-      "Master modern industry methodologies through structured modules, real-world case studies, and hands-on laboratory exercises.",
-    modulesCount: c.modulesCount || (Array.isArray(c.modules) ? c.modules.length : 8),
-    lessonsCount: c.lessonsCount || 36,
+      "",
+    modulesCount: c.modulesCount || (Array.isArray(c.modules) ? c.modules.length : 0),
+    lessonsCount: c.lessonsCount || 0,
   };
 };
 
@@ -258,6 +186,12 @@ const Courses = () => {
       newParams.set("level", lvl);
     }
     setSearchParams(newParams, { replace: true });
+  };
+
+  const handleSearchSubmit = (e) => {
+    e?.preventDefault();
+    setCurrentPage(1);
+    fetchCourses(searchQuery);
   };
 
   const updateSearchQuery = (query) => {
@@ -316,98 +250,120 @@ const Courses = () => {
     }
   };
 
-  // Fetch courses from API - uses trending, featured, or list based on context
-  const fetchCourses = useCallback(async () => {
+  // Fetch courses from backend API - connects search, category, level & sort directly
+  const fetchCourses = useCallback(async (searchOverride) => {
     setLoading(true);
     setError("");
 
+    const term = typeof searchOverride === 'string' ? searchOverride : searchQuery;
+
     try {
-      // Try multiple API endpoints for best results
       let list = [];
 
-      // 1. Try trending courses first
+      // 1. Primary: Use backend catalog search API with live search parameter
       try {
-        const trendingData = await courseApi.getTrendingCourses({
+        const sortMap = {
+          popular: 'POPULAR',
+          newest: 'NEWEST',
+          rating: 'RATING',
+          'price-asc': 'PRICE_ASC',
+          'price-desc': 'PRICE_DESC',
+        };
+
+        const listData = await courseApi.getCourseList({
+          search: term.trim() || undefined,
+          category: selectedCategory !== "All" ? selectedCategory : undefined,
+          level: selectedLevel !== "All Levels" ? selectedLevel : undefined,
+          sort: sortMap[sortBy] || 'POPULAR',
           page: 0,
-          size: 20,
-          category: selectedCategory !== "All" ? selectedCategory : "",
-          level: selectedLevel !== "All Levels" ? selectedLevel : ""
+          size: 50,
         });
 
-        if (Array.isArray(trendingData?.data?.courses)) {
-          list = trendingData.data.courses;
-        } else if (Array.isArray(trendingData?.data)) {
-          list = trendingData.data;
-        } else if (Array.isArray(trendingData)) {
-          list = trendingData;
+        if (Array.isArray(listData?.data?.courses)) {
+          list = listData.data.courses;
+        } else if (Array.isArray(listData?.data)) {
+          list = listData.data;
+        } else if (Array.isArray(listData?.courses)) {
+          list = listData.courses;
         }
-      } catch (trendingErr) {
-        console.warn("[Courses] Trending API failed, trying featured...", trendingErr);
-      }
 
-      // 2. If trending failed, try featured courses
-      if (list.length === 0) {
-        try {
-          const featuredData = await courseApi.getFeaturedCourses(12);
-          if (Array.isArray(featuredData)) {
-            list = featuredData;
-          } else if (Array.isArray(featuredData?.data)) {
-            list = featuredData.data;
+        // Fetch remaining pages so the full catalog (300+ courses) is available in frontend
+        const pagination = listData?.data?.pagination;
+        const totalPages = pagination?.totalPages || 1;
+        if (totalPages > 1) {
+          const pagePromises = [];
+          for (let p = 1; p < Math.min(totalPages, 20); p++) {
+            pagePromises.push(
+              courseApi.getCourseList({
+                search: term.trim() || undefined,
+                category: selectedCategory !== "All" ? selectedCategory : undefined,
+                level: selectedLevel !== "All Levels" ? selectedLevel : undefined,
+                sort: sortMap[sortBy] || 'POPULAR',
+                page: p,
+                size: 50,
+              }).catch(() => null)
+            );
           }
-        } catch (featuredErr) {
-          console.warn("[Courses] Featured API failed, trying course list...", featuredErr);
+          const additionalPages = await Promise.all(pagePromises);
+          for (const pageRes of additionalPages) {
+            const pageCourses = pageRes?.data?.courses || pageRes?.data || [];
+            if (Array.isArray(pageCourses)) {
+              list = list.concat(pageCourses);
+            }
+          }
         }
+      } catch (listErr) {
+        console.warn("[Courses] Course list search API failed, trying trending...", listErr);
       }
 
-      // 3. If featured failed, try course list with filters
-      if (list.length === 0) {
+      // 2. If list empty and no active filters, fallback to trending
+      if (list.length === 0 && !term.trim() && selectedCategory === "All" && selectedLevel === "All Levels") {
         try {
-          const listData = await courseApi.getCourseList({
-            category: selectedCategory !== "All" ? selectedCategory : undefined,
-            level: selectedLevel !== "All Levels" ? selectedLevel : undefined,
+          const trendingData = await courseApi.getTrendingCourses({
             page: 0,
-            size: 20
+            size: 50,
           });
 
-          if (Array.isArray(listData?.data?.courses)) {
-            list = listData.data.courses;
-          } else if (Array.isArray(listData?.data)) {
-            list = listData.data;
-          } else if (Array.isArray(listData)) {
-            list = listData;
+          if (Array.isArray(trendingData?.data?.courses)) {
+            list = trendingData.data.courses;
+          } else if (Array.isArray(trendingData?.data)) {
+            list = trendingData.data;
           }
-        } catch (listErr) {
-          console.warn("[Courses] Course list API failed, trying all courses...", listErr);
-        }
+        } catch (_) { }
       }
 
-      // 4. Final fallback to all courses
-      if (list.length === 0) {
-        const allData = await courseApi.getAllCourses({ page: 0, size: 20 });
-
-        if (Array.isArray(allData?.content)) {
-          list = allData.content;
-        } else if (Array.isArray(allData?.data)) {
-          list = allData.data;
-        } else if (Array.isArray(allData)) {
-          list = allData;
-        }
+      // 3. Fallback to getAllCourses if list still empty and no active search
+      if (list.length === 0 && !term.trim()) {
+        try {
+          const allData = await courseApi.getAllCourses({ page: 0, size: 500 });
+          if (Array.isArray(allData?.content)) {
+            list = allData.content;
+          } else if (Array.isArray(allData?.data)) {
+            list = allData.data;
+          }
+        } catch (_) { }
       }
 
       if (list.length > 0) {
         setCourses(list.map((c, idx) => normalizeCourseItem(c, idx)));
       } else {
-        // Fallback to high quality standard courses
-        setCourses(DEFAULT_COURSES);
+        if (term.trim() || selectedCategory !== "All" || selectedLevel !== "All Levels") {
+          setCourses([]);
+        } else {
+          setCourses([]);
+        }
       }
     } catch (err) {
-      console.warn("[BrowseCourses] All APIs failed, falling back to curated curriculum", err);
-      setError("Connected with offline course cache.");
-      setCourses(DEFAULT_COURSES);
+      console.warn("[BrowseCourses] APIs failed", err);
+      if (!term.trim()) {
+        setCourses([]);
+      } else {
+        setCourses([]);
+      }
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory, selectedLevel]);
+  }, [searchQuery, selectedCategory, selectedLevel, sortBy]);
 
   // Fetch featured and trending courses separately
   const fetchFeaturedCourses = useCallback(async () => {
@@ -446,8 +402,15 @@ const Courses = () => {
     }
   }, []);
 
+  // Live debounced search effect
   useEffect(() => {
-    fetchCourses();
+    const timer = setTimeout(() => {
+      fetchCourses(searchQuery);
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [searchQuery, selectedCategory, selectedLevel, sortBy]);
+
+  useEffect(() => {
     fetchFeaturedCourses();
     fetchTrendingCoursesSection();
   }, [fetchCourses, fetchFeaturedCourses, fetchTrendingCoursesSection]);
@@ -480,12 +443,12 @@ const Courses = () => {
         }
 
         // Category filter
-        if (selectedCategory !== "All" && course.category !== selectedCategory) {
+        if (selectedCategory !== "All" && course.category?.toLowerCase() !== selectedCategory.toLowerCase()) {
           return false;
         }
 
         // Level filter
-        if (selectedLevel !== "All Levels" && course.level !== selectedLevel) {
+        if (selectedLevel !== "All Levels" && course.level?.toLowerCase() !== selectedLevel.toLowerCase()) {
           return false;
         }
 
@@ -619,7 +582,7 @@ const Courses = () => {
           </div>
 
           {/* ── FEATURED COURSES CAROUSEL ─────────────────────────────────── */}
-          {featuredCourses.length > 0 && (
+          {!searchQuery.trim() && selectedCategory === "All" && featuredCourses.length > 0 && (
             <div className="rounded-3xl border border-white/[0.04] bg-[#0F0F13] p-5 sm:p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -672,10 +635,10 @@ const Courses = () => {
                         </span>
                         <button
                           type="button"
+                          aria-label={isWish ? "Remove from wishlist" : "Add to wishlist"}
                           onClick={(e) => toggleWishlist(course, e)}
-                          className={`absolute top-2 right-2 p-1.5 rounded-lg backdrop-blur-md transition ${
-                            isWish ? "bg-rose-500 text-white" : "bg-black/50 hover:bg-rose-500/80 text-white"
-                          }`}
+                          className={`absolute top-2 right-2 p-1.5 rounded-lg backdrop-blur-md transition ${isWish ? "bg-rose-500 text-white" : "bg-black/50 hover:bg-rose-500/80 text-white"
+                            }`}
                         >
                           <Heart size={12} fill={isWish ? "currentColor" : "none"} />
                         </button>
@@ -700,7 +663,7 @@ const Courses = () => {
           )}
 
           {/* ── TRENDING COURSES SECTION ─────────────────────────────────── */}
-          {trendingCourses.length > 0 && (
+          {!searchQuery.trim() && selectedCategory === "All" && trendingCourses.length > 0 && (
             <div className="rounded-3xl border border-white/[0.04] bg-[#0F0F13] p-5 sm:p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -752,10 +715,10 @@ const Courses = () => {
                         </div>
                         <button
                           type="button"
+                          aria-label={isWish ? "Remove from wishlist" : "Add to wishlist"}
                           onClick={(e) => toggleWishlist(course, e)}
-                          className={`absolute top-2 right-2 p-1 rounded-lg backdrop-blur-md transition ${
-                            isWish ? "bg-rose-500 text-white" : "bg-black/50 hover:bg-rose-500/80 text-white"
-                          }`}
+                          className={`absolute top-2 right-2 p-1 rounded-lg backdrop-blur-md transition ${isWish ? "bg-rose-500 text-white" : "bg-black/50 hover:bg-rose-500/80 text-white"
+                            }`}
                         >
                           <Heart size={11} fill={isWish ? "currentColor" : "none"} />
                         </button>
@@ -783,25 +746,16 @@ const Courses = () => {
           <div className="rounded-3xl border border-white/[0.04] bg-[#0F0F13] p-5 space-y-4 shadow-sm">
             {/* Top Controls: Search, Sort & View Mode */}
             <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-              {/* Physics-Based Muted Gold Search Input */}
-              <div className="relative flex-1 max-w-md">
-                <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" />
-                <input
-                  type="text"
-                  placeholder="Search tracks by topic, distributed architecture, or lead..."
-                  value={searchQuery}
-                  onChange={(e) => updateSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-9 py-2 rounded-xl border border-white/[0.06] bg-[#14141A] text-xs sm:text-sm text-[#F5F5F7] placeholder-[#71717A] outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880]/30 transition-all duration-300"
+              {/* Physics-Based Muted Gold Search Input & Action Button */}
+              <div className="relative flex-1 max-w-xl">
+                <AdvancedTypeaheadSearch
+                  initialValue={searchQuery}
+                  onExecuteSearch={(val) => {
+                    updateSearchQuery(val);
+                  }}
+                  placeholder="Search items by title, subtitle, tag category or author..."
+                  className="w-full"
                 />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => updateSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-[#F5F5F7] transition-colors"
-                  >
-                    <X size={14} />
-                  </button>
-                )}
               </div>
 
               {/* Right Controls: Level, Sort By & View Toggle */}
@@ -844,11 +798,10 @@ const Courses = () => {
                     type="button"
                     onClick={() => setViewMode("grid")}
                     title="Grid View"
-                    className={`p-1.5 rounded-lg transition ${
-                      viewMode === "grid"
+                    className={`p-1.5 rounded-lg transition ${viewMode === "grid"
                         ? "bg-[#C5A880] text-[#070709] font-bold"
                         : "text-[#71717A] hover:text-[#F5F5F7]"
-                    }`}
+                      }`}
                   >
                     <LayoutGrid size={15} />
                   </button>
@@ -856,11 +809,10 @@ const Courses = () => {
                     type="button"
                     onClick={() => setViewMode("list")}
                     title="List View"
-                    className={`p-1.5 rounded-lg transition ${
-                      viewMode === "list"
+                    className={`p-1.5 rounded-lg transition ${viewMode === "list"
                         ? "bg-[#C5A880] text-[#070709] font-bold"
                         : "text-[#71717A] hover:text-[#F5F5F7]"
-                    }`}
+                      }`}
                   >
                     <List size={15} />
                   </button>
@@ -878,20 +830,12 @@ const Courses = () => {
                     type="button"
                     whileTap={{ scale: 0.96 }}
                     onClick={() => updateCategoryFilter(cat)}
-                    className={`relative whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all select-none border cursor-pointer ${
-                      isSel
-                        ? "text-[#070709] font-bold border-[#C5A880]"
+                    className={`relative isolate whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all select-none border cursor-pointer ${isSel
+                        ? "text-[#070709] font-bold border-[#C5A880] bg-[#C5A880] shadow-[0_0_15px_rgba(197,168,128,0.25)]"
                         : "text-[#8E8E93] hover:text-[#F5F5F7] border-white/[0.04] hover:border-white/20 bg-[#14141A]"
-                    }`}
+                      }`}
                   >
-                    {isSel && (
-                      <motion.div
-                        layoutId="activeCatalogCategory"
-                        className="absolute inset-0 bg-[#C5A880] rounded-xl -z-10 shadow-[0_0_15px_rgba(197,168,128,0.25)]"
-                        transition={SPRING_TRANSITION}
-                      />
-                    )}
-                    <span>{cat}</span>
+                    <span className="relative z-10">{cat}</span>
                   </motion.button>
                 );
               })}
@@ -905,7 +849,7 @@ const Courses = () => {
                   {searchQuery && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-[#E5E5E7] text-[11px]">
                       <span>Query: "{searchQuery}"</span>
-                      <button type="button" onClick={() => setSearchQuery("")} className="hover:text-rose-400">
+                      <button type="button" aria-label="Clear search query" onClick={() => setSearchQuery("")} className="hover:text-rose-400">
                         <X size={12} />
                       </button>
                     </span>
@@ -913,7 +857,7 @@ const Courses = () => {
                   {selectedCategory !== "All" && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-[#E5E5E7] text-[11px]">
                       <span>Category: {selectedCategory}</span>
-                      <button type="button" onClick={() => setSelectedCategory("All")} className="hover:text-rose-400">
+                      <button type="button" aria-label="Clear category filter" onClick={() => setSelectedCategory("All")} className="hover:text-rose-400">
                         <X size={12} />
                       </button>
                     </span>
@@ -921,7 +865,7 @@ const Courses = () => {
                   {selectedLevel !== "All Levels" && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-[#E5E5E7] text-[11px]">
                       <span>Level: {selectedLevel}</span>
-                      <button type="button" onClick={() => setSelectedLevel("All Levels")} className="hover:text-rose-400">
+                      <button type="button" aria-label="Clear level filter" onClick={() => setSelectedLevel("All Levels")} className="hover:text-rose-400">
                         <X size={12} />
                       </button>
                     </span>
@@ -1018,13 +962,14 @@ const Courses = () => {
                 return (
                   <motion.div
                     key={course.id}
+                    data-course-id={course.id}
                     layout
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2, delay: idx * 0.03 }}
                     whileHover={{ y: -4 }}
                     onClick={() => handleCardClick(course.id)}
-                    className="group flex flex-col justify-between rounded-2xl border border-white/[0.04] bg-[#0F0F13] hover:border-[#C5A880]/40 hover:shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)] transition-all duration-300 overflow-hidden cursor-pointer"
+                    className="course-card group flex flex-col justify-between rounded-2xl border border-white/[0.04] bg-[#0F0F13] hover:border-[#C5A880]/40 hover:shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)] transition-all duration-300 overflow-hidden cursor-pointer"
                   >
                     <div>
                       {/* Card 16:9 Aspect Ratio Frame */}
@@ -1055,6 +1000,7 @@ const Courses = () => {
                         <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
                           <button
                             type="button"
+                            aria-label="Quick View"
                             onClick={(e) => {
                               e.stopPropagation();
                               setDrawerCourse(course);
@@ -1067,13 +1013,13 @@ const Courses = () => {
 
                           <button
                             type="button"
+                            aria-label={isWish ? "Remove from Saved" : "Save Course"}
                             onClick={(e) => toggleWishlist(course, e)}
                             title={isWish ? "Remove from Saved" : "Save Course"}
-                            className={`p-1.5 rounded-lg backdrop-blur-md transition ${
-                              isWish
+                            className={`p-1.5 rounded-lg backdrop-blur-md transition ${isWish
                                 ? "bg-rose-500 text-white"
                                 : "bg-[#0F0F13]/80 hover:bg-rose-500/80 text-white border border-white/[0.06]"
-                            }`}
+                              }`}
                           >
                             <Heart size={13} fill={isWish ? "currentColor" : "none"} />
                           </button>
@@ -1148,12 +1094,13 @@ const Courses = () => {
                 return (
                   <motion.div
                     key={course.id}
+                    data-course-id={course.id}
                     layout
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.15, delay: idx * 0.02 }}
                     onClick={() => handleCardClick(course.id)}
-                    className="group flex flex-col sm:flex-row items-stretch sm:items-center justify-between rounded-2xl border border-white/[0.04] bg-[#0F0F13] p-3.5 sm:p-4 hover:border-[#C5A880]/40 transition-all cursor-pointer gap-4"
+                    className="course-card group flex flex-col sm:flex-row items-stretch sm:items-center justify-between rounded-2xl border border-white/[0.04] bg-[#0F0F13] p-3.5 sm:p-4 hover:border-[#C5A880]/40 transition-all cursor-pointer gap-4"
                   >
                     {/* 16:9 Aspect Ratio Thumbnail */}
                     <div className="relative aspect-video sm:h-28 sm:w-44 shrink-0 rounded-xl overflow-hidden bg-[#070709]">
@@ -1206,10 +1153,10 @@ const Courses = () => {
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
+                          aria-label={isWish ? "Remove from wishlist" : "Add to wishlist"}
                           onClick={(e) => toggleWishlist(course, e)}
-                          className={`p-2 rounded-xl border border-white/[0.06] transition ${
-                            isWish ? "bg-rose-500 text-white border-rose-500" : "hover:bg-[#14141A] text-[#8E8E93]"
-                          }`}
+                          className={`p-2 rounded-xl border border-white/[0.06] transition ${isWish ? "bg-rose-500 text-white border-rose-500" : "hover:bg-[#14141A] text-[#8E8E93]"
+                            }`}
                         >
                           <Heart size={14} fill={isWish ? "currentColor" : "none"} />
                         </button>
@@ -1238,6 +1185,7 @@ const Courses = () => {
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
+                  aria-label="Previous page"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
                   className="p-2 rounded-xl border border-white/[0.06] bg-[#0F0F13] text-[#8E8E93] hover:text-white disabled:opacity-30 transition cursor-pointer"
@@ -1249,12 +1197,12 @@ const Courses = () => {
                   <button
                     key={pg}
                     type="button"
+                    aria-label={`Go to page ${pg}`}
                     onClick={() => setCurrentPage(pg)}
-                    className={`h-8 w-8 rounded-xl text-xs font-mono font-bold transition cursor-pointer ${
-                      currentPage === pg
+                    className={`h-8 w-8 rounded-xl text-xs font-mono font-bold transition cursor-pointer ${currentPage === pg
                         ? "bg-[#C5A880] text-[#070709]"
                         : "border border-white/[0.06] bg-[#0F0F13] text-[#8E8E93] hover:text-white"
-                    }`}
+                      }`}
                   >
                     {pg}
                   </button>
@@ -1262,6 +1210,7 @@ const Courses = () => {
 
                 <button
                   type="button"
+                  aria-label="Next page"
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
                   className="p-2 rounded-xl border border-white/[0.06] bg-[#0F0F13] text-[#8E8E93] hover:text-white disabled:opacity-30 transition cursor-pointer"
@@ -1301,6 +1250,7 @@ const Courses = () => {
                           </span>
                           <button
                             type="button"
+                            aria-label="Close details drawer"
                             onClick={() => setDrawerCourse(null)}
                             className="p-1.5 rounded-lg hover:bg-white/[0.04] text-[#8E8E93] hover:text-white transition"
                           >

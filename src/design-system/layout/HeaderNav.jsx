@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -11,9 +11,13 @@ import {
   LogOut,
   LayoutDashboard,
   Search,
+  BookOpen,
+  Award,
+  Briefcase,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useOrder } from '../../context/OrderContext';
+import { cmsPublicApi } from '../../api/cmsApi';
 import Button from '../primitives/Button';
 
 // Intentional spring physics configuration per architectural specification
@@ -23,7 +27,15 @@ const SPRING_TRANSITION = {
   damping: 26,
 };
 
-export const HeaderNav = ({ onSearchClick }) => {
+const sanitizeNavLabel = (label = '') => {
+  let cleaned = label.replace(/#\d+/g, '').trim();
+  const lower = cleaned.toLowerCase();
+  if (lower === 'explore') return 'Explore Courses';
+  if (lower === 'teach on fd_lms' || lower === 'teach') return 'For Instructors';
+  return cleaned;
+};
+
+export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = null }) => {
   const { user, logout } = useAuth();
   const { cartCount = 0 } = useOrder() || {};
   const navigate = useNavigate();
@@ -31,11 +43,118 @@ export const HeaderNav = ({ onSearchClick }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
-  const navLinks = [
-    { label: 'Explore', href: '/courses' },
-    { label: 'Certifications', href: '/certifications' },
-    { label: 'Teach on FD_LMS', href: '/instructor/apply' },
-  ];
+  // Clean and deduplicate navigation links
+  const [navItems, setNavItems] = useState(() => {
+    if (Array.isArray(initialNav) && initialNav.length > 0) {
+      return initialNav
+        .filter(item => item && item.destination !== '/cloud' && !item.label?.toLowerCase().includes('cloud matrix'))
+        .map(item => ({
+          label: sanitizeNavLabel(item.label),
+          href: item.destination || item.href || '/courses',
+        }));
+    }
+    return [
+      { label: 'Explore Courses', href: '/courses' },
+      { label: 'Certifications', href: '/certifications' },
+      { label: 'For Instructors', href: '/instructor/apply' },
+    ];
+  });
+
+  const [brand, setBrand] = useState(() => ({
+    name: initialSettings?.['brand.name'] || 'FD_LMS',
+    tagline: initialSettings?.['brand.tagline'] || 'ENGINEERING PLATFORM',
+    logoUrl: initialSettings?.['brand.logoUrl'] || '',
+  }));
+
+  // Keyboard navigation & accessibility: Escape key closes menus
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        setUserDropdownOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadCmsNav() {
+      try {
+        const [navRes, settingsRes] = await Promise.allSettled([
+          cmsPublicApi.getNavigation(),
+          cmsPublicApi.getSiteSettings(),
+        ]);
+        if (!isMounted) return;
+
+        if (navRes.status === 'fulfilled' && navRes.value) {
+          const list = navRes.value?.data || navRes.value;
+          if (Array.isArray(list) && list.length > 0) {
+            const seen = new Set();
+            const cleanedList = [];
+
+            for (const item of list) {
+              if (!item || item.isVisible === false) continue;
+              const rawLabel = item.label || '';
+              // Exclude invalid, dead, or internal test matrix entries
+              const href = item.destination || item.href || '/courses';
+              if (rawLabel.toLowerCase().includes('cloud matrix') || href === '/cloud') {
+                continue;
+              }
+              const label = sanitizeNavLabel(rawLabel);
+              const dedupKey = `${label.toLowerCase()}-${href.toLowerCase()}`;
+              if (!seen.has(dedupKey)) {
+                seen.add(dedupKey);
+                cleanedList.push({ label, href });
+              }
+            }
+
+            if (cleanedList.length > 0) {
+              setNavItems(cleanedList);
+            }
+          }
+        }
+
+        if (settingsRes.status === 'fulfilled' && settingsRes.value) {
+          const s = settingsRes.value?.data || settingsRes.value;
+          if (s && typeof s === 'object') {
+            setBrand({
+              name: s['brand.name'] || 'FD_LMS',
+              tagline: s['brand.tagline'] || 'ENGINEERING PLATFORM',
+              logoUrl: s['brand.logoUrl'] || '',
+            });
+          }
+        }
+      } catch {
+        // Fallback already in place
+      }
+    }
+    loadCmsNav();
+    return () => { isMounted = false; };
+  }, []);
+
+  // Compute adaptive nav links based on role
+  const dynamicNavLinks = useMemo(() => {
+    const links = [...navItems];
+    if (user) {
+      const role = (user.role || '').toUpperCase();
+      if (role === 'STUDENT' || (!role.includes('ADMIN') && role !== 'INSTRUCTOR')) {
+        if (!links.some(l => l.href.includes('student/dashboard') || l.href.includes('my-learning'))) {
+          links.unshift({ label: 'My Learning', href: '/student/dashboard' });
+        }
+      } else if (role === 'INSTRUCTOR') {
+        if (!links.some(l => l.href.includes('instructor/dashboard'))) {
+          links.unshift({ label: 'Instructor Hub', href: '/instructor/dashboard' });
+        }
+      } else if (role.includes('ADMIN')) {
+        if (!links.some(l => l.href.includes('admin/dashboard'))) {
+          links.unshift({ label: 'Admin Console', href: '/admin/dashboard' });
+        }
+      }
+    }
+    return links;
+  }, [navItems, user]);
 
   const getDashboardPath = () => {
     if (!user) return '/login';
@@ -47,40 +166,46 @@ export const HeaderNav = ({ onSearchClick }) => {
 
   return (
     <header className="sticky top-0 z-50 w-full px-4 sm:px-6 lg:px-8 pt-4 pb-2">
-      <div className="max-w-7xl mx-auto rounded-2xl bg-[#0F0F13]/90 border border-white/[0.04] shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)] backdrop-blur-2xl px-4 sm:px-6 py-3 flex items-center justify-between transition-all">
-        {/* Brand Identity Signature */}
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-[#14141A] border border-white/10 flex items-center justify-center text-[#C5A880] font-black shadow-sm transition-transform group-hover:scale-105">
-            <GraduationCap className="w-5 h-5 text-[#C5A880]" />
+      <div className="max-w-7xl mx-auto rounded-2xl bg-[#0F0F13]/95 border border-white/[0.06] shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)] backdrop-blur-2xl px-4 sm:px-6 py-3 flex items-center justify-between transition-all">
+        {/* Brand Identity Signature with improved prominence */}
+        <Link to="/" className="flex items-center gap-3 group" title="FD_LMS Home">
+          <div className="w-10 h-10 rounded-xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] font-black shadow-sm transition-transform group-hover:scale-105 overflow-hidden">
+            {brand.logoUrl ? (
+              <img src={brand.logoUrl} alt={brand.name} className="w-full h-full object-contain p-1" />
+            ) : (
+              <GraduationCap className="w-5 h-5 text-[#C5A880]" />
+            )}
           </div>
           <div className="flex flex-col">
-            <span className="text-base font-extrabold tracking-tight text-white group-hover:text-[#C5A880] transition-colors">
-              FD_LMS
+            <span className="text-base sm:text-lg font-extrabold tracking-tight text-white group-hover:text-[#C5A880] transition-colors leading-tight">
+              {brand.name}
             </span>
-            <span className="text-[9px] font-bold tracking-[0.25em] text-[#C5A880] uppercase -mt-0.5">
-              Architecture
-            </span>
+            {brand.tagline && (
+              <span className="hidden sm:inline text-[9px] font-bold tracking-[0.2em] text-[#C5A880] uppercase">
+                {brand.tagline}
+              </span>
+            )}
           </div>
         </Link>
 
-        {/* Desktop Navigation Links with Shared Layout Transitions */}
-        <nav className="hidden md:flex items-center gap-1 bg-[#070709]/80 p-1 rounded-xl border border-white/[0.04]">
-          {navLinks.map((link) => {
+        {/* Center Desktop Navigation */}
+        <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-1 bg-[#070709]/80 p-1 rounded-xl border border-white/[0.04]">
+          {dynamicNavLinks.map((link) => {
             const isActive = location.pathname === link.href;
             return (
               <Link
                 key={link.href}
                 to={link.href}
-                className="relative px-4 py-1.5 text-xs font-semibold tracking-wide transition-colors rounded-lg select-none"
+                className="relative px-3.5 py-1.5 text-xs font-semibold tracking-wide transition-colors rounded-lg select-none"
               >
                 {isActive && (
                   <motion.div
                     layoutId="activeNavIndicator"
-                    className="absolute inset-0 bg-[#C5A880]/10 border border-[#C5A880]/30 rounded-lg shadow-[0_0_15px_rgba(197,168,128,0.06)] -z-10"
+                    className="absolute inset-0 bg-[#C5A880]/15 border border-[#C5A880]/40 rounded-lg shadow-[0_0_15px_rgba(197,168,128,0.08)] -z-10"
                     transition={SPRING_TRANSITION}
                   />
                 )}
-                <span className={isActive ? 'text-white font-semibold' : 'text-[#A1A1AA] hover:text-white'}>
+                <span className={isActive ? 'text-white font-bold' : 'text-[#A1A1AA] hover:text-white'}>
                   {link.label}
                 </span>
               </Link>
@@ -88,26 +213,27 @@ export const HeaderNav = ({ onSearchClick }) => {
           })}
         </nav>
 
-        {/* Right Action Icons & Profile */}
+        {/* Right Action Icons & Auth Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {onSearchClick && (
-            <motion.button
-              type="button"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onSearchClick}
-              className="p-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] border border-transparent hover:border-white/[0.04] transition-all"
-              aria-label="Search Catalog"
-            >
-              <Search className="w-4 h-4" />
-            </motion.button>
-          )}
+          {/* Search Trigger with Tooltip */}
+          <motion.button
+            type="button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onSearchClick || (() => navigate('/courses'))}
+            className="p-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] border border-transparent hover:border-white/[0.06] transition-all cursor-pointer"
+            aria-label="Search courses catalog"
+            title="Search Catalog"
+          >
+            <Search className="w-4 h-4" />
+          </motion.button>
 
-          {/* Cart Icon with real count */}
+          {/* Cart Icon with Tooltip */}
           <Link
             to="/cart"
-            className="relative p-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] border border-transparent hover:border-white/[0.04] transition-all"
-            aria-label="View Shopping Cart"
+            className="relative p-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] border border-transparent hover:border-white/[0.06] transition-all"
+            aria-label="View shopping cart"
+            title="Shopping Cart"
           >
             <ShoppingCart className="w-4 h-4" />
             {cartCount > 0 && (
@@ -117,28 +243,31 @@ export const HeaderNav = ({ onSearchClick }) => {
             )}
           </Link>
 
-          {/* Wishlist */}
+          {/* Wishlist Icon with Tooltip */}
           <Link
             to="/wishlist"
-            className="p-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] border border-transparent hover:border-white/[0.04] transition-all hidden sm:flex"
-            aria-label="View Wishlist"
+            className="p-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] border border-transparent hover:border-white/[0.06] transition-all hidden sm:flex"
+            aria-label="View saved courses wishlist"
+            title="Saved Wishlist"
           >
             <Heart className="w-4 h-4" />
           </Link>
 
-          {/* Auth State Controls */}
+          {/* User Auth State Controls */}
           {user ? (
             <div className="relative">
               <motion.button
                 type="button"
                 whileTap={{ scale: 0.96 }}
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-[#14141A] hover:bg-[#1B1B24] border border-white/[0.06] hover:border-[#C5A880]/30 transition-all text-xs font-semibold text-[#F5F5F7]"
+                className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-[#14141A] hover:bg-[#1B1B24] border border-white/[0.08] hover:border-[#C5A880]/40 transition-all text-xs font-semibold text-[#F5F5F7]"
+                aria-label="User profile menu"
+                aria-expanded={userDropdownOpen}
               >
-                <div className="w-6 h-6 rounded-lg bg-[#1B1B24] border border-white/[0.06] flex items-center justify-center text-[#E5E5E7] text-xs font-bold uppercase shadow-sm">
+                <div className="w-6 h-6 rounded-lg bg-[#C5A880]/15 border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] text-xs font-bold uppercase shadow-sm">
                   {(user.name || user.email || 'U').charAt(0)}
                 </div>
-                <span className="hidden sm:inline max-w-[90px] truncate">
+                <span className="hidden sm:inline max-w-[90px] truncate text-white">
                   {user.name || user.email?.split('@')[0]}
                 </span>
               </motion.button>
@@ -150,7 +279,7 @@ export const HeaderNav = ({ onSearchClick }) => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.96 }}
                     transition={{ duration: 0.18 }}
-                    className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#0F0F13]/98 border border-white/[0.06] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.9)] backdrop-blur-2xl p-2 z-50 text-xs"
+                    className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#0F0F13]/98 border border-white/[0.08] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.9)] backdrop-blur-2xl p-2 z-50 text-xs"
                   >
                     <div className="px-3 py-2 border-b border-white/[0.04] mb-1">
                       <p className="font-semibold text-white truncate">{user.name || 'User'}</p>
@@ -194,11 +323,12 @@ export const HeaderNav = ({ onSearchClick }) => {
               </AnimatePresence>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-2">
               <Button
-                variant="ghost"
+                variant="secondary"
                 size="sm"
                 onClick={() => navigate('/login')}
+                className="text-white hover:text-[#C5A880] border-white/10 hover:border-white/20 px-3.5 font-semibold text-xs"
               >
                 Sign In
               </Button>
@@ -206,6 +336,7 @@ export const HeaderNav = ({ onSearchClick }) => {
                 variant="primary"
                 size="sm"
                 onClick={() => navigate('/register')}
+                className="px-4 font-bold text-xs shadow-md shadow-[#C5A880]/10"
               >
                 Get Started
               </Button>
@@ -232,10 +363,10 @@ export const HeaderNav = ({ onSearchClick }) => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={SPRING_TRANSITION}
-            className="md:hidden mt-2 rounded-2xl bg-[#0F0F13]/95 border border-white/[0.06] p-4 shadow-2xl backdrop-blur-2xl overflow-hidden"
+            className="md:hidden mt-2 rounded-2xl bg-[#0F0F13]/98 border border-white/[0.08] p-4 shadow-2xl backdrop-blur-2xl overflow-hidden"
           >
             <div className="flex flex-col gap-2">
-              {navLinks.map((link) => (
+              {dynamicNavLinks.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
@@ -245,6 +376,32 @@ export const HeaderNav = ({ onSearchClick }) => {
                   {link.label}
                 </Link>
               ))}
+              {!user && (
+                <div className="pt-3 border-t border-white/[0.06] flex items-center gap-3">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      navigate('/login');
+                    }}
+                    className="w-full text-xs font-semibold"
+                  >
+                    Sign In
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      navigate('/register');
+                    }}
+                    className="w-full text-xs font-bold"
+                  >
+                    Get Started
+                  </Button>
+                </div>
+              )}
             </div>
           </motion.div>
         )}

@@ -1,0 +1,32 @@
+{
+  "dashboard": {
+    "hasUsers263": true,
+    "hasCourses231": true,
+    "hasPlatformGross": true,
+    "hasOrders178": true,
+    "hasMock1420": false
+  },
+  "users": {
+    "usersHasTotal263": true,
+    "usersHasStudents198": true,
+    "usersHasInstructors16": true,
+    "usersHasAdmins2": true
+  },
+  "courses": {
+    "coursesCountVisible": true,
+    "hasCleanCodeCourse": true,
+    "hasKubernetesCourse": true
+  },
+  "coupons": {
+    "hasSpring20Coupon": true,
+    "hasDevMonthCoupon": true,
+    "hasCyber15Coupon": true
+  },
+  "orders": {
+    "has178Orders": true,
+    "hasRealNonZeroAmount": true
+  },
+  "instructors": {
+    "has16Instructors": true
+  }
+}

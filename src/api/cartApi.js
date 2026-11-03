@@ -142,6 +142,26 @@ export const cartApi = {
    * Get cart
    */
   getCart: async () => {
+    // Only attempt backend fetch if token exists
+    const hasToken = typeof window !== 'undefined' && Boolean(
+      window.localStorage.getItem('lms_token') ||
+      window.localStorage.getItem('access_token') ||
+      window.sessionStorage.getItem('lms_token')
+    );
+    if (!hasToken) {
+      const local = getSharedCart();
+      const subtotal = local.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
+      return {
+        cartId: 'guest-cart',
+        totalCourses: local.length,
+        courses: local.map(normalizeCartItem),
+        subtotal,
+        discount: 0,
+        tax: 0,
+        total: subtotal,
+        couponCode: null,
+      };
+    }
     try {
       const response = await axiosInstance.get('/api/v1/cart');
       const normalized = normalizeCart(response.data);
@@ -240,6 +260,32 @@ export const cartApi = {
       console.warn('[cartApi] DELETE /api/v1/cart failed');
       throw err;
     }
+  },
+
+  /**
+   * Merge Guest Cart into User Account upon login
+   * Scenario A: Guest A, B + User C -> A, B, C (no loss)
+   * Scenario B: Guest A + User A -> one A (idempotent duplicate prevention)
+   * Scenario C: Skip courses already enrolled by learner
+   */
+  mergeGuestCart: async (guestItems, enrolledCourseIds = []) => {
+    if (!Array.isArray(guestItems) || guestItems.length === 0) return [];
+    const mergedIds = [];
+    for (const item of guestItems) {
+      const courseId = String(item.courseId || item.id);
+      if (enrolledCourseIds.includes(courseId)) {
+        continue;
+      }
+      const payload = {
+        courseId: Number(courseId),
+        courseName: item.title || item.courseName || 'Curriculum',
+        price: Number(item.price || 0),
+        instructorId: item.instructorId || 1,
+      };
+      await axiosInstance.post('/api/v1/cart', payload);
+      mergedIds.push(courseId);
+    }
+    return mergedIds;
   },
 };
 

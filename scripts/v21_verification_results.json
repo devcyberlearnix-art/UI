@@ -1,0 +1,303 @@
+{
+  "timestamp": "2026-11-01T12:32:54.705Z",
+  "testCases": [
+    {
+      "id": "TC-VISUAL-01",
+      "name": "Responsive Rendering & Visual QA Across 7 Viewports",
+      "status": "PASS",
+      "details": {
+        "viewportsTested": [
+          "mobile-360 (360x740)",
+          "mobile-375 (375x667)",
+          "mobile-390 (390x844)",
+          "tablet-768 (768x1024)",
+          "laptop-1024 (1024x768)",
+          "desktop-1440 (1440x900)",
+          "desktop-1920 (1920x1080)"
+        ],
+        "totalScreenshots": 35
+      },
+      "timestamp": "2026-11-01T12:33:25.032Z"
+    },
+    {
+      "id": "TC-BRAND-A11Y-01",
+      "name": "Brand Alignment & Tablist Semantic Accessibility",
+      "status": "PASS",
+      "details": {
+        "title": "Sign In | Asivo Learning Platform",
+        "headlineFound": true,
+        "benefitsFound": true,
+        "noTamperProofClaim": true,
+        "noPort8080": true
+      },
+      "timestamp": "2026-11-01T12:33:25.994Z"
+    },
+    {
+      "id": "TC-LOGIN-01",
+      "name": "Invalid Password Login Rejection & Session Safety",
+      "status": "PASS",
+      "details": {
+        "errorMessage": "Invalid credentials",
+        "storageClean": true
+      },
+      "timestamp": "2026-11-01T12:33:27.922Z"
+    },
+    {
+      "id": "TC-LOGIN-02",
+      "name": "Valid Password Login & Session Synchronization",
+      "status": "PASS",
+      "details": {
+        "redirectUrl": "http://127.0.0.1:5173/student/dashboard",
+        "userEmail": "anjali.mukherjee@cyberlearnix.test",
+        "role": "student",
+        "hasToken": true
+      },
+      "timestamp": "2026-11-01T12:33:28.791Z"
+    },
+    {
+      "id": "TC-LOGIN-03",
+      "name": "OTP Sign In & MailHog Delivery E2E",
+      "status": "PASS",
+      "details": {
+        "email": "anjali.mukherjee@cyberlearnix.test",
+        "otpReceived": "555980",
+        "targetUrl": "http://127.0.0.1:5173/student/dashboard"
+      },
+      "timestamp": "2026-11-01T12:33:32.231Z"
+    },
+    {
+      "id": "TC-REG-01",
+      "name": "Registration → OTP Verification → Activation → Sign In",
+      "status": "PASS",
+      "details": {
+        "registeredEmail": "student.v21.1793536412234@asivo.io",
+        "matchIndicatorVisible": true,
+        "strengthMeterVisible": true,
+        "prefilledEmail": "student.v21.1793536412234@asivo.io",
+        "finalDashboard": "http://127.0.0.1:5173/student/dashboard"
+      },
+      "timestamp": "2026-11-01T12:33:38.042Z"
+    },
+    {
+      "id": "TC-REG-02",
+      "name": "Duplicate Registration Conflict Handling & Field Preservation",
+      "status": "PASS",
+      "details": {
+        "emailError": "This email address is already registered. Please sign in or use another email.",
+        "globalError": "An account with this email address already exists.",
+        "preservedFirstname": "Grace"
+      },
+      "timestamp": "2026-11-01T12:33:40.222Z"
+    },
+    {
+      "id": "TC-REG-03",
+      "name": "Inline Password Mismatch Validation",
+      "status": "PASS",
+      "details": {
+        "mismatchDetected": true
+      },
+      "timestamp": "2026-11-01T12:33:41.116Z"
+    },
+    {
+      "id": "TC-RESET-01",
+      "name": "3-Step Password Recovery E2E with MailHog & Re-Authentication",
+      "status": "PASS",
+      "details": {
+        "email": "student.v21.1793536412234@asivo.io",
+        "recoveryOtp": "343331",
+        "loginRedirect": "http://127.0.0.1:5173/login",
+        "dashboardRedirect": "http://127.0.0.1:5173/student/dashboard"
+      },
+      "timestamp": "2026-11-01T12:33:43.696Z"
+    },
+    {
+      "id": "TC-OAUTH-01",
+      "name": "OAuth Configuration Transparency & Real Google Routing",
+      "status": "PASS",
+      "details": {
+        "googleButtonRendered": true,
+        "githubUnavailableHonest": true,
+        "linkedinUnavailableHonest": true,
+        "noFakeSimulations": true
+      },
+      "timestamp": "2026-11-01T12:33:45.130Z"
+    }
+  ],
+  "screenshots": [
+    {
+      "page": "login",
+      "viewport": "mobile-360",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_mobile-360.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "mobile-360",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_otp_mode_mobile-360.png"
+    },
+    {
+      "page": "register",
+      "viewport": "mobile-360",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_register_mobile-360.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "mobile-360",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_forgot_password_mobile-360.png"
+    },
+    {
+      "page": "otp-verify",
+      "viewport": "mobile-360",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_otp_verify_mobile-360.png"
+    },
+    {
+      "page": "login",
+      "viewport": "mobile-375",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_mobile-375.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "mobile-375",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_otp_mode_mobile-375.png"
+    },
+    {
+      "page": "register",
+      "viewport": "mobile-375",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_register_mobile-375.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "mobile-375",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_forgot_password_mobile-375.png"
+    },
+    {
+      "page": "otp-verify",
+      "viewport": "mobile-375",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_otp_verify_mobile-375.png"
+    },
+    {
+      "page": "login",
+      "viewport": "mobile-390",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_mobile-390.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "mobile-390",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_otp_mode_mobile-390.png"
+    },
+    {
+      "page": "register",
+      "viewport": "mobile-390",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_register_mobile-390.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "mobile-390",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_forgot_password_mobile-390.png"
+    },
+    {
+      "page": "otp-verify",
+      "viewport": "mobile-390",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_otp_verify_mobile-390.png"
+    },
+    {
+      "page": "login",
+      "viewport": "tablet-768",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_tablet-768.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "tablet-768",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_otp_mode_tablet-768.png"
+    },
+    {
+      "page": "register",
+      "viewport": "tablet-768",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_register_tablet-768.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "tablet-768",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_forgot_password_tablet-768.png"
+    },
+    {
+      "page": "otp-verify",
+      "viewport": "tablet-768",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_otp_verify_tablet-768.png"
+    },
+    {
+      "page": "login",
+      "viewport": "laptop-1024",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_laptop-1024.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "laptop-1024",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_otp_mode_laptop-1024.png"
+    },
+    {
+      "page": "register",
+      "viewport": "laptop-1024",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_register_laptop-1024.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "laptop-1024",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_forgot_password_laptop-1024.png"
+    },
+    {
+      "page": "otp-verify",
+      "viewport": "laptop-1024",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_otp_verify_laptop-1024.png"
+    },
+    {
+      "page": "login",
+      "viewport": "desktop-1440",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_desktop-1440.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "desktop-1440",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_otp_mode_desktop-1440.png"
+    },
+    {
+      "page": "register",
+      "viewport": "desktop-1440",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_register_desktop-1440.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "desktop-1440",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_forgot_password_desktop-1440.png"
+    },
+    {
+      "page": "otp-verify",
+      "viewport": "desktop-1440",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_otp_verify_desktop-1440.png"
+    },
+    {
+      "page": "login",
+      "viewport": "desktop-1920",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_desktop-1920.png"
+    },
+    {
+      "page": "login-otp",
+      "viewport": "desktop-1920",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_login_otp_mode_desktop-1920.png"
+    },
+    {
+      "page": "register",
+      "viewport": "desktop-1920",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_register_desktop-1920.png"
+    },
+    {
+      "page": "forgot-password",
+      "viewport": "desktop-1920",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_forgot_password_desktop-1920.png"
+    },
+    {
+      "page": "otp-verify",
+      "viewport": "desktop-1920",
+      "path": "C:\\Users\\SHIVASAI\\OneDrive\\Desktop\\FD_LMS\\UI\\scripts\\v21_screenshots\\v21_otp_verify_desktop-1920.png"
+    }
+  ]
+}

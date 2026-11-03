@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { notificationApi } from '../api/notificationApi';
 import { normalizeNotification, unwrapArray } from '../utils/normalizers';
 import toast from 'react-hot-toast';
+import { useSafeAuth } from '../context/AuthContext';
 
 export const NOTIFICATIONS_QUERY_KEY = ['notifications'];
 
@@ -18,6 +19,7 @@ export const NOTIFICATIONS_QUERY_KEY = ['notifications'];
  */
 export function useNotifications(userId = null) {
   const queryClient = useQueryClient();
+  const { user } = useSafeAuth();
   const queryKey = [...NOTIFICATIONS_QUERY_KEY, userId || 'me'];
 
   const notificationsQuery = useQuery({
@@ -28,6 +30,7 @@ export function useNotifications(userId = null) {
       return rawList.map((item, idx) => normalizeNotification(item, idx));
     },
     refetchInterval: 15000, // Dynamic telemetry polling every 15s
+    enabled: Boolean(user && user.id && user.id !== 'guest'),
     staleTime: 1000 * 5,
     gcTime: 1000 * 60 * 15,
   });
@@ -38,6 +41,7 @@ export function useNotifications(userId = null) {
       const res = await notificationApi.getUnreadCount(userId);
       return Number(res?.data?.count ?? 0);
     },
+    enabled: Boolean(user && user.id && user.id !== 'guest'),
     refetchInterval: 15000,
     staleTime: 1000 * 5,
   });
@@ -161,6 +165,7 @@ export function useMarkAllNotificationsAsRead(userId = null) {
  */
 export function useNotificationPreferences() {
   const queryClient = useQueryClient();
+  const { user } = useSafeAuth();
 
   const preferencesQuery = useQuery({
     queryKey: ['notifications', 'preferences'],
@@ -168,6 +173,7 @@ export function useNotificationPreferences() {
       const res = await notificationApi.getPreferences();
       return res?.data || res || {};
     },
+    enabled: Boolean(user && user.id && user.id !== 'guest'),
     staleTime: 1000 * 60 * 10,
   });
 

@@ -1,0 +1,1123 @@
+[
+  {
+    "route": "/",
+    "component": "LandingDashboard",
+    "file": "src/pages/LandingDashboard.jsx",
+    "lines": 505,
+    "category": "STATIC_OR_LOCAL",
+    "apis": [],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/legacy-landing",
+    "component": "Landing",
+    "file": "src/pages/Landing.jsx",
+    "lines": 66,
+    "category": "BACKEND_CONNECTED",
+    "apis": [],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/forgot-password",
+    "component": "ForgotPassword",
+    "file": "src/pages/ForgotPassword.jsx",
+    "lines": 384,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "/api/v1/auth/password/forgot",
+      "/api/v1/auth/password/verify-otp",
+      "/api/v1/auth/password/reset"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/reset-otp",
+    "component": "ResetOtp",
+    "file": "src/pages/ResetOtp.jsx",
+    "lines": 358,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "\"/api/v1/auth/password/verify-otp\""
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/otp-login",
+    "component": "OtpLogin",
+    "file": "src/pages/OtpLogin.jsx",
+    "lines": 90,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "authApi.requestLoginOtp"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/otp-verify",
+    "component": "OtpVerify",
+    "file": "src/pages/OtpVerify.jsx",
+    "lines": 254,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "authApi.verifyOtp",
+      "authApi.resendOtp"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/registration-success",
+    "component": "RegistrationSuccess",
+    "file": "src/pages/admin/RegistrationSuccess.jsx",
+    "lines": 100,
+    "category": "STATIC_OR_LOCAL",
+    "apis": [],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/courses",
+    "component": "Courses",
+    "file": "src/pages/Courses.jsx",
+    "lines": 1401,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getCourseList",
+      "courseApi.getTrendingCourses",
+      "courseApi.getAllCourses",
+      "courseApi.getFeaturedCourses",
+      "courseApi.trackCourseImpression"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/courses/:courseId",
+    "component": "CourseDetail",
+    "file": "src/pages/CourseDetail.jsx",
+    "lines": 743,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getCourseDetails",
+      "courseApi.getCourseCurriculum",
+      "courseApi.getCourseRequirements",
+      "courseApi.getLearningOutcomes",
+      "courseApi.getCourseMaterials",
+      "courseApi.getCourseFAQs",
+      "reviewApi.getCourseReviews",
+      "reviewApi.getRatingSummary",
+      "wishlistApi.checkWishlist",
+      "wishlistApi.removeFromWishlist",
+      "wishlistApi.addToWishlist",
+      "cartApi.addToCart",
+      "courseApi.enrollCourse"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/cart",
+    "component": "ShoppingCartWorkspace",
+    "file": "src/pages/student/ShoppingCartWorkspace.jsx",
+    "lines": 438,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "cartApi.getCart",
+      "cartApi.removeFromCart",
+      "cartApi.applyCoupon",
+      "cartApi.removeCoupon",
+      "orderApi.stageOrder"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/wishlist",
+    "component": "Wishlist",
+    "file": "src/pages/student/Wishlist.jsx",
+    "lines": 94,
+    "category": "STATIC_OR_LOCAL",
+    "apis": [],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/student/courses",
+    "component": "Courses",
+    "file": "src/pages/Courses.jsx",
+    "lines": 1401,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getCourseList",
+      "courseApi.getTrendingCourses",
+      "courseApi.getAllCourses",
+      "courseApi.getFeaturedCourses",
+      "courseApi.trackCourseImpression"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/checkout",
+    "component": "CheckoutContainer",
+    "file": "src/pages/student/CheckoutContainer.jsx",
+    "lines": 584,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "orderApi.getStagedOrder",
+      "orderApi.createOrder"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/resilient-checkout",
+    "component": "ResilientCheckout",
+    "file": "src/pages/student/ResilientCheckout.jsx",
+    "lines": 114,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "orderApi.getStagedOrder"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/student/resilient-checkout",
+    "component": "ResilientCheckout",
+    "file": "src/pages/student/ResilientCheckout.jsx",
+    "lines": 114,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "orderApi.getStagedOrder"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/legacy-checkout",
+    "component": "Checkout",
+    "file": "src/pages/student/Checkout.jsx",
+    "lines": 243,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "cartApi.getCart",
+      "orderApi.createOrder"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/orders",
+    "component": "Orders",
+    "file": "src/pages/student/Orders.jsx",
+    "lines": 177,
+    "category": "BACKEND_CONNECTED",
+    "apis": [],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/certifications",
+    "component": "CertificateVerification",
+    "file": "src/pages/student/CertificateVerification.jsx",
+    "lines": 609,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getCourseProgress",
+      "courseApi.getCourseById",
+      "courseApi.getCourseCertificate"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/verify-certificate/:certificateId",
+    "component": "CertificateVerification",
+    "file": "src/pages/student/CertificateVerification.jsx",
+    "lines": 609,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getCourseProgress",
+      "courseApi.getCourseById",
+      "courseApi.getCourseCertificate"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/verify-certificate",
+    "component": "CertificateVerification",
+    "file": "src/pages/student/CertificateVerification.jsx",
+    "lines": 609,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getCourseProgress",
+      "courseApi.getCourseById",
+      "courseApi.getCourseCertificate"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/instructor/apply",
+    "component": "InstructorApplication",
+    "file": "src/pages/student/InstructorApplication.jsx",
+    "lines": 772,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "instructorApi.applyForInstructor"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/student/instructor-application",
+    "component": "InstructorApplication",
+    "file": "src/pages/student/InstructorApplication.jsx",
+    "lines": 772,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "instructorApi.applyForInstructor"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/my-learning",
+    "component": "Navigate",
+    "file": "UNKNOWN",
+    "status": "MISSING_FILE",
+    "apis": [],
+    "hasMockFallback": false,
+    "notes": "Component file not found"
+  },
+  {
+    "route": "/student/dashboard",
+    "component": "StudentDashboard",
+    "file": "src/pages/student/StudentDashboard.jsx",
+    "lines": 1018,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getStudentDashboard",
+      "courseApi.getStudentCourses",
+      "courseApi.getCourseById",
+      "courseApi.getCourseList",
+      "courseApi.getTrendingCourses",
+      "courseApi.resumeLearning"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/student/profile",
+    "component": "ProfileWorkspace",
+    "file": "src/pages/student/ProfileWorkspace.jsx",
+    "lines": 1280,
+    "category": "BACKEND_WITH_MOCK_FALLBACK",
+    "apis": [
+      "authApi.getUserProfile",
+      "courseApi.getStudentCourses",
+      "courseApi.getStudentDashboard",
+      "authApi.getSessions",
+      "authApi.uploadProfilePhoto",
+      "authApi.removeProfilePhoto",
+      "authApi.uploadCoverPhoto",
+      "authApi.updateUserProfile",
+      "authApi.logoutSession",
+      "authApi.logoutAllSessions",
+      "targetUrl"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/student/cart",
+    "component": "ShoppingCartWorkspace",
+    "file": "src/pages/student/ShoppingCartWorkspace.jsx",
+    "lines": 438,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "cartApi.getCart",
+      "cartApi.removeFromCart",
+      "cartApi.applyCoupon",
+      "cartApi.removeCoupon",
+      "orderApi.stageOrder"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/student/my-learning",
+    "component": "MyLearning",
+    "file": "src/pages/student/MyLearning.jsx",
+    "lines": 430,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getStudentCourses",
+      "'/api/v1/orders'"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/student/wishlist",
+    "component": "Wishlist",
+    "file": "src/pages/student/Wishlist.jsx",
+    "lines": 94,
+    "category": "STATIC_OR_LOCAL",
+    "apis": [],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/student/orders",
+    "component": "Orders",
+    "file": "src/pages/student/Orders.jsx",
+    "lines": 177,
+    "category": "BACKEND_CONNECTED",
+    "apis": [],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/student/live-classes",
+    "component": "LiveClassrooms",
+    "file": "src/pages/student/LiveClassrooms.jsx",
+    "lines": 541,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getStudentCourses",
+      "liveClassApi.getUpcomingLiveClasses",
+      "liveClassApi.getLiveClassesByCourse",
+      "liveClassApi.joinAttendance",
+      "liveClassApi.joinLiveClass"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/student/assignments",
+    "component": "StudentAssignments",
+    "file": "src/pages/student/Assignments.jsx",
+    "lines": 322,
+    "category": "STATIC_OR_LOCAL",
+    "apis": [],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/student/courses/:courseId",
+    "component": "StudentCourseDetail",
+    "file": "src/pages/student/StudentCourseDetail.jsx",
+    "lines": 685,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getCourseById",
+      "courseApi.getCourseCurriculum",
+      "courseApi.getCourseProgress",
+      "wishlistApi.checkWishlist",
+      "wishlistApi.removeFromWishlist",
+      "wishlistApi.addToWishlist",
+      "courseApi.startLecture",
+      "courseApi.updateLectureProgress",
+      "courseApi.completeLecture"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/student/courses/:courseId/classroom",
+    "component": "ClassroomView",
+    "file": "src/pages/student/ClassroomView.jsx",
+    "lines": 1512,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getCourseContent",
+      "courseApi.getCourseById",
+      "assignmentApi.getAssignments",
+      "courseApi.completeLecture",
+      "quizApi.startQuizAttempt",
+      "quizApi.submitQuizAttempt"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/student/courses/:courseId/classroom/quiz/:quizId",
+    "component": "ClassroomView",
+    "file": "src/pages/student/ClassroomView.jsx",
+    "lines": 1512,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getCourseContent",
+      "courseApi.getCourseById",
+      "assignmentApi.getAssignments",
+      "courseApi.completeLecture",
+      "quizApi.startQuizAttempt",
+      "quizApi.submitQuizAttempt"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/classroom/:courseId",
+    "component": "ClassroomView",
+    "file": "src/pages/student/ClassroomView.jsx",
+    "lines": 1512,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getCourseContent",
+      "courseApi.getCourseById",
+      "assignmentApi.getAssignments",
+      "courseApi.completeLecture",
+      "quizApi.startQuizAttempt",
+      "quizApi.submitQuizAttempt"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/student/courses/:courseId/quiz/:quizId",
+    "component": "QuizPage",
+    "file": "src/pages/student/QuizPage.jsx",
+    "lines": 263,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "quizApi.startAttempt"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/student/courses/:courseId/certificate",
+    "component": "CertificatePage",
+    "file": "src/pages/student/CertificatePage.jsx",
+    "lines": 9,
+    "category": "STATIC_OR_LOCAL",
+    "apis": [],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/student/courses/:courseId/live-classes",
+    "component": "LiveClassrooms",
+    "file": "src/pages/student/LiveClassrooms.jsx",
+    "lines": 541,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getStudentCourses",
+      "liveClassApi.getUpcomingLiveClasses",
+      "liveClassApi.getLiveClassesByCourse",
+      "liveClassApi.joinAttendance",
+      "liveClassApi.joinLiveClass"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/student/courses/:courseId/reviews",
+    "component": "ReviewPage",
+    "file": "src/pages/student/ReviewPage.jsx",
+    "lines": 387,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "reviewApi.getCourseReviews",
+      "reviewApi.getRatingSummary",
+      "reviewApi.getMyReview",
+      "reviewApi.updateReview",
+      "reviewApi.createReview",
+      "reviewApi.deleteReview"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/student/courses/:courseId/assignments",
+    "component": "StudentAssignments",
+    "file": "src/pages/student/Assignments.jsx",
+    "lines": 322,
+    "category": "STATIC_OR_LOCAL",
+    "apis": [],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/student/notifications",
+    "component": "NotificationPage",
+    "file": "src/pages/student/NotificationPage.jsx",
+    "lines": 281,
+    "category": "BACKEND_CONNECTED",
+    "apis": [],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/student/notification-preferences",
+    "component": "NotificationPreferences",
+    "file": "src/pages/student/NotificationPreferences.jsx",
+    "lines": 237,
+    "category": "STATIC_OR_LOCAL",
+    "apis": [],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/profile",
+    "component": "ProfileWorkspace",
+    "file": "src/pages/student/ProfileWorkspace.jsx",
+    "lines": 1280,
+    "category": "BACKEND_WITH_MOCK_FALLBACK",
+    "apis": [
+      "authApi.getUserProfile",
+      "courseApi.getStudentCourses",
+      "courseApi.getStudentDashboard",
+      "authApi.getSessions",
+      "authApi.uploadProfilePhoto",
+      "authApi.removeProfilePhoto",
+      "authApi.uploadCoverPhoto",
+      "authApi.updateUserProfile",
+      "authApi.logoutSession",
+      "authApi.logoutAllSessions",
+      "targetUrl"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/instructor/dashboard",
+    "component": "InstructorDashboard",
+    "file": "src/pages/instructor/Dashboard.jsx",
+    "lines": 434,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "instructorApi.getDashboard",
+      "instructorApi.getCourses",
+      "instructorApi.getEarnings"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/instructor/create-course",
+    "component": "CreateCourse",
+    "file": "src/pages/instructor/CreateCourse.jsx",
+    "lines": 2108,
+    "category": "BACKEND_WITH_MOCK_FALLBACK",
+    "apis": [
+      "courseApi.getCourseById",
+      "instructorApi.createCourse",
+      "courseApi.createSection"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/instructor/edit-course/:courseId",
+    "component": "CreateCourse",
+    "file": "src/pages/instructor/CreateCourse.jsx",
+    "lines": 2108,
+    "category": "BACKEND_WITH_MOCK_FALLBACK",
+    "apis": [
+      "courseApi.getCourseById",
+      "instructorApi.createCourse",
+      "courseApi.createSection"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/instructor/courses/:courseId/edit",
+    "component": "CreateCourse",
+    "file": "src/pages/instructor/CreateCourse.jsx",
+    "lines": 2108,
+    "category": "BACKEND_WITH_MOCK_FALLBACK",
+    "apis": [
+      "courseApi.getCourseById",
+      "instructorApi.createCourse",
+      "courseApi.createSection"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/instructor/my-courses",
+    "component": "InstructorCourses",
+    "file": "src/pages/instructor/MyCourses.jsx",
+    "lines": 435,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "instructorApi.getCourses",
+      "instructorApi.createCourse",
+      "instructorApi.deleteCourse"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/instructor/analytics",
+    "component": "InstructorAnalytics",
+    "file": "src/pages/instructor/Analytics.jsx",
+    "lines": 133,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "/api/v1/instructors/${instructorId}/dashboard",
+      "/api/v1/instructors/${instructorId}/earnings",
+      "/api/v1/instructors/${instructorId}/courses"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/instructor/courses/:courseId/assignments",
+    "component": "InstructorAssignments",
+    "file": "src/pages/instructor/Assignments.jsx",
+    "lines": 245,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "assignmentApi.createAssignment",
+      "assignmentApi.gradeSubmission",
+      "assignmentApi.getAssignments"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/profile",
+    "component": "ProfileWorkspace",
+    "file": "src/pages/student/ProfileWorkspace.jsx",
+    "lines": 1280,
+    "category": "BACKEND_WITH_MOCK_FALLBACK",
+    "apis": [
+      "authApi.getUserProfile",
+      "courseApi.getStudentCourses",
+      "courseApi.getStudentDashboard",
+      "authApi.getSessions",
+      "authApi.uploadProfilePhoto",
+      "authApi.removeProfilePhoto",
+      "authApi.uploadCoverPhoto",
+      "authApi.updateUserProfile",
+      "authApi.logoutSession",
+      "authApi.logoutAllSessions",
+      "targetUrl"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/dashboard",
+    "component": "AdminDashboard",
+    "file": "src/pages/admin/Dashboard.jsx",
+    "lines": 449,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.getDashboardStats",
+      "adminApi.getAllUsers",
+      "adminApi.getAllCourses",
+      "adminApi.getOrders"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/command-center",
+    "component": "AdminCommandCenter",
+    "file": "src/pages/admin/AdminCommandCenter.jsx",
+    "lines": 933,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.updateUserStatus",
+      "adminApi.broadcastNotification"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/command-center/:tab",
+    "component": "AdminCommandCenter",
+    "file": "src/pages/admin/AdminCommandCenter.jsx",
+    "lines": 933,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.updateUserStatus",
+      "adminApi.broadcastNotification"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/sub-dashboard",
+    "component": "SubDashboard",
+    "file": "src/pages/admin/SubDashboard.jsx",
+    "lines": 363,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.getAllUsers",
+      "adminApi.getAllCourses",
+      "adminApi.getOrders"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/users",
+    "component": "ManageUsers",
+    "file": "src/pages/admin/Users.jsx",
+    "lines": 1028,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.getUsers",
+      "adminApi.deleteUser",
+      "adminApi.getUserById",
+      "adminApi.updateUser",
+      "adminApi.createUser",
+      "adminApi.updateUserStatus"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/courses",
+    "component": "ManageCourses",
+    "file": "src/pages/admin/Courses.jsx",
+    "lines": 943,
+    "category": "BACKEND_WITH_MOCK_FALLBACK",
+    "apis": [
+      "courseApi.patchCourse",
+      "adminApi.getCourses",
+      "instructorApi.createCourse",
+      "courseApi.updateCourse",
+      "adminApi.updateCourse",
+      "courseApi.updateCourseStatus",
+      "adminApi.approveCourse",
+      "adminApi.rejectCourse",
+      "adminApi.deleteCourse",
+      "adminApi.getCourseContent"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/instructors",
+    "component": "Instructors",
+    "file": "src/pages/admin/Instructors.jsx",
+    "lines": 443,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.getInstructors",
+      "adminApi.approveInstructorApplication",
+      "adminApi.rejectInstructorApplication",
+      "adminApi.deleteInstructor"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/instructor-applications",
+    "component": "InstructorApplications",
+    "file": "src/pages/admin/InstructorApplications.jsx",
+    "lines": 447,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.getInstructorApplications",
+      "adminApi.approveInstructorApplication",
+      "adminApi.rejectInstructorApplication"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/orders",
+    "component": "AdminOrders",
+    "file": "src/pages/admin/Orders.jsx",
+    "lines": 573,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.getOrders",
+      "adminApi.deleteOrder"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/admin/orders/:orderId",
+    "component": "OrderDetails",
+    "file": "src/pages/admin/OrderDetails.jsx",
+    "lines": 122,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.getOrderDetails"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/admin/payments",
+    "component": "Payments",
+    "file": "src/pages/admin/Payments.jsx",
+    "lines": 278,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.getPayments"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/admin/certificates",
+    "component": "Certificates",
+    "file": "src/pages/admin/Certificates.jsx",
+    "lines": 296,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "courseApi.getMyCertificates",
+      "courseApi.getAllCourses"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/admin/analytics",
+    "component": "Analytics",
+    "file": "src/pages/admin/Analytics.jsx",
+    "lines": 316,
+    "category": "BACKEND_CONNECTED",
+    "apis": [],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/reports",
+    "component": "Reports",
+    "file": "src/pages/admin/Reports.jsx",
+    "lines": 599,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.getUsersReport",
+      "adminApi.getOrdersReport",
+      "adminApi.getRevenueReport",
+      "adminApi.getCoursesReport"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/admin/reviews",
+    "component": "Reviews",
+    "file": "src/pages/admin/Reviews.jsx",
+    "lines": 233,
+    "category": "BACKEND_CONNECTED",
+    "apis": [],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/notifications",
+    "component": "Notifications",
+    "file": "src/pages/admin/Notifications.jsx",
+    "lines": 445,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.broadcastNotification"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/admin/banners",
+    "component": "BannerManagement",
+    "file": "src/pages/admin/BannerManagement.jsx",
+    "lines": 1055,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.getAllBanners",
+      "adminApi.getBannerAnalytics",
+      "adminApi.getDeletedBanners",
+      "adminApi.uploadBannerImage",
+      "adminApi.updateBanner",
+      "adminApi.createBanner",
+      "adminApi.updateBannerStatus",
+      "adminApi.deleteBanner",
+      "adminApi.restoreBanner",
+      "adminApi.reorderBanners"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/coupons",
+    "component": "Coupons",
+    "file": "src/pages/admin/Coupons.jsx",
+    "lines": 733,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "couponApi.getAllCoupons",
+      "couponApi.getCampaigns",
+      "couponApi.deactivateCoupon",
+      "couponApi.activateCoupon",
+      "couponApi.deleteCoupon",
+      "couponApi.createCoupon",
+      "couponApi.bulkGenerate",
+      "couponApi.validateCoupon",
+      "couponApi.getBestDiscount"
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/admin/admins",
+    "component": "AdminManagement",
+    "file": "src/pages/admin/AdminManagement.jsx",
+    "lines": 379,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.getAdmins",
+      "adminApi.deleteSubAdmin",
+      "adminApi.toggleAdminStatus"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/register",
+    "component": "AdminRegister",
+    "file": "src/pages/admin/AdminRegister.jsx",
+    "lines": 686,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.registerSubAdmin"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/moderation",
+    "component": "Moderation",
+    "file": "src/pages/admin/Moderation.jsx",
+    "lines": 9,
+    "category": "STUB_COMING_SOON",
+    "apis": [],
+    "hasContextApi": false,
+    "notes": "Placeholder UI with Coming Soon notice"
+  },
+  {
+    "route": "/admin/support",
+    "component": "Support",
+    "file": "src/pages/admin/Support.jsx",
+    "lines": 9,
+    "category": "STUB_COMING_SOON",
+    "apis": [],
+    "hasContextApi": false,
+    "notes": "Placeholder UI with Coming Soon notice"
+  },
+  {
+    "route": "/admin/cms",
+    "component": "CMS",
+    "file": "src/pages/admin/CMS.jsx",
+    "lines": 9,
+    "category": "STATIC_OR_LOCAL",
+    "apis": [],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/admin/settings",
+    "component": "Settings",
+    "file": "src/pages/admin/Settings.jsx",
+    "lines": 314,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "\"/api/v1/admin/settings/platform\"",
+      "\"/api/v1/admin/settings/payment\"",
+      "\"/api/v1/admin/settings/notifications\""
+    ],
+    "hasContextApi": false,
+    "notes": ""
+  },
+  {
+    "route": "/admin/roles",
+    "component": "Roles",
+    "file": "src/pages/admin/Roles.jsx",
+    "lines": 626,
+    "category": "BACKEND_WITH_MOCK_FALLBACK",
+    "apis": [
+      "adminApi.getRoles",
+      "adminApi.updateRole",
+      "adminApi.createRole",
+      "adminApi.deleteRole"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/admin/ai-features",
+    "component": "AIFeatures",
+    "file": "src/pages/admin/AIFeatures.jsx",
+    "lines": 9,
+    "category": "STUB_COMING_SOON",
+    "apis": [],
+    "hasContextApi": false,
+    "notes": "Placeholder UI with Coming Soon notice"
+  },
+  {
+    "route": "/admin/gamification",
+    "component": "Gamification",
+    "file": "src/pages/admin/Gamification.jsx",
+    "lines": 9,
+    "category": "STUB_COMING_SOON",
+    "apis": [],
+    "hasContextApi": false,
+    "notes": "Placeholder UI with Coming Soon notice"
+  },
+  {
+    "route": "/admin/profile",
+    "component": "AdminProfile",
+    "file": "src/pages/admin/Profile.jsx",
+    "lines": 606,
+    "category": "BACKEND_CONNECTED",
+    "apis": [
+      "adminApi.getAdminProfile",
+      "adminApi.updateAdminProfile",
+      "authApi.uploadProfilePhoto",
+      "authApi.removeProfilePhoto"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "/profile",
+    "component": "ProfileWorkspace",
+    "file": "src/pages/student/ProfileWorkspace.jsx",
+    "lines": 1280,
+    "category": "BACKEND_WITH_MOCK_FALLBACK",
+    "apis": [
+      "authApi.getUserProfile",
+      "courseApi.getStudentCourses",
+      "courseApi.getStudentDashboard",
+      "authApi.getSessions",
+      "authApi.uploadProfilePhoto",
+      "authApi.removeProfilePhoto",
+      "authApi.uploadCoverPhoto",
+      "authApi.updateUserProfile",
+      "authApi.logoutSession",
+      "authApi.logoutAllSessions",
+      "targetUrl"
+    ],
+    "hasContextApi": true,
+    "notes": ""
+  },
+  {
+    "route": "*",
+    "component": "Navigate",
+    "file": "UNKNOWN",
+    "status": "MISSING_FILE",
+    "apis": [],
+    "hasMockFallback": false,
+    "notes": "Component file not found"
+  }
+]

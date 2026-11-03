@@ -46,7 +46,16 @@ axiosInstance.interceptors.request.use(
       '/auth/password/forgot',
       '/auth/password/verify-otp',
       '/auth/password/reset',
-      '/auth/refresh'
+      '/auth/refresh',
+      // CMS public endpoints — never require JWT
+      '/public/landing-page',
+      '/public/navigation',
+      '/public/site-settings',
+      '/public/banners',
+      '/public/testimonials',
+      '/public/website-stats',
+      '/public/footer',
+      '/public/seo/',
     ];
 
     const isPublicEndpoint = publicEndpoints.some(endpoint => config.url?.includes(endpoint));
@@ -75,7 +84,6 @@ axiosInstance.interceptors.request.use(
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-      } else {
       }
     }
 
@@ -107,16 +115,21 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       const { status, config, data } = error.response;
 
+      const hadAuthHeader = Boolean(config?.headers?.Authorization);
       const isPublicAuthCall = config?.url?.includes('/auth/') ||
         config?.url?.includes('/verify-email') ||
         config?.url?.includes('/register');
 
       const isRefreshEndpoint = config?.url?.includes('/auth/refresh');
+      const hasRefreshToken = Boolean(
+        localStorage.getItem('refresh_token') ||
+        sessionStorage.getItem('refresh_token')
+      );
 
-      // Attempt token refresh on 401 for protected endpoints
-      if (status === 401 && !isPublicAuthCall && !isRefreshEndpoint) {
+      // Attempt token refresh on 401 for protected endpoints ONLY if request sent auth AND refresh token exists
+      if (status === 401 && hadAuthHeader && !isPublicAuthCall && !isRefreshEndpoint && hasRefreshToken) {
         if (isRefreshing) {
-          // Queue the request if refresh is already in progress
+          // Queue concurrent 401 requests while refresh is already in flight
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
           }).then((token) => {
@@ -130,14 +143,14 @@ axiosInstance.interceptors.response.use(
         isRefreshing = true;
 
         try {
-          // Attempt to refresh the token
+          // Attempt to refresh the token via backend
           const refreshResponse = await authApi.refreshAccessToken();
-          
+
           // Extract new access token from response
           const newAccessToken = refreshResponse?.authentication?.accessToken ||
-                                refreshResponse?.accessToken ||
-                                refreshResponse?.data?.authentication?.accessToken ||
-                                refreshResponse?.data?.accessToken;
+            refreshResponse?.accessToken ||
+            refreshResponse?.data?.authentication?.accessToken ||
+            refreshResponse?.data?.accessToken;
 
           if (newAccessToken) {
             // Update token storage
@@ -147,9 +160,9 @@ axiosInstance.interceptors.response.use(
 
             // Update refresh token if rotated by backend
             const newRefreshToken = refreshResponse?.authentication?.refreshToken ||
-                                     refreshResponse?.refreshToken ||
-                                     refreshResponse?.data?.authentication?.refreshToken ||
-                                     refreshResponse?.data?.refreshToken;
+              refreshResponse?.refreshToken ||
+              refreshResponse?.data?.authentication?.refreshToken ||
+              refreshResponse?.data?.refreshToken;
             if (newRefreshToken) {
               localStorage.setItem('refresh_token', newRefreshToken);
             }
@@ -165,29 +178,41 @@ axiosInstance.interceptors.response.use(
           }
         } catch (refreshError) {
           console.error('[API] Token refresh failed:', refreshError);
-          
+
           // Process queued requests with error
           processQueue(refreshError, null);
 
-          // Clear all tokens and redirect to login
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('lms_token');
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-          localStorage.removeItem('userData');
-          localStorage.removeItem('lms_user');
-          sessionStorage.removeItem('authToken');
-          sessionStorage.removeItem('lms_token');
+          // Clear all tokens only when refresh genuinely failed on an active session
+          const hadSession = Boolean(
+            localStorage.getItem('lms_token') ||
+            localStorage.getItem('access_token') ||
+            localStorage.getItem('lms_user')
+          );
+
+          if (hadSession) {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('lms_token');
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('userData');
+            localStorage.removeItem('lms_user');
+            sessionStorage.removeItem('authToken');
+            sessionStorage.removeItem('lms_token');
+
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new Event('authSessionExpired'));
+            }
+          }
 
           // Only redirect if user is currently trying to browse a protected route
           const isProtectedRoute = () => {
             const p = window.location.pathname;
             return p.startsWith('/student') ||
-                   p.startsWith('/instructor') ||
-                   p.startsWith('/admin') ||
-                   p === '/profile' ||
-                   p.startsWith('/classroom') ||
-                   p.startsWith('/checkout');
+              p.startsWith('/instructor') ||
+              p.startsWith('/admin') ||
+              p === '/profile' ||
+              p.startsWith('/classroom') ||
+              p.startsWith('/checkout');
           };
 
           if (isProtectedRoute()) {
@@ -198,33 +223,48 @@ axiosInstance.interceptors.response.use(
         } finally {
           isRefreshing = false;
         }
-      } else if (status === 401 && !isPublicAuthCall) {
-        // Direct logout for refresh endpoint failures or other 401s
-        console.warn('[API] 401 Unauthorized - Clearing tokens');
+      } else if (status === 401 && hadAuthHeader && !isPublicAuthCall) {
+        // Authenticated request with invalid/expired session without valid refresh token
+        const hadSession = Boolean(
+          localStorage.getItem('lms_token') ||
+          localStorage.getItem('access_token') ||
+          localStorage.getItem('lms_user')
+        );
 
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('lms_token');
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('userData');
-        localStorage.removeItem('lms_user');
-        sessionStorage.removeItem('authToken');
-        sessionStorage.removeItem('lms_token');
+        if (hadSession) {
+          console.warn('[API] 401 Unauthorized - Active session expired, clearing tokens');
+
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('lms_token');
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('userData');
+          localStorage.removeItem('lms_user');
+          sessionStorage.removeItem('authToken');
+          sessionStorage.removeItem('lms_token');
+
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('authSessionExpired'));
+          }
+        }
 
         const isProtectedRoute = () => {
           const p = window.location.pathname;
           return p.startsWith('/student') ||
-                 p.startsWith('/instructor') ||
-                 p.startsWith('/admin') ||
-                 p === '/profile' ||
-                 p.startsWith('/classroom') ||
-                 p.startsWith('/checkout');
+            p.startsWith('/instructor') ||
+            p.startsWith('/admin') ||
+            p === '/profile' ||
+            p.startsWith('/classroom') ||
+            p.startsWith('/checkout');
         };
 
         if (isProtectedRoute()) {
           window.location.href = '/login';
         }
       }
+
+      // Note: 403 Forbidden is intentionally NOT handled as an expired session.
+      // It is a permission failure that must not log out the user.
 
       console.error('[API] Error details:', {
         status,
@@ -238,4 +278,3 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance;
-

@@ -246,8 +246,8 @@ export const StudentDashboard = () => {
           category: data.category || data.categoryName || prev?.category || course.category,
           level: data.level || data.difficultyLevel || prev?.level || course.level,
           price: data.price != null ? Number(data.price) : prev?.price,
-          rating: Number(data.rating || data.avgRating || prev?.rating || 4.8),
-          students: Number(data.students || data.enrolledCount || prev?.students || 140),
+          rating: Number(data.rating || data.avgRating || prev?.rating || 0),
+          students: Number(data.students || data.enrolledCount || prev?.students || 0),
           duration: data.duration || data.estimatedDuration || prev?.duration || 'Self-paced',
           instructor:
             data.instructor?.name ||
@@ -872,7 +872,7 @@ export const StudentDashboard = () => {
                           </span>
                           <span className="text-[10px] text-[#C5A880] flex items-center gap-1 font-mono">
                             <Star className="w-3 h-3 fill-[#C5A880]" />
-                            <span>{course.rating ? Number(course.rating).toFixed(1) : '4.8'}</span>
+                            <span>{course.rating ? Number(course.rating).toFixed(1) : '0.0'}</span>
                           </span>
                         </div>
                       </motion.div>

@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-11-01T07:52:54.392Z",
+  "statsCards": [
+    {
+      "number": "228",
+      "label": "Active Courses",
+      "description": "Published courses",
+      "rawText": "228\nActive Courses\nPublished courses"
+    },
+    {
+      "number": "75+",
+      "label": "Enrolled Engineers",
+      "description": "Verified enrollments",
+      "rawText": "75+\nEnrolled Engineers\nVerified enrollments"
+    },
+    {
+      "number": "★ 4.8",
+      "label": "Average Rating",
+      "description": "Genuine student reviews",
+      "rawText": "★ 4.8\nAverage Rating\nGenuine student reviews"
+    },
+    {
+      "number": "13",
+      "label": "Lead Instructors",
+      "description": "Active approved instructors",
+      "rawText": "13\nLead Instructors\nActive approved instructors"
+    }
+  ],
+  "url": "http://localhost:4173"
+}

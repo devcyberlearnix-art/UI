@@ -1,0 +1,129 @@
+{
+  "timestamp": "2026-11-01T06:45:26.333Z",
+  "environment": "Docker Microservices Environment",
+  "gateway": "http://localhost:8079",
+  "tests": [
+    {
+      "testName": "Guest Catalog Exploration",
+      "category": "Guest Journey",
+      "status": "PASS",
+      "expected": "HTTP 200 with course content",
+      "actual": "Public catalog accessible",
+      "notes": "",
+      "timestamp": "2026-11-01T06:45:26.442Z"
+    },
+    {
+      "testName": "Guest Course Details Exploration",
+      "category": "Guest Journey",
+      "status": "PASS",
+      "expected": "HTTP 200 course object",
+      "actual": "Course details accessible without auth",
+      "notes": "",
+      "timestamp": "2026-11-01T06:45:26.510Z"
+    },
+    {
+      "testName": "Guest Cart Protection",
+      "category": "Guest Journey",
+      "status": "PASS",
+      "expected": "HTTP 401/403 Rejected",
+      "actual": "HTTP 401 Authorization Required",
+      "notes": "",
+      "timestamp": "2026-11-01T06:45:26.533Z"
+    },
+    {
+      "testName": "Student Authentication via Social Login",
+      "category": "Authentication",
+      "status": "PASS",
+      "expected": "Valid JWT Token & Student ID",
+      "actual": "Student ID: 00891fb9-aff3-465d-92da-41f88a7386c1",
+      "notes": "",
+      "timestamp": "2026-11-01T06:45:27.939Z"
+    },
+    {
+      "testName": "Add Course to Cart",
+      "category": "Cart Lifecycle",
+      "status": "PASS",
+      "expected": "HTTP 200/201 Item added",
+      "actual": "Course 4 added to cart",
+      "notes": "",
+      "timestamp": "2026-11-01T06:45:30.176Z"
+    },
+    {
+      "testName": "Duplicate Cart Item Handling",
+      "category": "Cart Lifecycle",
+      "status": "PASS",
+      "expected": "Handled duplicate cart addition",
+      "actual": "Cart backend handled duplicate call",
+      "notes": "",
+      "timestamp": "2026-11-01T06:45:30.240Z"
+    },
+    {
+      "testName": "Cart Persistence & Retrieval",
+      "category": "Cart Lifecycle",
+      "status": "PASS",
+      "expected": "HTTP 200 with persisted items",
+      "actual": "1 item(s) in active cart",
+      "notes": "",
+      "timestamp": "2026-11-01T06:45:30.308Z"
+    },
+    {
+      "testName": "Order Creation & Server-side Pricing",
+      "category": "Order Management",
+      "status": "PASS",
+      "expected": "HTTP 200/201 Order created",
+      "actual": "Order ID: 773dbd80-a500-47da-8581-e2b1de75afb2, Amount: ₹14999, Status: PENDING",
+      "notes": "",
+      "timestamp": "2026-11-01T06:45:30.464Z"
+    },
+    {
+      "testName": "Payment Service Actuator Health",
+      "category": "Payment Service",
+      "status": "FAIL",
+      "expected": "HTTP 200 UP",
+      "actual": "HTTP 500: No static resource actuator/health.",
+      "notes": "Actuator starter missing or unmapped in PaymentServiceApplication",
+      "timestamp": "2026-11-01T06:45:30.496Z"
+    },
+    {
+      "testName": "Course Enrollment Execution",
+      "category": "Enrollment Flow",
+      "status": "PASS",
+      "expected": "HTTP 200/201 Enrollment confirmed",
+      "actual": "Enrolled in course 4",
+      "notes": "",
+      "timestamp": "2026-11-01T06:45:30.534Z"
+    },
+    {
+      "testName": "Enrollment Status Verification",
+      "category": "Enrollment Flow",
+      "status": "PASS",
+      "expected": "isEnrolled = true",
+      "actual": "Confirmed enrolled status",
+      "notes": "",
+      "timestamp": "2026-11-01T06:45:30.568Z"
+    },
+    {
+      "testName": "Classroom Access & Student Dashboard",
+      "category": "Classroom Access",
+      "status": "FAIL",
+      "expected": "HTTP 200 array",
+      "actual": "Student courses unavailable",
+      "notes": "",
+      "timestamp": "2026-11-01T06:45:30.687Z"
+    },
+    {
+      "testName": "Duplicate Enrollment Prevention",
+      "category": "Enrollment Flow",
+      "status": "PASS",
+      "expected": "HTTP 400/409 Conflict Detected",
+      "actual": "Duplicate enrollment safely blocked",
+      "notes": "",
+      "timestamp": "2026-11-01T06:45:30.722Z"
+    }
+  ],
+  "summary": {
+    "total": 13,
+    "passed": 11,
+    "failed": 2
+  }
+}

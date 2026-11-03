@@ -86,7 +86,7 @@ const MyCourses = () => {
         level:       form.level,
         price:       parseFloat(form.price) || 0,
         language:    form.language,
-        status:      "Published",
+        status:      "DRAFT",
         createdAt:   new Date().toLocaleDateString(),
         instructorId: instructorId,
         instructorName: user?.name || user?.firstName || storedUser?.name || "Instructor",

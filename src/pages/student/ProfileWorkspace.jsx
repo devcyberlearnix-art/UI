@@ -72,31 +72,36 @@ export default function ProfileWorkspace() {
   const photoBlobUrlRef = useRef(null);
   const coverPhotoInputRef = useRef(null);
 
-  // Fetch authenticated photo blob
-  const fetchProfilePhotoAsBlob = async (photoUrl, retries = 2) => {
+  // Fetch authenticated photo blob (resolves Google Drive and proxy URLs)
+  const fetchPhotoAsBlob = async (photoUrl, retries = 2) => {
     if (!photoUrl) return null;
-    if (photoUrl.includes('drive.google.com')) return photoUrl;
+    if (photoUrl.startsWith('blob:') || photoUrl.startsWith('data:')) return photoUrl;
+
+    let targetUrl = photoUrl;
+    if (photoUrl.includes('drive.google.com')) {
+      const idMatch = photoUrl.match(/id=([^&]+)/);
+      const fileMatch = photoUrl.match(/\/file\/d\/([^\/]+)/);
+      const fileId = idMatch ? idMatch[1] : (fileMatch ? fileMatch[1] : null);
+      if (fileId) {
+        targetUrl = `/api/v1/users/photo/${fileId}`;
+      }
+    }
 
     for (let i = 0; i < retries; i++) {
       try {
-        if (photoBlobUrlRef.current && photoBlobUrlRef.current.startsWith('blob:')) {
-          URL.revokeObjectURL(photoBlobUrlRef.current);
-          photoBlobUrlRef.current = null;
-        }
-
-        const response = await axiosInstance.get(photoUrl, { responseType: 'blob' });
+        const response = await axiosInstance.get(targetUrl, { responseType: 'blob' });
         if (!response.data || response.data.size === 0) return null;
 
         const blob = new Blob([response.data], { type: response.headers['content-type'] || 'image/jpeg' });
-        const blobUrl = URL.createObjectURL(blob);
-        photoBlobUrlRef.current = blobUrl;
-        return blobUrl;
+        return URL.createObjectURL(blob);
       } catch (err) {
-        if (i === retries - 1) return null;
-        await new Promise(res => setTimeout(res, 400));
+        if (i === retries - 1) return targetUrl;
+        await new Promise(res => setTimeout(res, 300));
       }
     }
+    return targetUrl;
   };
+  const fetchProfilePhotoAsBlob = fetchPhotoAsBlob;
 
   // Fetch full live profile specification
   const fetchProfile = useCallback(async () => {
@@ -154,15 +159,18 @@ export default function ProfileWorkspace() {
       setProfile(hydratedProfile);
       setTemp(hydratedProfile);
 
-      if (normalizedPhotoUrl) {
-        const blobUrl = await fetchProfilePhotoAsBlob(normalizedPhotoUrl);
+      if (normalizedPhotoUrl || data.profilePhoto) {
+        const blobUrl = await fetchPhotoAsBlob(data.profilePhoto || normalizedPhotoUrl);
         setPhotoBlobUrl(blobUrl);
       } else {
         setPhotoBlobUrl(null);
       }
 
-      if (normalizedCoverPhotoUrl) {
-        setCoverPhotoUrl(normalizedCoverPhotoUrl);
+      if (data.coverPhoto || normalizedCoverPhotoUrl) {
+        const coverBlob = await fetchPhotoAsBlob(data.coverPhoto || normalizedCoverPhotoUrl);
+        setCoverPhotoUrl(coverBlob || normalizedCoverPhotoUrl);
+      } else {
+        setCoverPhotoUrl(null);
       }
 
       await fetchTelemetryStats();
@@ -227,20 +235,8 @@ export default function ProfileWorkspace() {
       setSessions(Array.isArray(sessionList) ? sessionList : []);
     } catch (err) {
       console.warn('[ProfileWorkspace] Sessions load error:', err);
-      // Mock active session if endpoint unavailable
-      setSessions([
-        {
-          id: 'current-session-01',
-          deviceName: 'Primary Hardware Terminal',
-          deviceType: 'desktop',
-          browser: 'Chromium Platform',
-          operatingSystem: 'Windows NT 10.0',
-          city: profile?.city || 'Obsidian Gateway',
-          country: profile?.country || 'Encrypted Mesh',
-          loginTime: new Date().toISOString(),
-          isCurrent: true
-        }
-      ]);
+      // Authoritative response only: no mock sessions
+      setSessions([]);
     } finally {
       setSessionsLoading(false);
     }
@@ -309,21 +305,28 @@ export default function ProfileWorkspace() {
     }
 
     setUploadingCover(true);
+    let preview = null;
     try {
-      const preview = URL.createObjectURL(file);
+      preview = URL.createObjectURL(file);
       setCoverPhotoUrl(preview);
 
       const response = await authApi.uploadCoverPhoto(file);
-      const newCover = response?.data?.data?.coverPhoto || response?.data?.coverPhoto;
+      const newCover = response?.data?.coverPhoto || response?.data?.data?.coverPhoto || response?.coverPhoto;
       if (newCover) {
-        const normalized = normalizePhotoUrl(newCover);
-        setCoverPhotoUrl(normalized);
-        setProfile(prev => ({ ...prev, coverPhoto: normalized }));
-        toast.success('Obsidian cover matrix updated');
+        setProfile(prev => ({ ...prev, coverPhoto: newCover }));
+        // Silently pre-fetch authenticated blob in the background
+        fetchPhotoAsBlob(newCover).then(blobUrl => {
+          if (blobUrl && blobUrl.startsWith('blob:')) {
+            setCoverPhotoUrl(blobUrl);
+          }
+        }).catch(() => {});
+        toast.success('Cover photo uploaded successfully');
       }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to commit cover banner');
-      setCoverPhotoUrl(profile?.coverPhoto || null);
+      if (profile?.coverPhoto) {
+        setCoverPhotoUrl(profile.coverPhoto);
+      }
     } finally {
       setUploadingCover(false);
       if (coverPhotoInputRef.current) coverPhotoInputRef.current.value = '';
@@ -337,25 +340,69 @@ export default function ProfileWorkspace() {
     setError('');
 
     try {
-      const payload = {
-        firstName: temp.firstName,
-        lastName: temp.lastName,
-        email: temp.email,
-        mobile: temp.phone || temp.mobile,
-        preferredLanguage: temp.preferredLanguage,
-        city: temp.city,
-        state: temp.state,
-        country: temp.country,
-        dob: temp.dob,
-        gender: temp.gender,
-        highestQualification: temp.highestQualification,
-        fieldOfStudy: temp.fieldOfStudy,
-        organization: temp.organization,
-        skills: Array.isArray(temp.skills) ? temp.skills.join(',') : temp.skills
+      const langMap = {
+        English: 'EN',
+        Spanish: 'ES',
+        French: 'FR',
+        German: 'DE',
+        EN: 'EN',
+        ES: 'ES',
+        FR: 'FR',
+        DE: 'DE'
       };
 
+      const cleanMobile = (temp.phone || temp.mobile || '').replace(/[\s-]/g, '');
+      const validMobile = /^\+?[0-9]{10,15}$/.test(cleanMobile) ? cleanMobile : null;
+
+      let validGender = null;
+      if (temp.gender) {
+        const g = temp.gender.trim();
+        if (/^male$/i.test(g)) validGender = 'Male';
+        else if (/^female$/i.test(g)) validGender = 'Female';
+        else if (/^(other|non-binary)$/i.test(g)) validGender = 'Other';
+        else if (['Male', 'Female', 'Other'].includes(g)) validGender = g;
+      }
+
+      const validDob = temp.dob && /^\d{4}-\d{2}-\d{2}$/.test(temp.dob.split('T')[0])
+        ? temp.dob.split('T')[0]
+        : null;
+
+      const cleanStr = (val) => (typeof val === 'string' && val.trim().length > 0 ? val.trim() : null);
+
+      const payload = {
+        firstName: cleanStr(temp.firstName),
+        lastName: cleanStr(temp.lastName),
+        mobile: validMobile,
+        preferredLanguage: langMap[temp.preferredLanguage] || 'EN',
+        city: cleanStr(temp.city),
+        state: cleanStr(temp.state),
+        country: cleanStr(temp.country),
+        dob: validDob,
+        gender: validGender,
+        highestQualification: cleanStr(temp.highestQualification),
+        fieldOfStudy: cleanStr(temp.fieldOfStudy),
+        organization: cleanStr(temp.organization),
+        skills: Array.isArray(temp.skills)
+          ? temp.skills.filter(Boolean).join(',')
+          : cleanStr(temp.skills)
+      };
+
+      // Strip null/undefined/empty keys so only valid fields are sent to backend
+      Object.keys(payload).forEach(key => {
+        if (payload[key] === null || payload[key] === undefined || payload[key] === '') {
+          delete payload[key];
+        }
+      });
+
       await authApi.updateUserProfile(payload);
-      setProfile({ ...temp });
+      setProfile(prev => ({
+        ...prev,
+        ...temp,
+        gender: validGender || prev?.gender,
+        preferredLanguage: langMap[temp.preferredLanguage] || 'EN',
+        mobile: validMobile || prev?.mobile,
+        phone: validMobile || prev?.phone
+      }));
       setEditMode(false);
       toast.success('Profile matrix synchronized');
       window.dispatchEvent(new CustomEvent('profileUpdated'));
@@ -463,16 +510,7 @@ export default function ProfileWorkspace() {
             Hydrating Identity Matrix...
           </p>
         </div>
-        <EmailChangeModal
-        isOpen={isEmailModalOpen}
-        onClose={() => setIsEmailModalOpen(false)}
-        currentEmail={profile.email || temp?.email}
-        onEmailUpdated={(newMail) => {
-          setProfile(p => ({ ...p, email: newMail }));
-          setTemp(t => ({ ...t, email: newMail }));
-        }}
-      />
-    </GlobalLayoutWrapper>
+      </GlobalLayoutWrapper>
     );
   }
 
@@ -498,11 +536,21 @@ export default function ProfileWorkspace() {
           {/* Subtle Obsidian Textured Cover Banner */}
           <div className="h-44 bg-gradient-to-r from-[#14141A] to-[#1B1B24] relative flex items-end justify-end p-4 border-b border-white/[0.04] overflow-hidden">
             {coverPhotoUrl && (
-              <img
-                src={coverPhotoUrl}
-                alt="Obsidian Cover"
-                className="absolute inset-0 w-full h-full object-cover opacity-60"
-              />
+              <>
+                <img
+                  src={coverPhotoUrl}
+                  alt=""
+                  aria-hidden="true"
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    // Silently suppress broken element immediately
+                    e.currentTarget.style.display = 'none';
+                    setCoverPhotoUrl(null);
+                  }}
+                  className="absolute inset-0 w-full h-full object-cover opacity-90 transition-opacity duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F13]/80 via-transparent to-black/20 pointer-events-none" />
+              </>
             )}
             
             {/* Cover photo file input */}
@@ -550,7 +598,7 @@ export default function ProfileWorkspace() {
                     <img
                       ref={profileImgRef}
                       src={photoBlobUrl || profile?.profilePhoto}
-                      alt={profile.name}
+                      alt={profile?.name || 'Profile'}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       onError={() => setPhotoBlobUrl(null)}
                     />
@@ -774,10 +822,9 @@ export default function ProfileWorkspace() {
                         className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none transition font-sans"
                       >
                         <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="non-binary">Non-binary</option>
-                        <option value="other">Prefer not to say</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
                       </select>
                     </div>
 
@@ -1203,6 +1250,17 @@ export default function ProfileWorkspace() {
         onUploadPhoto={handlePhotoUpload}
         onRemovePhoto={handleRemovePhoto}
         currentPhotoUrl={profile?.profilePhoto}
+      />
+
+      {/* Email Change Modal */}
+      <EmailChangeModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        currentEmail={profile?.email || temp?.email || user?.email || ''}
+        onEmailUpdated={(newMail) => {
+          setProfile(p => (p ? { ...p, email: newMail } : p));
+          setTemp(t => (t ? { ...t, email: newMail } : t));
+        }}
       />
     </GlobalLayoutWrapper>
   );

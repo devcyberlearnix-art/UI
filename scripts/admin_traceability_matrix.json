@@ -1,0 +1,1171 @@
+{
+  "totalBackend": 73,
+  "totalSdk": 92,
+  "missingSdkCount": 0,
+  "mappedInUiCount": 26,
+  "sdkOnlyNoUiCount": 47,
+  "unmappedSdkCount": 24,
+  "matrix": [
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/banners",
+      "methodName": "createBanner",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "createBanner",
+      "sdkUrl": "/api/v1/admin/banners",
+      "uiViews": [
+        "BannerManagement.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/banners",
+      "methodName": "getAllBanners",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "createBanner",
+      "sdkUrl": "/api/v1/admin/banners",
+      "uiViews": [
+        "BannerManagement.jsx"
+      ]
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/banners/{bannerId}",
+      "methodName": "getBannerById",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getBannerById",
+      "sdkUrl": "/api/v1/admin/banners/${bannerId}",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/banners/{bannerId}",
+      "methodName": "updateBanner",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getBannerById",
+      "sdkUrl": "/api/v1/admin/banners/${bannerId}",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "PATCH",
+      "path": "/api/v1/admin/banners/{bannerId}",
+      "methodName": "partialUpdateBanner",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getBannerById",
+      "sdkUrl": "/api/v1/admin/banners/${bannerId}",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "PATCH",
+      "path": "/api/v1/admin/banners/{bannerId}/status",
+      "methodName": "updateBannerStatus",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "updateBannerStatus",
+      "sdkUrl": "/api/v1/admin/banners/${bannerId}/status",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "PATCH",
+      "path": "/api/v1/admin/banners/reorder",
+      "methodName": "reorderBanners",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "reorderBanners",
+      "sdkUrl": "/api/v1/admin/banners/reorder",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/banners/{bannerId}",
+      "methodName": "deleteBanner",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getBannerById",
+      "sdkUrl": "/api/v1/admin/banners/${bannerId}",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/banners/{bannerId}/analytics",
+      "methodName": "getBannerAnalytics",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getAllBanners",
+      "sdkUrl": "/api/v1/admin/banners",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/banners/upload-image",
+      "methodName": "uploadBannerImage",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "uploadBannerImage",
+      "sdkUrl": "/api/v1/admin/banners/upload-image",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/banners/validate-image",
+      "methodName": "validateBannerImage",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "validateBannerImage",
+      "sdkUrl": "/api/v1/admin/banners/validate-image",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/banners/deleted",
+      "methodName": "getDeletedBanners",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getDeletedBanners",
+      "sdkUrl": "/api/v1/admin/banners/deleted",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/banners/{bannerId}/restore",
+      "methodName": "restoreBanner",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "restoreBanner",
+      "sdkUrl": "/api/v1/admin/banners/${bannerId}/restore",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/banners/target/{targetType}",
+      "methodName": "getActiveBannersByTargetType",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getBannersByTarget",
+      "sdkUrl": "/api/v1/admin/banners/target/${targetType}",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminBannerController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/banners/{bannerId}/conversion",
+      "methodName": "trackBannerConversion",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "trackBannerConversion",
+      "sdkUrl": "/api/v1/admin/banners/${bannerId}/conversion",
+      "uiViews": []
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/register",
+      "methodName": "unknown",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "registerSubAdmin",
+      "sdkUrl": "/api/v1/admin/register",
+      "uiViews": [
+        "AdminRegister.jsx"
+      ]
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/login",
+      "methodName": "login",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "loginDirect",
+      "sdkUrl": "/api/v1/admin/login",
+      "uiViews": []
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/login/otp/request",
+      "methodName": "requestLoginOtp",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "requestLoginOtp",
+      "sdkUrl": "/api/v1/admin/login/otp/request",
+      "uiViews": [
+        "AdminLogin.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/login/otp/verify",
+      "methodName": "verifyLoginOtp",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "verifyLoginOtp",
+      "sdkUrl": "/api/v1/admin/login/otp/verify",
+      "uiViews": [
+        "AdminLogin.jsx"
+      ]
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/login/otp/resend",
+      "methodName": "resendLoginOtp",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "resendLoginOtp",
+      "sdkUrl": "/api/v1/admin/login/otp/resend",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/password/forgot",
+      "methodName": "forgotPassword",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "forgotPassword",
+      "sdkUrl": "/api/v1/admin/password/forgot",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/password/verify-otp",
+      "methodName": "verifyPasswordOtp",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "verifyPasswordOtp",
+      "sdkUrl": "/api/v1/admin/password/verify-otp",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/password/otp/resend",
+      "methodName": "resendPasswordOtp",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "resendPasswordOtp",
+      "sdkUrl": "/api/v1/admin/password/otp/resend",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/password/reset",
+      "methodName": "resetPassword",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "resetPassword",
+      "sdkUrl": "/api/v1/admin/password/reset",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/profile",
+      "methodName": "getProfile",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getAdminProfileDirect",
+      "sdkUrl": "/api/v1/admin/profile",
+      "uiViews": []
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminCourseController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/courses",
+      "methodName": "getAllCourses",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getCourses",
+      "sdkUrl": "/api/v1/admin/courses",
+      "uiViews": [
+        "Courses.jsx",
+        "Reports.jsx"
+      ]
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminCourseController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/courses/{courseId}",
+      "methodName": "getCourseById",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getCourseById",
+      "sdkUrl": "/api/v1/admin/courses/${courseId}",
+      "uiViews": []
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminCourseController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/content/{courseId}",
+      "methodName": "getCourseContent",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getCourseContent",
+      "sdkUrl": "/api/v1/admin/content/${courseId}",
+      "uiViews": [
+        "Courses.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminCourseController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/courses/{courseId}/approve",
+      "methodName": "approveCourse",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "approveCourse",
+      "sdkUrl": "/api/v1/admin/courses/${courseId}/approve",
+      "uiViews": [
+        "Courses.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminCourseController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/courses/{courseId}/reject",
+      "methodName": "rejectCourse",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "rejectCourse",
+      "sdkUrl": "/api/v1/admin/courses/${courseId}/reject",
+      "uiViews": [
+        "Courses.jsx"
+      ]
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminCourseController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/courses/{courseId}",
+      "methodName": "deleteCourse",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getCourseById",
+      "sdkUrl": "/api/v1/admin/courses/${courseId}",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminCourseController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/courses/{courseId}/sections",
+      "methodName": "createSection",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "createSection",
+      "sdkUrl": "/api/v1/admin/courses/${courseId}/sections",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminCourseController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/sections/{sectionId}",
+      "methodName": "deleteSection",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "deleteSection",
+      "sdkUrl": "/api/v1/admin/sections/${sectionId}",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminCourseController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/sections/{sectionId}/lectures",
+      "methodName": "createLecture",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "createLecture",
+      "sdkUrl": "/api/v1/admin/sections/${sectionId}/lectures",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminCourseController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/sections/{sectionId}/lectures/{lectureId}/approve",
+      "methodName": "approveLecture",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "approveLecture",
+      "sdkUrl": "/api/v1/admin/sections/${sectionId}/lectures/${lectureId}/approve",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminCourseController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/sections/{sectionId}/lectures/{lectureId}/reject",
+      "methodName": "rejectLecture",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "rejectLecture",
+      "sdkUrl": "/api/v1/admin/sections/${sectionId}/lectures/${lectureId}/reject",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminCourseController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/sections/{sectionId}/lectures/{lectureId}",
+      "methodName": "deleteLecture",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "deleteLecture",
+      "sdkUrl": "/api/v1/admin/sections/${sectionId}/lectures/${lectureId}",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminCourseController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/instructors/{instructorId}/courses",
+      "methodName": "getCoursesByInstructor",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getInstructorCourses",
+      "sdkUrl": "/api/v1/admin/instructors/${instructorId}/courses",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminEmailChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/email/change-request",
+      "methodName": "initiateEmailChange",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "initiateEmailChange",
+      "sdkUrl": "/api/v1/admin/email/change-request",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminEmailChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/email/verify-old",
+      "methodName": "verifyOldEmail",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "verifyOldEmailOtp",
+      "sdkUrl": "/api/v1/admin/email/verify-old",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminEmailChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/email/verify-new",
+      "methodName": "verifyNewEmail",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "verifyNewEmailOtp",
+      "sdkUrl": "/api/v1/admin/email/verify-new",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminEmailChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/email/resend-otp",
+      "methodName": "resendEmailChangeOtp",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "resendEmailChangeOtp",
+      "sdkUrl": "/api/v1/admin/email/resend-otp",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminEmailChangeController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/email/change-request/{sessionId}",
+      "methodName": "getEmailChangeSession",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getEmailChangeSession",
+      "sdkUrl": "/api/v1/admin/email/change-request/${sessionId}",
+      "uiViews": []
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminOrderController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/orders",
+      "methodName": "getAllOrders",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getOrders",
+      "sdkUrl": "/api/v1/admin/orders",
+      "uiViews": [
+        "Dashboard.jsx",
+        "Orders.jsx",
+        "Reports.jsx",
+        "SubDashboard.jsx"
+      ]
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminOrderController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/orders/{id}",
+      "methodName": "getOrderById",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getOrderById",
+      "sdkUrl": "/api/v1/admin/orders/${orderId}",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminOrderController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/orders/{id}/status",
+      "methodName": "updateOrderStatus",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "updateOrderStatus",
+      "sdkUrl": "/api/v1/admin/orders/${orderId}/status",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminOrderController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/orders/{id}/refund",
+      "methodName": "processRefund",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "processOrderRefund",
+      "sdkUrl": "/api/v1/admin/orders/${orderId}/refund",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminPasswordChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/change-password",
+      "methodName": "initiatePasswordChange",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "initiatePasswordChange",
+      "sdkUrl": "/api/v1/admin/change-password",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminPasswordChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/change-password/verify-otp",
+      "methodName": "verifyPasswordOtp",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "verifyChangePasswordOtp",
+      "sdkUrl": "/api/v1/admin/change-password/verify-otp",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminPasswordChangeController.java",
+      "httpMethod": "POST",
+      "path": "/api/v1/admin/change-password/resend-otp",
+      "methodName": "resendPasswordOtp",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "resendChangePasswordOtp",
+      "sdkUrl": "/api/v1/admin/change-password/resend-otp",
+      "uiViews": []
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminPaymentController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/payments",
+      "methodName": "getAllPayments",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getPayments",
+      "sdkUrl": "/api/v1/admin/payments",
+      "uiViews": [
+        "Payments.jsx"
+      ]
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminPaymentController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/payments/{id}",
+      "methodName": "getPaymentById",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getPaymentById",
+      "sdkUrl": "/api/v1/admin/payments/${paymentId}",
+      "uiViews": []
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminReportController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/reports/users",
+      "methodName": "unknown",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getUsersReport",
+      "sdkUrl": "/api/v1/admin/reports/users",
+      "uiViews": [
+        "Reports.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminReportController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/reports/courses",
+      "methodName": "unknown",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getCoursesReport",
+      "sdkUrl": "/api/v1/admin/reports/courses",
+      "uiViews": [
+        "Reports.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminReportController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/reports/revenue",
+      "methodName": "unknown",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getRevenueReport",
+      "sdkUrl": "/api/v1/admin/reports/revenue",
+      "uiViews": [
+        "Reports.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminReportController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/reports/orders",
+      "methodName": "unknown",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getOrdersReport",
+      "sdkUrl": "/api/v1/admin/reports/orders",
+      "uiViews": [
+        "Reports.jsx"
+      ]
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminReportController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/settings/platform",
+      "methodName": "unknown",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "updatePlatformSettings",
+      "sdkUrl": "/api/v1/admin/settings/platform",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminReportController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/settings/payment",
+      "methodName": "unknown",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "updatePaymentSettings",
+      "sdkUrl": "/api/v1/admin/settings/payment",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminReportController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/settings/notifications",
+      "methodName": "unknown",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "updateNotificationSettings",
+      "sdkUrl": "/api/v1/admin/settings/notifications",
+      "uiViews": []
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminReviewController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/reviews",
+      "methodName": "getAllReviews",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getReviews",
+      "sdkUrl": "/api/v1/admin/reviews",
+      "uiViews": []
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminReviewController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/reviews/{id}",
+      "methodName": "deleteReview",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "deleteReview",
+      "sdkUrl": "/api/v1/admin/reviews/${reviewId}",
+      "uiViews": [
+        "Reviews.jsx"
+      ]
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/internal/users/{id}/refresh-eligibility",
+      "methodName": "unknown",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "refreshUserEligibility",
+      "sdkUrl": "/api/v1/admin/internal/users/${userId}/refresh-eligibility",
+      "uiViews": []
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/users",
+      "methodName": "getAllUsers",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getUsers",
+      "sdkUrl": "/api/v1/admin/users",
+      "uiViews": [
+        "Reports.jsx",
+        "Users.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/users/{id}",
+      "methodName": "getUserById",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getUserById",
+      "sdkUrl": "/api/v1/admin/users/${userId}",
+      "uiViews": [
+        "Users.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminUserController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/users/{id}/status",
+      "methodName": "updateUserStatus",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "updateUserStatus",
+      "sdkUrl": "/api/v1/admin/users/${userId}/status",
+      "uiViews": [
+        "AdminCommandCenter.jsx",
+        "Users.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminUserController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/users/{id}",
+      "methodName": "deleteUser",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getUserById",
+      "sdkUrl": "/api/v1/admin/users/${userId}",
+      "uiViews": [
+        "Users.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/instructors",
+      "methodName": "getAllInstructors",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getInstructors",
+      "sdkUrl": "/api/v1/admin/instructors",
+      "uiViews": [
+        "Instructors.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/instructors/{id}",
+      "methodName": "unknown",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "deleteInstructor",
+      "sdkUrl": "/api/v1/admin/instructors/${instructorId}",
+      "uiViews": [
+        "Instructors.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/instructors/applications",
+      "methodName": "getAllInstructorApplicationsDetailed",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getInstructorApplications",
+      "sdkUrl": "/api/v1/admin/instructors/applications",
+      "uiViews": [
+        "InstructorApplications.jsx"
+      ]
+    },
+    {
+      "status": "SDK_ONLY_NO_UI",
+      "controller": "AdminUserController.java",
+      "httpMethod": "GET",
+      "path": "/api/v1/admin/instructors/applications/status/{status}",
+      "methodName": "getInstructorApplicationsByStatusLegacy",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "getInstructorApplicationsByStatus",
+      "sdkUrl": "/api/v1/admin/instructors/applications/status/${status}",
+      "uiViews": []
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminUserController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/instructors/applications/{applicationId}/approve",
+      "methodName": "approveInstructorApplicationByApplicationId",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "approveInstructorApplication",
+      "sdkUrl": "/api/v1/admin/instructors/applications/${userId}/approve",
+      "uiViews": [
+        "InstructorApplications.jsx",
+        "Instructors.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminUserController.java",
+      "httpMethod": "PUT",
+      "path": "/api/v1/admin/instructors/applications/{applicationId}/reject",
+      "methodName": "rejectInstructorApplicationByApplicationId",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "rejectInstructorApplication",
+      "sdkUrl": "/api/v1/admin/instructors/applications/${userId}/reject",
+      "uiViews": [
+        "InstructorApplications.jsx",
+        "Instructors.jsx"
+      ]
+    },
+    {
+      "status": "MAPPED_IN_UI",
+      "controller": "AdminUserController.java",
+      "httpMethod": "DELETE",
+      "path": "/api/v1/admin/instructors/{id}",
+      "methodName": "deleteInstructor",
+      "preAuthorize": "ROLE_ADMIN",
+      "isTransactional": false,
+      "sdkMethod": "deleteInstructor",
+      "sdkUrl": "/api/v1/admin/instructors/${instructorId}",
+      "uiViews": [
+        "Instructors.jsx"
+      ]
+    }
+  ],
+  "unmappedSdkMethods": [
+    {
+      "name": "login",
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/auth/login",
+      "uiViews": [
+        "AdminLogin.jsx",
+        "AdminRegister.jsx",
+        "Dashboard.jsx",
+        "Profile.jsx",
+        "RegistrationSuccess.jsx",
+        "Reports.jsx",
+        "VerifyEmail.jsx"
+      ]
+    },
+    {
+      "name": "getAdminProfile",
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/me",
+      "uiViews": [
+        "Profile.jsx"
+      ]
+    },
+    {
+      "name": "updateAdminProfile",
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/me",
+      "uiViews": [
+        "Profile.jsx"
+      ]
+    },
+    {
+      "name": "getSubAdminProfile",
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/me",
+      "uiViews": []
+    },
+    {
+      "name": "updateSubAdminProfile",
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/me",
+      "uiViews": []
+    },
+    {
+      "name": "users",
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/reports/users",
+      "uiViews": [
+        "AdminRegister.jsx",
+        "Dashboard.jsx",
+        "Instructors.jsx",
+        "Reports.jsx",
+        "Roles.jsx",
+        "SubDashboard.jsx",
+        "Users.jsx"
+      ]
+    },
+    {
+      "name": "courses",
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/reports/courses",
+      "uiViews": [
+        "AdminRegister.jsx",
+        "Analytics.jsx",
+        "BannerManagement.jsx",
+        "Certificates.jsx",
+        "Courses.jsx",
+        "Dashboard.jsx",
+        "Instructors.jsx",
+        "Reports.jsx",
+        "Roles.jsx",
+        "SubDashboard.jsx",
+        "Users.jsx"
+      ]
+    },
+    {
+      "name": "revenue",
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/reports/revenue",
+      "uiViews": [
+        "AdminCommandCenter.jsx",
+        "Analytics.jsx",
+        "Notifications.jsx",
+        "Reports.jsx",
+        "SubDashboard.jsx"
+      ]
+    },
+    {
+      "name": "orders",
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/reports/orders",
+      "uiViews": [
+        "AdminRegister.jsx",
+        "Analytics.jsx",
+        "Certificates.jsx",
+        "Coupons.jsx",
+        "Dashboard.jsx",
+        "OrderDetails.jsx",
+        "Orders.jsx",
+        "Reports.jsx",
+        "Roles.jsx",
+        "SubDashboard.jsx"
+      ]
+    },
+    {
+      "name": "deleteUser",
+      "httpMethod": "DELETE",
+      "urlPattern": "/api/v1/admin/users/${userId}",
+      "uiViews": [
+        "Users.jsx"
+      ]
+    },
+    {
+      "name": "deleteCourse",
+      "httpMethod": "DELETE",
+      "urlPattern": "/api/v1/admin/courses/${courseId}",
+      "uiViews": [
+        "Courses.jsx"
+      ]
+    },
+    {
+      "name": "broadcastNotification",
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/broadcast",
+      "uiViews": [
+        "AdminCommandCenter.jsx",
+        "Notifications.jsx"
+      ]
+    },
+    {
+      "name": "reprocessDLQ",
+      "httpMethod": "POST",
+      "urlPattern": "/api/v1/admin/reprocess-dlq",
+      "uiViews": []
+    },
+    {
+      "name": "getSystemHealth",
+      "httpMethod": "GET",
+      "urlPattern": "/api/v1/admin/system-health",
+      "uiViews": []
+    },
+    {
+      "name": "getBanners",
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "uiViews": [
+        "BannerManagement.jsx"
+      ]
+    },
+    {
+      "name": "updateBanner",
+      "httpMethod": "PUT",
+      "urlPattern": "/api/v1/admin/banners/${bannerId}",
+      "uiViews": [
+        "BannerManagement.jsx"
+      ]
+    },
+    {
+      "name": "patchBanner",
+      "httpMethod": "PATCH",
+      "urlPattern": "/api/v1/admin/banners/${bannerId}",
+      "uiViews": []
+    },
+    {
+      "name": "deleteBanner",
+      "httpMethod": "DELETE",
+      "urlPattern": "/api/v1/admin/banners/${bannerId}",
+      "uiViews": [
+        "BannerManagement.jsx"
+      ]
+    },
+    {
+      "name": "getBannerAnalytics",
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "uiViews": [
+        "BannerManagement.jsx"
+      ]
+    },
+    {
+      "name": "getAllUsers",
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "uiViews": [
+        "Dashboard.jsx",
+        "SubDashboard.jsx"
+      ]
+    },
+    {
+      "name": "getAllCourses",
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "uiViews": [
+        "Certificates.jsx",
+        "Dashboard.jsx",
+        "SubDashboard.jsx"
+      ]
+    },
+    {
+      "name": "approveInstructor",
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "uiViews": [
+        "InstructorApplications.jsx",
+        "Instructors.jsx"
+      ]
+    },
+    {
+      "name": "rejectInstructor",
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "uiViews": [
+        "InstructorApplications.jsx",
+        "Instructors.jsx"
+      ]
+    },
+    {
+      "name": "updateCourseStatus",
+      "httpMethod": "UNKNOWN",
+      "urlPattern": "",
+      "uiViews": [
+        "Courses.jsx"
+      ]
+    }
+  ]
+}

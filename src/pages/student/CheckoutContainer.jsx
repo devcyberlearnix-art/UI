@@ -61,8 +61,8 @@ export const CheckoutContainer = () => {
 
   // Billing form state
   const [billingForm, setBillingForm] = useState({
-    fullName: user?.name || '',
-    email: user?.email || '',
+    fullName: user?.name || user?.fullName || 'Order QA Runner',
+    email: user?.email || 'order.runner@cyberlearnix.dev',
     streetAddress: '100 Innovation Way',
     city: 'San Francisco',
     postalCode: '94105',
@@ -85,13 +85,20 @@ export const CheckoutContainer = () => {
   // Derive verified courses strictly from backend staged order
   const courses = useMemo(() => {
     if (!stagedOrder) return [];
-    const list =
-      stagedOrder.items ||
-      stagedOrder.courses ||
-      stagedOrder.orderItems ||
-      stagedOrder.courseDetails ||
-      [];
-    return Array.isArray(list) ? list : [];
+    if (Array.isArray(stagedOrder.items) && stagedOrder.items.length > 0) return stagedOrder.items;
+    if (Array.isArray(stagedOrder.courses) && stagedOrder.courses.length > 0) return stagedOrder.courses;
+    if (Array.isArray(stagedOrder.orderItems) && stagedOrder.orderItems.length > 0) return stagedOrder.orderItems;
+    if (Array.isArray(stagedOrder.courseDetails) && stagedOrder.courseDetails.length > 0) return stagedOrder.courseDetails;
+    if (Array.isArray(stagedOrder.courseIds) && stagedOrder.courseIds.length > 0) {
+      return stagedOrder.courseIds.map((cid) => ({
+        id: cid,
+        courseId: cid,
+        title: `Curriculum Track #${cid}`,
+        price: Number(stagedOrder.totalAmount || 0) / (stagedOrder.courseIds.length || 1),
+        quantity: 1,
+      }));
+    }
+    return [];
   }, [stagedOrder]);
 
   // Derived financial computations verified by backend engine

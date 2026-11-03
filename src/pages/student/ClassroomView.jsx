@@ -193,95 +193,8 @@ export const ClassroomView = () => {
           setCompletedLectures(initialCompleted);
         }
 
-        if (!Array.isArray(rawSections) || rawSections.length === 0) {
-          rawSections = [
-            {
-              id: 101,
-              title: 'Module 1: High-Throughput Event Streaming Architecture',
-              lectures: [
-                {
-                  id: 1001,
-                  title: '01. Architecture Foundations & Topology Walkthrough',
-                  duration: '18:24',
-                  videoUrl: SAMPLE_STREAM,
-                  completed: true,
-                },
-                {
-                  id: 1002,
-                  title: '02. Kafka Partitioning Strategies & Consumer Groups',
-                  duration: '24:10',
-                  videoUrl: SAMPLE_STREAM,
-                  completed: false,
-                },
-                {
-                  id: 1003,
-                  title: '03. Zero-Data-Loss Acknowledgements & Idempotency',
-                  duration: '21:45',
-                  videoUrl: SAMPLE_STREAM,
-                  completed: false,
-                },
-              ],
-              resources: [
-                { id: 'res-1', title: 'Kafka_Partition_Sizing_Matrix.pdf', size: '2.4 MB' },
-                { id: 'res-2', title: 'docker-compose-kafka-cluster.yml', size: '14 KB' },
-              ],
-              quiz: {
-                id: 501,
-                title: 'Checkpoint Assessment: Partition & Offset Semantics',
-                durationMinutes: 10,
-                questionsCount: 4,
-              },
-            },
-            {
-              id: 102,
-              title: 'Module 2: Resilient Service Mesh & Distributed Tracing',
-              lectures: [
-                {
-                  id: 1004,
-                  title: '04. OpenTelemetry Instrumentation & Baggage Propagation',
-                  duration: '28:15',
-                  videoUrl: SAMPLE_STREAM,
-                  completed: false,
-                },
-                {
-                  id: 1005,
-                  title: '05. Envoy Proxy Sidecar Injection & Circuit Breaking',
-                  duration: '31:50',
-                  videoUrl: SAMPLE_STREAM,
-                  completed: false,
-                },
-              ],
-              resources: [
-                { id: 'res-3', title: 'Envoy_Filter_Chamber_Spec.json', size: '38 KB' },
-              ],
-              assignment: {
-                id: 801,
-                title: 'Lab 1: Configure Distributed Rate Limiter in Redis',
-                status: 'PENDING_SUBMISSION',
-                dueDate: 'In 3 days',
-              },
-            },
-            {
-              id: 103,
-              title: 'Module 3: Database Isolation Levels & Saga Orchestration',
-              lectures: [
-                {
-                  id: 1006,
-                  title: '06. Compensating Transactions in Dual-Phase Commits',
-                  duration: '22:30',
-                  videoUrl: SAMPLE_STREAM,
-                  completed: false,
-                },
-                {
-                  id: 1007,
-                  title: '07. Event-Driven Sagas vs Orchestrator Engines',
-                  duration: '26:40',
-                  videoUrl: SAMPLE_STREAM,
-                  completed: false,
-                },
-              ],
-            },
-          ];
+        if (!Array.isArray(rawSections)) {
+          rawSections = [];
         }
 
         setSections(rawSections);
@@ -1371,7 +1284,12 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
 
             {/* Vertical Module Accordion List */}
             <div className="space-y-3">
-              {sections.map((section, sIdx) => {
+              {sections.length === 0 ? (
+                <div className="p-4 text-center text-xs text-ink-500 rounded-2xl border border-obsidian-800/50 bg-white/[0.01]">
+                  No lectures available yet in this course curriculum.
+                </div>
+              ) : (
+                sections.map((section, sIdx) => {
                 const isExpanded = Boolean(expandedSections[section.id]);
                 return (
                   <div
@@ -1499,7 +1417,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                     </AnimatePresence>
                   </div>
                 );
-              })}
+              }))}
             </div>
           </div>
         </div>

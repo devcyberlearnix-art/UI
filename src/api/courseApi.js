@@ -40,6 +40,22 @@ export const courseApi = {
   },
 
   /**
+   * Search courses using backend catalog endpoint
+   * GET /api/v1/courses/list?search=...
+   */
+  searchCourses: async (query, filters = {}) => {
+    try {
+      const response = await axiosInstance.get('/api/v1/courses/list', {
+        params: { search: query, ...filters }
+      });
+      return response.data;
+    } catch (err) {
+      console.warn('[courseApi] Search courses failed:', err);
+      throw err;
+    }
+  },
+
+  /**
    * GET /api/v1/courses/featured
    * Get featured courses
    */
@@ -256,11 +272,11 @@ export const courseApi = {
    */
   getStudentDashboard: async () => {
     try {
-      const response = await axiosInstance.get('/api/v1/progress/courses');
+      const response = await axiosInstance.get('/api/v1/dashboard/student');
       return response.data?.data || response.data;
     } catch (err) {
-      console.warn('[courseApi] GET /api/v1/progress/courses fallback to /api/v1/dashboard/student');
-      const fallback = await axiosInstance.get('/api/v1/dashboard/student');
+      console.warn('[courseApi] GET /api/v1/dashboard/student fallback to /api/v1/progress/courses');
+      const fallback = await axiosInstance.get('/api/v1/progress/courses');
       return fallback.data?.data || fallback.data;
     }
   },

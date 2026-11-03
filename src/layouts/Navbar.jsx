@@ -30,6 +30,7 @@ const Navbar = () => {
   const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
   const navigate = useNavigate();
   const location = useLocation();
+  const isCoursesPage = location.pathname.startsWith('/courses');
 
   // Sync user state from storage
   const updateUser = () => {
@@ -52,9 +53,7 @@ const Navbar = () => {
     updateUser();
     updateCartCount();
 
-    if (localStorage.getItem('lms_token') || localStorage.getItem('access_token')) {
-      cartApi.getCart().catch(() => {});
-    }
+    // Cart count updated via local storage and order context
 
     const handleStorage = (e) => {
       if (e.key === 'lms_user') updateUser();
@@ -183,22 +182,24 @@ const Navbar = () => {
               })}
             </div>
 
-            {/* Architectural Search Input */}
-            <form
-              onSubmit={handleSearchSubmit}
-              className="hidden md:flex flex-1 max-w-sm mx-4"
-            >
-              <div className="relative w-full group">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search curriculum..."
-                  className="w-full pl-9 pr-4 py-2 bg-[#0F0F13] border border-white/[0.06] rounded-xl text-xs text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880]/30 transition-all"
-                />
-                <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[#71717A] group-focus-within:text-[#C5A880] transition-colors" />
-              </div>
-            </form>
+            {/* Architectural Search Input - Context-Aware: Hidden on /courses where dedicated in-page catalog search is active */}
+            {!isCoursesPage && (
+              <form
+                onSubmit={handleSearchSubmit}
+                className="hidden md:flex flex-1 max-w-sm mx-4"
+              >
+                <div className="relative w-full group">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search curriculum..."
+                    className="w-full pl-9 pr-4 py-2 bg-[#0F0F13] border border-white/[0.06] rounded-xl text-xs text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880]/30 transition-all"
+                  />
+                  <button type="submit" className="absolute left-3 top-2.5 text-[#71717A] group-focus-within:text-[#C5A880] transition-colors cursor-pointer" aria-label="Submit search"><Search className="h-3.5 w-3.5" /></button>
+                </div>
+              </form>
+            )}
 
             {/* Right Action Icons & Controls */}
             <div className="hidden md:flex items-center gap-3">
@@ -341,16 +342,18 @@ const Navbar = () => {
               transition={SPRING_TRANSITION}
               className="md:hidden mt-3 pb-4 space-y-3 overflow-hidden border-t border-white/[0.04] pt-3"
             >
-              <form onSubmit={handleSearchSubmit} className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search courses..."
-                  className="w-full pl-9 pr-4 py-2 bg-[#0F0F13] border border-white/[0.06] rounded-xl text-xs text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880]"
-                />
-                <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[#71717A]" />
-              </form>
+              {!isCoursesPage && (
+                <form onSubmit={handleSearchSubmit} className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search courses..."
+                    className="w-full pl-9 pr-4 py-2 bg-[#0F0F13] border border-white/[0.06] rounded-xl text-xs text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880]"
+                  />
+                  <button type="submit" className="absolute left-3 top-2.5 text-[#71717A] cursor-pointer" aria-label="Submit search"><Search className="h-3.5 w-3.5" /></button>
+                </form>
+              )}
 
               <div className="flex flex-col space-y-1">
                 {navLinks.map((link) => (

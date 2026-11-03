@@ -4,6 +4,7 @@ import { AlertCircle, Eye, EyeOff, KeyRound, Lock, LogIn, Mail, RefreshCw } from
 import toast from "react-hot-toast";
 import { useAuth, normalizeRole } from "../../context/AuthContext";
 import { authApi } from "../../api/authApi";
+import { adminApi } from "../../api/adminApi";
 import AuthShell from "../../components/ui/AuthShell";
 
 const AdminLogin = () => {
@@ -87,7 +88,7 @@ const AdminLogin = () => {
 
     setLoading(true);
     try {
-      const result = await login(email.trim(), password);
+      const result = await login(email.trim(), password, true);
       if (!result.success) {
         const message = result.error || "Login failed";
         setError(message);
@@ -115,7 +116,7 @@ const AdminLogin = () => {
 
     setLoading(true);
     try {
-      const res = await authApi.requestLoginOtp(email.trim());
+      const res = await adminApi.requestLoginOtp(email.trim());
       setOtpSessionId(res.otpSessionId || "");
       setCooldownSeconds(Number(res.cooldownSeconds || 30));
       setOtpSent(true);
@@ -146,11 +147,7 @@ const AdminLogin = () => {
         throw new Error("OTP session expired. Please request OTP again.");
       }
 
-      const response = await authApi.verifyLoginOtp({
-        email: email.trim(),
-        otpSessionId,
-        otp: otp.trim(),
-      });
+      const response = await adminApi.verifyLoginOtp(email.trim(), otp.trim());
       const tokenData =
         response.authentication?.accessToken ||
         response.authentication?.token ||
@@ -204,7 +201,7 @@ const AdminLogin = () => {
 
     setOtpResending(true);
     try {
-      const res = await authApi.resendOtp({ flow: "login", email: email.trim() });
+      const res = await adminApi.resendLoginOtp(email.trim());
       setOtpSessionId(res.otpSessionId || "");
       setCooldownSeconds(Number(res.cooldownSeconds || 30));
       toast.success(res.message || "OTP resent successfully");
@@ -243,7 +240,7 @@ const AdminLogin = () => {
             setError("");
           }}
           className={`py-2 text-xs font-semibold rounded-xl transition-all ${
-            loginMethod === "password" ? "bg-[#C5A880] text-[#070709] font-bold shadow-sm" : "text-[#8E8E93] hover:text-[#F5F5F7]"
+            loginMethod === "password" ? "bg-[#C5A880] text-[#070709] font-bold shadow-sm" : "text-[#D4D4D8] hover:text-[#FFFFFF]"
           }`}
         >
           Password
@@ -256,7 +253,7 @@ const AdminLogin = () => {
             setError("");
           }}
           className={`py-2 text-xs font-semibold rounded-xl transition-all ${
-            loginMethod === "otp" ? "bg-[#C5A880] text-[#070709] font-bold shadow-sm" : "text-[#8E8E93] hover:text-[#F5F5F7]"
+            loginMethod === "otp" ? "bg-[#C5A880] text-[#070709] font-bold shadow-sm" : "text-[#D4D4D8] hover:text-[#FFFFFF]"
           }`}
         >
           OTP Code

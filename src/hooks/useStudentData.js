@@ -21,9 +21,13 @@ export const useStudentData = (courseId = null) => {
   const dashboardQuery = useQuery({
     queryKey: ['student', 'dashboard', user?.id || 'guest'],
     queryFn: async () => {
+      if (!user || !user.id || user.id === 'guest') {
+        return { enrolledCourses: [], overallProgress: 0, completedCoursesCount: 0, activeStreak: 0 };
+      }
       const res = await courseApi.getStudentDashboard();
       return res?.data || res || { enrolledCourses: [], overallProgress: 0, completedCoursesCount: 0, activeStreak: 12 };
     },
+    enabled: Boolean(user && user.id && user.id !== 'guest'),
     staleTime: 1000 * 60 * 5,
   });
 
@@ -294,6 +298,7 @@ export const useStudentWishlist = () => {
   const wishlistQuery = useQuery({
     queryKey: ['wishlist', userId],
     queryFn: async () => {
+      if (!user || !user.id || user.id === 'guest') return [];
       const res = await wishlistApi.getWishlist();
       // Safely unwrap backend envelope data structures
       const rawPayload = res?.data || res || [];
@@ -309,6 +314,7 @@ export const useStudentWishlist = () => {
         return item;
       });
     },
+    enabled: Boolean(user && user.id && user.id !== 'guest'),
     staleTime: 1000 * 60 * 5
   });
 
@@ -415,7 +421,7 @@ export const useCourseWishlistCheck = (courseId) => {
   return useQuery({
     queryKey: ['wishlist-check', userId, courseId],
     queryFn: async () => {
-      if (!courseId) return false;
+      if (!courseId || !user || !user.id || user.id === 'guest') return false;
       try {
         const res = await wishlistApi.checkWishlistStatus(courseId);
         // Backend returns direct native boolean literals or wrapped response entities
@@ -426,6 +432,7 @@ export const useCourseWishlistCheck = (courseId) => {
         return false;
       }
     },
+    enabled: Boolean(courseId && user && user.id && user.id !== 'guest'),
     initialData: () => {
       const cachedWishlist = queryClient.getQueryData(['wishlist', userId]) || [];
       if (Array.isArray(cachedWishlist) && cachedWishlist.length > 0) {
