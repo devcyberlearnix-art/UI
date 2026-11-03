@@ -260,10 +260,10 @@ const StudentCourseDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F2EC] dark:bg-[#151413]">
         <div className="text-center space-y-4">
-          <Loader2 className="animate-spin text-orange-500 w-12 h-12 mx-auto" />
-          <p className="text-sm text-slate-600">Loading course...</p>
+          <Loader2 className="animate-spin text-[#5B3E57] dark:text-[#D1A7CC] w-12 h-12 mx-auto" />
+          <p className="text-sm text-[#635E56] dark:text-[#A69F94]">Loading course...</p>
         </div>
       </div>
     );
@@ -271,14 +271,14 @@ const StudentCourseDetail = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F2EC] dark:bg-[#151413]">
         <div className="text-center space-y-4 max-w-md p-8">
           <AlertCircle className="text-red-500 w-16 h-16 mx-auto" />
-          <h2 className="text-xl font-bold text-slate-900">Error Loading Course</h2>
-          <p className="text-slate-500">{error}</p>
+          <h2 className="text-xl font-bold text-[#282521] dark:text-[#EDE8E1]">Error Loading Course</h2>
+          <p className="text-[#756E64] dark:text-[#7A7368]">{error}</p>
           <button
             onClick={() => navigate("/student/dashboard")}
-            className="px-6 py-2 rounded-xl bg-orange-500 text-white font-semibold hover:bg-orange-600 transition"
+            className="px-6 py-2 rounded-xl bg-[#5B3E57] hover:bg-[#462D42] text-[#FFFEFA] font-semibold transition"
           >
             Back to Dashboard
           </button>
@@ -292,14 +292,14 @@ const StudentCourseDetail = () => {
   const totalLectures = curriculum?.totalLectures || 0;
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] font-sans">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 sticky top-0 z-50">
+      <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] border-b border-[#E3DCD3] dark:border-white/[0.08] sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <button
               onClick={() => navigate("/student/dashboard")}
-              className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition"
+              className="flex items-center gap-2 text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-[#EDE8E1] transition"
             >
               <ArrowLeft size={18} />
               <span className="font-medium">Back to Dashboard</span>
@@ -307,10 +307,10 @@ const StudentCourseDetail = () => {
 
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <div className="text-sm font-bold text-slate-900">
+                <div className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">
                   {progressPercentage}% Complete
                 </div>
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-[#756E64] dark:text-[#7A7368]">
                   {completedLectures}/{totalLectures} lessons
                 </div>
               </div>
@@ -319,7 +319,7 @@ const StudentCourseDetail = () => {
                 className={`p-2 rounded-xl border transition ${
                   isWishlisted
                     ? "border-rose-200 bg-rose-50 text-rose-600"
-                    : "border-slate-200 hover:border-rose-300 text-slate-600 hover:text-rose-600"
+                    : "border-[#E3DCD3] dark:border-white/[0.08] hover:border-rose-300 text-[#635E56] dark:text-[#A69F94] hover:text-rose-600"
                 }`}
               >
                 <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
