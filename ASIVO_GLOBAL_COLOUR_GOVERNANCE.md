@@ -99,3 +99,4 @@ Developers must compose UI elements using the centralized semantic tokens:
 ## 5. DEVELOPER LINTING & AUTOMATED GOVERNANCE
 
 A project scanner (`scratch/scan-color-governance.mjs`) is integrated into the workspace. Any PR or branch introducing unapproved blue, cyan, or hardcoded hex literals will fail CI compliance.
+

@@ -120,3 +120,4 @@ In compliance with WCAG 2.2 Target Size Minimum (24×24px) and Apple HIG / Mater
 ## 7. ACCESSIBILITY CERTIFICATION
 
 The Asivo LMS platform is certified compliant with **WCAG 2.2 Level AA** across all audited routes, with enhanced **Level AAA** performance across primary reading surfaces and brand call-to-actions.
+

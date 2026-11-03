@@ -106,3 +106,4 @@ import {
 2. **Do not create redundant button styles:** Use `<Button variant="...">` instead of custom `<button className="...">`.
 3. **Do not write page-specific modals:** Wrap custom dialogs in `<Modal isOpen={...} onClose={...}>`.
 4. **Use standardized badges for status:** Always pass standard status variants (`success`, `warning`, `danger`).
+
