@@ -167,22 +167,22 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
 
   return (
     <header className="sticky top-0 z-50 w-full px-4 sm:px-6 lg:px-8 pt-4 pb-2">
-      <div className="max-w-7xl mx-auto rounded-2xl bg-white/95 dark:bg-[#0F0F13]/95 border border-slate-200/90 dark:border-white/[0.06] shadow-sm dark:shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)] backdrop-blur-2xl px-4 sm:px-6 py-3 flex items-center justify-between transition-all">
+      <div className="max-w-7xl mx-auto rounded-2xl bg-[#FFFEFA]/95 dark:bg-[#1D1C1A]/95 border border-[#E3DCD3] dark:border-white/[0.08] shadow-card backdrop-blur-2xl px-4 sm:px-6 py-3 flex items-center justify-between transition-all">
         {/* Brand Identity Signature with improved prominence */}
-        <Link to="/" className="flex items-center gap-3 group" title="FD_LMS Home">
-          <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-[#14141A] border border-blue-500/20 dark:border-[#C5A880]/30 flex items-center justify-center text-blue-600 dark:text-[#C5A880] font-black shadow-xs transition-transform group-hover:scale-105 overflow-hidden">
+        <Link to="/" className="flex items-center gap-3 group" title="ASIVO Home">
+          <div className="w-10 h-10 rounded-xl bg-[#FFFEFA] dark:bg-[#272523] border border-[#5B3E57]/20 dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] font-black shadow-xs transition-transform group-hover:scale-105 overflow-hidden">
             {brand.logoUrl ? (
               <img src={brand.logoUrl} alt={brand.name} className="w-full h-full object-contain p-1" />
             ) : (
-              <GraduationCap className="w-5 h-5 text-blue-600 dark:text-[#C5A880]" />
+              <GraduationCap className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" />
             )}
           </div>
           <div className="flex flex-col">
-            <span className="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-[#C5A880] transition-colors leading-tight">
-              {brand.name}
+            <span className="text-base sm:text-lg font-extrabold tracking-tight text-[#282521] dark:text-[#EDE8E1] group-hover:text-[#5B3E57] dark:group-hover:text-[#D1A7CC] transition-colors leading-tight">
+              {brand.name === 'FD_LMS' ? 'ASIVO' : brand.name}
             </span>
             {brand.tagline && (
-              <span className="hidden sm:inline text-[9px] font-bold tracking-[0.2em] text-blue-600 dark:text-[#C5A880] uppercase">
+              <span className="hidden sm:inline text-[9px] font-bold tracking-[0.2em] text-[#5B3E57] dark:text-[#D1A7CC] uppercase">
                 {brand.tagline}
               </span>
             )}
@@ -190,7 +190,7 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
         </Link>
 
         {/* Center Desktop Navigation */}
-        <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-1 bg-slate-100 dark:bg-[#070709]/80 p-1 rounded-xl border border-slate-200 dark:border-white/[0.04]">
+        <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-1 bg-[#EAE5DC] dark:bg-[#151413]/80 p-1 rounded-xl border border-[#E3DCD3] dark:border-white/[0.06]">
           {dynamicNavLinks.map((link) => {
             const isActive = location.pathname === link.href;
             return (
@@ -202,11 +202,11 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
                 {isActive && (
                   <motion.div
                     layoutId="activeNavIndicator"
-                    className="absolute inset-0 bg-white dark:bg-[#C5A880]/15 border border-slate-200/80 dark:border-[#C5A880]/40 rounded-lg shadow-xs -z-10"
+                    className="absolute inset-0 bg-[#FFFEFA] dark:bg-[#D1A7CC]/15 border border-[#E3DCD3] dark:border-[#D1A7CC]/40 rounded-lg shadow-xs -z-10"
                     transition={SPRING_TRANSITION}
                   />
                 )}
-                <span className={isActive ? 'text-blue-600 dark:text-white font-bold' : 'text-slate-600 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white'}>
+                <span className={isActive ? 'text-[#5B3E57] dark:text-[#D1A7CC] font-bold' : 'text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white'}>
                   {link.label}
                 </span>
               </Link>
@@ -225,7 +225,7 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onSearchClick || (() => navigate('/courses'))}
-            className="p-2 rounded-xl text-slate-600 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] border border-transparent hover:border-slate-200 dark:hover:border-white/[0.06] transition-all cursor-pointer"
+            className="p-2 rounded-xl text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.04] border border-transparent hover:border-[#E3DCD3] dark:hover:border-white/[0.06] transition-all cursor-pointer"
             aria-label="Search courses catalog"
             title="Search Catalog"
           >
@@ -235,13 +235,13 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
           {/* Cart Icon with Tooltip */}
           <Link
             to="/cart"
-            className="relative p-2 rounded-xl text-slate-600 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] border border-transparent hover:border-slate-200 dark:hover:border-white/[0.06] transition-all"
+            className="relative p-2 rounded-xl text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.04] border border-transparent hover:border-[#E3DCD3] dark:hover:border-white/[0.06] transition-all"
             aria-label="View shopping cart"
             title="Shopping Cart"
           >
             <ShoppingCart className="w-4 h-4" />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-blue-600 dark:bg-[#C5A880] text-white dark:text-[#070709] text-[10px] font-bold flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] text-[10px] font-bold flex items-center justify-center">
                 {cartCount > 9 ? '9+' : cartCount}
               </span>
             )}

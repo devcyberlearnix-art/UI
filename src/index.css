@@ -5,45 +5,58 @@
 @layer base {
   :root {
     /* =========================================================================
-       ASIVO LIGHT THEME DESIGN SYSTEM (DEFAULT)
+       ASIVO LIGHT THEME DESIGN SYSTEM: QUIET ATELIER (DEFAULT)
+       Scholarly Warmth, Parchment Canvas, Soft Ivory Surfaces, Muted Plum Signature
        ========================================================================= */
     --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
-    /* Core Theme Tokens */
-    --app-background: #F8FAFC;
-    --surface-primary: #FFFFFF;
-    --surface-secondary: #F1F5F9;
-    --surface-tertiary: #E2E8F0;
+    /* Core Surfaces & Canvas */
+    --app-background: #F5F2EC;
+    --surface-primary: #FFFEFA;
+    --surface-secondary: #EAE5DC;
+    --surface-tertiary: #E1DBD0;
 
-    --text-primary: #0F172A;
-    --text-secondary: #475569;
-    --text-muted: #64748B;
+    /* Typography (Warm Deep Sumi Ink & Slate) */
+    --text-primary: #282521;
+    --text-secondary: #635E56;
+    --text-muted: #756E64;
 
-    --border-primary: #E2E8F0;
-    --border-secondary: #CBD5E1;
+    /* Structural Hairline Borders */
+    --border-primary: #E3DCD3;
+    --border-secondary: #D8D0C5;
 
-    --primary: #2563EB;
-    --primary-hover: #1D4ED8;
-    --accent: #06B6D4;
+    /* Brand Signature: Muted Scholarly Plum */
+    --primary: #5B3E57;
+    --primary-hover: #462D42;
+    --accent: #9A6B56; /* Warm Clay */
 
-    --success: #16A34A;
-    --warning: #D97706;
-    --danger: #DC2626;
-    --info: #0284C7;
+    /* Meaningful Semantic Status Tokens */
+    --success: #2B6747;
+    --warning: #935E1E;
+    --danger: #9B3835;
+    --info: #365D75;
 
-    --sidebar-background: #FFFFFF;
-    --sidebar-text: #334155;
-    --sidebar-active-background: #EFF6FF;
-    --sidebar-active-text: #2563EB;
+    /* Workspace Chrome & Navigation */
+    --sidebar-background: #FAF7F2;
+    --sidebar-text: #4F4A43;
+    --sidebar-active-background: #F2ECF1;
+    --sidebar-active-text: #5B3E57;
 
-    --header-background: rgba(255, 255, 255, 0.92);
-    --card-background: #FFFFFF;
-    --input-background: #FFFFFF;
-    --input-border: #E2E8F0;
+    --header-background: rgba(255, 254, 250, 0.94);
+    --card-background: #FFFEFA;
+    --input-background: #FFFEFA;
+    --input-border: #D8D0C5;
 
-    /* Semantic Compatibility Mappings (Ink & Onyx Primitives -> Light Design Tokens) */
+    /* Data Visualization Series */
+    --color-chart-1: #5B3E57;
+    --color-chart-2: #37654F;
+    --color-chart-3: #A36750;
+    --color-chart-4: #436A84;
+    --color-chart-5: #A87E38;
+
+    /* Semantic Compatibility Mappings */
     --canvas-matte: var(--app-background);
     --canvas-obsidian: var(--surface-primary);
     --canvas-surface: var(--surface-secondary);
@@ -51,68 +64,76 @@
     --canvas-surface-raised: var(--surface-primary);
 
     --accent-gold: var(--primary);
-    --accent-gold-muted: rgba(37, 99, 235, 0.1);
-    --accent-gold-border: rgba(37, 99, 235, 0.25);
+    --accent-gold-muted: rgba(91, 62, 87, 0.08);
+    --accent-gold-border: rgba(91, 62, 87, 0.22);
     --accent-mercury: var(--text-secondary);
 
     --border-subtle: var(--border-primary);
     --border-highlight: var(--border-secondary);
     --border-gold: var(--primary);
 
-    --backing-glow-gold: 0 4px 20px rgba(37, 99, 235, 0.1);
+    --backing-glow-gold: 0 4px 20px rgba(91, 62, 87, 0.08);
   }
 
   html.dark {
     /* =========================================================================
-       ASIVO DARK THEME (USER-SELECTABLE OPTION)
+       ASIVO DARK THEME: NOCTURNAL ATELIER (USER-SELECTABLE OPTION)
+       Warm Velvet Carbon, Obsidian Slate, Soft Thistle Signature Accent
        ========================================================================= */
-    --app-background: #070709;
-    --surface-primary: #0F0F13;
-    --surface-secondary: #14141A;
-    --surface-tertiary: #1B1B24;
+    --app-background: #151413;
+    --surface-primary: #1D1C1A;
+    --surface-secondary: #272523;
+    --surface-tertiary: #312E2A;
 
-    --text-primary: #F5F5F7;
-    --text-secondary: #A1A1AA;
-    --text-muted: #71717A;
+    --text-primary: #EDE8E1;
+    --text-secondary: #A69F94;
+    --text-muted: #7A7368;
 
-    --border-primary: rgba(255, 255, 255, 0.05);
-    --border-secondary: rgba(255, 255, 255, 0.1);
+    --border-primary: rgba(237, 232, 225, 0.08);
+    --border-secondary: rgba(237, 232, 225, 0.14);
 
-    --primary: #C5A880;
-    --primary-hover: #D4BC98;
-    --accent: #06B6D4;
+    --primary: #D1A7CC;
+    --primary-hover: #E0BFDC;
+    --accent: #D9A48F;
 
-    --success: #10B981;
-    --warning: #F59E0B;
-    --danger: #EF4444;
-    --info: #38BDF8;
+    --success: #529E73;
+    --warning: #D19447;
+    --danger: #D66B67;
+    --info: #6499BE;
 
-    --sidebar-background: #0F0F13;
-    --sidebar-text: #A1A1AA;
-    --sidebar-active-background: rgba(197, 168, 128, 0.1);
-    --sidebar-active-text: #C5A880;
+    --sidebar-background: #1A1917;
+    --sidebar-text: #A69F94;
+    --sidebar-active-background: rgba(209, 167, 204, 0.12);
+    --sidebar-active-text: #D1A7CC;
 
-    --header-background: rgba(15, 15, 19, 0.85);
-    --card-background: #0F0F13;
-    --input-background: #0F0F13;
-    --input-border: rgba(255, 255, 255, 0.08);
+    --header-background: rgba(29, 28, 26, 0.88);
+    --card-background: #1D1C1A;
+    --input-background: #1D1C1A;
+    --input-border: rgba(237, 232, 225, 0.12);
 
-    --canvas-matte: #070709;
-    --canvas-obsidian: #0F0F13;
-    --canvas-surface: #14141A;
-    --canvas-surface-hover: #1B1B24;
-    --canvas-surface-raised: #22222E;
+    /* Data Visualization Series (Dark Mode) */
+    --color-chart-1: #D1A7CC;
+    --color-chart-2: #65AF88;
+    --color-chart-3: #D9A48F;
+    --color-chart-4: #6499BE;
+    --color-chart-5: #E2AD5D;
 
-    --accent-gold: #C5A880;
-    --accent-gold-muted: rgba(197, 168, 128, 0.12);
-    --accent-gold-border: rgba(197, 168, 128, 0.35);
-    --accent-mercury: #E5E5E7;
+    --canvas-matte: #151413;
+    --canvas-obsidian: #1D1C1A;
+    --canvas-surface: #272523;
+    --canvas-surface-hover: #312E2A;
+    --canvas-surface-raised: #3A3631;
 
-    --border-subtle: rgba(255, 255, 255, 0.04);
-    --border-highlight: rgba(255, 255, 255, 0.09);
-    --border-gold: rgba(197, 168, 128, 0.4);
+    --accent-gold: #D1A7CC;
+    --accent-gold-muted: rgba(209, 167, 204, 0.12);
+    --accent-gold-border: rgba(209, 167, 204, 0.28);
+    --accent-mercury: #EDE8E1;
 
-    --backing-glow-gold: 0 0 35px rgba(197, 168, 128, 0.08);
+    --border-subtle: rgba(237, 232, 225, 0.06);
+    --border-highlight: rgba(237, 232, 225, 0.12);
+    --border-gold: rgba(209, 167, 204, 0.35);
+
+    --backing-glow-gold: 0 0 30px rgba(209, 167, 204, 0.08);
   }
 
   html {
@@ -136,12 +157,12 @@
 
   /* Accessible Selection Theming */
   ::selection {
-    background-color: rgba(37, 99, 235, 0.2);
-    color: #1D4ED8;
+    background-color: rgba(91, 62, 87, 0.18);
+    color: #5B3E57;
   }
   html.dark ::selection {
-    background-color: rgba(197, 168, 128, 0.3);
-    color: #FFFFFF;
+    background-color: rgba(209, 167, 204, 0.25);
+    color: #EDE8E1;
   }
 
   /* Adaptive Modern Scrollbar */
@@ -216,11 +237,11 @@
   }
 
   .glow-gold-focus {
-    box-shadow: 0 0 0 1px var(--primary), 0 0 20px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 0 0 1px var(--primary), 0 0 16px rgba(91, 62, 87, 0.15);
   }
 
   .glow-gold-subtle {
-    box-shadow: 0 4px 25px rgba(37, 99, 235, 0.08);
+    box-shadow: 0 4px 20px rgba(91, 62, 87, 0.06);
   }
 
   .zero-cls-frame {
@@ -419,7 +440,13 @@ html:not(.dark) {
   .bg-\[\#070709\]\/95,
   .bg-\[\#0F0F13\]\/90,
   .bg-\[\#0F0F13\]\/95 {
-    background-color: rgba(255, 255, 255, 0.95) !important;
+    background-color: rgba(255, 254, 250, 0.95) !important;
+  }
+  .bg-black\/80,
+  .bg-black\/70,
+  .bg-black\/60,
+  .bg-black\/50 {
+    background-color: rgba(40, 37, 33, 0.45) !important;
   }
 
   /* Text Colors */
@@ -460,38 +487,47 @@ html:not(.dark) {
     border-color: var(--border-secondary) !important;
   }
 
-  /* Accent Mappings */
-  .text-\[\#C5A880\] {
+  /* Accent Mappings: Quiet Atelier Plum & Clay */
+  .text-\[\#C5A880\],
+  .text-blue-600,
+  .text-blue-700 {
     color: var(--primary) !important;
   }
-  .hover\:text-\[\#C5A880\]:hover {
+  .hover\:text-\[\#C5A880\]:hover,
+  .hover\:text-blue-600:hover,
+  .hover\:text-blue-700:hover {
     color: var(--primary-hover) !important;
   }
-  .bg-\[\#C5A880\] {
+  .bg-\[\#C5A880\],
+  .bg-blue-600 {
     background-color: var(--primary) !important;
-    color: #FFFFFF !important;
+    color: #FFFEFA !important;
   }
   .hover\:bg-\[\#D4BC98\]:hover,
-  .hover\:bg-\[\#D4B991\]:hover {
+  .hover\:bg-\[\#D4B991\]:hover,
+  .hover\:bg-blue-700:hover {
     background-color: var(--primary-hover) !important;
   }
   .border-\[\#C5A880\],
   .border-\[\#C5A880\]\/30,
-  .border-\[\#C5A880\]\/40 {
-    border-color: rgba(37, 99, 235, 0.35) !important;
+  .border-\[\#C5A880\]\/40,
+  .border-blue-600 {
+    border-color: rgba(91, 62, 87, 0.28) !important;
   }
   .bg-\[\#C5A880\]\/10,
   .bg-\[\#C5A880\]\/15,
   .bg-\[\#C5A880\]\/20,
-  .bg-\[\#C5A880\]\/5 {
-    background-color: rgba(37, 99, 235, 0.08) !important;
+  .bg-\[\#C5A880\]\/5,
+  .bg-blue-50,
+  .bg-blue-100 {
+    background-color: rgba(91, 62, 87, 0.08) !important;
   }
 
-  /* Shadow enhancements for light mode */
+  /* Shadow enhancements for light mode (Warm, diffused ambient) */
   .shadow-2xl,
   .shadow-\[0_12px_36px_-8px_rgba\(0\,0\,0\,0\.85\)\],
   .shadow-\[0_20px_50px_-10px_rgba\(0\,0\,0\,0\.85\)\] {
-    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03) !important;
+    box-shadow: 0 10px 30px -5px rgba(40, 37, 33, 0.08), 0 4px 6px -2px rgba(40, 37, 33, 0.03) !important;
   }
 }
 

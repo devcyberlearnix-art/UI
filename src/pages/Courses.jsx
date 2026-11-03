@@ -79,28 +79,21 @@ const SORT_OPTIONS = [
 ];
 
 const CATEGORY_COLORS = {
-  Programming: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30",
-  "Web Development": "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
-  "Backend Development": "bg-blue-500/15 text-blue-300 border-blue-500/30",
-  "Frontend Development": "bg-teal-500/15 text-teal-300 border-teal-500/30",
-  "Mobile Development": "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-  "Cyber Security": "bg-red-500/15 text-red-300 border-red-500/30",
-  "Cloud Computing": "bg-sky-500/15 text-sky-300 border-sky-500/30",
-  DevOps: "bg-orange-500/15 text-orange-300 border-orange-500/30",
-  "Data Science": "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-  "Artificial Intelligence": "bg-purple-500/15 text-purple-300 border-purple-500/30",
-  "Machine Learning": "bg-violet-500/15 text-violet-300 border-violet-500/30",
-  Database: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-  "Software Engineering": "bg-blue-600/15 text-blue-300 border-blue-600/30",
-  Networking: "bg-green-500/15 text-green-300 border-green-500/30",
-  "Computer Science": "bg-indigo-600/15 text-indigo-300 border-indigo-600/30",
-  Testing: "bg-pink-500/15 text-pink-300 border-pink-500/30",
-  "System Design": "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30",
-  Blockchain: "bg-yellow-500/15 text-yellow-300 border-yellow-500/30",
-  "UI/UX": "bg-rose-500/15 text-rose-300 border-rose-500/30",
-  "Business/Technology": "bg-amber-500/15 text-amber-300 border-amber-500/30",
-  Architecture: "bg-purple-600/15 text-purple-300 border-purple-600/30",
-  Cloud: "bg-sky-600/15 text-sky-300 border-sky-600/30",
+  default: "bg-[#EAE5DC] text-[#635E56] border-[#E3DCD3] dark:bg-[#272523] dark:text-[#A69F94] dark:border-white/[0.08]",
+  Programming: "bg-[#F2ECF1] text-[#5B3E57] border-[#D5C0D1] dark:bg-[#D1A7CC]/15 dark:text-[#D1A7CC] dark:border-[#D1A7CC]/30",
+  "Web Development": "bg-[#EAE5DC] text-[#635E56] border-[#E3DCD3] dark:bg-[#272523] dark:text-[#A69F94] dark:border-white/[0.08]",
+  "Backend Development": "bg-[#F2ECF1] text-[#5B3E57] border-[#D5C0D1] dark:bg-[#D1A7CC]/15 dark:text-[#D1A7CC] dark:border-[#D1A7CC]/30",
+  "Frontend Development": "bg-[#EAE5DC] text-[#635E56] border-[#E3DCD3] dark:bg-[#272523] dark:text-[#A69F94] dark:border-white/[0.08]",
+  "Cyber Security": "bg-[#F6EFEA] text-[#9A6B56] border-[#E0D0C7] dark:bg-[#D9A48F]/15 dark:text-[#D9A48F] dark:border-[#D9A48F]/30",
+  "Cloud Computing": "bg-[#EAE5DC] text-[#635E56] border-[#E3DCD3] dark:bg-[#272523] dark:text-[#A69F94] dark:border-white/[0.08]",
+  DevOps: "bg-[#F6EFEA] text-[#9A6B56] border-[#E0D0C7] dark:bg-[#D9A48F]/15 dark:text-[#D9A48F] dark:border-[#D9A48F]/30",
+  "Data Science": "bg-[#EBF3EE] text-[#2B6747] border-[#B7D9C5] dark:bg-[#529E73]/15 dark:text-[#529E73] dark:border-[#529E73]/30",
+  "Artificial Intelligence": "bg-[#F2ECF1] text-[#5B3E57] border-[#D5C0D1] dark:bg-[#D1A7CC]/15 dark:text-[#D1A7CC] dark:border-[#D1A7CC]/30",
+  Database: "bg-[#EAE5DC] text-[#635E56] border-[#E3DCD3] dark:bg-[#272523] dark:text-[#A69F94] dark:border-white/[0.08]",
+  "Software Engineering": "bg-[#F2ECF1] text-[#5B3E57] border-[#D5C0D1] dark:bg-[#D1A7CC]/15 dark:text-[#D1A7CC] dark:border-[#D1A7CC]/30",
+  "System Design": "bg-[#F2ECF1] text-[#5B3E57] border-[#D5C0D1] dark:bg-[#D1A7CC]/15 dark:text-[#D1A7CC] dark:border-[#D1A7CC]/30",
+  Architecture: "bg-[#F2ECF1] text-[#5B3E57] border-[#D5C0D1] dark:bg-[#D1A7CC]/15 dark:text-[#D1A7CC] dark:border-[#D1A7CC]/30",
+  Cloud: "bg-[#EAE5DC] text-[#635E56] border-[#E3DCD3] dark:bg-[#272523] dark:text-[#A69F94] dark:border-white/[0.08]",
 };
 
 const DEFAULT_COURSES = [];
@@ -610,7 +603,7 @@ const Courses = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {featuredCourses.slice(0, 3).map((course, idx) => {
                   const isWish = wishlist.some((id) => String(id) === String(course.id));
-                  const catClass = CATEGORY_COLORS[course.category] || "bg-[#14141A] text-[#E5E5E7] border-white/[0.06]";
+                  const catClass = CATEGORY_COLORS[course.category] || CATEGORY_COLORS.default;
 
                   return (
                     <motion.div
@@ -957,7 +950,7 @@ const Courses = () => {
               {paginatedCourses.map((course, idx) => {
                 const isWish = wishlist.some((id) => String(id) === String(course.id));
                 const catClass =
-                  CATEGORY_COLORS[course.category] || "bg-[#14141A] text-[#E5E5E7] border-white/[0.06]";
+                  CATEGORY_COLORS[course.category] || CATEGORY_COLORS.default;
 
                 return (
                   <motion.div
@@ -1089,7 +1082,7 @@ const Courses = () => {
               {paginatedCourses.map((course, idx) => {
                 const isWish = wishlist.some((id) => String(id) === String(course.id));
                 const catClass =
-                  CATEGORY_COLORS[course.category] || "bg-[#14141A] text-[#E5E5E7] border-white/[0.06]";
+                  CATEGORY_COLORS[course.category] || CATEGORY_COLORS.default;
 
                 return (
                   <motion.div

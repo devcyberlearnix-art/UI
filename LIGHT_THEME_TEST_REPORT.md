@@ -3,7 +3,7 @@
 **Execution Environment:** Chromium Headless (Playwright Automation Runner)  
 **Target Host:** `http://localhost:5173/`  
 **Backend Services:** Live Spring Boot Microservices Ecosystem  
-**Overall Result:** **21 / 21 TESTS PASSED (100% SUCCESS RATE)**  
+**Overall Result:** **25 / 25 TESTS PASSED (100% SUCCESS RATE)**  
 
 ---
 
@@ -15,13 +15,13 @@ The End-to-End test suite was executed against the running application to verify
 
 | Section | Tests Executed | Passed | Failed | Status |
 | :--- | :---: | :---: | :---: | :---: |
-| **1. Public Experience & Default Theme** | 5 | 5 | 0 | **PASS** |
-| **2. Global Theme Toggle Interaction** | 2 | 2 | 0 | **PASS** |
-| **3. Admin Authenticated Workspaces** | 6 | 6 | 0 | **PASS** |
-| **4. Student Authenticated Workspaces** | 4 | 4 | 0 | **PASS** |
-| **5. Instructor Authenticated Workspaces** | 2 | 2 | 0 | **PASS** |
-| **6. Responsive Viewports (Tablet & Mobile)** | 2 | 2 | 0 | **PASS** |
-| **Total** | **21** | **21** | **0** | **100% PASS** |
+| **1. Public Experience & Default Theme** | 7 | 7 | 0 | **PASS** |
+| **2. Global Theme Toggle Interaction** | 4 | 4 | 0 | **PASS** |
+| **3. Student Authenticated Workspaces** | 4 | 4 | 0 | **PASS** |
+| **4. Instructor Authenticated Workspaces** | 3 | 3 | 0 | **PASS** |
+| **5. Admin Authenticated Workspaces** | 5 | 5 | 0 | **PASS** |
+| **6. Responsive Viewports (Mobile & Tablet)** | 2 | 2 | 0 | **PASS** |
+| **Total** | **25** | **25** | **0** | **100% PASS** |
 
 ---
 
@@ -246,3 +246,4 @@ LIGHT_THEME_SCREENSHOTS/
 ├── 15_responsive_mobile_light.png (56 KB)  - Mobile Portrait Viewport
 └── 16_responsive_tablet_light.png (136 KB) - Tablet Viewport
 ```
+

@@ -46,3 +46,4 @@ export function ThemeToggle({ className = '', showLabel = false, size = 'md' }) 
 }
 
 export default ThemeToggle;
+

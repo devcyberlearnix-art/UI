@@ -291,11 +291,11 @@ export const AppShell = ({ children }) => {
   // PRIMARY ENTERPRISE WORKSPACE SHELL
   // -------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#070709] font-sans text-[#0F172A] dark:text-[#F5F5F7] flex flex-col selection:bg-blue-500/20 dark:selection:bg-[#C5A880]/30 selection:text-blue-900 dark:selection:text-white">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] font-sans text-[#282521] dark:text-[#EDE8E1] flex flex-col selection:bg-[#5B3E57]/15 dark:selection:bg-[#D1A7CC]/25 selection:text-[#5B3E57] dark:selection:text-[#EDE8E1]">
       {/* Keyboard Accessibility Skip Link */}
       <a
         href="#main-shell-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-4 z-[100] px-4 py-2 rounded-xl bg-[#C5A880] text-[#070709] font-bold text-xs shadow-xl outline-none ring-2 ring-white"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-4 z-[100] px-4 py-2 rounded-xl bg-[#5B3E57] text-[#FFFEFA] font-bold text-xs shadow-xl outline-none ring-2 ring-white"
       >
         Skip to main content
       </a>
@@ -306,10 +306,10 @@ export const AppShell = ({ children }) => {
           initial={false}
           animate={{ width: isCollapsed ? 76 : 260 }}
           transition={SPRING_TRANSITION}
-          className="hidden md:flex flex-col shrink-0 bg-white dark:bg-[#0F0F13]/95 backdrop-blur-2xl border-r border-slate-200 dark:border-white/[0.04] z-40 relative select-none"
+          className="hidden md:flex flex-col shrink-0 bg-[#FAF7F2] dark:bg-[#1A1917] backdrop-blur-2xl border-r border-[#E3DCD3] dark:border-white/[0.06] z-40 relative select-none"
         >
           {/* Brand Signature Bar */}
-          <div className="h-16 px-4 flex items-center justify-between border-b border-slate-200 dark:border-white/[0.04]">
+          <div className="h-16 px-4 flex items-center justify-between border-b border-[#E3DCD3] dark:border-white/[0.06]">
             <div
               onClick={() => handleNavigate(
                 userRole === 'admin'
@@ -320,7 +320,7 @@ export const AppShell = ({ children }) => {
               )}
               className="flex items-center gap-3 group overflow-hidden cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-[#14141A] border border-blue-500/20 dark:border-[#C5A880]/30 flex items-center justify-center text-blue-600 dark:text-[#C5A880] shadow-sm shrink-0 transition-transform group-hover:scale-105">
+              <div className="w-10 h-10 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#5B3E57]/20 dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] shadow-xs shrink-0 transition-transform group-hover:scale-105">
                 <GraduationCap className="w-5 h-5" />
               </div>
               {!isCollapsed && (
@@ -330,10 +330,10 @@ export const AppShell = ({ children }) => {
                   transition={{ duration: 0.2 }}
                   className="flex flex-col whitespace-nowrap"
                 >
-                  <span className="text-base font-extrabold tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-[#C5A880] transition-colors">
-                    FD_LMS
+                  <span className="text-base font-extrabold tracking-tight text-[#282521] dark:text-white group-hover:text-[#5B3E57] dark:group-hover:text-[#D1A7CC] transition-colors">
+                    ASIVO
                   </span>
-                  <span className="text-[9px] font-bold tracking-[0.25em] text-blue-600 dark:text-[#C5A880] uppercase -mt-0.5">
+                  <span className="text-[9px] font-bold tracking-[0.25em] text-[#5B3E57] dark:text-[#D1A7CC] uppercase -mt-0.5">
                     {userRole.toUpperCase()} RAIL
                   </span>
                 </motion.div>
@@ -344,7 +344,7 @@ export const AppShell = ({ children }) => {
             <button
               type="button"
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:text-[#71717A] dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors cursor-pointer"
+              className="p-1.5 rounded-xl text-[#827B71] hover:text-[#282521] dark:text-[#7A7368] dark:hover:text-white hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.04] transition-colors cursor-pointer"
               title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               aria-label="Toggle Sidebar"
             >
@@ -368,21 +368,21 @@ export const AppShell = ({ children }) => {
                   type="button"
                   onClick={() => handleNavigate(item.href)}
                   className={`w-full relative flex items-center gap-3.5 px-3.5 py-2.5 rounded-2xl text-xs font-semibold tracking-wide transition-colors group select-none cursor-pointer text-left ${
-                    active ? 'text-blue-600 dark:text-white font-bold' : 'text-slate-600 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.02]'
+                    active ? 'text-[#5B3E57] dark:text-[#D1A7CC] font-bold' : 'text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.02]'
                   }`}
                 >
                   {/* Shared Layout Active Indicator (Spring Morphing) */}
                   {active && (
                     <motion.div
                       layoutId="activeNavBackground"
-                      className="absolute inset-0 bg-blue-50 dark:bg-[#C5A880]/10 border border-blue-200 dark:border-[#C5A880]/30 rounded-2xl -z-10 shadow-xs dark:shadow-[0_0_20px_rgba(197,168,128,0.06)]"
+                      className="absolute inset-0 bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 rounded-2xl -z-10 shadow-xs"
                       transition={SPRING_TRANSITION}
                     />
                   )}
 
                   <Icon
                     className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${
-                      active ? 'text-blue-600 dark:text-[#C5A880]' : 'text-slate-400 dark:text-[#71717A]'
+                      active ? 'text-[#5B3E57] dark:text-[#D1A7CC]' : 'text-[#827B71] dark:text-[#7A7368]'
                     }`}
                   />
 
@@ -401,18 +401,18 @@ export const AppShell = ({ children }) => {
           </nav>
 
           {/* User Status Footer Dock */}
-          <div className="p-3 border-t border-slate-200 dark:border-white/[0.04] bg-slate-50 dark:bg-[#070709]/40">
+          <div className="p-3 border-t border-[#E3DCD3] dark:border-white/[0.06] bg-[#FAF7F2] dark:bg-[#1A1917]">
             {user ? (
-              <div className="flex items-center gap-3 p-2 rounded-2xl bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.04] shadow-xs">
-                <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-[#14141A] border border-slate-200 dark:border-white/15 flex items-center justify-center text-slate-800 dark:text-[#E5E5E7] text-xs font-bold shrink-0">
+              <div className="flex items-center gap-3 p-2 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] shadow-xs">
+                <div className="w-8 h-8 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-bold shrink-0">
                   {(user.name || user.email || 'U').charAt(0).toUpperCase()}
                 </div>
                 {!isCollapsed && (
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                      {user.name || 'Engineer'}
+                    <p className="text-xs font-bold text-[#282521] dark:text-white truncate">
+                      {user.name || 'Member'}
                     </p>
-                    <p className="text-[10px] text-slate-500 dark:text-[#71717A] truncate font-mono">
+                    <p className="text-[10px] text-[#827B71] dark:text-[#7A7368] truncate font-mono">
                       {user.email}
                     </p>
                   </div>
@@ -424,7 +424,7 @@ export const AppShell = ({ children }) => {
                       logout();
                       navigate('/');
                     }}
-                    className="p-1.5 text-slate-400 hover:text-rose-500 dark:text-[#71717A] dark:hover:text-rose-400 transition-colors cursor-pointer"
+                    className="p-1.5 text-[#827B71] hover:text-[#9B3835] dark:text-[#7A7368] dark:hover:text-rose-400 transition-colors cursor-pointer"
                     title="Sign Out"
                     aria-label="Sign out"
                   >
@@ -447,7 +447,7 @@ export const AppShell = ({ children }) => {
                   <button
                     type="button"
                     onClick={() => navigate('/login')}
-                    className="w-full h-8 rounded-xl bg-[#C5A880] text-[#070709] flex items-center justify-center text-xs font-bold cursor-pointer"
+                    className="w-full h-8 rounded-xl bg-[#5B3E57] text-[#FFFEFA] flex items-center justify-center text-xs font-bold cursor-pointer"
                     title="Sign In"
                     aria-label="Sign In"
                   >
@@ -460,9 +460,9 @@ export const AppShell = ({ children }) => {
         </motion.aside>
 
         {/* ======================= MAIN CANVAS ======================= */}
-        <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-slate-50 dark:bg-[#070709]">
+        <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-[#F5F2EC] dark:bg-[#151413]">
           {/* Header Navigation Rail */}
-          <header className="sticky top-0 z-30 w-full px-4 sm:px-6 lg:px-8 py-3.5 backdrop-blur-xl bg-white/90 dark:bg-[#070709]/85 border-b border-slate-200 dark:border-white/[0.04]">
+          <header className="sticky top-0 z-30 w-full px-4 sm:px-6 lg:px-8 py-3.5 backdrop-blur-xl bg-[#FFFEFA]/92 dark:bg-[#1D1C1A]/88 border-b border-[#E3DCD3] dark:border-white/[0.06]">
             <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
               {/* Left: Mobile Toggle & Dynamic Breadcrumbs */}
               <div className="flex items-center gap-3 min-w-0">
@@ -523,9 +523,9 @@ export const AppShell = ({ children }) => {
                 <button
                   type="button"
                   onClick={() => handleNavigate('/courses')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.02] dark:hover:bg-white/[0.05] border border-slate-200 dark:border-white/[0.04] text-xs font-semibold text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAE5DC] hover:bg-[#E1DBD0] dark:bg-white/[0.04] dark:hover:bg-white/[0.08] border border-[#E3DCD3] dark:border-white/[0.06] text-xs font-semibold text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white transition-colors cursor-pointer"
                 >
-                  <Search className="w-3.5 h-3.5 text-blue-600 dark:text-[#C5A880]" />
+                  <Search className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <span>Catalog</span>
                 </button>
 
@@ -533,13 +533,13 @@ export const AppShell = ({ children }) => {
                 <button
                   type="button"
                   onClick={() => handleNavigate('/cart')}
-                  className="relative p-2 rounded-xl bg-slate-100 dark:bg-[#14141A] text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/[0.04] hover:border-blue-400 dark:hover:border-[#C5A880]/30 transition-all cursor-pointer"
+                  className="relative p-2 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC]/30 transition-all cursor-pointer"
                   title="View Shopping Cart"
                   aria-label="Shopping Cart"
                 >
                   <ShoppingCart className="w-4 h-4" />
                   {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-blue-600 dark:bg-[#C5A880] text-white dark:text-[#070709] text-[9px] font-black flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] text-[9px] font-black flex items-center justify-center">
                       {cartCount}
                     </span>
                   )}
@@ -645,10 +645,10 @@ export const AppShell = ({ children }) => {
                   <button
                     type="button"
                     onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                    className="flex items-center gap-2 p-1.5 rounded-xl bg-slate-100 dark:bg-[#14141A] border border-slate-200 dark:border-white/[0.04] hover:border-blue-400 dark:hover:border-[#C5A880]/30 transition-all cursor-pointer"
+                    className="flex items-center gap-2 p-1.5 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC]/30 transition-all cursor-pointer"
                     aria-label="User profile options"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-[#C5A880]/20 border border-blue-200 dark:border-[#C5A880]/40 flex items-center justify-center text-blue-600 dark:text-[#C5A880] text-xs font-bold">
+                    <div className="w-7 h-7 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 border border-[#D5C0D1] dark:border-[#D1A7CC]/40 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-bold">
                       {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
                     </div>
                   </button>
@@ -660,13 +660,13 @@ export const AppShell = ({ children }) => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={SPRING_TRANSITION}
-                        className="absolute right-0 mt-3 w-56 rounded-2xl bg-white dark:bg-[#0F0F13] border border-slate-200 dark:border-white/[0.06] shadow-xl dark:shadow-2xl p-2 z-50 text-xs font-medium text-slate-900 dark:text-white"
+                        className="absolute right-0 mt-3 w-56 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] shadow-card p-2 z-50 text-xs font-medium text-[#282521] dark:text-white"
                       >
-                        <div className="px-3 py-2 border-b border-slate-200 dark:border-white/[0.04]">
-                          <p className="font-bold text-slate-900 dark:text-white truncate">
-                            {user?.name || 'Engineer'}
+                        <div className="px-3 py-2 border-b border-[#E3DCD3] dark:border-white/[0.06]">
+                          <p className="font-bold text-[#282521] dark:text-white truncate">
+                            {user?.name || 'Member'}
                           </p>
-                          <p className="text-[10px] text-slate-500 dark:text-[#71717A] truncate font-mono">
+                          <p className="text-[10px] text-[#827B71] dark:text-[#7A7368] truncate font-mono">
                             {user?.email}
                           </p>
                           <div className="mt-1">
@@ -689,9 +689,9 @@ export const AppShell = ({ children }) => {
                                   : '/student/profile'
                               );
                             }}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
                           >
-                            <User className="w-4 h-4 text-blue-600 dark:text-[#C5A880]" />
+                            <User className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                             <span>Identity Profile</span>
                           </button>
 
@@ -701,9 +701,9 @@ export const AppShell = ({ children }) => {
                               setProfileDropdownOpen(false);
                               handleNavigate('/student/orders');
                             }}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
                           >
-                            <CreditCard className="w-4 h-4 text-blue-600 dark:text-[#C5A880]" />
+                            <CreditCard className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                             <span>Billing & Orders</span>
                           </button>
 
@@ -713,9 +713,9 @@ export const AppShell = ({ children }) => {
                               setProfileDropdownOpen(false);
                               handleNavigate('/student/notification-preferences');
                             }}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
                           >
-                            <Settings className="w-4 h-4 text-blue-600 dark:text-[#C5A880]" />
+                            <Settings className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                             <span>Preferences</span>
                           </button>
                         </div>

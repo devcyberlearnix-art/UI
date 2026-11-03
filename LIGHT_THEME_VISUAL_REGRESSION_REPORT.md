@@ -101,3 +101,4 @@ All foreground-to-background color combinations were audited against the WCAG Le
 - [x] **Bi-Directional Theme Parity**: Users who explicitly toggle to Dark Mode retain a flawless dark presentation.
 
 **Visual Regression Sign-off:** **APPROVED FOR IMMEDIATE PRODUCTION RELEASE**
+

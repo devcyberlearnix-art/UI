@@ -21,16 +21,16 @@ export const Input = ({
   return (
     <div className={`relative flex flex-col ${className}`}>
       <div
-        className={`relative flex items-center min-h-[54px] rounded-xl transition-all duration-300 border bg-white dark:bg-[#0F0F13]/90 backdrop-blur-xl ${
+        className={`relative flex items-center min-h-[54px] rounded-xl transition-all duration-300 border bg-[#FFFEFA] dark:bg-[#1D1C1A] backdrop-blur-xl ${
           error
-            ? 'border-red-500 shadow-xs ring-1 ring-red-500/20'
+            ? 'border-[#9B3835] shadow-xs ring-1 ring-[#9B3835]/20'
             : isFocused
-            ? 'border-blue-500 shadow-xs ring-1 ring-blue-500/20 dark:border-[#C5A880]/60 dark:shadow-[0_0_25px_rgba(197,168,128,0.14)] dark:bg-[#14141A]'
-            : 'border-slate-200 dark:border-white/[0.05] hover:border-slate-300 dark:hover:border-white/[0.12]'
+            ? 'border-[#5B3E57] shadow-xs ring-2 ring-[#5B3E57]/15 dark:border-[#D1A7CC]/60 dark:ring-[#D1A7CC]/20'
+            : 'border-[#D8D0C5] dark:border-white/[0.08] hover:border-[#C4B9AA] dark:hover:border-white/[0.14]'
         }`}
       >
         {LeftIcon && (
-          <div className="pl-3.5 pr-1 text-slate-400 dark:text-[#71717A] shrink-0">
+          <div className="pl-3.5 pr-1 text-[#827B71] dark:text-[#7A7368] shrink-0">
             <LeftIcon className="w-4 h-4" />
           </div>
         )}
@@ -45,7 +45,7 @@ export const Input = ({
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             placeholder={isFocused ? placeholder : ''}
-            className={`w-full px-3.5 pt-4 pb-1.5 text-sm font-medium text-slate-900 dark:text-[#F5F5F7] bg-transparent outline-none placeholder:text-slate-400 dark:placeholder-[#71717A]/60 transition-colors ${
+            className={`w-full px-3.5 pt-4 pb-1.5 text-sm font-medium text-[#282521] dark:text-[#EDE8E1] bg-transparent outline-none placeholder:text-[#827B71] dark:placeholder-[#7A7368] transition-colors ${
               LeftIcon ? 'pl-2' : ''
             }`}
             {...props}
@@ -59,8 +59,8 @@ export const Input = ({
                 LeftIcon ? 'left-2' : 'left-3.5'
               } ${
                 isElevated
-                  ? 'top-1.5 text-[10px] tracking-wider uppercase font-semibold text-blue-600 dark:text-[#C5A880]'
-                  : 'top-3.5 text-xs text-slate-400 dark:text-[#71717A]'
+                  ? 'top-1.5 text-[10px] tracking-wider uppercase font-semibold text-[#5B3E57] dark:text-[#D1A7CC]'
+                  : 'top-3.5 text-xs text-[#827B71] dark:text-[#7A7368]'
               }`}
             >
               {label}
