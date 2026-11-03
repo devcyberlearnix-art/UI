@@ -7,7 +7,7 @@ const StatsCard = ({ title, value, icon: Icon, color }) => {
     purple: 'bg-purple-50 text-purple-600',
     orange: 'bg-orange-50 text-orange-600',
     red: 'bg-red-50 text-red-600',
-    blue: 'bg-blue-50 text-blue-600',
+    blue: 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 text-[#5B3E57] dark:text-[#D1A7CC]',
   };
 
   return (

@@ -229,7 +229,7 @@ export default function Analytics() {
               <h2 className="text-sm font-semibold text-[#F5F5F7]">Transaction & Order Volume</h2>
               <p className="text-[11px] text-[#8E8E93]">Total checkout completions across microservices</p>
             </div>
-            <Badge className="bg-[#14141A] text-cyan-400 border-white/5 font-mono text-[10px]">
+            <Badge className="bg-[#14141A] text-[#D1A7CC] border-white/5 font-mono text-[10px]">
               Orders
             </Badge>
           </div>

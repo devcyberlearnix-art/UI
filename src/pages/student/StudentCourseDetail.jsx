@@ -442,22 +442,22 @@ const StudentCourseDetail = () => {
                       <div key={section.id}>
                         <button
                           onClick={() => toggleSection(section.id)}
-                          className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition"
+                          className="w-full p-4 flex items-center justify-between hover:bg-[#EAE5DC]/40 dark:hover:bg-white/[0.04] transition"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm">
+                            <div className="w-8 h-8 rounded-lg bg-[#EAE5DC] dark:bg-white/[0.06] text-[#635E56] dark:text-[#A69F94] flex items-center justify-center font-bold text-sm">
                               {idx + 1}
                             </div>
                             <div className="text-left">
-                              <h3 className="font-semibold text-slate-900 text-sm">{section.title}</h3>
-                              <p className="text-xs text-slate-500">
+                              <h3 className="font-semibold text-[#282521] dark:text-[#EDE8E1] text-sm">{section.title}</h3>
+                              <p className="text-xs text-[#756E64] dark:text-[#7A7368]">
                                 {section.lectures?.length || 0} lectures
                               </p>
                             </div>
                           </div>
                           <ChevronDown
                             size={18}
-                            className={`text-slate-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                            className={`text-[#756E64] dark:text-[#7A7368] transition-transform ${isExpanded ? 'rotate-180' : ''}`}
                           />
                         </button>
 
@@ -467,7 +467,7 @@ const StudentCourseDetail = () => {
                               initial={{ height: 0 }}
                               animate={{ height: 'auto' }}
                               exit={{ height: 0 }}
-                              className="overflow-hidden bg-slate-50"
+                              className="overflow-hidden bg-[#FAF8F5] dark:bg-[#151413]/50"
                             >
                               <div className="p-2 space-y-1">
                                 {section.lectures?.map((lecture) => {
@@ -479,29 +479,29 @@ const StudentCourseDetail = () => {
                                       onClick={() => selectLecture(lecture)}
                                       className={`w-full p-3 rounded-lg flex items-center gap-3 transition ${
                                         isCurrent
-                                          ? 'bg-orange-50 border-orange-300'
-                                          : 'hover:bg-white border-transparent'
+                                          ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30'
+                                          : 'hover:bg-[#FFFEFA] dark:hover:bg-[#1D1C1A] border-transparent'
                                       }`}
                                     >
                                       {isCompleted ? (
-                                        <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+                                        <CheckCircle2 size={16} className="text-[#2B6747] dark:text-[#52B788] shrink-0" />
                                       ) : isCurrent ? (
-                                        <PlayCircle size={16} className="text-orange-500 shrink-0" />
+                                        <PlayCircle size={16} className="text-[#5B3E57] dark:text-[#D1A7CC] shrink-0" />
                                       ) : (
-                                        <Video size={16} className="text-slate-400 shrink-0" />
+                                        <Video size={16} className="text-[#756E64] dark:text-[#7A7368] shrink-0" />
                                       )}
                                       <div className="flex-1 text-left">
-                                        <p className="text-sm font-medium text-slate-900 line-clamp-1">
+                                        <p className="text-sm font-medium text-[#282521] dark:text-[#EDE8E1] line-clamp-1">
                                           {lecture.title}
                                         </p>
-                                        <p className="text-xs text-slate-500">
+                                        <p className="text-xs text-[#756E64] dark:text-[#7A7368]">
                                           {lecture.duration ? `${Math.floor(lecture.duration / 60)}m` : ''} {lecture.previewEnabled && (
-                                            <span className="text-emerald-600 font-medium">• Preview</span>
+                                            <span className="text-[#2B6747] dark:text-[#52B788] font-medium">• Preview</span>
                                           )}
                                         </p>
                                       </div>
                                       {isCurrent && (
-                                        <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                                        <div className="w-2 h-2 rounded-full bg-[#5B3E57] dark:bg-[#D1A7CC] animate-pulse" />
                                       )}
                                     </button>
                                   );
@@ -518,22 +518,22 @@ const StudentCourseDetail = () => {
             </div>
 
             {/* Course Info */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-              <h2 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Target size={18} className="text-orange-500" />
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl shadow-sm border border-[#E3DCD3] dark:border-white/[0.08] p-6">
+              <h2 className="font-bold text-[#282521] dark:text-[#EDE8E1] mb-4 flex items-center gap-2">
+                <Target size={18} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
                 What You'll Learn
               </h2>
               <div className="space-y-3">
-                <div className="flex items-start gap-3 text-sm text-slate-700">
-                  <CheckCircle2 size={16} className="text-emerald-600 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3 text-sm text-[#3D3832] dark:text-[#D8D0C5]">
+                  <CheckCircle2 size={16} className="text-[#2B6747] dark:text-[#52B788] shrink-0 mt-0.5" />
                   <span>Master the fundamentals and advanced concepts</span>
                 </div>
-                <div className="flex items-start gap-3 text-sm text-slate-700">
-                  <CheckCircle2 size={16} className="text-emerald-600 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3 text-sm text-[#3D3832] dark:text-[#D8D0C5]">
+                  <CheckCircle2 size={16} className="text-[#2B6747] dark:text-[#52B788] shrink-0 mt-0.5" />
                   <span>Build real-world projects and portfolio pieces</span>
                 </div>
-                <div className="flex items-start gap-3 text-sm text-slate-700">
-                  <CheckCircle2 size={16} className="text-emerald-600 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3 text-sm text-[#3D3832] dark:text-[#D8D0C5]">
+                  <CheckCircle2 size={16} className="text-[#2B6747] dark:text-[#52B788] shrink-0 mt-0.5" />
                   <span>Earn a verified certificate upon completion</span>
                 </div>
               </div>
@@ -543,11 +543,11 @@ const StudentCourseDetail = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Course Info Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl shadow-sm border border-[#E3DCD3] dark:border-white/[0.08] p-6">
               <div className="space-y-4">
                 <div>
-                  <h2 className="font-bold text-slate-900 mb-2">{course.title}</h2>
-                  <p className="text-sm text-slate-600 line-clamp-2">{course.description}</p>
+                  <h2 className="font-bold text-[#282521] dark:text-[#EDE8E1] mb-2">{course.title}</h2>
+                  <p className="text-sm text-[#635E56] dark:text-[#A69F94] line-clamp-2">{course.description}</p>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -555,20 +555,20 @@ const StudentCourseDetail = () => {
                     <Star size={16} fill="currentColor" />
                     <span className="font-bold">{course.rating.toFixed(1)}</span>
                   </div>
-                  <span className="text-sm text-slate-500">({course.ratingCount} reviews)</span>
+                  <span className="text-sm text-[#756E64] dark:text-[#7A7368]">({course.ratingCount} reviews)</span>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-slate-600">
+                <div className="flex items-center gap-2 text-sm text-[#635E56] dark:text-[#A69F94]">
                   <Users size={16} />
                   <span>{course.students} students enrolled</span>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-slate-600">
+                <div className="flex items-center gap-2 text-sm text-[#635E56] dark:text-[#A69F94]">
                   <Clock size={16} />
                   <span>{course.duration}</span>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-slate-600">
+                <div className="flex items-center gap-2 text-sm text-[#635E56] dark:text-[#A69F94]">
                   <Award size={16} />
                   <span>Certificate included</span>
                 </div>
@@ -576,36 +576,36 @@ const StudentCourseDetail = () => {
             </div>
 
             {/* Course Activities & Resources */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
-              <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2 text-sm">
-                <BookOpen size={16} className="text-orange-500" />
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl shadow-sm border border-[#E3DCD3] dark:border-white/[0.08] p-5">
+              <h3 className="font-bold text-[#282521] dark:text-[#EDE8E1] mb-3 flex items-center gap-2 text-sm">
+                <BookOpen size={16} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
                 Course Activities
               </h3>
               <div className="grid grid-cols-2 gap-2">
                 <Link
                   to={`/student/courses/${courseId}/assignments`}
-                  className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-100 hover:border-orange-200 hover:bg-orange-50/50 text-slate-700 hover:text-orange-600 transition text-xs font-semibold"
+                  className="flex items-center gap-2 p-2.5 rounded-xl border border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#9A6B56] hover:bg-[#9A6B56]/10 text-[#3D3832] dark:text-[#D8D0C5] hover:text-[#9A6B56] transition text-xs font-semibold"
                 >
-                  <ClipboardList size={15} className="text-orange-500" />
+                  <ClipboardList size={15} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <span>Assignments</span>
                 </Link>
                 <Link
                   to={`/student/courses/${courseId}/live-classes`}
-                  className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-[#F2ECF1] dark:bg-[#D1A7CC]/15/50 text-slate-700 hover:text-[#5B3E57] dark:text-[#D1A7CC] transition text-xs font-semibold"
+                  className="flex items-center gap-2 p-2.5 rounded-xl border border-[#E3DCD3] dark:border-white/[0.08] hover:border-blue-200 hover:bg-[#F2ECF1] dark:bg-[#D1A7CC]/15/50 text-[#3D3832] dark:text-[#D8D0C5] hover:text-[#5B3E57] dark:text-[#D1A7CC] transition text-xs font-semibold"
                 >
                   <Radio size={15} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <span>Live Classes</span>
                 </Link>
                 <Link
                   to={`/student/courses/${courseId}/reviews`}
-                  className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-100 hover:border-amber-200 hover:bg-amber-50/50 text-slate-700 hover:text-amber-600 transition text-xs font-semibold"
+                  className="flex items-center gap-2 p-2.5 rounded-xl border border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#935E1E] hover:bg-[#935E1E]/10 text-[#3D3832] dark:text-[#D8D0C5] hover:text-[#935E1E] transition text-xs font-semibold"
                 >
                   <MessageSquare size={15} className="text-amber-500" />
                   <span>Reviews</span>
                 </Link>
                 <Link
                   to={`/student/courses/${courseId}/certificate`}
-                  className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/50 text-slate-700 hover:text-emerald-600 transition text-xs font-semibold"
+                  className="flex items-center gap-2 p-2.5 rounded-xl border border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#2B6747] hover:bg-[#2B6747]/10 text-[#3D3832] dark:text-[#D8D0C5] hover:text-[#2B6747] dark:text-[#52B788] transition text-xs font-semibold"
                 >
                   <Award size={15} className="text-emerald-500" />
                   <span>Certificate</span>
@@ -615,38 +615,38 @@ const StudentCourseDetail = () => {
 
             {/* Progress Card */}
             {courseProgress && (
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl shadow-sm border border-[#E3DCD3] dark:border-white/[0.08] p-6">
+                <h3 className="font-bold text-[#282521] dark:text-[#EDE8E1] mb-4 flex items-center gap-2">
                   <TrendingUp size={18} className="text-emerald-500" />
                   Your Progress
                 </h3>
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="text-slate-600">Overall Progress</span>
-                      <span className="font-bold text-slate-900">{progressPercentage}%</span>
+                      <span className="text-[#635E56] dark:text-[#A69F94]">Overall Progress</span>
+                      <span className="font-bold text-[#282521] dark:text-[#EDE8E1]">{progressPercentage}%</span>
                     </div>
-                    <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div className="h-2 bg-[#EAE5DC] dark:bg-white/[0.08] rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-emerald-500 to-green-500 rounded-full transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-[#5B3E57] to-[#9A6B56] rounded-full transition-all duration-500"
                         style={{ width: `${progressPercentage}%` }}
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 text-center">
-                    <div className="p-3 rounded-xl bg-slate-50">
-                      <div className="text-2xl font-bold text-slate-900">{completedLectures}</div>
-                      <div className="text-xs text-slate-500">Completed</div>
+                    <div className="p-3 rounded-xl bg-[#FAF8F5] dark:bg-white/[0.04]">
+                      <div className="text-2xl font-bold text-[#282521] dark:text-[#EDE8E1]">{completedLectures}</div>
+                      <div className="text-xs text-[#756E64] dark:text-[#7A7368]">Completed</div>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-50">
-                      <div className="text-2xl font-bold text-slate-900">{totalLectures - completedLectures}</div>
-                      <div className="text-xs text-slate-500">Remaining</div>
+                    <div className="p-3 rounded-xl bg-[#FAF8F5] dark:bg-white/[0.04]">
+                      <div className="text-2xl font-bold text-[#282521] dark:text-[#EDE8E1]">{totalLectures - completedLectures}</div>
+                      <div className="text-xs text-[#756E64] dark:text-[#7A7368]">Remaining</div>
                     </div>
                   </div>
 
                   {courseProgress.estimatedCompletionDate && (
-                    <div className="text-xs text-slate-500 text-center">
+                    <div className="text-xs text-[#756E64] dark:text-[#7A7368] text-center">
                       Est. completion: {new Date(courseProgress.estimatedCompletionDate).toLocaleDateString()}
                     </div>
                   )}
@@ -655,22 +655,22 @@ const StudentCourseDetail = () => {
             )}
 
             {/* Instructor Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-              <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <MonitorUp size={18} className="text-[#C5A880]" />
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl shadow-sm border border-[#E3DCD3] dark:border-white/[0.08] p-6">
+              <h3 className="font-bold text-[#282521] dark:text-[#EDE8E1] mb-4 flex items-center gap-2">
+                <MonitorUp size={18} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
                 Instructor
               </h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-[#14141A] border border-white/[0.08] text-[#C5A880] flex items-center justify-center font-bold text-lg">
+                  <div className="w-12 h-12 rounded-full bg-[#EAE5DC] dark:bg-white/[0.08] border border-[#E3DCD3] dark:border-white/[0.08] text-[#5B3E57] dark:text-[#D1A7CC] flex items-center justify-center font-bold text-lg">
                     {course.instructor?.charAt(0) || 'I'}
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900">{course.instructor}</p>
-                    <p className="text-xs text-slate-500">{course.instructorRole}</p>
+                    <p className="font-semibold text-[#282521] dark:text-[#EDE8E1]">{course.instructor}</p>
+                    <p className="text-xs text-[#756E64] dark:text-[#7A7368]">{course.instructorRole}</p>
                   </div>
                 </div>
-                <p className="text-sm text-slate-600">{course.instructorBio}</p>
+                <p className="text-sm text-[#635E56] dark:text-[#A69F94]">{course.instructorBio}</p>
               </div>
             </div>
           </div>

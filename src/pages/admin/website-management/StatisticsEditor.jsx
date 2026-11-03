@@ -624,7 +624,7 @@ export default function StatisticsEditor() {
 
                 {/* HYBRID Mode Ceiling Rule Notice */}
                 {stat.dataMode === DATA_MODES.HYBRID && (
-                  <div className="mt-4 p-3 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC]/10 border border-blue-500/20 text-xs flex items-center justify-between gap-3">
+                  <div className="mt-4 p-3 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC]/10 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-xs flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2 text-[#5B3E57] dark:text-[#D1A7CC]">
                       <ShieldCheck className="w-4 h-4 shrink-0" />
                       <span>

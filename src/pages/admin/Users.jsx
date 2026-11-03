@@ -604,7 +604,7 @@ const Users = () => {
                               ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                               : userObj.role === "INSTRUCTOR"
                               ? "bg-[#C5A880]/10 text-[#9A6B56] dark:text-[#D9A48F] border-[#5B3E57] dark:border-[#D1A7CC]/30"
-                              : "bg-blue-500/10 text-[#5B3E57] dark:text-[#D1A7CC] border-blue-500/20"
+                              : "bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#5B3E57] dark:text-[#D1A7CC] border-[#D5C0D1] dark:border-[#D1A7CC]/30"
                           }`}
                         >
                           {userObj.role}

@@ -109,25 +109,25 @@ const LiveClassPage = () => {
     switch (status) {
       case 'SCHEDULED': return 'bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#5B3E57] dark:text-[#D1A7CC]';
       case 'IN_PROGRESS': return 'bg-emerald-100 text-emerald-700';
-      case 'COMPLETED': return 'bg-slate-100 text-slate-700';
+      case 'COMPLETED': return 'bg-[#EAE5DC] dark:bg-[#FFFEFA] dark:bg-[#1D1C1A]/[0.06] text-[#3D3832] dark:text-[#D8D0C5]';
       case 'CANCELLED': return 'bg-red-100 text-red-700';
-      default: return 'bg-slate-100 text-slate-700';
+      default: return 'bg-[#EAE5DC] dark:bg-[#FFFEFA] dark:bg-[#1D1C1A]/[0.06] text-[#3D3832] dark:text-[#D8D0C5]';
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F2EC] dark:bg-[#151413]">
         <div className="text-center space-y-4">
           <Loader2 className="animate-spin text-orange-500 w-12 h-12 mx-auto" />
-          <p className="text-sm text-slate-600">Loading live classes...</p>
+          <p className="text-sm text-[#635E56] dark:text-[#A69F94]">Loading live classes...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans p-6">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] font-sans p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
@@ -135,8 +135,8 @@ const LiveClassPage = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-black text-slate-900 mb-2">Live Classes</h1>
-          <p className="text-slate-500">
+          <h1 className="text-3xl font-black text-[#282521] dark:text-[#EDE8E1] mb-2">Live Classes</h1>
+          <p className="text-[#756E64] dark:text-[#7A7368]">
             Join scheduled live sessions with your instructor
           </p>
         </motion.div>
@@ -160,7 +160,7 @@ const LiveClassPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
-              className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition"
+              className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl shadow-sm border border-[#E3DCD3] dark:border-white/[0.08] overflow-hidden hover:shadow-md transition"
             >
               {/* Header */}
               <div className="bg-[#0F0F13] border-b border-white/[0.06] p-4 text-white">
@@ -177,28 +177,28 @@ const LiveClassPage = () => {
 
               {/* Content */}
               <div className="p-4 space-y-3">
-                <div className="flex items-center gap-2 text-sm text-slate-600">
+                <div className="flex items-center gap-2 text-sm text-[#635E56] dark:text-[#A69F94]">
                   <Calendar size={16} />
                   <span>{formatDateTime(liveClass.scheduledTime)}</span>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-slate-600">
+                <div className="flex items-center gap-2 text-sm text-[#635E56] dark:text-[#A69F94]">
                   <Clock size={16} />
                   <span>{liveClass.duration || 60} minutes</span>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-slate-600">
+                <div className="flex items-center gap-2 text-sm text-[#635E56] dark:text-[#A69F94]">
                   <Users size={16} />
                   <span>{liveClass.attendees || 0} attending</span>
                 </div>
 
                 {liveClass.description && (
-                  <p className="text-sm text-slate-500 line-clamp-2">{liveClass.description}</p>
+                  <p className="text-sm text-[#756E64] dark:text-[#7A7368] line-clamp-2">{liveClass.description}</p>
                 )}
               </div>
 
               {/* Actions */}
-              <div className="p-4 border-t border-slate-200">
+              <div className="p-4 border-t border-[#E3DCD3] dark:border-white/[0.08]">
                 {liveClass.status === 'SCHEDULED' || liveClass.status === 'IN_PROGRESS' ? (
                   <button
                     onClick={() => handleJoin(liveClass.id)}
@@ -218,7 +218,7 @@ const LiveClassPage = () => {
                     )}
                   </button>
                 ) : liveClass.status === 'COMPLETED' ? (
-                  <div className="text-center text-sm text-slate-500">
+                  <div className="text-center text-sm text-[#756E64] dark:text-[#7A7368]">
                     This class has ended
                   </div>
                 ) : (
@@ -231,15 +231,15 @@ const LiveClassPage = () => {
           ))}
 
           {liveClasses.length === 0 && (
-            <div className="col-span-full text-center py-16 bg-white rounded-2xl border-2 border-dashed border-slate-200">
-              <Video size={48} className="mx-auto text-slate-300 mb-4" />
-              <h3 className="text-xl font-bold text-slate-900 mb-2">No Live Classes Scheduled</h3>
-              <p className="text-slate-500 mb-6">
+            <div className="col-span-full text-center py-16 bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border-2 border-dashed border-[#E3DCD3] dark:border-white/[0.08]">
+              <Video size={48} className="mx-auto text-[#D8D0C5] dark:text-[#7A7368] mb-4" />
+              <h3 className="text-xl font-bold text-[#282521] dark:text-[#EDE8E1] mb-2">No Live Classes Scheduled</h3>
+              <p className="text-[#756E64] dark:text-[#7A7368] mb-6">
                 Check back later for upcoming live sessions
               </p>
               <button
                 onClick={() => navigate(`/student/courses/${courseId}`)}
-                className="px-6 py-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] text-white font-semibold hover:bg-slate-800 transition"
+                className="px-6 py-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] text-white font-semibold hover:bg-[#462D42] transition"
               >
                 Back to Course
               </button>
@@ -253,27 +253,27 @@ const LiveClassPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-8 bg-white rounded-2xl shadow-sm p-6"
+            className="mt-8 bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl shadow-sm p-6"
           >
-            <h3 className="font-bold text-slate-900 mb-4">Your Attendance</h3>
+            <h3 className="font-bold text-[#282521] dark:text-[#EDE8E1] mb-4">Your Attendance</h3>
             <div className="grid grid-cols-3 gap-4">
               <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-center">
                 <div className="text-2xl font-black text-emerald-600">
                   {liveClasses.filter(lc => lc.attended).length}
                 </div>
-                <div className="text-xs text-slate-600">Attended</div>
+                <div className="text-xs text-[#635E56] dark:text-[#A69F94]">Attended</div>
               </div>
-              <div className="p-4 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] border border-blue-200 text-center">
+              <div className="p-4 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-center">
                 <div className="text-2xl font-black text-[#5B3E57] dark:text-[#D1A7CC]">
                   {liveClasses.filter(lc => lc.status === 'SCHEDULED').length}
                 </div>
-                <div className="text-xs text-slate-600">Upcoming</div>
+                <div className="text-xs text-[#635E56] dark:text-[#A69F94]">Upcoming</div>
               </div>
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                <div className="text-2xl font-black text-slate-600">
+              <div className="p-4 rounded-xl bg-[#FAF8F5] dark:bg-white/[0.04] border border-[#E3DCD3] dark:border-white/[0.08] text-center">
+                <div className="text-2xl font-black text-[#635E56] dark:text-[#A69F94]">
                   {liveClasses.length}
                 </div>
-                <div className="text-xs text-slate-600">Total</div>
+                <div className="text-xs text-[#635E56] dark:text-[#A69F94]">Total</div>
               </div>
             </div>
           </motion.div>

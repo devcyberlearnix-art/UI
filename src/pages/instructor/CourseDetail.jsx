@@ -103,7 +103,7 @@ const CourseDetail = () => {
       case "published": return "bg-green-100 text-green-700 border-green-200";
       case "draft":     return "bg-yellow-100 text-yellow-700 border-yellow-200";
       case "archived":  return "bg-gray-100 text-gray-600 border-gray-200";
-      default:          return "bg-blue-100 text-blue-700 border-blue-200";
+      default:          return "bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 text-[#5B3E57] dark:text-[#D1A7CC] border-[#D5C0D1] dark:border-[#D1A7CC]/30";
     }
   };
 
@@ -161,7 +161,7 @@ const CourseDetail = () => {
           </button>
           <button
             onClick={() => navigate(`/instructor/courses/${courseId}/students`)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 hover:bg-blue-100 text-blue-700 rounded-xl text-sm font-semibold transition"
+            className="flex items-center gap-2 px-4 py-2 bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 hover:bg-[#EAE5DC] dark:hover:bg-[#D1A7CC]/25 text-[#5B3E57] dark:text-[#D1A7CC] rounded-xl text-sm font-semibold transition"
           >
             <Users size={16} /> Enrolled Students
           </button>

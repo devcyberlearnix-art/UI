@@ -134,7 +134,7 @@ const MyCourses = () => {
       case "published": return "bg-green-100 text-green-700";
       case "draft":     return "bg-yellow-100 text-yellow-700";
       case "archived":  return "bg-gray-100 text-gray-600";
-      default:          return "bg-blue-100 text-blue-700";
+      default:          return "bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 text-[#5B3E57] dark:text-[#D1A7CC]";
     }
   };
 

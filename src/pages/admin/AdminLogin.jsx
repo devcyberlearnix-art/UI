@@ -60,7 +60,7 @@ const AdminLogin = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-orange-500" />
-          <p className="text-slate-600">Loading...</p>
+          <p className="text-[#635E56] dark:text-[#A69F94]">Loading...</p>
         </div>
       </div>
     );
@@ -270,9 +270,9 @@ const AdminLogin = () => {
       {loginMethod === "password" && (
         <form onSubmit={handlePasswordLogin} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">Email Address</label>
+            <label className="mb-1 block text-sm font-medium text-[#3D3832] dark:text-[#D8D0C5]">Email Address</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" size={18} />
               <input
                 type="email"
                 className="lms-input pl-10"
@@ -284,9 +284,9 @@ const AdminLogin = () => {
             </div>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">Password</label>
+            <label className="mb-1 block text-sm font-medium text-[#3D3832] dark:text-[#D8D0C5]">Password</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" size={18} />
               <input
                 type={showPassword ? "text" : "password"}
                 className="lms-input pl-10 pr-10"
@@ -298,7 +298,7 @@ const AdminLogin = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -313,9 +313,9 @@ const AdminLogin = () => {
       {loginMethod === "otp" && (
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">Email Address</label>
+            <label className="mb-1 block text-sm font-medium text-[#3D3832] dark:text-[#D8D0C5]">Email Address</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" size={18} />
               <input
                 type="email"
                 className="lms-input pl-10"
@@ -334,9 +334,9 @@ const AdminLogin = () => {
           ) : (
             <form onSubmit={handleOtpLogin} className="space-y-4">
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">One-Time Password</label>
+                <label className="mb-1 block text-sm font-medium text-[#3D3832] dark:text-[#D8D0C5]">One-Time Password</label>
                 <div className="relative">
-                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" size={18} />
                   <input
                     type="text"
                     className="lms-input pl-10"
@@ -355,7 +355,7 @@ const AdminLogin = () => {
                 type="button"
                 onClick={handleResendOtp}
                 disabled={otpResending || !canResend}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-600"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#E3DCD3] dark:border-white/[0.08] bg-[#FFFEFA] dark:bg-[#1D1C1A] px-4 py-3 text-sm font-semibold text-[#3D3832] dark:text-[#D8D0C5] transition hover:border-[#5B3E57] hover:text-[#5B3E57] dark:hover:border-[#D1A7CC] dark:hover:text-[#D1A7CC]"
               >
                 <RefreshCw size={16} className={otpResending ? "animate-spin" : ""} />
                 {otpResending ? "Resending..." : canResend ? "Resend OTP" : `Resend in ${cooldownSeconds}s`}
@@ -369,7 +369,7 @@ const AdminLogin = () => {
         <Link to="/forgot-password" className="lms-link text-sm">
           Forgot Password?
         </Link>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-[#756E64] dark:text-[#7A7368]">
           Need user login? <Link to="/login" className="lms-link">Go to learner sign in</Link>
         </p>
       </div>

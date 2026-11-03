@@ -83,20 +83,20 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
   };
 
   return (
-    <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <div className="sticky top-0 z-30 bg-[#FFFEFA]/95 dark:bg-[#1D1C1A]/95 backdrop-blur-md border-b border-[#E3DCD3] dark:border-white/[0.08] shadow-sm">
       <div className="h-14 flex justify-between items-center px-4 sm:px-6">
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-600 hover:text-slate-900"
+            className="p-1.5 hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.06] rounded-lg transition-colors text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:text-[#EDE8E1]"
             title="Toggle Sidebar"
           >
             <Menu size={18} />
           </button>
           <div className="hidden sm:flex items-center gap-2 min-w-0 text-xs">
-            <span className="font-semibold text-slate-400">Portal</span>
-            <span className="text-slate-300">/</span>
-            <span className="font-bold text-slate-800 tracking-tight">{displayRole} Workspace</span>
+            <span className="font-semibold text-[#756E64] dark:text-[#7A7368]">Portal</span>
+            <span className="text-[#D8D0C5] dark:text-[#7A7368]">/</span>
+            <span className="font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">{displayRole} Workspace</span>
           </div>
         </div>
 
@@ -104,7 +104,7 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
           {/* Search Bar */}
           <div className="hidden md:flex items-center">
             <div className="relative">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" />
               <input
                 type="text"
                 placeholder="Search for courses, skills, or instructors..."
@@ -119,19 +119,19 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
             <RoleSwitcher currentRole={tabRole} onRoleChange={handleRoleChange} />
           )}
 
-          <button className="relative p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-500 hover:text-slate-800">
+          <button className="relative p-1.5 hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.06] rounded-lg transition-colors text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:text-[#EDE8E1]">
             <Bell size={16} />
             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-orange-600 rounded-full"></span>
           </button>
 
-          <button className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-500 hover:text-slate-800">
+          <button className="p-1.5 hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.06] rounded-lg transition-colors text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:text-[#EDE8E1]">
             <Calendar size={16} />
           </button>
 
-          <div className="flex items-center gap-2.5 pl-3 border-l border-slate-200">
+          <div className="flex items-center gap-2.5 pl-3 border-l border-[#E3DCD3] dark:border-white/[0.08]">
             <div className="text-right hidden sm:block">
-              <p className="text-xs font-bold text-slate-900 leading-tight">{displayName}</p>
-              <p className="text-[10px] text-slate-400 font-mono leading-tight">{displayRole}</p>
+              <p className="text-xs font-bold text-[#282521] dark:text-[#EDE8E1] leading-tight">{displayName}</p>
+              <p className="text-[10px] text-[#756E64] dark:text-[#7A7368] font-mono leading-tight">{displayRole}</p>
             </div>
             <div className="relative">
               <img
@@ -144,7 +144,7 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
                 }}
                 style={{display: user?.profilePhoto ? 'block' : 'none'}}
               />
-              <div className="h-8 w-8 rounded-lg bg-slate-900 flex items-center justify-center text-white font-bold text-xs shadow-2xs" style={{display: user?.profilePhoto ? 'none' : 'flex'}}>
+              <div className="h-8 w-8 rounded-lg bg-[#5B3E57] dark:bg-[#D1A7CC] flex items-center justify-center text-[#FFFEFA] dark:text-[#151413] font-bold text-xs shadow-2xs" style={{display: user?.profilePhoto ? 'none' : 'flex'}}>
                 {getUserInitials()}
               </div>
             </div>
@@ -153,7 +153,7 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
       </div>
 
       {roleTabs.length > 0 && (
-        <div className="px-6 pb-2.5 border-t border-slate-100 bg-slate-50/50">
+        <div className="px-6 pb-2.5 border-t border-[#E3DCD3]/60 dark:border-white/[0.06] bg-[#FAF8F5] dark:bg-white/[0.02]">
           <div className="flex flex-wrap gap-1.5 pt-2">
             {roleTabs.map((tab) => {
               const isActive = activeTab?.label === tab.label;
@@ -163,8 +163,8 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
                   to={tab.defaultPath}
                   className={`px-3 py-1 text-xs rounded-lg font-semibold transition-all ${
                     isActive
-                      ? "bg-slate-900 text-white shadow-2xs"
-                      : "bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:text-slate-900"
+                      ? "bg-[#5B3E57] text-[#FFFEFA] dark:bg-[#D1A7CC] dark:text-[#151413] shadow-xs"
+                      : "bg-white text-[#635E56] dark:text-[#A69F94] border border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#D8D0C5] dark:border-white/[0.12] hover:text-[#282521] dark:text-[#EDE8E1]"
                   }`}
                 >
                   {tab.label}
@@ -189,7 +189,7 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
                     `px-2.5 py-0.5 text-xs rounded-md transition-colors ${
                       isActive
                         ? "bg-orange-100 text-orange-800 font-semibold"
-                        : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                        : "text-[#756E64] dark:text-[#7A7368] hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.06] hover:text-[#3D3832] dark:text-[#D8D0C5]"
                     }`
                   }
                 >

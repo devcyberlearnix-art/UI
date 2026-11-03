@@ -188,7 +188,7 @@ export const AuthShell = ({
           >
             {showCardBrand && (
               <div className="flex items-center justify-center gap-2 mb-6">
-                <div className="w-7 h-7 rounded-xl bg-slate-100 dark:bg-[#14141A] border border-[#5B3E57] dark:border-[#D1A7CC]/20 dark:border-[#C5A880]/30 flex items-center justify-center overflow-hidden">
+                <div className="w-7 h-7 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] border border-[#5B3E57] dark:border-[#D1A7CC]/20 dark:border-[#C5A880]/30 flex items-center justify-center overflow-hidden">
                   <img src="/assets/asivo-symbol-64.png" alt="Asivo" className="w-4 h-4 object-contain" />
                 </div>
                 <span className="text-xs font-bold tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#C5A880] uppercase">
@@ -200,7 +200,7 @@ export const AuthShell = ({
             {children}
 
             {showTerms && (
-              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-white/[0.04] text-center text-[11px] text-slate-500 dark:text-[#71717A] leading-relaxed">
+              <div className="mt-6 pt-4 border-t border-[#E3DCD3] dark:border-white/[0.06] text-center text-[11px] text-[#756E64] dark:text-[#7A7368] leading-relaxed">
                 By continuing, you agree to our{' '}
                 <Link to="/terms" className="text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#C5A880] hover:underline font-medium">
                   Terms of Service
@@ -218,7 +218,7 @@ export const AuthShell = ({
             <div className="hidden lg:flex justify-center mt-6">
               <Link
                 to="/"
-                className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#71717A] dark:hover:text-[#C5A880] transition-colors"
+                className="inline-flex items-center gap-2 text-xs font-semibold text-[#756E64] hover:text-[#5B3E57] dark:text-[#A69F94] dark:hover:text-[#D1A7CC] transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Return to discovery catalog</span>
@@ -228,12 +228,12 @@ export const AuthShell = ({
         </div>
 
         {/* Minimal Footer Stamp */}
-        <div className="w-full max-w-[460px] text-center text-[11px] text-slate-400 dark:text-[#52525B] pt-4 flex items-center justify-center gap-3">
+        <div className="w-full max-w-[460px] text-center text-[11px] text-[#756E64] dark:text-[#7A7368] pt-4 flex items-center justify-center gap-3">
           <span>&copy; {new Date().getFullYear()} Asivo. All rights reserved.</span>
           <span>&bull;</span>
-          <Link to="/terms" className="hover:text-slate-600 dark:hover:text-[#A1A1AA] transition-colors">Terms</Link>
+          <Link to="/terms" className="hover:text-[#282521] dark:hover:text-[#EDE8E1] transition-colors">Terms</Link>
           <span>&bull;</span>
-          <Link to="/privacy" className="hover:text-slate-600 dark:hover:text-[#A1A1AA] transition-colors">Privacy</Link>
+          <Link to="/privacy" className="hover:text-[#282521] dark:hover:text-[#EDE8E1] transition-colors">Privacy</Link>
         </div>
       </section>
     </main>

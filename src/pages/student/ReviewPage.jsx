@@ -115,17 +115,17 @@ const ReviewPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F2EC] dark:bg-[#151413]">
         <div className="text-center space-y-4">
           <Loader2 className="animate-spin text-orange-500 w-12 h-12 mx-auto" />
-          <p className="text-sm text-slate-600">Loading reviews...</p>
+          <p className="text-sm text-[#635E56] dark:text-[#A69F94]">Loading reviews...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans p-6">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] font-sans p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
@@ -133,8 +133,8 @@ const ReviewPage = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-black text-slate-900 mb-2">Course Reviews</h1>
-          <p className="text-slate-500">
+          <h1 className="text-3xl font-black text-[#282521] dark:text-[#EDE8E1] mb-2">Course Reviews</h1>
+          <p className="text-[#756E64] dark:text-[#7A7368]">
             See what students are saying about this course
           </p>
         </motion.div>
@@ -144,11 +144,11 @@ const ReviewPage = () => {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl shadow-sm p-6 mb-6"
+            className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl shadow-sm p-6 mb-6"
           >
             <div className="flex items-center gap-8">
               <div className="text-center">
-                <div className="text-5xl font-black text-slate-900">
+                <div className="text-5xl font-black text-[#282521] dark:text-[#EDE8E1]">
                   {ratingSummary.averageRating?.toFixed(1) || "4.5"}
                 </div>
                 <div className="flex items-center justify-center gap-1 text-amber-400 my-2">
@@ -160,7 +160,7 @@ const ReviewPage = () => {
                     />
                   ))}
                 </div>
-                <div className="text-sm text-slate-500">
+                <div className="text-sm text-[#756E64] dark:text-[#7A7368]">
                   {ratingSummary.totalReviews || 0} reviews
                 </div>
               </div>
@@ -171,14 +171,14 @@ const ReviewPage = () => {
                   const percentage = ratingSummary.totalReviews ? (count / ratingSummary.totalReviews) * 100 : 0;
                   return (
                     <div key={star} className="flex items-center gap-3">
-                      <span className="text-sm text-slate-600 w-8">{star} star</span>
-                      <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+                      <span className="text-sm text-[#635E56] dark:text-[#A69F94] w-8">{star} star</span>
+                      <div className="flex-1 h-2 bg-[#EAE5DC] dark:bg-[#FFFEFA] dark:bg-[#1D1C1A]/[0.08] rounded-full overflow-hidden">
                         <div
                           className="h-full bg-amber-400 rounded-full"
                           style={{ width: `${percentage}%` }}
                         />
                       </div>
-                      <span className="text-sm text-slate-500 w-8">{count}</span>
+                      <span className="text-sm text-[#756E64] dark:text-[#7A7368] w-8">{count}</span>
                     </div>
                   );
                 })}
@@ -192,10 +192,10 @@ const ReviewPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl shadow-sm p-6 mb-6"
+          className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl shadow-sm p-6 mb-6"
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-slate-900">Your Review</h3>
+            <h3 className="font-bold text-[#282521] dark:text-[#EDE8E1]">Your Review</h3>
             {myReview && !showForm && (
               <button
                 onClick={handleEditReview}
@@ -216,7 +216,7 @@ const ReviewPage = () => {
               >
                 <form onSubmit={handleSubmitReview} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Rating</label>
+                    <label className="block text-sm font-medium text-[#3D3832] dark:text-[#D8D0C5] mb-2">Rating</label>
                     <div className="flex gap-2">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
@@ -226,7 +226,7 @@ const ReviewPage = () => {
                           className={`p-2 rounded-lg transition ${
                             formData.rating >= star
                               ? "text-amber-400"
-                              : "text-slate-300 hover:text-amber-400"
+                              : "text-[#D8D0C5] dark:text-[#7A7368] hover:text-amber-400"
                           }`}
                         >
                           <Star size={24} fill={formData.rating >= star ? "currentColor" : "none"} />
@@ -236,13 +236,13 @@ const ReviewPage = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Your Review</label>
+                    <label className="block text-sm font-medium text-[#3D3832] dark:text-[#D8D0C5] mb-2">Your Review</label>
                     <textarea
                       value={formData.comment}
                       onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
                       placeholder="Share your experience with this course..."
                       rows={4}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none transition resize-none"
+                      className="w-full px-4 py-3 rounded-xl border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] focus:ring-2 focus:ring-[#5B3E57]/20 outline-none transition resize-none"
                       required
                     />
                   </div>
@@ -251,7 +251,7 @@ const ReviewPage = () => {
                     <button
                       type="button"
                       onClick={() => setShowForm(false)}
-                      className="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition"
+                      className="px-4 py-2 rounded-xl border border-[#E3DCD3] dark:border-white/[0.08] text-[#3D3832] dark:text-[#D8D0C5] font-medium hover:bg-[#FAF8F5] dark:bg-[#FFFEFA] dark:bg-[#1D1C1A]/[0.04] transition"
                     >
                       Cancel
                     </button>
@@ -278,7 +278,7 @@ const ReviewPage = () => {
             ) : (
               <>
                 {myReview ? (
-                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <div className="p-4 rounded-xl bg-[#FAF8F5] dark:bg-[#FFFEFA] dark:bg-[#1D1C1A]/[0.04] border border-[#E3DCD3] dark:border-white/[0.08]">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="flex items-center gap-1 text-amber-400">
                         {[1, 2, 3, 4, 5].map((star) => (
@@ -289,16 +289,16 @@ const ReviewPage = () => {
                           />
                         ))}
                       </div>
-                      <span className="text-sm text-slate-500">
+                      <span className="text-sm text-[#756E64] dark:text-[#7A7368]">
                         {new Date(myReview.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <p className="text-slate-700">{myReview.comment}</p>
+                    <p className="text-[#3D3832] dark:text-[#D8D0C5]">{myReview.comment}</p>
                   </div>
                 ) : (
                   <button
                     onClick={() => setShowForm(true)}
-                    className="w-full py-4 rounded-xl border-2 border-dashed border-slate-300 text-slate-500 hover:border-orange-500 hover:text-orange-600 font-medium transition"
+                    className="w-full py-4 rounded-xl border-2 border-dashed border-[#D8D0C5] dark:border-white/[0.12] text-[#756E64] dark:text-[#7A7368] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] font-medium transition"
                   >
                     Write a Review
                   </button>
@@ -315,7 +315,7 @@ const ReviewPage = () => {
           transition={{ delay: 0.2 }}
           className="space-y-4"
         >
-          <h3 className="font-bold text-slate-900">All Reviews ({reviews.length})</h3>
+          <h3 className="font-bold text-[#282521] dark:text-[#EDE8E1]">All Reviews ({reviews.length})</h3>
 
           {reviews.map((review, idx) => (
             <motion.div
@@ -323,7 +323,7 @@ const ReviewPage = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + idx * 0.05 }}
-              className="bg-white rounded-2xl shadow-sm p-6"
+              className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl shadow-sm p-6"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
@@ -331,8 +331,8 @@ const ReviewPage = () => {
                     {review.studentName?.charAt(0) || "U"}
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900">{review.studentName || "Student"}</p>
-                    <div className="flex items-center gap-2 text-sm text-slate-500">
+                    <p className="font-semibold text-[#282521] dark:text-[#EDE8E1]">{review.studentName || "Student"}</p>
+                    <div className="flex items-center gap-2 text-sm text-[#756E64] dark:text-[#7A7368]">
                       <Clock size={14} />
                       {new Date(review.createdAt).toLocaleDateString()}
                     </div>
@@ -359,7 +359,7 @@ const ReviewPage = () => {
                 ))}
               </div>
 
-              <p className="text-slate-700">{review.comment}</p>
+              <p className="text-[#3D3832] dark:text-[#D8D0C5]">{review.comment}</p>
 
               {review.instructorResponse && (
                 <div className="mt-4 p-4 rounded-xl bg-indigo-50 border border-indigo-200">
@@ -371,10 +371,10 @@ const ReviewPage = () => {
           ))}
 
           {reviews.length === 0 && (
-            <div className="text-center py-12 bg-white rounded-2xl border-2 border-dashed border-slate-200">
-              <Star size={48} className="mx-auto text-slate-300 mb-4" />
-              <h3 className="text-xl font-bold text-slate-900 mb-2">No Reviews Yet</h3>
-              <p className="text-slate-500">Be the first to review this course!</p>
+            <div className="text-center py-12 bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border-2 border-dashed border-[#E3DCD3] dark:border-white/[0.08]">
+              <Star size={48} className="mx-auto text-[#D8D0C5] dark:text-[#7A7368] mb-4" />
+              <h3 className="text-xl font-bold text-[#282521] dark:text-[#EDE8E1] mb-2">No Reviews Yet</h3>
+              <p className="text-[#756E64] dark:text-[#7A7368]">Be the first to review this course!</p>
             </div>
           )}
         </motion.div>

@@ -107,7 +107,7 @@ const Checkout = () => {
       <div className="flex items-center justify-center h-72">
         <div className="text-center">
           <Loader2 className="w-10 h-10 animate-spin text-orange-600 mx-auto mb-3" />
-          <p className="text-slate-500">Preparing checkout...</p>
+          <p className="text-[#756E64] dark:text-[#7A7368]">Preparing checkout...</p>
         </div>
       </div>
     );
@@ -116,10 +116,10 @@ const Checkout = () => {
   if (success) {
     return (
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="min-h-[70vh] flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl shadow-xl border border-emerald-100 p-9 text-center max-w-md">
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-3xl shadow-xl border border-emerald-100 p-9 text-center max-w-md">
           <CheckCircle size={62} className="mx-auto text-emerald-500 mb-4" />
           <h2 className="text-2xl font-bold mb-2">Order placed</h2>
-          <p className="text-slate-600">Your enrollment is being processed. Redirecting to orders...</p>
+          <p className="text-[#635E56] dark:text-[#A69F94]">Your enrollment is being processed. Redirecting to orders...</p>
         </div>
       </motion.div>
     );
@@ -128,7 +128,7 @@ const Checkout = () => {
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="py-8 px-4">
       <div className="max-w-5xl mx-auto space-y-6">
-        <div className="rounded-3xl bg-gradient-to-r from-orange-600 via-amber-500 to-cyan-500 p-6 text-white shadow-xl">
+        <div className="rounded-3xl bg-gradient-to-r from-[#5B3E57] via-[#9A6B56] to-[#2B6747] p-6 text-white shadow-xl">
           <h1 className="text-2xl font-bold">Secure Checkout</h1>
           <p className="text-orange-50 mt-1">Confirm your order and unlock your learning instantly.</p>
         </div>
@@ -141,24 +141,24 @@ const Checkout = () => {
 
         <div className="grid md:grid-cols-3 gap-6">
           <div className="md:col-span-2 space-y-5">
-            <div className="bg-white rounded-2xl border border-slate-200 p-5">
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-white/[0.08] p-5">
               <h2 className="font-semibold text-lg mb-3 flex items-center gap-2">
                 <ShoppingBag size={18} /> Order Items
               </h2>
               <div className="space-y-3">
                 {cart.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center border-b border-slate-100 pb-2">
+                  <div key={item.id} className="flex justify-between items-center border-b border-[#E3DCD3]/60 dark:border-white/[0.06] pb-2">
                     <div>
-                      <p className="font-medium text-slate-800">{item.title}</p>
-                      <p className="text-xs text-slate-500">Qty: {item.quantity}</p>
+                      <p className="font-medium text-[#282521] dark:text-[#EDE8E1]">{item.title}</p>
+                      <p className="text-xs text-[#756E64] dark:text-[#7A7368]">Qty: {item.quantity}</p>
                     </div>
-                    <p className="font-semibold text-slate-900">₹{(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="font-semibold text-[#282521] dark:text-[#EDE8E1]">₹{(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 p-5">
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-white/[0.08] p-5">
               <h2 className="font-semibold text-lg mb-3 flex items-center gap-2">
                 <Truck size={18} /> Shipping Details
               </h2>
@@ -168,7 +168,7 @@ const Checkout = () => {
                   name="shippingAddress"
                   value={formData.shippingAddress}
                   onChange={handleInputChange}
-                  className="w-full border border-slate-200 rounded-xl p-2.5"
+                  className="w-full border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl p-2.5"
                   placeholder="Street address"
                 />
                 <div className="grid grid-cols-2 gap-3">
@@ -177,7 +177,7 @@ const Checkout = () => {
                     name="city"
                     value={formData.city}
                     onChange={handleInputChange}
-                    className="w-full border border-slate-200 rounded-xl p-2.5"
+                    className="w-full border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl p-2.5"
                     placeholder="City"
                   />
                   <input
@@ -185,20 +185,20 @@ const Checkout = () => {
                     name="postalCode"
                     value={formData.postalCode}
                     onChange={handleInputChange}
-                    className="w-full border border-slate-200 rounded-xl p-2.5"
+                    className="w-full border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl p-2.5"
                     placeholder="Postal code"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 p-5">
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-white/[0.08] p-5">
               <h2 className="font-semibold text-lg mb-3 flex items-center gap-2">
                 <CreditCard size={18} /> Payment
               </h2>
               <div className="grid sm:grid-cols-3 gap-2">
                 {["CARD", "UPI", "PAYPAL"].map((method) => (
-                  <label key={method} className="flex items-center gap-2 p-2 border border-slate-200 rounded-xl">
+                  <label key={method} className="flex items-center gap-2 p-2 border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl">
                     <input type="radio" name="paymentMethod" value={method} checked={formData.paymentMethod === method} onChange={handleInputChange} />
                     <span className="text-sm">{method}</span>
                   </label>
@@ -208,7 +208,7 @@ const Checkout = () => {
           </div>
 
           <div className="md:col-span-1">
-            <div className="bg-white rounded-2xl border border-slate-200 p-5 sticky top-6 shadow-sm">
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-white/[0.08] p-5 sticky top-6 shadow-sm">
               <h3 className="font-semibold text-lg mb-3">Total</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">

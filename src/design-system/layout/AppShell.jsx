@@ -720,7 +720,7 @@ export const AppShell = ({ children }) => {
                           </button>
                         </div>
 
-                        <div className="border-t border-slate-200 dark:border-white/[0.04] my-1" />
+                        <div className="border-t border-[#E3DCD3] dark:border-white/[0.06] my-1" />
 
                         <button
                           type="button"

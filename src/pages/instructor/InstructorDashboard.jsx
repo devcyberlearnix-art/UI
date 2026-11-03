@@ -424,7 +424,7 @@ const InstructorDashboard = () => {
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => { setSelectedStudent(enrollment); setGradeValue(enrollment.grade); setShowStudentModal(true); }}
-                          className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm"
+                          className="bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 text-[#5B3E57] dark:text-[#D1A7CC] px-2 py-1 rounded text-sm"
                         >
                           Assign Grade
                         </motion.button>

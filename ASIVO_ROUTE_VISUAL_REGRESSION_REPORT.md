@@ -67,10 +67,10 @@ Every route declared in `src/App.jsx` was audited for visual consistency, theme 
 
 ## 2. SCREENSHOT EVIDENCE DIRECTORY MAPPING
 
-All captured evidence assets are located in `ASIVO_CONSISTENCY_SCREENSHOTS/`:
+All captured evidence assets are located in the canonical screenshot directory `ASIVO_DESIGN_SCREENSHOTS/`:
 
 ```
-ASIVO_CONSISTENCY_SCREENSHOTS/
+ASIVO_DESIGN_SCREENSHOTS/
 ├── 01_landing_public_light.png          (Desktop 1440px Public Landing Hero)
 ├── 02_landing_public_dark.png           (Desktop 1440px Public Landing Nocturnal)
 ├── 03_courses_catalog_light.png         (Courses Catalog with Harmonized Badges)

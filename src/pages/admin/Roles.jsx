@@ -114,7 +114,7 @@ const Roles = () => {
       id: "1",
       name: "Super Admin",
       description: "Full system access with all permissions",
-      permissions: Object.values(permissionCategories).flatMap(cat => 
+      permissions: Object.values(permissionCategories).flatMap(cat =>
         cat.permissions.map(p => p.id)
       ),
       users: 2,
@@ -212,7 +212,7 @@ const Roles = () => {
   };
 
   const handlePermissionToggle = (permissionId) => {
-    setSelectedPermissions(prev => 
+    setSelectedPermissions(prev =>
       prev.includes(permissionId)
         ? prev.filter(id => id !== permissionId)
         : [...prev, permissionId]
@@ -222,13 +222,13 @@ const Roles = () => {
   const handleSelectAll = (categoryPermissions) => {
     const allIds = categoryPermissions.map(p => p.id);
     const allSelected = allIds.every(id => selectedPermissions.includes(id));
-    
+
     if (allSelected) {
-      setSelectedPermissions(prev => 
+      setSelectedPermissions(prev =>
         prev.filter(id => !allIds.includes(id))
       );
     } else {
-      setSelectedPermissions(prev => 
+      setSelectedPermissions(prev =>
         [...new Set([...prev, ...allIds])]
       );
     }
@@ -244,10 +244,10 @@ const Roles = () => {
       // In production: const data = editingRole 
       //   ? await adminApi.updateRole(editingRole.id, { ...formData, permissions: selectedPermissions })
       //   : await adminApi.createRole({ ...formData, permissions: selectedPermissions });
-      
+
       // Simulate save
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       const newRole = {
         id: editingRole ? editingRole.id : String(Date.now()),
         name: formData.name,
@@ -284,7 +284,7 @@ const Roles = () => {
       // In production: await adminApi.deleteRole(roleId);
       // Simulate delete
       await new Promise(resolve => setTimeout(resolve, 300));
-      
+
       setRoles(prev => prev.filter(r => r.id !== roleId));
       toast.success("Role deleted successfully");
     } catch (error) {
@@ -313,9 +313,9 @@ const Roles = () => {
   }
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }} 
-      animate={{ opacity: 1, y: 0 }} 
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       className="space-y-6"
     >
       {/* Header */}
@@ -382,15 +382,13 @@ const Roles = () => {
               key={role.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`bg-white rounded-xl shadow-sm border ${
-                role.isActive ? "border-gray-200" : "border-red-200 bg-red-50/30"
-              } p-6 hover:shadow-md transition`}
+              className={`bg-white rounded-xl shadow-sm border ${role.isActive ? "border-gray-200" : "border-red-200 bg-red-50/30"
+                } p-6 hover:shadow-md transition`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-lg ${
-                    role.isActive ? "bg-orange-100" : "bg-gray-200"
-                  }`}>
+                  <div className={`p-3 rounded-lg ${role.isActive ? "bg-orange-100" : "bg-gray-200"
+                    }`}>
                     <Icon className={`${role.isActive ? "text-orange-600" : "text-gray-500"}`} size={24} />
                   </div>
                   <div>
@@ -400,11 +398,10 @@ const Roles = () => {
                       <span className="text-xs text-gray-500">
                         {role.users} users assigned
                       </span>
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                        role.isActive 
-                          ? "bg-green-100 text-green-700" 
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${role.isActive
+                          ? "bg-green-100 text-green-700"
                           : "bg-red-100 text-red-700"
-                      }`}>
+                        }`}>
                         {role.isActive ? "Active" : "Inactive"}
                       </span>
                     </div>
@@ -467,156 +464,155 @@ const Roles = () => {
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto"
             >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
-            >
-              <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center">
-                <h2 className="text-2xl font-bold">
-                  {editingRole ? "Edit Role" : "Create New Role"}
-                </h2>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="p-6 space-y-6">
-                {/* Basic Info */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Role Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Enter role name"
-                      className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Status
-                    </label>
-                    <div className="flex items-center gap-4 pt-2">
-                      <label className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          checked={formData.isActive}
-                          onChange={() => setFormData({ ...formData, isActive: true })}
-                          className="w-4 h-4 text-orange-500 focus:ring-orange-500"
-                        />
-                        Active
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          checked={!formData.isActive}
-                          onChange={() => setFormData({ ...formData, isActive: false })}
-                          className="w-4 h-4 text-orange-500 focus:ring-orange-500"
-                        />
-                        Inactive
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Describe the role's purpose"
-                    rows="2"
-                    className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none resize-none"
-                  />
-                </div>
-
-                {/* Permissions */}
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">Permissions</h3>
-                    <button
-                      onClick={() => {
-                        const allPermissions = Object.values(permissionCategories).flatMap(
-                          cat => cat.permissions.map(p => p.id)
-                        );
-                        const allSelected = allPermissions.every(id => selectedPermissions.includes(id));
-                        setSelectedPermissions(allSelected ? [] : allPermissions);
-                      }}
-                      className="text-sm text-orange-500 hover:text-orange-600 font-medium"
-                    >
-                      {Object.values(permissionCategories).flatMap(cat => cat.permissions).every(
-                        p => selectedPermissions.includes(p.id)
-                      ) ? "Deselect All" : "Select All"}
-                    </button>
-                  </div>
-
-                  {Object.entries(permissionCategories).map(([key, category]) => (
-                    <div key={key} className="mb-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium text-gray-700">{category.label}</h4>
-                        <button
-                          onClick={() => handleSelectAll(category.permissions)}
-                          className="text-xs text-blue-500 hover:text-blue-600"
-                        >
-                          {category.permissions.every(p => selectedPermissions.includes(p.id))
-                            ? "Deselect All"
-                            : "Select All"}
-                        </button>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        {category.permissions.map((permission) => (
-                          <label
-                            key={permission.id}
-                            className={`flex items-center gap-2 p-2 rounded-lg border transition cursor-pointer ${
-                              selectedPermissions.includes(permission.id)
-                                ? "border-orange-500 bg-orange-50"
-                                : "border-gray-200 hover:border-gray-300"
-                            }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedPermissions.includes(permission.id)}
-                              onChange={() => handlePermissionToggle(permission.id)}
-                              className="w-4 h-4 text-orange-500 focus:ring-orange-500"
-                            />
-                            <span className="text-sm text-gray-700">{permission.label}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Actions */}
-                <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+              <motion.div
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+              >
+                <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center">
+                  <h2 className="text-2xl font-bold">
+                    {editingRole ? "Edit Role" : "Create New Role"}
+                  </h2>
                   <button
                     onClick={() => setShowModal(false)}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition"
+                    className="p-2 hover:bg-gray-100 rounded-lg transition"
                   >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSaveRole}
-                    className="flex items-center gap-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
-                  >
-                    <Save size={18} />
-                    {editingRole ? "Update Role" : "Create Role"}
+                    <X size={20} />
                   </button>
                 </div>
-              </div>
+
+                <div className="p-6 space-y-6">
+                  {/* Basic Info */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Role Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Enter role name"
+                        className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Status
+                      </label>
+                      <div className="flex items-center gap-4 pt-2">
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            checked={formData.isActive}
+                            onChange={() => setFormData({ ...formData, isActive: true })}
+                            className="w-4 h-4 text-orange-500 focus:ring-orange-500"
+                          />
+                          Active
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            checked={!formData.isActive}
+                            onChange={() => setFormData({ ...formData, isActive: false })}
+                            className="w-4 h-4 text-orange-500 focus:ring-orange-500"
+                          />
+                          Inactive
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Description
+                    </label>
+                    <textarea
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="Describe the role's purpose"
+                      rows="2"
+                      className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none resize-none"
+                    />
+                  </div>
+
+                  {/* Permissions */}
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold">Permissions</h3>
+                      <button
+                        onClick={() => {
+                          const allPermissions = Object.values(permissionCategories).flatMap(
+                            cat => cat.permissions.map(p => p.id)
+                          );
+                          const allSelected = allPermissions.every(id => selectedPermissions.includes(id));
+                          setSelectedPermissions(allSelected ? [] : allPermissions);
+                        }}
+                        className="text-sm text-orange-500 hover:text-orange-600 font-medium"
+                      >
+                        {Object.values(permissionCategories).flatMap(cat => cat.permissions).every(
+                          p => selectedPermissions.includes(p.id)
+                        ) ? "Deselect All" : "Select All"}
+                      </button>
+                    </div>
+
+                    {Object.entries(permissionCategories).map(([key, category]) => (
+                      <div key={key} className="mb-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-medium text-gray-700">{category.label}</h4>
+                          <button
+                            onClick={() => handleSelectAll(category.permissions)}
+                            className="text-xs text-blue-500 hover:text-blue-600"
+                          >
+                            {category.permissions.every(p => selectedPermissions.includes(p.id))
+                              ? "Deselect All"
+                              : "Select All"}
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          {category.permissions.map((permission) => (
+                            <label
+                              key={permission.id}
+                              className={`flex items-center gap-2 p-2 rounded-lg border transition cursor-pointer ${selectedPermissions.includes(permission.id)
+                                  ? "border-orange-500 bg-orange-50"
+                                  : "border-gray-200 hover:border-gray-300"
+                                }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedPermissions.includes(permission.id)}
+                                onChange={() => handlePermissionToggle(permission.id)}
+                                className="w-4 h-4 text-orange-500 focus:ring-orange-500"
+                              />
+                              <span className="text-sm text-gray-700">{permission.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                    <button
+                      onClick={() => setShowModal(false)}
+                      className="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveRole}
+                      className="flex items-center gap-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+                    >
+                      <Save size={18} />
+                      {editingRole ? "Update Role" : "Create Role"}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        </Portal>
+          </Portal>
         )}
       </AnimatePresence>
     </motion.div>

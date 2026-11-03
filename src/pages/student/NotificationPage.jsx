@@ -34,7 +34,7 @@ const SPRING_TRANSITION = {
 const getNotificationIcon = (type) => {
   switch (type) {
     case 'ENROLLMENT':
-      return <BookOpen size={18} className="text-cyan-400" />;
+      return <BookOpen size={18} className="text-[#5B3E57] dark:text-[#D1A7CC]" />;
     case 'REVIEW':
       return <Star size={18} className="text-amber-400" />;
     case 'CERTIFICATE':
