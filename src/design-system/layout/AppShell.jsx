@@ -36,6 +36,7 @@ import { useOrder } from '../../context/OrderContext';
 import { notificationApi } from '../../api/notificationApi';
 import Badge from '../primitives/Badge';
 import Button from '../primitives/Button';
+import ThemeToggle from '../../components/common/ThemeToggle';
 
 // Intentional spring physics configuration per architectural specification
 const SPRING_TRANSITION = {
@@ -290,7 +291,7 @@ export const AppShell = ({ children }) => {
   // PRIMARY ENTERPRISE WORKSPACE SHELL
   // -------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-[#070709] font-sans text-[#F5F5F7] flex flex-col selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#070709] font-sans text-[#0F172A] dark:text-[#F5F5F7] flex flex-col selection:bg-blue-500/20 dark:selection:bg-[#C5A880]/30 selection:text-blue-900 dark:selection:text-white">
       {/* Keyboard Accessibility Skip Link */}
       <a
         href="#main-shell-content"
@@ -305,10 +306,10 @@ export const AppShell = ({ children }) => {
           initial={false}
           animate={{ width: isCollapsed ? 76 : 260 }}
           transition={SPRING_TRANSITION}
-          className="hidden md:flex flex-col shrink-0 bg-[#0F0F13]/95 backdrop-blur-2xl border-r border-white/[0.04] z-40 relative select-none"
+          className="hidden md:flex flex-col shrink-0 bg-white dark:bg-[#0F0F13]/95 backdrop-blur-2xl border-r border-slate-200 dark:border-white/[0.04] z-40 relative select-none"
         >
           {/* Brand Signature Bar */}
-          <div className="h-16 px-4 flex items-center justify-between border-b border-white/[0.04]">
+          <div className="h-16 px-4 flex items-center justify-between border-b border-slate-200 dark:border-white/[0.04]">
             <div
               onClick={() => handleNavigate(
                 userRole === 'admin'
@@ -319,7 +320,7 @@ export const AppShell = ({ children }) => {
               )}
               className="flex items-center gap-3 group overflow-hidden cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shadow-sm shrink-0 transition-transform group-hover:scale-105">
+              <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-[#14141A] border border-blue-500/20 dark:border-[#C5A880]/30 flex items-center justify-center text-blue-600 dark:text-[#C5A880] shadow-sm shrink-0 transition-transform group-hover:scale-105">
                 <GraduationCap className="w-5 h-5" />
               </div>
               {!isCollapsed && (
@@ -329,10 +330,10 @@ export const AppShell = ({ children }) => {
                   transition={{ duration: 0.2 }}
                   className="flex flex-col whitespace-nowrap"
                 >
-                  <span className="text-base font-extrabold tracking-tight text-white group-hover:text-[#C5A880] transition-colors">
+                  <span className="text-base font-extrabold tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-[#C5A880] transition-colors">
                     FD_LMS
                   </span>
-                  <span className="text-[9px] font-bold tracking-[0.25em] text-[#C5A880] uppercase -mt-0.5">
+                  <span className="text-[9px] font-bold tracking-[0.25em] text-blue-600 dark:text-[#C5A880] uppercase -mt-0.5">
                     {userRole.toUpperCase()} RAIL
                   </span>
                 </motion.div>
@@ -343,7 +344,7 @@ export const AppShell = ({ children }) => {
             <button
               type="button"
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-1.5 rounded-xl text-[#71717A] hover:text-white hover:bg-white/[0.04] transition-colors cursor-pointer"
+              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:text-[#71717A] dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors cursor-pointer"
               title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               aria-label="Toggle Sidebar"
             >
@@ -367,21 +368,21 @@ export const AppShell = ({ children }) => {
                   type="button"
                   onClick={() => handleNavigate(item.href)}
                   className={`w-full relative flex items-center gap-3.5 px-3.5 py-2.5 rounded-2xl text-xs font-semibold tracking-wide transition-colors group select-none cursor-pointer text-left ${
-                    active ? 'text-white' : 'text-[#A1A1AA] hover:text-white hover:bg-white/[0.02]'
+                    active ? 'text-blue-600 dark:text-white font-bold' : 'text-slate-600 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.02]'
                   }`}
                 >
                   {/* Shared Layout Active Indicator (Spring Morphing) */}
                   {active && (
                     <motion.div
                       layoutId="activeNavBackground"
-                      className="absolute inset-0 bg-[#C5A880]/10 border border-[#C5A880]/30 rounded-2xl -z-10 shadow-[0_0_20px_rgba(197,168,128,0.06)]"
+                      className="absolute inset-0 bg-blue-50 dark:bg-[#C5A880]/10 border border-blue-200 dark:border-[#C5A880]/30 rounded-2xl -z-10 shadow-xs dark:shadow-[0_0_20px_rgba(197,168,128,0.06)]"
                       transition={SPRING_TRANSITION}
                     />
                   )}
 
                   <Icon
                     className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${
-                      active ? 'text-[#C5A880]' : 'text-[#71717A]'
+                      active ? 'text-blue-600 dark:text-[#C5A880]' : 'text-slate-400 dark:text-[#71717A]'
                     }`}
                   />
 
@@ -400,18 +401,18 @@ export const AppShell = ({ children }) => {
           </nav>
 
           {/* User Status Footer Dock */}
-          <div className="p-3 border-t border-white/[0.04] bg-[#070709]/40">
+          <div className="p-3 border-t border-slate-200 dark:border-white/[0.04] bg-slate-50 dark:bg-[#070709]/40">
             {user ? (
-              <div className="flex items-center gap-3 p-2 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
-                <div className="w-8 h-8 rounded-xl bg-[#14141A] border border-white/15 flex items-center justify-center text-[#E5E5E7] text-xs font-bold shrink-0">
+              <div className="flex items-center gap-3 p-2 rounded-2xl bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/[0.04] shadow-xs">
+                <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-[#14141A] border border-slate-200 dark:border-white/15 flex items-center justify-center text-slate-800 dark:text-[#E5E5E7] text-xs font-bold shrink-0">
                   {(user.name || user.email || 'U').charAt(0).toUpperCase()}
                 </div>
                 {!isCollapsed && (
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-white truncate">
+                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
                       {user.name || 'Engineer'}
                     </p>
-                    <p className="text-[10px] text-[#71717A] truncate font-mono">
+                    <p className="text-[10px] text-slate-500 dark:text-[#71717A] truncate font-mono">
                       {user.email}
                     </p>
                   </div>
@@ -423,7 +424,7 @@ export const AppShell = ({ children }) => {
                       logout();
                       navigate('/');
                     }}
-                    className="p-1.5 text-[#71717A] hover:text-rose-400 transition-colors cursor-pointer"
+                    className="p-1.5 text-slate-400 hover:text-rose-500 dark:text-[#71717A] dark:hover:text-rose-400 transition-colors cursor-pointer"
                     title="Sign Out"
                     aria-label="Sign out"
                   >
@@ -459,16 +460,16 @@ export const AppShell = ({ children }) => {
         </motion.aside>
 
         {/* ======================= MAIN CANVAS ======================= */}
-        <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-slate-50 dark:bg-[#070709]">
           {/* Header Navigation Rail */}
-          <header className="sticky top-0 z-30 w-full px-4 sm:px-6 lg:px-8 py-3.5 backdrop-blur-xl bg-[#070709]/85 border-b border-white/[0.04]">
+          <header className="sticky top-0 z-30 w-full px-4 sm:px-6 lg:px-8 py-3.5 backdrop-blur-xl bg-white/90 dark:bg-[#070709]/85 border-b border-slate-200 dark:border-white/[0.04]">
             <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
               {/* Left: Mobile Toggle & Dynamic Breadcrumbs */}
               <div className="flex items-center gap-3 min-w-0">
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(true)}
-                  className="md:hidden p-2 rounded-xl bg-[#14141A] text-[#A1A1AA] hover:text-white border border-white/[0.04] cursor-pointer"
+                  className="md:hidden p-2 rounded-xl bg-slate-100 dark:bg-[#14141A] text-slate-600 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/[0.04] cursor-pointer"
                   aria-label="Open navigation menu"
                 >
                   <Menu className="w-4 h-4" />
@@ -477,7 +478,7 @@ export const AppShell = ({ children }) => {
                 {/* Dynamic Breadcrumb Trail */}
                 <nav
                   aria-label="Breadcrumbs"
-                  className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-[#71717A] overflow-hidden whitespace-nowrap"
+                  className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-[#71717A] overflow-hidden whitespace-nowrap"
                 >
                   <button
                     type="button"
@@ -488,22 +489,22 @@ export const AppShell = ({ children }) => {
                         ? '/instructor/dashboard'
                         : '/student/dashboard'
                     )}
-                    className="hover:text-white transition-colors cursor-pointer"
+                    className="hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
                   >
                     Platform
                   </button>
                   {breadcrumbs.map((crumb, idx) => (
                     <React.Fragment key={crumb.href}>
-                      <span className="text-white/20">/</span>
+                      <span className="text-slate-300 dark:text-white/20">/</span>
                       {idx === breadcrumbs.length - 1 ? (
-                        <span className="text-white font-semibold truncate max-w-[200px]">
+                        <span className="text-slate-900 dark:text-white font-semibold truncate max-w-[200px]">
                           {crumb.label}
                         </span>
                       ) : (
                         <button
                           type="button"
                           onClick={() => handleNavigate(crumb.href)}
-                          className="hover:text-white transition-colors truncate max-w-[150px] cursor-pointer"
+                          className="hover:text-slate-900 dark:hover:text-white transition-colors truncate max-w-[150px] cursor-pointer"
                         >
                           {crumb.label}
                         </button>
@@ -515,13 +516,16 @@ export const AppShell = ({ children }) => {
 
               {/* Right: Actions, Notifications & Profile */}
               <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                {/* Theme Toggle Button */}
+                <ThemeToggle size="sm" />
+
                 {/* Catalog Navigation Quick Action */}
                 <button
                   type="button"
                   onClick={() => handleNavigate('/courses')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.04] text-xs font-semibold text-[#A1A1AA] hover:text-white transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.02] dark:hover:bg-white/[0.05] border border-slate-200 dark:border-white/[0.04] text-xs font-semibold text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
                 >
-                  <Search className="w-3.5 h-3.5 text-[#C5A880]" />
+                  <Search className="w-3.5 h-3.5 text-blue-600 dark:text-[#C5A880]" />
                   <span>Catalog</span>
                 </button>
 
@@ -529,13 +533,13 @@ export const AppShell = ({ children }) => {
                 <button
                   type="button"
                   onClick={() => handleNavigate('/cart')}
-                  className="relative p-2 rounded-xl bg-[#14141A] text-[#A1A1AA] hover:text-white border border-white/[0.04] hover:border-[#C5A880]/30 transition-all cursor-pointer"
+                  className="relative p-2 rounded-xl bg-slate-100 dark:bg-[#14141A] text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/[0.04] hover:border-blue-400 dark:hover:border-[#C5A880]/30 transition-all cursor-pointer"
                   title="View Shopping Cart"
                   aria-label="Shopping Cart"
                 >
                   <ShoppingCart className="w-4 h-4" />
                   {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#C5A880] text-[#070709] text-[9px] font-black flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-blue-600 dark:bg-[#C5A880] text-white dark:text-[#070709] text-[9px] font-black flex items-center justify-center">
                       {cartCount}
                     </span>
                   )}
@@ -546,7 +550,7 @@ export const AppShell = ({ children }) => {
                   <button
                     type="button"
                     onClick={() => setNotificationsOpen(!notificationsOpen)}
-                    className="relative p-2 rounded-xl bg-[#14141A] text-[#A1A1AA] hover:text-white border border-white/[0.04] hover:border-[#C5A880]/30 transition-all cursor-pointer"
+                    className="relative p-2 rounded-xl bg-slate-100 dark:bg-[#14141A] text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/[0.04] hover:border-blue-400 dark:hover:border-[#C5A880]/30 transition-all cursor-pointer"
                     title="Notifications"
                     aria-label="View notifications"
                   >
@@ -565,11 +569,11 @@ export const AppShell = ({ children }) => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={SPRING_TRANSITION}
-                        className="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl bg-[#0F0F13] border border-white/[0.06] shadow-2xl p-4 z-50 overflow-hidden"
+                        className="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl bg-white dark:bg-[#0F0F13] border border-slate-200 dark:border-white/[0.06] shadow-xl dark:shadow-2xl p-4 z-50 overflow-hidden text-slate-900 dark:text-white"
                       >
-                        <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
+                        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-white/[0.04]">
                           <div className="flex items-center gap-2">
-                            <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                            <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                               Real-Time Telemetry
                             </h4>
                             {unreadCount > 0 && (
@@ -582,7 +586,7 @@ export const AppShell = ({ children }) => {
                             <button
                               type="button"
                               onClick={handleMarkAllRead}
-                              className="text-[10px] text-[#C5A880] hover:underline font-mono flex items-center gap-1 cursor-pointer"
+                              className="text-[10px] text-blue-600 dark:text-[#C5A880] hover:underline font-mono flex items-center gap-1 cursor-pointer"
                             >
                               <CheckCheck className="w-3 h-3" /> Mark Read
                             </button>
@@ -591,11 +595,11 @@ export const AppShell = ({ children }) => {
 
                         <div className="py-2 max-h-72 overflow-y-auto space-y-2 scrollbar-none">
                           {loadingNotifications ? (
-                            <div className="p-6 text-center text-xs text-[#71717A] font-mono">
+                            <div className="p-6 text-center text-xs text-slate-500 dark:text-[#71717A] font-mono">
                               Querying notifications feed...
                             </div>
                           ) : notifications.length === 0 ? (
-                            <div className="p-6 text-center text-xs text-[#71717A]">
+                            <div className="p-6 text-center text-xs text-slate-500 dark:text-[#71717A]">
                               All operational signals cleared.
                             </div>
                           ) : (
@@ -604,14 +608,14 @@ export const AppShell = ({ children }) => {
                                 key={n.id || n.notificationId}
                                 className={`p-3 rounded-xl border text-xs transition-colors ${
                                   n.status === 'READ' || n.isRead
-                                    ? 'bg-white/[0.01] border-white/[0.02] text-[#8E8E93]'
-                                    : 'bg-[#C5A880]/5 border-[#C5A880]/20 text-[#E5E5E7]'
+                                    ? 'bg-slate-50 dark:bg-white/[0.01] border-slate-200 dark:border-white/[0.02] text-slate-500 dark:text-[#8E8E93]'
+                                    : 'bg-blue-50/60 dark:bg-[#C5A880]/5 border-blue-200/60 dark:border-[#C5A880]/20 text-slate-800 dark:text-[#E5E5E7]'
                                 }`}
                               >
-                                <p className="font-semibold text-white truncate">
+                                <p className="font-semibold text-slate-900 dark:text-white truncate">
                                   {n.title || n.subject || 'System Notification'}
                                 </p>
-                                <p className="text-[11px] text-[#A1A1AA] mt-0.5 line-clamp-2">
+                                <p className="text-[11px] text-slate-600 dark:text-[#A1A1AA] mt-0.5 line-clamp-2">
                                   {n.message || n.content}
                                 </p>
                               </div>
@@ -619,14 +623,14 @@ export const AppShell = ({ children }) => {
                           )}
                         </div>
 
-                        <div className="pt-2 border-t border-white/[0.04] text-center">
+                        <div className="pt-2 border-t border-slate-200 dark:border-white/[0.04] text-center">
                           <button
                             type="button"
                             onClick={() => {
                               setNotificationsOpen(false);
                               handleNavigate('/student/notifications');
                             }}
-                            className="text-[11px] font-semibold text-[#C5A880] hover:text-white transition-colors cursor-pointer"
+                            className="text-[11px] font-semibold text-blue-600 dark:text-[#C5A880] hover:text-blue-700 dark:hover:text-white transition-colors cursor-pointer"
                           >
                             View All Telemetry Alerts &rarr;
                           </button>
@@ -641,10 +645,10 @@ export const AppShell = ({ children }) => {
                   <button
                     type="button"
                     onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                    className="flex items-center gap-2 p-1.5 rounded-xl bg-[#14141A] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all cursor-pointer"
+                    className="flex items-center gap-2 p-1.5 rounded-xl bg-slate-100 dark:bg-[#14141A] border border-slate-200 dark:border-white/[0.04] hover:border-blue-400 dark:hover:border-[#C5A880]/30 transition-all cursor-pointer"
                     aria-label="User profile options"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-[#C5A880]/20 border border-[#C5A880]/40 flex items-center justify-center text-[#C5A880] text-xs font-bold">
+                    <div className="w-7 h-7 rounded-lg bg-blue-100 dark:bg-[#C5A880]/20 border border-blue-200 dark:border-[#C5A880]/40 flex items-center justify-center text-blue-600 dark:text-[#C5A880] text-xs font-bold">
                       {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
                     </div>
                   </button>
@@ -656,13 +660,13 @@ export const AppShell = ({ children }) => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={SPRING_TRANSITION}
-                        className="absolute right-0 mt-3 w-56 rounded-2xl bg-[#0F0F13] border border-white/[0.06] shadow-2xl p-2 z-50 text-xs font-medium"
+                        className="absolute right-0 mt-3 w-56 rounded-2xl bg-white dark:bg-[#0F0F13] border border-slate-200 dark:border-white/[0.06] shadow-xl dark:shadow-2xl p-2 z-50 text-xs font-medium text-slate-900 dark:text-white"
                       >
-                        <div className="px-3 py-2 border-b border-white/[0.04]">
-                          <p className="font-bold text-white truncate">
+                        <div className="px-3 py-2 border-b border-slate-200 dark:border-white/[0.04]">
+                          <p className="font-bold text-slate-900 dark:text-white truncate">
                             {user?.name || 'Engineer'}
                           </p>
-                          <p className="text-[10px] text-[#71717A] truncate font-mono">
+                          <p className="text-[10px] text-slate-500 dark:text-[#71717A] truncate font-mono">
                             {user?.email}
                           </p>
                           <div className="mt-1">
@@ -677,11 +681,17 @@ export const AppShell = ({ children }) => {
                             type="button"
                             onClick={() => {
                               setProfileDropdownOpen(false);
-                              handleNavigate('/student/profile');
+                              handleNavigate(
+                                userRole === 'admin'
+                                  ? '/admin/profile'
+                                  : userRole === 'instructor'
+                                  ? '/instructor/profile'
+                                  : '/student/profile'
+                              );
                             }}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
                           >
-                            <User className="w-4 h-4 text-[#C5A880]" />
+                            <User className="w-4 h-4 text-blue-600 dark:text-[#C5A880]" />
                             <span>Identity Profile</span>
                           </button>
 
@@ -691,9 +701,9 @@ export const AppShell = ({ children }) => {
                               setProfileDropdownOpen(false);
                               handleNavigate('/student/orders');
                             }}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
                           >
-                            <CreditCard className="w-4 h-4 text-[#C5A880]" />
+                            <CreditCard className="w-4 h-4 text-blue-600 dark:text-[#C5A880]" />
                             <span>Billing & Orders</span>
                           </button>
 
@@ -703,14 +713,14 @@ export const AppShell = ({ children }) => {
                               setProfileDropdownOpen(false);
                               handleNavigate('/student/notification-preferences');
                             }}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
                           >
-                            <Settings className="w-4 h-4 text-[#C5A880]" />
+                            <Settings className="w-4 h-4 text-blue-600 dark:text-[#C5A880]" />
                             <span>Preferences</span>
                           </button>
                         </div>
 
-                        <div className="border-t border-white/[0.04] my-1" />
+                        <div className="border-t border-slate-200 dark:border-white/[0.04] my-1" />
 
                         <button
                           type="button"
@@ -719,7 +729,7 @@ export const AppShell = ({ children }) => {
                             logout();
                             navigate('/');
                           }}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors text-left cursor-pointer"
+                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:text-rose-400 dark:hover:text-rose-300 dark:hover:bg-rose-500/10 transition-colors text-left cursor-pointer"
                         >
                           <LogOut className="w-4 h-4" />
                           <span>Terminate Session</span>

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cartApi } from '../api/cartApi';
+import ThemeToggle from '../components/common/ThemeToggle';
 
 const SPRING_TRANSITION = {
   type: 'spring',
@@ -126,24 +127,24 @@ const Navbar = () => {
       </a>
 
       <nav
-        className={`fixed top-0 w-full z-50 transition-all duration-300 selection:bg-[#C5A880]/30 selection:text-white ${
+        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
           scrolled
-            ? 'bg-[#070709]/95 backdrop-blur-xl border-b border-white/[0.04] py-3 shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)]'
-            : 'bg-[#070709]/80 backdrop-blur-md border-b border-white/[0.02] py-4'
+            ? 'bg-white/95 dark:bg-[#070709]/95 backdrop-blur-xl border-b border-slate-200 dark:border-white/[0.04] py-3 shadow-sm dark:shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)]'
+            : 'bg-white/80 dark:bg-[#070709]/80 backdrop-blur-md border-b border-slate-200/80 dark:border-white/[0.02] py-4'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center gap-4">
             {/* Brand Signature */}
             <Link to="/" className="flex items-center gap-3 group shrink-0">
-              <div className="w-10 h-10 rounded-xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shadow-sm transition-transform group-hover:scale-105">
-                <GraduationCap className="w-5 h-5 text-[#C5A880]" />
+              <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-[#14141A] border border-blue-500/20 dark:border-[#C5A880]/30 flex items-center justify-center text-blue-600 dark:text-[#C5A880] shadow-xs transition-transform group-hover:scale-105">
+                <GraduationCap className="w-5 h-5" />
               </div>
               <div className="flex flex-col">
-                <span className="text-base font-extrabold tracking-tight text-white group-hover:text-[#C5A880] transition-colors">
+                <span className="text-base font-extrabold tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-[#C5A880] transition-colors">
                   FD_LMS
                 </span>
-                <span className="hidden sm:block text-[9px] font-bold tracking-[0.25em] text-[#C5A880] uppercase -mt-0.5">
+                <span className="hidden sm:block text-[9px] font-bold tracking-[0.25em] text-blue-600 dark:text-[#C5A880] uppercase -mt-0.5">
                   ENTERPRISE
                 </span>
               </div>
@@ -151,14 +152,14 @@ const Navbar = () => {
 
             {/* Offline Network Alert Beacon */}
             {!isOnline && (
-              <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 font-mono text-[10px] font-semibold">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-500 font-mono text-[10px] font-semibold">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
                 <span>OFFLINE MESH</span>
               </div>
             )}
 
             {/* Desktop Navigation Links */}
-            <div className="hidden lg:flex items-center space-x-1 bg-[#0F0F13] p-1 rounded-xl border border-white/[0.04]">
+            <div className="hidden lg:flex items-center space-x-1 bg-slate-100 dark:bg-[#0F0F13] p-1 rounded-xl border border-slate-200 dark:border-white/[0.04]">
               {navLinks.map((link) => {
                 const isActive = location.pathname === link.href;
                 return (
@@ -166,13 +167,13 @@ const Navbar = () => {
                     key={link.href}
                     to={link.href}
                     className={`relative px-4 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                      isActive ? 'text-white' : 'text-[#8E8E93] hover:text-[#F5F5F7]'
+                      isActive ? 'text-blue-600 dark:text-white' : 'text-slate-600 dark:text-[#8E8E93] hover:text-slate-900 dark:hover:text-[#F5F5F7]'
                     }`}
                   >
                     {isActive && (
                       <motion.div
                         layoutId="publicNavActive"
-                        className="absolute inset-0 bg-[#C5A880]/15 border border-[#C5A880]/30 rounded-lg -z-10 shadow-[0_0_12px_rgba(197,168,128,0.1)]"
+                        className="absolute inset-0 bg-white dark:bg-[#C5A880]/15 border border-slate-200 dark:border-[#C5A880]/30 rounded-lg -z-10 shadow-xs dark:shadow-[0_0_12px_rgba(197,168,128,0.1)]"
                         transition={SPRING_TRANSITION}
                       />
                     )}
@@ -182,7 +183,7 @@ const Navbar = () => {
               })}
             </div>
 
-            {/* Architectural Search Input - Context-Aware: Hidden on /courses where dedicated in-page catalog search is active */}
+            {/* Architectural Search Input */}
             {!isCoursesPage && (
               <form
                 onSubmit={handleSearchSubmit}
@@ -194,19 +195,20 @@ const Navbar = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search curriculum..."
-                    className="w-full pl-9 pr-4 py-2 bg-[#0F0F13] border border-white/[0.06] rounded-xl text-xs text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880]/30 transition-all"
+                    className="w-full pl-9 pr-4 py-2 bg-slate-100 dark:bg-[#0F0F13] border border-slate-200 dark:border-white/[0.06] rounded-xl text-xs text-slate-900 dark:text-[#F5F5F7] placeholder-slate-400 dark:placeholder-[#71717A] focus:outline-none focus:border-blue-500 dark:focus:border-[#C5A880] focus:ring-1 focus:ring-blue-500/30 transition-all"
                   />
-                  <button type="submit" className="absolute left-3 top-2.5 text-[#71717A] group-focus-within:text-[#C5A880] transition-colors cursor-pointer" aria-label="Submit search"><Search className="h-3.5 w-3.5" /></button>
+                  <button type="submit" className="absolute left-3 top-2.5 text-slate-400 group-focus-within:text-blue-600 dark:group-focus-within:text-[#C5A880] transition-colors cursor-pointer" aria-label="Submit search"><Search className="h-3.5 w-3.5" /></button>
                 </div>
               </form>
             )}
 
             {/* Right Action Icons & Controls */}
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-2 sm:gap-3">
+              <ThemeToggle size="sm" />
               {/* Wishlist */}
               <Link
                 to="/wishlist"
-                className="p-2 rounded-xl bg-[#0F0F13] border border-white/[0.04] text-[#8E8E93] hover:text-[#F5F5F7] hover:border-white/[0.08] transition-all"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-[#0F0F13] border border-slate-200 dark:border-white/[0.04] text-slate-600 dark:text-[#8E8E93] hover:text-slate-900 dark:hover:text-[#F5F5F7] hover:border-slate-300 dark:hover:border-white/[0.08] transition-all"
                 aria-label="Wishlist"
               >
                 <Heart className="w-4 h-4" />

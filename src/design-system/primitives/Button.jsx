@@ -11,22 +11,22 @@ const SPRING_TRANSITION = {
 
 const VARIANTS = {
   primary:
-    'bg-[#C5A880] text-[#070709] font-bold border border-[#C5A880] hover:bg-[#D4BC98] hover:border-[#D4BC98] shadow-[0_4px_20px_rgba(197,168,128,0.22)] active:bg-[#B8976C]',
+    'bg-blue-600 dark:bg-[#C5A880] text-white dark:text-[#070709] font-bold border border-blue-600 dark:border-[#C5A880] hover:bg-blue-700 dark:hover:bg-[#D4BC98] hover:border-blue-700 dark:hover:border-[#D4BC98] shadow-sm hover:shadow-md dark:shadow-[0_4px_20px_rgba(197,168,128,0.22)] active:bg-blue-800 dark:active:bg-[#B8976C]',
   secondary:
-    'bg-[#14141A] text-[#E5E5E7] hover:text-white hover:bg-[#1B1B24] border border-white/[0.06] hover:border-white/[0.12] backdrop-blur-xl',
+    'bg-slate-100 dark:bg-[#14141A] text-slate-800 dark:text-[#E5E5E7] hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-[#1B1B24] border border-slate-200 dark:border-white/[0.06] hover:border-slate-300 dark:hover:border-white/[0.12] backdrop-blur-xl',
   gold:
-    'bg-[#C5A880] text-[#070709] font-bold border border-[#C5A880] hover:bg-[#D4BC98] shadow-[0_4px_20px_rgba(197,168,128,0.22)] active:bg-[#B8976C]',
+    'bg-blue-600 dark:bg-[#C5A880] text-white dark:text-[#070709] font-bold border border-blue-600 dark:border-[#C5A880] hover:bg-blue-700 dark:hover:bg-[#D4BC98] shadow-sm hover:shadow-md dark:shadow-[0_4px_20px_rgba(197,168,128,0.22)] active:bg-blue-800 dark:active:bg-[#B8976C]',
   ghost:
-    'bg-transparent text-[#A1A1AA] hover:text-[#F5F5F7] hover:bg-white/[0.04] active:bg-white/[0.08] border border-transparent',
+    'bg-transparent text-slate-600 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-[#F5F5F7] hover:bg-slate-100 dark:hover:bg-white/[0.04] active:bg-slate-200 dark:active:bg-white/[0.08] border border-transparent',
   outline:
-    'bg-transparent text-[#E5E5E7] hover:text-white border border-white/[0.08] hover:border-[#C5A880]/50 hover:bg-[#C5A880]/[0.04]',
+    'bg-transparent text-slate-700 dark:text-[#E5E5E7] hover:text-slate-900 dark:hover:text-white border border-slate-300 dark:border-white/[0.08] hover:border-blue-500 dark:hover:border-[#C5A880]/50 hover:bg-blue-50/50 dark:hover:bg-[#C5A880]/[0.04]',
   danger:
-    'bg-red-500/15 text-red-300 hover:bg-red-500/25 border border-red-500/30 hover:border-red-500/60',
+    'bg-red-50 dark:bg-red-500/15 text-red-600 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-500/25 border border-red-200 dark:border-red-500/30 hover:border-red-400 dark:hover:border-red-500/60',
   // Compatibility aliases
   cyan:
-    'bg-[#C5A880] text-[#070709] font-bold border border-[#C5A880] hover:bg-[#D4BC98] shadow-[0_4px_20px_rgba(197,168,128,0.22)]',
+    'bg-blue-600 dark:bg-[#C5A880] text-white dark:text-[#070709] font-bold border border-blue-600 dark:border-[#C5A880] hover:bg-blue-700 dark:hover:bg-[#D4BC98] shadow-sm',
   magenta:
-    'bg-[#14141A] text-[#E5E5E7] border border-white/[0.08] hover:border-[#C5A880]/50',
+    'bg-slate-100 dark:bg-[#14141A] text-slate-800 dark:text-[#E5E5E7] border border-slate-300 dark:border-white/[0.08] hover:border-blue-500 dark:hover:border-[#C5A880]/50',
 };
 
 const SIZES = {

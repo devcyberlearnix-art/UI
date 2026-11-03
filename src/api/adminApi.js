@@ -31,6 +31,26 @@ export const adminApi = {
     return response.data;
   },
 
+  uploadProfilePhoto: async (formData) => {
+    const response = await axiosInstance.post('/api/v1/admin/me/photo', formData);
+    return response.data;
+  },
+
+  deleteProfilePhoto: async () => {
+    const response = await axiosInstance.delete('/api/v1/admin/me/photo');
+    return response.data;
+  },
+
+  uploadCoverPhoto: async (formData) => {
+    const response = await axiosInstance.post('/api/v1/admin/me/cover-photo', formData);
+    return response.data;
+  },
+
+  deleteCoverPhoto: async () => {
+    const response = await axiosInstance.delete('/api/v1/admin/me/cover-photo');
+    return response.data;
+  },
+
   // ======================== USERS MANAGEMENT ========================
   // Legacy paginated helpers
   getUsersPaged: async (page = 0, size = 10) => {

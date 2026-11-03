@@ -117,6 +117,15 @@ function WebSocketNotificationBridge() {
   return null;
 }
 
+function ProfileRedirect() {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  const role = (user.role || '').toLowerCase();
+  if (role.includes('admin')) return <Navigate to="/admin/profile" replace />;
+  if (role === 'instructor') return <Navigate to="/instructor/profile" replace />;
+  return <Navigate to="/student/profile" replace />;
+}
+
 export default function App() {
   const { user, loading } = useAuth();
 
@@ -216,7 +225,6 @@ export default function App() {
               <Route path="/student/courses/:courseId/assignments" element={<StudentAssignments />} />
               <Route path="/student/notifications" element={<NotificationPage />} />
               <Route path="/student/notification-preferences" element={<NotificationPreferences />} />
-              <Route path="/profile" element={<ProfileWorkspace />} />
             </Route>
 
             {/* =========================================================================
@@ -236,7 +244,7 @@ export default function App() {
               <Route path="/instructor/my-courses" element={<InstructorCourses />} />
               <Route path="/instructor/analytics" element={<InstructorAnalytics />} />
               <Route path="/instructor/courses/:courseId/assignments" element={<InstructorAssignments />} />
-              <Route path="/profile" element={<ProfileWorkspace />} />
+              <Route path="/instructor/profile" element={<ProfileWorkspace />} />
             </Route>
 
             {/* =========================================================================
@@ -277,7 +285,6 @@ export default function App() {
               <Route path="/admin/ai-features" element={<AIFeatures />} />
               <Route path="/admin/gamification" element={<Gamification />} />
               <Route path="/admin/profile" element={<AdminProfile />} />
-              <Route path="/profile" element={<ProfileWorkspace />} />
               {/* ── Website Management (CMS) Routes ── */}
               <Route path="/admin/website-management" element={<WebsiteManagementHub />} />
               <Route path="/admin/website-management/hero" element={<HeroEditor />} />
@@ -291,6 +298,9 @@ export default function App() {
               <Route path="/admin/website-management/media" element={<MediaLibrary />} />
               <Route path="/admin/website-management/revisions" element={<RevisionHistory />} />
             </Route>
+
+            {/* Unified Role-Aware Profile Route */}
+            <Route path="/profile" element={<ProfileRedirect />} />
 
             {/* =========================================================================
                 GLOBAL STRUCTURAL WILDCARD FALLBACK

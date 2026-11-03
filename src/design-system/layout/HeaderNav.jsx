@@ -19,6 +19,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useOrder } from '../../context/OrderContext';
 import { cmsPublicApi } from '../../api/cmsApi';
 import Button from '../primitives/Button';
+import ThemeToggle from '../../components/common/ThemeToggle';
 
 // Intentional spring physics configuration per architectural specification
 const SPRING_TRANSITION = {
@@ -166,22 +167,22 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
 
   return (
     <header className="sticky top-0 z-50 w-full px-4 sm:px-6 lg:px-8 pt-4 pb-2">
-      <div className="max-w-7xl mx-auto rounded-2xl bg-[#0F0F13]/95 border border-white/[0.06] shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)] backdrop-blur-2xl px-4 sm:px-6 py-3 flex items-center justify-between transition-all">
+      <div className="max-w-7xl mx-auto rounded-2xl bg-white/95 dark:bg-[#0F0F13]/95 border border-slate-200/90 dark:border-white/[0.06] shadow-sm dark:shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)] backdrop-blur-2xl px-4 sm:px-6 py-3 flex items-center justify-between transition-all">
         {/* Brand Identity Signature with improved prominence */}
         <Link to="/" className="flex items-center gap-3 group" title="FD_LMS Home">
-          <div className="w-10 h-10 rounded-xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] font-black shadow-sm transition-transform group-hover:scale-105 overflow-hidden">
+          <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-[#14141A] border border-blue-500/20 dark:border-[#C5A880]/30 flex items-center justify-center text-blue-600 dark:text-[#C5A880] font-black shadow-xs transition-transform group-hover:scale-105 overflow-hidden">
             {brand.logoUrl ? (
               <img src={brand.logoUrl} alt={brand.name} className="w-full h-full object-contain p-1" />
             ) : (
-              <GraduationCap className="w-5 h-5 text-[#C5A880]" />
+              <GraduationCap className="w-5 h-5 text-blue-600 dark:text-[#C5A880]" />
             )}
           </div>
           <div className="flex flex-col">
-            <span className="text-base sm:text-lg font-extrabold tracking-tight text-white group-hover:text-[#C5A880] transition-colors leading-tight">
+            <span className="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-[#C5A880] transition-colors leading-tight">
               {brand.name}
             </span>
             {brand.tagline && (
-              <span className="hidden sm:inline text-[9px] font-bold tracking-[0.2em] text-[#C5A880] uppercase">
+              <span className="hidden sm:inline text-[9px] font-bold tracking-[0.2em] text-blue-600 dark:text-[#C5A880] uppercase">
                 {brand.tagline}
               </span>
             )}
@@ -189,7 +190,7 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
         </Link>
 
         {/* Center Desktop Navigation */}
-        <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-1 bg-[#070709]/80 p-1 rounded-xl border border-white/[0.04]">
+        <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-1 bg-slate-100 dark:bg-[#070709]/80 p-1 rounded-xl border border-slate-200 dark:border-white/[0.04]">
           {dynamicNavLinks.map((link) => {
             const isActive = location.pathname === link.href;
             return (
@@ -201,11 +202,11 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
                 {isActive && (
                   <motion.div
                     layoutId="activeNavIndicator"
-                    className="absolute inset-0 bg-[#C5A880]/15 border border-[#C5A880]/40 rounded-lg shadow-[0_0_15px_rgba(197,168,128,0.08)] -z-10"
+                    className="absolute inset-0 bg-white dark:bg-[#C5A880]/15 border border-slate-200/80 dark:border-[#C5A880]/40 rounded-lg shadow-xs -z-10"
                     transition={SPRING_TRANSITION}
                   />
                 )}
-                <span className={isActive ? 'text-white font-bold' : 'text-[#A1A1AA] hover:text-white'}>
+                <span className={isActive ? 'text-blue-600 dark:text-white font-bold' : 'text-slate-600 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white'}>
                   {link.label}
                 </span>
               </Link>
@@ -215,13 +216,16 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
 
         {/* Right Action Icons & Auth Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Theme Toggle Button */}
+          <ThemeToggle size="sm" />
+
           {/* Search Trigger with Tooltip */}
           <motion.button
             type="button"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onSearchClick || (() => navigate('/courses'))}
-            className="p-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] border border-transparent hover:border-white/[0.06] transition-all cursor-pointer"
+            className="p-2 rounded-xl text-slate-600 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] border border-transparent hover:border-slate-200 dark:hover:border-white/[0.06] transition-all cursor-pointer"
             aria-label="Search courses catalog"
             title="Search Catalog"
           >
@@ -231,13 +235,13 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
           {/* Cart Icon with Tooltip */}
           <Link
             to="/cart"
-            className="relative p-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] border border-transparent hover:border-white/[0.06] transition-all"
+            className="relative p-2 rounded-xl text-slate-600 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] border border-transparent hover:border-slate-200 dark:hover:border-white/[0.06] transition-all"
             aria-label="View shopping cart"
             title="Shopping Cart"
           >
             <ShoppingCart className="w-4 h-4" />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#C5A880] text-[#070709] text-[10px] font-bold flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-blue-600 dark:bg-[#C5A880] text-white dark:text-[#070709] text-[10px] font-bold flex items-center justify-center">
                 {cartCount > 9 ? '9+' : cartCount}
               </span>
             )}
@@ -246,7 +250,7 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
           {/* Wishlist Icon with Tooltip */}
           <Link
             to="/wishlist"
-            className="p-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] border border-transparent hover:border-white/[0.06] transition-all hidden sm:flex"
+            className="p-2 rounded-xl text-slate-600 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] border border-transparent hover:border-slate-200 dark:hover:border-white/[0.06] transition-all hidden sm:flex"
             aria-label="View saved courses wishlist"
             title="Saved Wishlist"
           >
@@ -363,15 +367,19 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={SPRING_TRANSITION}
-            className="md:hidden mt-2 rounded-2xl bg-[#0F0F13]/98 border border-white/[0.08] p-4 shadow-2xl backdrop-blur-2xl overflow-hidden"
+            className="md:hidden mt-2 rounded-2xl bg-white dark:bg-[#0F0F13]/98 border border-slate-200 dark:border-white/[0.08] p-4 shadow-lg dark:shadow-2xl backdrop-blur-2xl overflow-hidden"
           >
             <div className="flex flex-col gap-2">
+              <div className="pb-2 border-b border-slate-200 dark:border-white/[0.06] flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Appearance</span>
+                <ThemeToggle size="sm" showLabel />
+              </div>
               {dynamicNavLinks.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-2 rounded-xl text-sm font-semibold text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] transition-colors"
+                  className="px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors"
                 >
                   {link.label}
                 </Link>

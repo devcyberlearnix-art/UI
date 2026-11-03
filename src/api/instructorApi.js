@@ -26,6 +26,35 @@ export const instructorApi = {
     }
   },
 
+  updateProfile: async (profileData) => {
+    const response = await axiosInstance.put("/api/v1/users/me", profileData);
+    return response.data;
+  },
+
+  uploadProfilePhoto: async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await axiosInstance.put("/api/v1/users/me/photo", formData);
+    return response.data;
+  },
+
+  removeProfilePhoto: async () => {
+    const response = await axiosInstance.delete("/api/v1/users/me/photo");
+    return response.data;
+  },
+
+  uploadCoverPhoto: async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await axiosInstance.put("/api/v1/users/me/cover-photo", formData);
+    return response.data;
+  },
+
+  removeCoverPhoto: async () => {
+    const response = await axiosInstance.delete("/api/v1/users/me/cover-photo");
+    return response.data;
+  },
+
   // ======================== COURSE MANAGEMENT ========================
 
   // POST /api/v1/instructors/{instructorId}/courses

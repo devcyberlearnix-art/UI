@@ -799,8 +799,8 @@ const Courses = () => {
                     onClick={() => setViewMode("grid")}
                     title="Grid View"
                     className={`p-1.5 rounded-lg transition ${viewMode === "grid"
-                        ? "bg-[#C5A880] text-[#070709] font-bold"
-                        : "text-[#71717A] hover:text-[#F5F5F7]"
+                      ? "bg-[#C5A880] text-[#070709] font-bold"
+                      : "text-[#71717A] hover:text-[#F5F5F7]"
                       }`}
                   >
                     <LayoutGrid size={15} />
@@ -810,8 +810,8 @@ const Courses = () => {
                     onClick={() => setViewMode("list")}
                     title="List View"
                     className={`p-1.5 rounded-lg transition ${viewMode === "list"
-                        ? "bg-[#C5A880] text-[#070709] font-bold"
-                        : "text-[#71717A] hover:text-[#F5F5F7]"
+                      ? "bg-[#C5A880] text-[#070709] font-bold"
+                      : "text-[#71717A] hover:text-[#F5F5F7]"
                       }`}
                   >
                     <List size={15} />
@@ -831,8 +831,8 @@ const Courses = () => {
                     whileTap={{ scale: 0.96 }}
                     onClick={() => updateCategoryFilter(cat)}
                     className={`relative isolate whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all select-none border cursor-pointer ${isSel
-                        ? "text-[#070709] font-bold border-[#C5A880] bg-[#C5A880] shadow-[0_0_15px_rgba(197,168,128,0.25)]"
-                        : "text-[#8E8E93] hover:text-[#F5F5F7] border-white/[0.04] hover:border-white/20 bg-[#14141A]"
+                      ? "text-[#070709] font-bold border-[#C5A880] bg-[#C5A880] shadow-[0_0_15px_rgba(197,168,128,0.25)]"
+                      : "text-[#8E8E93] hover:text-[#F5F5F7] border-white/[0.04] hover:border-white/20 bg-[#14141A]"
                       }`}
                   >
                     <span className="relative z-10">{cat}</span>
@@ -1017,8 +1017,8 @@ const Courses = () => {
                             onClick={(e) => toggleWishlist(course, e)}
                             title={isWish ? "Remove from Saved" : "Save Course"}
                             className={`p-1.5 rounded-lg backdrop-blur-md transition ${isWish
-                                ? "bg-rose-500 text-white"
-                                : "bg-[#0F0F13]/80 hover:bg-rose-500/80 text-white border border-white/[0.06]"
+                              ? "bg-rose-500 text-white"
+                              : "bg-[#0F0F13]/80 hover:bg-rose-500/80 text-white border border-white/[0.06]"
                               }`}
                           >
                             <Heart size={13} fill={isWish ? "currentColor" : "none"} />
@@ -1200,8 +1200,8 @@ const Courses = () => {
                     aria-label={`Go to page ${pg}`}
                     onClick={() => setCurrentPage(pg)}
                     className={`h-8 w-8 rounded-xl text-xs font-mono font-bold transition cursor-pointer ${currentPage === pg
-                        ? "bg-[#C5A880] text-[#070709]"
-                        : "border border-white/[0.06] bg-[#0F0F13] text-[#8E8E93] hover:text-white"
+                      ? "bg-[#C5A880] text-[#070709]"
+                      : "border border-white/[0.06] bg-[#0F0F13] text-[#8E8E93] hover:text-white"
                       }`}
                   >
                     {pg}

@@ -62,6 +62,29 @@
       ]
     }
     </script>
+    <!-- Anti-FOUC Pre-Hydration Theme Script: Defaults strictly to Light Mode -->
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('asivo_theme') || localStorage.getItem('theme');
+          var theme = saved === 'dark' ? 'dark' : 'light';
+          var root = document.documentElement;
+          if (theme === 'dark') {
+            root.classList.add('dark');
+            root.classList.remove('light');
+            root.setAttribute('data-theme', 'dark');
+            root.style.colorScheme = 'dark';
+          } else {
+            root.classList.remove('dark');
+            root.classList.add('light');
+            root.setAttribute('data-theme', 'light');
+            root.style.colorScheme = 'light';
+          }
+        } catch (e) {
+          document.documentElement.classList.add('light');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
