@@ -347,10 +347,10 @@ const StudentCourseDetail = () => {
                     controls={false}
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-slate-800">
+                  <div className="w-full h-full flex items-center justify-center bg-[#1D1C1A]">
                     <div className="text-center">
-                      <Video size={48} className="text-slate-600 mx-auto mb-4" />
-                      <p className="text-slate-400">Select a lecture to start learning</p>
+                      <Video size={48} className="text-[#756E64] mx-auto mb-4" />
+                      <p className="text-[#A69F94]">Select a lecture to start learning</p>
                     </div>
                   </div>
                 )}
@@ -366,7 +366,7 @@ const StudentCourseDetail = () => {
                         max={duration || 100}
                         value={currentTime}
                         onChange={handleSeek}
-                        className="w-full h-1 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-orange-500"
+                        className="w-full h-1 bg-[#635E56] rounded-lg appearance-none cursor-pointer accent-[#5B3E57] dark:accent-[#D1A7CC]"
                       />
                     </div>
 
@@ -374,7 +374,7 @@ const StudentCourseDetail = () => {
                       <div className="flex items-center gap-3">
                         <button
                           onClick={handlePlayPause}
-                          className="p-2 rounded-full bg-white text-slate-900 hover:bg-slate-100 transition"
+                          className="p-2 rounded-full bg-[#FFFEFA] text-[#282521] hover:bg-[#EAE5DC] transition"
                         >
                           {isPlaying ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}
                         </button>
@@ -399,12 +399,11 @@ const StudentCourseDetail = () => {
                           <option value={0.75}>0.75x</option>
                           <option value={1}>1x</option>
                           <option value={1.25}>1.25x</option>
-                          <option value={1.5}>1.5x</option>
                           <option value={2}>2x</option>
                         </select>
                         <button
                           onClick={handleLectureComplete}
-                          className="px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-bold hover:bg-emerald-600 transition flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-lg bg-[#2B6747] text-[#FFFEFA] text-xs font-bold hover:bg-[#235339] transition flex items-center gap-1"
                         >
                           <Check size={14} /> Complete
                         </button>
@@ -416,27 +415,27 @@ const StudentCourseDetail = () => {
 
               {/* Lecture Info */}
               {currentLecture && (
-                <div className="bg-white rounded-xl p-4 shadow-sm">
-                  <h3 className="font-bold text-slate-900 mb-1">{currentLecture.title}</h3>
+                <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl p-4 shadow-sm">
+                  <h3 className="font-bold text-[#282521] dark:text-[#EDE8E1] mb-1">{currentLecture.title}</h3>
                   {currentLecture.description && (
-                    <p className="text-sm text-slate-600">{currentLecture.description}</p>
+                    <p className="text-sm text-[#635E56] dark:text-[#A69F94]">{currentLecture.description}</p>
                   )}
                 </div>
               )}
 
               {/* Curriculum */}
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="p-4 border-b border-slate-200 flex items-center justify-between">
-                  <h2 className="font-bold text-slate-900 flex items-center gap-2">
-                    <BookOpen size={18} className="text-orange-500" />
+              <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl shadow-sm border border-[#E3DCD3] dark:border-white/[0.08] overflow-hidden">
+                <div className="p-4 border-b border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-between">
+                  <h2 className="font-bold text-[#282521] dark:text-[#EDE8E1] flex items-center gap-2">
+                    <BookOpen size={18} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
                     Course Curriculum
                   </h2>
-                  <div className="text-xs text-slate-500">
+                  <div className="text-xs text-[#756E64] dark:text-[#7A7368]">
                     {curriculum?.totalSections} sections • {curriculum?.totalLectures} lectures
                   </div>
                 </div>
 
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-[#E3DCD3]/60 dark:divide-white/[0.06]">
                   {curriculum?.sections?.map((section, idx) => {
                     const isExpanded = expandedSections[section.id];
                     return (
