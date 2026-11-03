@@ -98,7 +98,7 @@ export const EmailChangeModal = ({ isOpen, onClose, currentEmail, onEmailUpdated
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#282521]/45 dark:bg-black/75 backdrop-blur-sm animate-fadeIn">
       <div className="relative w-full max-w-md p-6 bg-[#0E0E12] border border-white/[0.08] rounded-2xl shadow-2xl space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">

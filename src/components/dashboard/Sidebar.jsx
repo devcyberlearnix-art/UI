@@ -133,7 +133,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       {/* ── BRAND HEADER ──────────────────────────────────────────────── */}
       <div className="h-16 px-3.5 border-b border-slate-800/50 flex flex-col justify-center shrink-0 bg-[#0B1220]">
         <div className={`flex items-center gap-2.5 min-w-0 ${!sidebarOpen && 'justify-center w-full'}`}>
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-[#2563EB] to-[#06B6D4] text-white flex items-center justify-center font-bold text-sm tracking-tight shrink-0 shadow-sm shadow-[#2563EB]/20">
+          <div className="h-9 w-9 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] flex items-center justify-center font-bold text-sm tracking-tight shrink-0 shadow-xs">
             <span className="font-extrabold">
               A
             </span>
@@ -211,7 +211,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       const active = isActive || navIsActive;
                       return `relative flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 group ${
                         active
-                          ? 'bg-[#2563EB] text-white shadow-md font-bold'
+                          ? 'bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] shadow-xs font-bold'
                           : 'text-slate-300 hover:bg-slate-800/50 hover:text-white'
                       } ${!sidebarOpen && 'justify-center px-1.5'}`;
                     }}
@@ -237,8 +237,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <span
                               className={`ml-auto px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold ${
                                 active
-                                  ? 'bg-white text-[#2563EB]'
-                                  : 'bg-[#06B6D4]/20 text-[#06B6D4]'
+                                  ? 'bg-[#FFFEFA] dark:bg-[#151413] text-[#5B3E57] dark:text-[#D1A7CC]'
+                                  : 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 text-[#5B3E57] dark:text-[#D1A7CC]'
                               }`}
                             >
                               {wishlistCount}
@@ -264,11 +264,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             {/* Quick Instructor Application Card */}
             <button
               onClick={() => navigate('/student/dashboard')}
-              className="w-full p-2.5 rounded-2xl border border-[#2563EB]/30 bg-gradient-to-r from-[#2563EB]/20 via-[#06B6D4]/10 to-[#2563EB]/20 text-white hover:border-[#06B6D4]/50 transition-all text-left shadow-2xs group"
+              className="w-full p-2.5 rounded-2xl border border-[#E3DCD3] dark:border-white/[0.08] bg-[#FAF7F2] dark:bg-[#1D1C1A] text-[#282521] dark:text-[#EDE8E1] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC]/50 transition-all text-left shadow-2xs group"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-6 w-6 rounded-md bg-white/10 flex items-center justify-center text-[#06B6D4]">
+                  <div className="h-6 w-6 rounded-md bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
                     <GraduationCap size={13} />
                   </div>
                   <div>
@@ -278,7 +278,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 </div>
                 <ArrowRight
                   size={12}
-                  className="text-slate-400 group-hover:text-[#06B6D4] group-hover:translate-x-0.5 transition-all"
+                  className="text-slate-400 group-hover:text-[#5B3E57] dark:group-hover:text-[#D1A7CC] group-hover:translate-x-0.5 transition-all"
                 />
               </div>
             </button>
@@ -289,8 +289,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       {/* ── FOOTER: PROMOTIONAL CARD & SIGN OUT ──────────────────────────────── */}
       <div className="p-2.5 border-t border-slate-800/50 bg-[#0B1220] shrink-0 space-y-2.5">
         {sidebarOpen && (
-          <div className="p-3 rounded-xl border border-[#2563EB]/30 bg-gradient-to-r from-[#2563EB]/20 via-[#06B6D4]/10 to-[#2563EB]/20 text-white space-y-2.5">
-            <div className="w-full h-16 rounded-lg bg-gradient-to-br from-[#2563EB]/30 to-[#06B6D4]/20 flex items-center justify-center overflow-hidden">
+          <div className="p-3 rounded-xl border border-[#E3DCD3] dark:border-white/[0.08] bg-[#FAF7F2] dark:bg-[#1D1C1A] text-[#282521] dark:text-[#EDE8E1] space-y-2.5">
+            <div className="w-full h-16 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 flex items-center justify-center overflow-hidden">
               <div className="text-center">
                 <GraduationCap size={24} className="text-white/80 mx-auto mb-1" />
                 <p className="text-[9px] font-bold text-white/90">Keep learning.</p>

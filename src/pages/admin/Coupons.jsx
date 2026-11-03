@@ -285,7 +285,7 @@ export const Coupons = () => {
         </div>
         <div className="bg-[#14141A]/60 border border-white/5 rounded-2xl p-5 space-y-2">
           <span className="text-xs font-mono text-[#8E8E93] uppercase tracking-wider">Campaign Batches</span>
-          <div className="text-2xl font-bold text-blue-400 font-mono">{campaigns.length}</div>
+          <div className="text-2xl font-bold text-[#5B3E57] dark:text-[#D1A7CC] font-mono">{campaigns.length}</div>
           <p className="text-[11px] text-[#8E8E93]">Unique promotional tracks</p>
         </div>
       </div>
@@ -503,7 +503,7 @@ export const Coupons = () => {
       {/* CREATE COUPON MODAL */}
       <AnimatePresence>
         {showCreateModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#282521]/45 dark:bg-black/75 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -625,7 +625,7 @@ export const Coupons = () => {
       {/* BULK GENERATOR MODAL */}
       <AnimatePresence>
         {showBulkModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#282521]/45 dark:bg-black/75 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}

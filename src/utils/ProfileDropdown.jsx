@@ -311,7 +311,7 @@ const ProfileDropdown = ({ user, onLogout }) => {
           <Modal onClose={() => setShowMessages(false)} title="Messages">
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {messages.map(m => (
-                <div key={m.id} className={`p-3 rounded-lg border cursor-pointer ${m.read ? "bg-white" : "bg-blue-50"}`} onClick={() => markMsgRead(m.id)}>
+                <div key={m.id} className={`p-3 rounded-lg border cursor-pointer ${m.read ? "bg-white" : "bg-[#F2ECF1] dark:bg-[#D1A7CC]/15"}`} onClick={() => markMsgRead(m.id)}>
                   <p className="font-medium">{m.from}</p>
                   <p className="text-sm text-gray-500">{m.message}</p>
                   <p className="text-xs text-gray-400">{m.time}</p>
@@ -360,7 +360,7 @@ const Modal = ({ children, title, onClose }) => (
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-[#282521]/40 dark:bg-black/70 flex items-center justify-center z-50 p-4"
       onClick={onClose}
     >
       <motion.div

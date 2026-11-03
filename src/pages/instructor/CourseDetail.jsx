@@ -161,7 +161,7 @@ const CourseDetail = () => {
           </button>
           <button
             onClick={() => navigate(`/instructor/courses/${courseId}/students`)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl text-sm font-semibold transition"
+            className="flex items-center gap-2 px-4 py-2 bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 hover:bg-blue-100 text-blue-700 rounded-xl text-sm font-semibold transition"
           >
             <Users size={16} /> Enrolled Students
           </button>
@@ -231,7 +231,7 @@ const CourseDetail = () => {
                 </span>
               </div>
               <div className="flex items-center gap-2 text-gray-600">
-                <Users size={16} className="text-blue-500" />
+                <Users size={16} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
                 <span>{course?.enrolledCount ?? course?.enrolled ?? 0} Students</span>
               </div>
               {course?.rating != null && (

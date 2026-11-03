@@ -386,7 +386,7 @@ const MyCourses = () => {
                       </button>
                       <button
                         onClick={() => navigate(`/instructor/courses/${course.id}/students`)}
-                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                        className="p-2 text-gray-400 hover:text-[#5B3E57] dark:text-[#D1A7CC] hover:bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 rounded-lg transition"
                         title="View Students"
                       >
                         <Eye size={16} />

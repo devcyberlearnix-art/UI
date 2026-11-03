@@ -107,7 +107,7 @@ const LiveClassPage = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'SCHEDULED': return 'bg-blue-100 text-blue-700';
+      case 'SCHEDULED': return 'bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#5B3E57] dark:text-[#D1A7CC]';
       case 'IN_PROGRESS': return 'bg-emerald-100 text-emerald-700';
       case 'COMPLETED': return 'bg-slate-100 text-slate-700';
       case 'CANCELLED': return 'bg-red-100 text-red-700';
@@ -239,7 +239,7 @@ const LiveClassPage = () => {
               </p>
               <button
                 onClick={() => navigate(`/student/courses/${courseId}`)}
-                className="px-6 py-2 rounded-xl bg-slate-900 text-white font-semibold hover:bg-slate-800 transition"
+                className="px-6 py-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] text-white font-semibold hover:bg-slate-800 transition"
               >
                 Back to Course
               </button>
@@ -263,8 +263,8 @@ const LiveClassPage = () => {
                 </div>
                 <div className="text-xs text-slate-600">Attended</div>
               </div>
-              <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 text-center">
-                <div className="text-2xl font-black text-blue-600">
+              <div className="p-4 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] border border-blue-200 text-center">
+                <div className="text-2xl font-black text-[#5B3E57] dark:text-[#D1A7CC]">
                   {liveClasses.filter(lc => lc.status === 'SCHEDULED').length}
                 </div>
                 <div className="text-xs text-slate-600">Upcoming</div>

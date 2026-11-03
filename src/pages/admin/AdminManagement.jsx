@@ -109,8 +109,8 @@ const AdminManagement = () => {
       label: "Total Admins",
       value: admins.length,
       icon: Users,
-      color: "bg-blue-50",
-      textColor: "text-blue-600"
+      color: "bg-[#5B3E57] dark:bg-[#D1A7CC]",
+      textColor: "text-[#5B3E57] dark:text-[#D1A7CC]"
     },
     {
       label: "Super Admin",
@@ -320,7 +320,7 @@ const AdminManagement = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-1">
                       <button
-                        className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition"
+                        className="p-2 text-gray-400 hover:text-[#5B3E57] dark:text-[#D1A7CC] hover:bg-[#5B3E57] dark:bg-[#D1A7CC] rounded-lg transition"
                         title="View Details"
                       >
                         <Eye size={16} />

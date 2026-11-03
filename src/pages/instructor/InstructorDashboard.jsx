@@ -357,7 +357,7 @@ const InstructorDashboard = () => {
                   <p className="text-gray-500 text-sm">{course.description}</p>
                   <p className="text-orange-600 font-bold mt-1">${course.price}</p>
                   <div className="flex gap-2 mt-3">
-                    <motion.button whileHover={{ scale: 1.1 }} onClick={() => { setEditingCourse(course); setCourseForm(course); setShowCourseModal(true); }} className="text-blue-600"><Edit size={16} /></motion.button>
+                    <motion.button whileHover={{ scale: 1.1 }} onClick={() => { setEditingCourse(course); setCourseForm(course); setShowCourseModal(true); }} className="text-[#5B3E57] dark:text-[#D1A7CC]"><Edit size={16} /></motion.button>
                     <motion.button whileHover={{ scale: 1.1 }} onClick={() => handleDeleteCourse(course.id)} className="text-red-600"><Trash2 size={16} /></motion.button>
                     <motion.button whileHover={{ scale: 1.1 }} onClick={() => openModuleModal(course)} className="text-green-600"><PlusCircle size={16} /> Module</motion.button>
                   </div>
@@ -369,7 +369,7 @@ const InstructorDashboard = () => {
                         <div key={module.id} className="flex justify-between items-center text-sm mt-1">
                           <span>{module.title} ({module.type})</span>
                           <div>
-                            <button onClick={() => { setSelectedCourseForModule(course); setEditingModule(module); setModuleForm(module); setShowModuleModal(true); }} className="text-blue-500 mr-1"><Edit size={12} /></button>
+                            <button onClick={() => { setSelectedCourseForModule(course); setEditingModule(module); setModuleForm(module); setShowModuleModal(true); }} className="text-[#5B3E57] dark:text-[#D1A7CC] mr-1"><Edit size={12} /></button>
                             <button onClick={() => handleDeleteModule(course.id, module.id)} className="text-red-500"><Trash2 size={12} /></button>
                             <label className="ml-2 cursor-pointer text-gray-400"><Upload size={12} /><input type="file" className="hidden" onChange={(e) => handleFileUpload(course.id, module.id, e.target.files[0])} /></label>
                           </div>
@@ -500,7 +500,7 @@ const InstructorDashboard = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     onClick={() => { setSelectedStudent(msg); setMessageReply(""); setShowMessageModal(true); }}
-                    className="mt-2 text-blue-600 text-sm flex items-center gap-1"
+                    className="mt-2 text-[#5B3E57] dark:text-[#D1A7CC] text-sm flex items-center gap-1"
                   >
                     <MessageCircle size={14} /> Reply
                   </motion.button>
@@ -608,7 +608,7 @@ const Modal = ({ children, title, onClose }) => (
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-[#282521]/40 dark:bg-black/70 flex items-center justify-center z-50 p-4"
       onClick={onClose}
     >
       <motion.div

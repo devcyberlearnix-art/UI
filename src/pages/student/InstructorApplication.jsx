@@ -434,13 +434,13 @@ export default function InstructorApplication() {
                   {existingApp?.application?.reviewMessage || "Your submission has been cataloged for administrative verification."}
                 </p>
                 {existingApp?.application?.rejectionReason && (
-                  <div className="mt-4 p-3.5 bg-black/40 border border-rose-500/30 rounded-lg text-sm text-rose-300">
+                  <div className="mt-4 p-3.5 bg-[#282521]/30 dark:bg-black/60 border border-rose-500/30 rounded-lg text-sm text-rose-300">
                     <p className="text-xs font-semibold uppercase tracking-wider mb-1 text-rose-400">Official Decision Reason:</p>
                     {existingApp.application.rejectionReason}
                   </div>
                 )}
                 {existingApp?.application?.requestedInfo && (
-                  <div className="mt-4 p-3.5 bg-black/40 border border-amber-500/30 rounded-lg text-sm text-amber-300">
+                  <div className="mt-4 p-3.5 bg-[#282521]/30 dark:bg-black/60 border border-amber-500/30 rounded-lg text-sm text-amber-300">
                     <p className="text-xs font-semibold uppercase tracking-wider mb-1 text-amber-400">Reviewer Requested Information:</p>
                     {existingApp.application.requestedInfo}
                   </div>
@@ -1315,7 +1315,7 @@ export default function InstructorApplication() {
       {/* ── Submission Confirmation Dialog ──────────────────────────────────── */}
       {showConfirmModal && (
         <Portal>
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#282521]/45 dark:bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-[#0F0F13] border border-white/15 rounded-2xl max-w-md w-full p-6 shadow-2xl relative text-left">
               <div className="w-12 h-12 rounded-xl bg-[#C5A880]/15 border border-[#C5A880]/30 text-[#C5A880] flex items-center justify-center mb-4">
                 <Shield className="w-6 h-6" />

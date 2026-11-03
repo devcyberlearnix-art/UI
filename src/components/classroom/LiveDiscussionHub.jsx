@@ -48,7 +48,7 @@ function formatInlineTokens(text) {
       return (
         <code
           key={index}
-          className="px-1.5 py-0.5 mx-0.5 rounded bg-obsidian-950 border border-obsidian-800 text-cyan-300 font-mono text-[11px] font-semibold tracking-wide"
+          className="px-1.5 py-0.5 mx-0.5 rounded bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] text-[#5B3E57] dark:text-[#D1A7CC] font-mono text-[11px] font-semibold tracking-wide"
         >
           {code}
         </code>
@@ -120,15 +120,15 @@ function CodeSnippetBlock({ language, code }) {
         return (
           <div key={lineIdx}>
             <span>{indent}</span>
-            <span className="text-cyan-400 font-semibold">{key}</span>
-            <span className="text-ink-400">:</span>
+            <span className="text-[#5B3E57] dark:text-[#D1A7CC] font-semibold">{key}</span>
+            <span className="text-[#635E56] dark:text-[#A69F94]">:</span>
             <span className="text-amber-300">{rest}</span>
           </div>
         );
       }
 
       return (
-        <div key={lineIdx} className="text-ink-200">
+        <div key={lineIdx} className="text-[#282521] dark:text-[#EDE8E1]">
           {line}
         </div>
       );
@@ -136,15 +136,15 @@ function CodeSnippetBlock({ language, code }) {
   }, [code]);
 
   return (
-    <div className="my-2.5 rounded-xl border border-obsidian-800 bg-obsidian-950 overflow-hidden shadow-inner group">
-      <div className="px-3.5 py-1.5 bg-obsidian-900/80 border-b border-obsidian-800/80 flex items-center justify-between text-[11px] font-mono text-ink-400">
-        <span className="flex items-center gap-1.5 text-cyan-400">
+    <div className="my-2.5 rounded-xl border border-[#E3DCD3] dark:border-white/[0.08] bg-[#FFFEFA] dark:bg-[#1D1C1A] overflow-hidden shadow-inner group">
+      <div className="px-3.5 py-1.5 bg-[#FFFEFA] dark:bg-[#1D1C1A] border-b border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-between text-[11px] font-mono text-[#635E56] dark:text-[#A69F94]">
+        <span className="flex items-center gap-1.5 text-[#5B3E57] dark:text-[#D1A7CC]">
           <Terminal className="w-3.5 h-3.5" />
           {language || 'config'}
         </span>
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1 px-2 py-0.5 rounded bg-obsidian-800/60 hover:bg-obsidian-800 text-ink-300 hover:text-white transition-colors"
+          className="flex items-center gap-1 px-2 py-0.5 rounded bg-[#FAF7F2] dark:bg-[#272523] hover:bg-[#EAE5DC] dark:bg-[#272523] text-[#635E56] dark:text-[#A69F94] hover:text-white transition-colors"
         >
           {copied ? (
             <>
@@ -177,7 +177,7 @@ function FormattedMessageBody({ content }) {
     const textBefore = content.substring(lastIndex, match.index);
     if (textBefore.trim()) {
       elements.push(
-        <p key={lastIndex} className="text-sm text-ink-200 leading-relaxed font-light whitespace-pre-wrap">
+        <p key={lastIndex} className="text-sm text-[#282521] dark:text-[#EDE8E1] leading-relaxed font-light whitespace-pre-wrap">
           {formatInlineTokens(textBefore)}
         </p>
       );
@@ -195,7 +195,7 @@ function FormattedMessageBody({ content }) {
   const remaining = content.substring(lastIndex);
   if (remaining.trim()) {
     elements.push(
-      <p key={lastIndex} className="text-sm text-ink-200 leading-relaxed font-light whitespace-pre-wrap">
+      <p key={lastIndex} className="text-sm text-[#282521] dark:text-[#EDE8E1] leading-relaxed font-light whitespace-pre-wrap">
         {formatInlineTokens(remaining)}
       </p>
     );
@@ -565,13 +565,13 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
   }, [messages, filterMode]);
 
   return (
-    <div className="flex flex-col h-full bg-obsidian-950/60 rounded-2xl border border-obsidian-800/80 overflow-hidden shadow-2xl relative">
+    <div className="flex flex-col h-full bg-[#FFFEFA] dark:bg-[#1D1C1A]/60 rounded-2xl border border-[#E3DCD3] dark:border-white/[0.08] overflow-hidden shadow-2xl relative">
       {/* ===================================================================
           1. TOP FILTER CONTROLS & TELEMETRY STATUS BAR
           =================================================================== */}
-      <div className="p-4 bg-obsidian-900/60 border-b border-obsidian-800/80 flex flex-wrap items-center justify-between gap-3">
+      <div className="p-4 bg-[#FFFEFA] dark:bg-[#1D1C1A] border-b border-[#E3DCD3] dark:border-white/[0.08] flex flex-wrap items-center justify-between gap-3">
         {/* Dual Filter Pills */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-obsidian-950 border border-obsidian-800 text-xs select-none">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] text-xs select-none">
           {[
             { id: 'all', label: 'All Transmissions' },
             { id: 'qa', label: 'Architectural Q&A' },
@@ -585,8 +585,8 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                 onClick={() => setFilterMode(tab.id)}
                 className={`px-3 py-1.5 rounded-lg font-mono font-medium transition-all ${
                   active
-                    ? 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 shadow-glow shadow-cyan-500/10'
-                    : 'text-ink-400 hover:text-ink-200'
+                    ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#5B3E57] dark:text-[#D1A7CC] border border-[#D5C0D1] dark:border-[#D1A7CC]/30 shadow-glow shadow-cyan-500/10'
+                    : 'text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:text-[#EDE8E1]'
                 }`}
               >
                 {tab.label}
@@ -596,11 +596,11 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
         </div>
 
         {/* Live Channel Heartbeat Indicator */}
-        <div className="flex items-center gap-2 font-mono text-[11px] text-ink-400">
+        <div className="flex items-center gap-2 font-mono text-[11px] text-[#635E56] dark:text-[#A69F94]">
           <span className="relative flex h-2 w-2">
             <span
               className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                isLiveConnected ? 'bg-emerald-400' : 'bg-cyan-400'
+                isLiveConnected ? 'bg-emerald-400' : 'bg-[#5B3E57] dark:bg-[#D1A7CC]'
               }`}
             />
             <span
@@ -609,7 +609,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
               }`}
             />
           </span>
-          <span className="font-semibold text-ink-300">
+          <span className="font-semibold text-[#635E56] dark:text-[#A69F94]">
             {isLiveConnected ? 'Mesh Stream Sync: ACTIVE' : 'Local Telemetry Ingest'}
           </span>
         </div>
@@ -624,8 +624,8 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
         className="flex-1 p-5 overflow-y-auto space-y-5 max-h-[520px] custom-scrollbar scroll-smooth"
       >
         {filteredMessages.length === 0 ? (
-          <div className="py-16 text-center text-ink-500 space-y-2">
-            <MessageSquare className="w-8 h-8 mx-auto text-obsidian-700" />
+          <div className="py-16 text-center text-[#756E64] dark:text-[#7A7368] space-y-2">
+            <MessageSquare className="w-8 h-8 mx-auto text-[#756E64] dark:text-[#A69F94]" />
             <p className="text-sm font-mono">No matching telemetry transmissions logged.</p>
           </div>
         ) : (
@@ -644,12 +644,12 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
               {/* Header: Author + Meta */}
               <div className="flex items-start justify-between gap-3 mb-2.5">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC] font-mono text-xs font-bold flex items-center justify-center shrink-0">
                     {msg.avatar}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-ink-100">{msg.author}</span>
+                      <span className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">{msg.author}</span>
                       {msg.type === 'qa' && (
                         <Badge
                           variant={msg.isSolved ? 'success' : 'secondary'}
@@ -664,7 +664,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                         </Badge>
                       )}
                     </div>
-                    <span className="text-[11px] text-ink-500 font-mono">
+                    <span className="text-[11px] text-[#756E64] dark:text-[#7A7368] font-mono">
                       {msg.role} • {msg.time}
                     </span>
                   </div>
@@ -674,7 +674,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => upvoteMutation.mutate(msg.id)}
-                    className="flex items-center gap-1 px-2 py-1 rounded-lg bg-obsidian-950 border border-obsidian-800 text-ink-400 hover:text-cyan-300 text-xs font-mono transition-colors"
+                    className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] text-[#635E56] dark:text-[#A69F94] hover:text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-mono transition-colors"
                     title="Upvote transmission"
                   >
                     <ThumbsUp className="w-3 h-3" />
@@ -687,7 +687,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                       className={`p-1 rounded-lg border transition-colors ${
                         msg.isSolved
                           ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-                          : 'bg-obsidian-950 border-obsidian-800 text-ink-500 hover:text-emerald-400'
+                          : 'bg-[#FFFEFA] dark:bg-[#1D1C1A] border-[#E3DCD3] dark:border-white/[0.08] text-[#756E64] dark:text-[#7A7368] hover:text-emerald-400'
                       }`}
                       title={msg.isSolved ? 'Mark as Unsolved' : 'Mark as Solved'}
                     >
@@ -703,26 +703,26 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
 
                 {/* Replies Thread */}
                 {msg.replies && msg.replies.length > 0 && (
-                  <div className="mt-4 pt-3 border-t border-obsidian-800/60 space-y-3">
+                  <div className="mt-4 pt-3 border-t border-[#E3DCD3] dark:border-white/[0.08] space-y-3">
                     {msg.replies.map((reply) => (
                       <div
                         key={reply.id}
-                        className="p-3 rounded-lg bg-obsidian-950/80 border border-obsidian-850 flex items-start gap-3 text-xs"
+                        className="p-3 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A]/80 border border-obsidian-850 flex items-start gap-3 text-xs"
                       >
                         <div className="w-6 h-6 rounded bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
                           {reply.avatar}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="font-bold text-ink-200">{reply.author}</span>
+                            <span className="font-bold text-[#282521] dark:text-[#EDE8E1]">{reply.author}</span>
                             {reply.isInstructorVerified && (
                               <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">
                                 <ShieldCheck className="w-3 h-3" /> VERIFIED SOLUTION
                               </span>
                             )}
-                            <span className="text-[10px] text-ink-500 font-mono">{reply.time}</span>
+                            <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] font-mono">{reply.time}</span>
                           </div>
-                          <div className="text-ink-300 leading-relaxed font-light">
+                          <div className="text-[#635E56] dark:text-[#A69F94] leading-relaxed font-light">
                             {formatInlineTokens(reply.content)}
                           </div>
                         </div>
@@ -741,7 +741,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                         onChange={(e) => setReplyInput(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && addReply(msg.id)}
                         placeholder="Write verified architectural response..."
-                        className="flex-1 px-3 py-1.5 bg-obsidian-950 border border-obsidian-800 rounded-lg text-xs text-ink-200 focus:outline-none focus:border-cyan-500/50"
+                        className="flex-1 px-3 py-1.5 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-lg text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
                         autoFocus
                       />
                       <Button variant="secondary" size="sm" onClick={() => addReply(msg.id)}>
@@ -749,7 +749,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                       </Button>
                       <button
                         onClick={() => setReplyingToId(null)}
-                        className="text-xs text-ink-500 hover:text-ink-300"
+                        className="text-xs text-[#756E64] dark:text-[#7A7368] hover:text-[#635E56] dark:text-[#A69F94]"
                       >
                         Cancel
                       </button>
@@ -757,7 +757,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                   ) : (
                     <button
                       onClick={() => setReplyingToId(msg.id)}
-                      className="text-xs text-ink-400 hover:text-cyan-400 flex items-center gap-1.5 font-mono transition-colors"
+                      className="text-xs text-[#635E56] dark:text-[#A69F94] hover:text-[#5B3E57] dark:text-[#D1A7CC] flex items-center gap-1.5 font-mono transition-colors"
                     >
                       <CornerDownRight className="w-3.5 h-3.5" /> Reply to thread ({msg.replies?.length || 0})
                     </button>
@@ -788,19 +788,19 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
       {/* ===================================================================
           3. ADVANCED COMPOSER DOCK (CODE INSERTER + MARKDOWN READY)
           =================================================================== */}
-      <form onSubmit={handleSendMessage} className="p-4 bg-obsidian-900/80 border-t border-obsidian-800/80 space-y-3">
+      <form onSubmit={handleSendMessage} className="p-4 bg-[#FFFEFA] dark:bg-[#1D1C1A] border-t border-[#E3DCD3] dark:border-white/[0.08] space-y-3">
         <div className="flex items-center justify-between text-xs">
           {/* Post Type Selector */}
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono text-ink-500 uppercase font-semibold">Transmission Mode:</span>
-            <div className="inline-flex rounded-lg bg-obsidian-950 p-0.5 border border-obsidian-800 font-mono text-[11px]">
+            <span className="text-[11px] font-mono text-[#756E64] dark:text-[#7A7368] uppercase font-semibold">Transmission Mode:</span>
+            <div className="inline-flex rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] p-0.5 border border-[#E3DCD3] dark:border-white/[0.08] font-mono text-[11px]">
               <button
                 type="button"
                 onClick={() => setPostType('qa')}
                 className={`px-2.5 py-1 rounded-md transition-colors ${
                   postType === 'qa'
-                    ? 'bg-cyan-500/20 text-cyan-300 font-bold'
-                    : 'text-ink-400 hover:text-ink-200'
+                    ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 text-[#5B3E57] dark:text-[#D1A7CC] font-bold'
+                    : 'text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:text-[#EDE8E1]'
                 }`}
               >
                 Inquiry / Question
@@ -810,8 +810,8 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                 onClick={() => setPostType('stream')}
                 className={`px-2.5 py-1 rounded-md transition-colors ${
                   postType === 'stream'
-                    ? 'bg-cyan-500/20 text-cyan-300 font-bold'
-                    : 'text-ink-400 hover:text-ink-200'
+                    ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 text-[#5B3E57] dark:text-[#D1A7CC] font-bold'
+                    : 'text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:text-[#EDE8E1]'
                 }`}
               >
                 Commentary Stream
@@ -823,9 +823,9 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
           <button
             type="button"
             onClick={insertCodeTemplate}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-obsidian-950 border border-obsidian-800 text-ink-400 hover:text-cyan-300 font-mono text-[11px] transition-colors"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] text-[#635E56] dark:text-[#A69F94] hover:text-[#5B3E57] dark:text-[#D1A7CC] font-mono text-[11px] transition-colors"
           >
-            <Code className="w-3.5 h-3.5 text-cyan-400" />
+            <Code className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
             + Code Template
           </button>
         </div>
@@ -846,7 +846,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                 ? 'Pose a technical architectural query (Supports Markdown & ```yaml ``` blocks)...'
                 : 'Stream immediate telemetry or observations into current classroom session...'
             }
-            className="w-full p-3.5 pr-24 bg-obsidian-950 border border-obsidian-800 rounded-xl text-sm text-ink-100 placeholder-ink-600 focus:outline-none focus:border-cyan-500/50 resize-none font-light tracking-wide transition-all"
+            className="w-full p-3.5 pr-24 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-sm text-[#282521] dark:text-[#EDE8E1] placeholder:text-[#756E64] dark:placeholder-[#7A7368] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50 resize-none font-light tracking-wide transition-all"
           />
 
           <div className="absolute right-2.5 bottom-3.5 flex items-center gap-2">
@@ -857,7 +857,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
               disabled={!messageInput.trim()}
               isLoading={postMessageMutation.isPending}
               rightIcon={Send}
-              className="bg-cyan-500 hover:bg-cyan-400 text-black font-mono font-bold text-xs shadow-glow shadow-cyan-500/20"
+              className="bg-cyan-500 hover:bg-[#5B3E57] dark:bg-[#D1A7CC] text-black font-mono font-bold text-xs shadow-glow shadow-cyan-500/20"
             >
               Broadcast
             </Button>

@@ -310,25 +310,25 @@ const Users = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] p-6 lg:p-10 space-y-8 font-sans selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="min-h-screen bg-[#070709] text-[#282521] dark:text-[#EDE8E1] p-6 lg:p-10 space-y-8 font-sans selection:bg-[#C5A880]/30 selection:text-white">
       {/* Header Telemetry Node */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={SPRING}
-        className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 sm:p-8 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.85)] flex flex-col md:flex-row md:items-center justify-between gap-6"
+        className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] p-6 sm:p-8 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.85)] flex flex-col md:flex-row md:items-center justify-between gap-6"
       >
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14141A] border border-[#C5A880]/30 text-xs font-semibold text-[#C5A880]">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#C5A880]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FAF7F2] dark:bg-[#272523] border border-[#5B3E57] dark:border-[#D1A7CC]/30 text-xs font-semibold text-[#9A6B56] dark:text-[#D9A48F]">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#9A6B56] dark:text-[#D9A48F]" />
             <span className="tracking-wider uppercase text-[10px] font-bold">
               Identity Governance Matrix
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F5F5F7] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
             User Governance & Access Directory
           </h1>
-          <p className="text-xs sm:text-sm text-[#8E8E93] max-w-xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#756E64] dark:text-[#A69F94] max-w-xl leading-relaxed">
             Federated IAM identity verification, RBAC role assignments, user status provisioning, and platform security audits.
           </p>
         </div>
@@ -340,18 +340,18 @@ const Users = () => {
               fetchUsers(currentPage, search, selectedRole);
               toast.success("Identity directory refreshed");
             }}
-            className="p-2.5 bg-[#14141A] border border-white/10 hover:border-white/20 rounded-xl text-white/70 hover:text-white transition-all cursor-pointer flex items-center gap-2 text-xs font-medium"
+            className="p-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-white/10 hover:border-white/20 rounded-xl text-white/70 hover:text-white transition-all cursor-pointer flex items-center gap-2 text-xs font-medium"
             title="Refresh Directory"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-[#C5A880]' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-[#9A6B56] dark:text-[#D9A48F]' : ''}`} />
             <span>Sync Telemetry</span>
           </button>
           
           <button
             onClick={handleExport}
-            className="px-4 py-2.5 bg-[#14141A] border border-white/10 hover:border-[#C5A880]/40 rounded-xl text-white/80 hover:text-white transition-all cursor-pointer flex items-center gap-2 text-xs font-medium"
+            className="px-4 py-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-white/10 hover:border-[#5B3E57] dark:border-[#D1A7CC]/40 rounded-xl text-white/80 hover:text-white transition-all cursor-pointer flex items-center gap-2 text-xs font-medium"
           >
-            <Download className="w-4 h-4 text-[#C5A880]" />
+            <Download className="w-4 h-4 text-[#9A6B56] dark:text-[#D9A48F]" />
             <span>Export CSV</span>
           </button>
         </div>
@@ -364,20 +364,20 @@ const Users = () => {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...SPRING, delay: 0.02 }}
-          className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all duration-300 group"
+          className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:border-[#D1A7CC]/30 transition-all duration-300 group"
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-[#8E8E93] tracking-wide">
+            <span className="text-xs font-semibold text-[#756E64] dark:text-[#A69F94] tracking-wide">
               Total Platform Users
             </span>
-            <div className="w-9 h-9 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#C5A880] group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-[#9A6B56] dark:text-[#D9A48F] group-hover:scale-105 transition-transform">
               <UsersIcon className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-3xl font-extrabold text-[#F5F5F7] tracking-tight font-mono">
+          <p className="text-3xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight font-mono">
             {metrics.totalUsers.toLocaleString()}
           </p>
-          <p className="text-[11px] text-[#A1A1AA] mt-2">
+          <p className="text-[11px] text-[#635E56] dark:text-[#A69F94] mt-2">
             Authoritative user_db directory accounts
           </p>
         </motion.div>
@@ -387,20 +387,20 @@ const Users = () => {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...SPRING, delay: 0.04 }}
-          className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all duration-300 group"
+          className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:border-[#D1A7CC]/30 transition-all duration-300 group"
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-[#8E8E93] tracking-wide">
+            <span className="text-xs font-semibold text-[#756E64] dark:text-[#A69F94] tracking-wide">
               Candidate Students
             </span>
-            <div className="w-9 h-9 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-blue-400 group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] group-hover:scale-105 transition-transform">
               <GraduationCap className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-3xl font-extrabold text-blue-400 tracking-tight font-mono">
+          <p className="text-3xl font-extrabold text-[#5B3E57] dark:text-[#D1A7CC] tracking-tight font-mono">
             {metrics.students.toLocaleString()}
           </p>
-          <p className="text-[11px] text-[#A1A1AA] mt-2">
+          <p className="text-[11px] text-[#635E56] dark:text-[#A69F94] mt-2">
             <span className="text-emerald-400 font-semibold">{metrics.activeStudents} Active</span> • <span className="text-amber-400">{metrics.pending} Pending</span> • <span className="text-red-400">{metrics.suspended} Restricted</span>
           </p>
         </motion.div>
@@ -410,20 +410,20 @@ const Users = () => {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...SPRING, delay: 0.06 }}
-          className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all duration-300 group"
+          className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:border-[#D1A7CC]/30 transition-all duration-300 group"
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-[#8E8E93] tracking-wide">
+            <span className="text-xs font-semibold text-[#756E64] dark:text-[#A69F94] tracking-wide">
               Verified Instructors
             </span>
-            <div className="w-9 h-9 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#C5A880] group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-[#9A6B56] dark:text-[#D9A48F] group-hover:scale-105 transition-transform">
               <BookOpen className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-3xl font-extrabold text-[#C5A880] tracking-tight font-mono">
+          <p className="text-3xl font-extrabold text-[#9A6B56] dark:text-[#D9A48F] tracking-tight font-mono">
             {metrics.instructors.toLocaleString()}
           </p>
-          <p className="text-[11px] text-[#A1A1AA] mt-2">
+          <p className="text-[11px] text-[#635E56] dark:text-[#A69F94] mt-2">
             16 Active course authors (verified)
           </p>
         </motion.div>
@@ -433,39 +433,39 @@ const Users = () => {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...SPRING, delay: 0.08 }}
-          className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all duration-300 group"
+          className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:border-[#D1A7CC]/30 transition-all duration-300 group"
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-[#8E8E93] tracking-wide">
+            <span className="text-xs font-semibold text-[#756E64] dark:text-[#A69F94] tracking-wide">
               Security Pipeline
             </span>
-            <div className="w-9 h-9 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-amber-400 group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-amber-400 group-hover:scale-105 transition-transform">
               <Shield className="w-4 h-4" />
             </div>
           </div>
           <p className="text-3xl font-extrabold text-amber-400 tracking-tight font-mono">
             {(metrics.pending + metrics.suspended).toLocaleString()}
           </p>
-          <p className="text-[11px] text-[#A1A1AA] mt-2">
+          <p className="text-[11px] text-[#635E56] dark:text-[#A69F94] mt-2">
             {metrics.pending} Pending verification • {metrics.suspended} Restricted
           </p>
         </motion.div>
       </div>
 
       {/* IAM Federation Authority Notice */}
-      <div className="px-5 py-3 rounded-2xl bg-[#14141A] border border-white/[0.04] flex items-center justify-between text-xs text-[#8E8E93]">
+      <div className="px-5 py-3 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-between text-xs text-[#756E64] dark:text-[#A69F94]">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-[#C5A880]" />
-          <span>IAM Federation Matrix: <strong className="text-white">263</strong> user-service directory identities (<span className="text-blue-400">247 Students</span> + <span className="text-[#C5A880]">16 Instructors</span>) + <strong className="text-emerald-400">2</strong> root admin-service platform authorities.</span>
+          <ShieldCheck className="w-4 h-4 text-[#9A6B56] dark:text-[#D9A48F]" />
+          <span>IAM Federation Matrix: <strong className="text-white">263</strong> user-service directory identities (<span className="text-[#5B3E57] dark:text-[#D1A7CC]">247 Students</span> + <span className="text-[#9A6B56] dark:text-[#D9A48F]">16 Instructors</span>) + <strong className="text-emerald-400">2</strong> root admin-service platform authorities.</span>
         </div>
-        <span className="font-mono text-[11px] text-[#71717A] hidden sm:inline">100% Account Reconciliation Verified</span>
+        <span className="font-mono text-[11px] text-[#756E64] dark:text-[#7A7368] hidden sm:inline">100% Account Reconciliation Verified</span>
       </div>
 
       {/* Control Matrix Toolbar */}
-      <div className="rounded-2xl bg-[#0F0F13] border border-white/[0.04] p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] p-4 flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Search */}
         <div className="relative w-full md:w-96">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8E8E93]" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#756E64] dark:text-[#A69F94]" />
           <input
             type="text"
             value={search}
@@ -474,7 +474,7 @@ const Users = () => {
               setCurrentPage(1);
             }}
             placeholder="Search by candidate name or email..."
-            className="w-full pl-10 pr-4 py-2.5 bg-[#14141A] border border-white/[0.08] rounded-xl text-sm text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-sm text-[#282521] dark:text-[#EDE8E1] placeholder:text-[#756E64] dark:placeholder-[#7A7368] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition-colors"
           />
         </div>
 
@@ -482,14 +482,14 @@ const Users = () => {
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           {/* Role Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[#8E8E93] font-medium hidden sm:inline">Role:</span>
+            <span className="text-xs text-[#756E64] dark:text-[#A69F94] font-medium hidden sm:inline">Role:</span>
             <select
               value={selectedRole}
               onChange={(e) => {
                 setSelectedRole(e.target.value);
                 setCurrentPage(1);
               }}
-              className="px-3 py-2 bg-[#14141A] border border-white/[0.08] rounded-xl text-xs text-[#F5F5F7] focus:outline-none focus:border-[#C5A880] cursor-pointer"
+              className="px-3 py-2 bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] cursor-pointer"
             >
               <option value="All">All Roles</option>
               <option value="STUDENT">Student</option>
@@ -500,11 +500,11 @@ const Users = () => {
 
           {/* Status Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[#8E8E93] font-medium hidden sm:inline">Status:</span>
+            <span className="text-xs text-[#756E64] dark:text-[#A69F94] font-medium hidden sm:inline">Status:</span>
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="px-3 py-2 bg-[#14141A] border border-white/[0.08] rounded-xl text-xs text-[#F5F5F7] focus:outline-none focus:border-[#C5A880] cursor-pointer"
+              className="px-3 py-2 bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] cursor-pointer"
             >
               <option value="All">All Statuses</option>
               <option value="ACTIVE">Active</option>
@@ -516,10 +516,10 @@ const Users = () => {
       </div>
 
       {/* Primary User Data Table */}
-      <div className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] shadow-sm overflow-hidden">
+      <div className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#14141A] text-[#8E8E93] border-b border-white/[0.04]">
+            <thead className="bg-[#FAF7F2] dark:bg-[#272523] text-[#756E64] dark:text-[#A69F94] border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08]">
               <tr>
                 <th className="px-6 py-4 font-bold uppercase tracking-wider text-[10px]">#</th>
                 <th className="px-6 py-4 font-bold uppercase tracking-wider text-[10px]">Candidate Identity</th>
@@ -533,15 +533,15 @@ const Users = () => {
             <tbody className="divide-y divide-white/[0.02]">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-16 text-center text-[#8E8E93]">
-                    <Loader2 className="w-6 h-6 animate-spin text-[#C5A880] mx-auto mb-2" />
+                  <td colSpan={7} className="px-6 py-16 text-center text-[#756E64] dark:text-[#A69F94]">
+                    <Loader2 className="w-6 h-6 animate-spin text-[#9A6B56] dark:text-[#D9A48F] mx-auto mb-2" />
                     <span>Synchronizing authoritative user ledger...</span>
                   </td>
                 </tr>
               ) : displayUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-16 text-center text-[#71717A]">
-                    <UsersIcon className="w-8 h-8 text-[#71717A] mx-auto mb-2 opacity-50" />
+                  <td colSpan={7} className="px-6 py-16 text-center text-[#756E64] dark:text-[#7A7368]">
+                    <UsersIcon className="w-8 h-8 text-[#756E64] dark:text-[#7A7368] mx-auto mb-2 opacity-50" />
                     <span>No identity records match the selected scope.</span>
                   </td>
                 </tr>
@@ -551,21 +551,21 @@ const Users = () => {
                   return (
                     <tr key={userObj.id} className="hover:bg-white/[0.02] transition-colors group">
                       {/* Index */}
-                      <td className="px-6 py-4 font-mono text-[#71717A]">
+                      <td className="px-6 py-4 font-mono text-[#756E64] dark:text-[#7A7368]">
                         {globalIdx}
                       </td>
 
                       {/* Name & Full Email (No Truncation) */}
                       <td className="px-6 py-4">
                         <div>
-                          <p className="font-semibold text-[#F5F5F7] text-sm group-hover:text-[#C5A880] transition-colors">
+                          <p className="font-semibold text-[#282521] dark:text-[#EDE8E1] text-sm group-hover:text-[#9A6B56] dark:text-[#D9A48F] transition-colors">
                             {userObj.name}
                           </p>
-                          <div className="flex items-center gap-1.5 mt-0.5 text-xs text-[#8E8E93]">
+                          <div className="flex items-center gap-1.5 mt-0.5 text-xs text-[#756E64] dark:text-[#A69F94]">
                             <span>{userObj.email}</span>
                             <button
                               onClick={() => handleCopy(userObj.email, `email-${userObj.id}`)}
-                              className="text-[#71717A] hover:text-[#C5A880] transition-colors p-0.5"
+                              className="text-[#756E64] dark:text-[#7A7368] hover:text-[#9A6B56] dark:text-[#D9A48F] transition-colors p-0.5"
                               title="Copy full email"
                             >
                               {copiedId === `email-${userObj.id}` ? (
@@ -580,11 +580,11 @@ const Users = () => {
 
                       {/* UUID Identifier */}
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-1.5 font-mono text-[11px] text-[#A1A1AA]">
+                        <div className="flex items-center gap-1.5 font-mono text-[11px] text-[#635E56] dark:text-[#A69F94]">
                           <span>{userObj.id.slice(0, 13)}...</span>
                           <button
                             onClick={() => handleCopy(userObj.id, `id-${userObj.id}`)}
-                            className="text-[#71717A] hover:text-[#C5A880] transition-colors p-0.5"
+                            className="text-[#756E64] dark:text-[#7A7368] hover:text-[#9A6B56] dark:text-[#D9A48F] transition-colors p-0.5"
                             title="Copy full UUID"
                           >
                             {copiedId === `id-${userObj.id}` ? (
@@ -603,8 +603,8 @@ const Users = () => {
                             userObj.role.includes("ADMIN")
                               ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                               : userObj.role === "INSTRUCTOR"
-                              ? "bg-[#C5A880]/10 text-[#C5A880] border-[#C5A880]/30"
-                              : "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                              ? "bg-[#C5A880]/10 text-[#9A6B56] dark:text-[#D9A48F] border-[#5B3E57] dark:border-[#D1A7CC]/30"
+                              : "bg-blue-500/10 text-[#5B3E57] dark:text-[#D1A7CC] border-blue-500/20"
                           }`}
                         >
                           {userObj.role}
@@ -632,7 +632,7 @@ const Users = () => {
                       </td>
 
                       {/* Registration Date */}
-                      <td className="px-6 py-4 font-mono text-[#71717A] text-[11px]">
+                      <td className="px-6 py-4 font-mono text-[#756E64] dark:text-[#7A7368] text-[11px]">
                         {userObj.createdAt}
                       </td>
 
@@ -642,7 +642,7 @@ const Users = () => {
                           {/* View Modal */}
                           <button
                             onClick={() => handleViewUser(userObj)}
-                            className="p-1.5 rounded-lg bg-[#14141A] border border-white/5 hover:border-[#C5A880]/40 text-[#8E8E93] hover:text-[#C5A880] transition-colors"
+                            className="p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#272523] border border-white/5 hover:border-[#5B3E57] dark:border-[#D1A7CC]/40 text-[#756E64] dark:text-[#A69F94] hover:text-[#9A6B56] dark:text-[#D9A48F] transition-colors"
                             title="Inspect Identity Profile"
                           >
                             <Eye className="w-4 h-4" />
@@ -651,7 +651,7 @@ const Users = () => {
                           {/* Revoke */}
                           <button
                             onClick={() => handleDeleteUser(userObj)}
-                            className="p-1.5 rounded-lg bg-[#14141A] border border-white/5 hover:border-red-500/40 text-[#8E8E93] hover:text-red-400 transition-colors"
+                            className="p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#272523] border border-white/5 hover:border-red-500/40 text-[#756E64] dark:text-[#A69F94] hover:text-red-400 transition-colors"
                             title="Revoke Identity"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -667,31 +667,31 @@ const Users = () => {
         </div>
 
         {/* Server Pagination Matrix */}
-        <div className="px-6 py-4 bg-[#14141A]/50 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
-          <span className="text-[#8E8E93]">
-            Showing <strong className="text-[#F5F5F7]">{(currentPage - 1) * usersPerPage + 1}</strong> to{" "}
-            <strong className="text-[#F5F5F7]">{Math.min(currentPage * usersPerPage, totalUsers)}</strong> of{" "}
-            <strong className="text-[#C5A880]">{totalUsers}</strong> federated users
+        <div className="px-6 py-4 bg-[#FAF7F2] dark:bg-[#272523]/50 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+          <span className="text-[#756E64] dark:text-[#A69F94]">
+            Showing <strong className="text-[#282521] dark:text-[#EDE8E1]">{(currentPage - 1) * usersPerPage + 1}</strong> to{" "}
+            <strong className="text-[#282521] dark:text-[#EDE8E1]">{Math.min(currentPage * usersPerPage, totalUsers)}</strong> of{" "}
+            <strong className="text-[#9A6B56] dark:text-[#D9A48F]">{totalUsers}</strong> federated users
           </span>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage <= 1 || loading}
-              className="p-2 rounded-xl bg-[#14141A] border border-white/[0.08] hover:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed text-[#F5F5F7] transition-all"
+              className="p-2 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.08] hover:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed text-[#282521] dark:text-[#EDE8E1] transition-all"
               title="Previous Page"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
 
-            <span className="px-3 py-1 font-mono text-xs text-[#A1A1AA]">
-              Page <strong className="text-[#C5A880]">{currentPage}</strong> / {totalPages}
+            <span className="px-3 py-1 font-mono text-xs text-[#635E56] dark:text-[#A69F94]">
+              Page <strong className="text-[#9A6B56] dark:text-[#D9A48F]">{currentPage}</strong> / {totalPages}
             </span>
 
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage >= totalPages || loading}
-              className="p-2 rounded-xl bg-[#14141A] border border-white/[0.08] hover:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed text-[#F5F5F7] transition-all"
+              className="p-2 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.08] hover:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed text-[#282521] dark:text-[#EDE8E1] transition-all"
               title="Next Page"
             >
               <ChevronRight className="w-4 h-4" />
@@ -710,47 +710,47 @@ const Users = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={SPRING}
-                className="w-full max-w-lg bg-[#0F0F13] border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl text-left"
+                className="w-full max-w-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl text-left"
               >
                 <div className="flex items-center justify-between border-b border-white/5 pb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880]">
+                    <div className="w-10 h-10 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#5B3E57] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#9A6B56] dark:text-[#D9A48F]">
                       <UsersIcon className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-[#F5F5F7]">
+                      <h3 className="text-lg font-bold text-[#282521] dark:text-[#EDE8E1]">
                         Candidate Identity Record
                       </h3>
-                      <p className="text-xs text-[#8E8E93]">
+                      <p className="text-xs text-[#756E64] dark:text-[#A69F94]">
                         Federated microservice profile inspection
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => setShowViewModal(false)}
-                    className="p-2 rounded-xl bg-[#14141A] border border-white/10 text-[#8E8E93] hover:text-white"
+                    className="p-2 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-white/10 text-[#756E64] dark:text-[#A69F94] hover:text-white"
                   >
                     ✕
                   </button>
                 </div>
 
                 <div className="space-y-4 text-xs">
-                  <div className="p-4 rounded-2xl bg-[#14141A] border border-white/5 space-y-2.5">
+                  <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-white/5 space-y-2.5">
                     <div className="flex justify-between items-center">
-                      <span className="text-[#8E8E93]">Full Legal Name</span>
+                      <span className="text-[#756E64] dark:text-[#A69F94]">Full Legal Name</span>
                       <span className="font-semibold text-white text-sm">{selectedUser.name}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-[#8E8E93]">Federated Email</span>
-                      <span className="font-mono text-[#C5A880]">{selectedUser.email}</span>
+                      <span className="text-[#756E64] dark:text-[#A69F94]">Federated Email</span>
+                      <span className="font-mono text-[#9A6B56] dark:text-[#D9A48F]">{selectedUser.email}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-[#8E8E93]">Candidate UUID</span>
-                      <div className="flex items-center gap-1.5 font-mono text-[#A1A1AA]">
+                      <span className="text-[#756E64] dark:text-[#A69F94]">Candidate UUID</span>
+                      <div className="flex items-center gap-1.5 font-mono text-[#635E56] dark:text-[#A69F94]">
                         <span className="text-[11px]">{selectedUser.id}</span>
                         <button
                           onClick={() => handleCopy(selectedUser.id, `modal-id-${selectedUser.id}`)}
-                          className="p-1 hover:text-[#C5A880] transition-colors"
+                          className="p-1 hover:text-[#9A6B56] dark:text-[#D9A48F] transition-colors"
                           title="Copy UUID"
                         >
                           {copiedId === `modal-id-${selectedUser.id}` ? (
@@ -764,12 +764,12 @@ const Users = () => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="p-4 rounded-2xl bg-[#14141A] border border-white/5 space-y-1">
-                      <span className="text-[#8E8E93] block">Assigned Role</span>
+                    <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-white/5 space-y-1">
+                      <span className="text-[#756E64] dark:text-[#A69F94] block">Assigned Role</span>
                       <span className="font-bold text-white text-sm">{selectedUser.role}</span>
                     </div>
-                    <div className="p-4 rounded-2xl bg-[#14141A] border border-white/5 space-y-1">
-                      <span className="text-[#8E8E93] block">Provisioning Status</span>
+                    <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-white/5 space-y-1">
+                      <span className="text-[#756E64] dark:text-[#A69F94] block">Provisioning Status</span>
                       <div className="flex items-center gap-2">
                         <span className={`font-bold text-sm ${
                           selectedUser.status === "ACTIVE" ? "text-emerald-400" : "text-amber-400"
@@ -781,17 +781,17 @@ const Users = () => {
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-[#14141A] border border-white/5 space-y-2">
+                  <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-white/5 space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-[#8E8E93]">Enrolled Curriculum</span>
+                      <span className="text-[#756E64] dark:text-[#A69F94]">Enrolled Curriculum</span>
                       <span className="font-mono text-white font-semibold">{selectedUser.courses} Active Enrollments</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#8E8E93]">Registered Timestamp</span>
-                      <span className="font-mono text-[#71717A]">{selectedUser.createdAt} (IST)</span>
+                      <span className="text-[#756E64] dark:text-[#A69F94]">Registered Timestamp</span>
+                      <span className="font-mono text-[#756E64] dark:text-[#7A7368]">{selectedUser.createdAt} (IST)</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#8E8E93]">Administrative Audit Policy</span>
+                      <span className="text-[#756E64] dark:text-[#A69F94]">Administrative Audit Policy</span>
                       <span className="text-emerald-400 text-[11px]">Reversible State Governance</span>
                     </div>
                   </div>
@@ -817,7 +817,7 @@ const Users = () => {
 
                   <button
                     onClick={() => setShowViewModal(false)}
-                    className="px-5 py-2.5 bg-[#14141A] border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all cursor-pointer"
+                    className="px-5 py-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all cursor-pointer"
                   >
                     Close Inspection
                   </button>

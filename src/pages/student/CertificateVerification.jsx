@@ -215,11 +215,11 @@ export const CertificateVerification = () => {
   if (loading) {
     return (
       <div className="min-h-[75vh] flex flex-col items-center justify-center space-y-4 p-8 text-center">
-        <RefreshCw className="w-10 h-10 animate-spin text-cyan-400 mx-auto" />
+        <RefreshCw className="w-10 h-10 animate-spin text-[#5B3E57] dark:text-[#D1A7CC] mx-auto" />
         <h3 className="text-base font-mono font-bold text-white tracking-widest uppercase">
           Querying Structural Completions Registry...
         </h3>
-        <p className="text-xs text-ink-500 font-mono">
+        <p className="text-xs text-[#756E64] dark:text-[#7A7368] font-mono">
           Verifying lecture tracking, assessment grades, and cryptographic signatures.
         </p>
       </div>
@@ -240,21 +240,21 @@ export const CertificateVerification = () => {
   }
 
   return (
-    <div className="space-y-8 font-sans text-ink-100 max-w-6xl mx-auto pb-24">
+    <div className="space-y-8 font-sans text-[#282521] dark:text-[#EDE8E1] max-w-6xl mx-auto pb-24">
       {/* ===================================================================
           1. NAVIGATION & CREDENTIAL ACTION HEADER DOCK
           =================================================================== */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-obsidian-900/60 border border-obsidian-800/80 backdrop-blur-xl shadow-2xl relative overflow-hidden print:hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-xl shadow-2xl relative overflow-hidden print:hidden">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="p-2.5 rounded-xl bg-obsidian-800/60 hover:bg-obsidian-800 border border-obsidian-700/60 text-ink-400 hover:text-white transition-colors"
+            className="p-2.5 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] hover:bg-[#EAE5DC] dark:bg-[#272523] border border-obsidian-700/60 text-[#635E56] dark:text-[#A69F94] hover:text-white transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono font-bold tracking-widest text-cyan-400 uppercase">
+              <span className="text-[11px] font-mono font-bold tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] uppercase">
                 Accreditation Registry
               </span>
               <span className="text-obsidian-600">•</span>
@@ -323,7 +323,7 @@ export const CertificateVerification = () => {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={SPRING}
-          className="p-6 sm:p-10 rounded-3xl bg-obsidian-900/40 border border-amber-500/30 backdrop-blur-xl text-center space-y-6 shadow-2xl max-w-2xl mx-auto"
+          className="p-6 sm:p-10 rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-amber-500/30 backdrop-blur-xl text-center space-y-6 shadow-2xl max-w-2xl mx-auto"
         >
           <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto shadow-glow shadow-amber-500/20">
             <Lock className="w-7 h-7 sm:w-10 sm:h-10" />
@@ -331,25 +331,25 @@ export const CertificateVerification = () => {
 
           <div className="space-y-2">
             <h3 className="text-2xl font-black text-white">Credential Issuance Locked</h3>
-            <p className="text-sm text-ink-300 leading-relaxed font-light">
+            <p className="text-sm text-[#635E56] dark:text-[#A69F94] leading-relaxed font-light">
               This credential requires absolute 100% verification across all streaming lectures,
               checkpoint evaluations, and architectural labs.
             </p>
           </div>
 
           {/* Progress Breakdown */}
-          <div className="p-4 rounded-xl bg-obsidian-950 border border-obsidian-800 text-left space-y-3 font-mono text-xs">
-            <div className="flex justify-between items-center text-ink-300">
+          <div className="p-4 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] text-left space-y-3 font-mono text-xs">
+            <div className="flex justify-between items-center text-[#635E56] dark:text-[#A69F94]">
               <span>Verified Trajectory Score:</span>
               <span className="font-bold text-amber-400">{calculatedPercentage}% / 100%</span>
             </div>
-            <div className="w-full h-2 rounded-full bg-obsidian-800 overflow-hidden">
+            <div className="w-full h-2 rounded-full bg-[#EAE5DC] dark:bg-[#272523] overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full"
                 style={{ width: `${calculatedPercentage}%` }}
               />
             </div>
-            <div className="flex justify-between items-center text-[11px] text-ink-500">
+            <div className="flex justify-between items-center text-[11px] text-[#756E64] dark:text-[#7A7368]">
               <span>Completed Streams: {progressData?.completedLectures || 0}/{progressData?.totalLectures || 14}</span>
               <span>Evaluations: {progressData?.passedAssessments || 0}/{progressData?.totalAssessments || 3}</span>
             </div>
@@ -360,7 +360,7 @@ export const CertificateVerification = () => {
               variant="primary"
               size="md"
               onClick={() => navigate(`/student/courses/${courseId}/classroom`)}
-              className="w-full sm:w-auto bg-gradient-to-r from-cyan-600 to-brand-600 text-white font-bold"
+              className="w-full sm:w-auto bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold"
             >
               Resume Learning in Classroom
             </Button>
@@ -368,7 +368,7 @@ export const CertificateVerification = () => {
               variant="ghost"
               size="md"
               onClick={() => setSimulatedComplete(true)}
-              className="w-full sm:w-auto text-ink-400 text-xs hover:text-white"
+              className="w-full sm:w-auto text-[#635E56] dark:text-[#A69F94] text-xs hover:text-white"
             >
               [Dev Override: Simulate 100%]
             </Button>
@@ -388,14 +388,14 @@ export const CertificateVerification = () => {
           <div
             ref={certificateFrameRef}
             id="credential-print-area"
-            className="relative rounded-3xl bg-gradient-to-b from-obsidian-900 via-obsidian-950 to-black p-8 md:p-14 border border-cyan-500/30 shadow-2xl shadow-cyan-950/20 overflow-hidden group select-none"
+            className="relative rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] p-8 md:p-14 border-2 border-[#E3DCD3] dark:border-white/[0.12] shadow-lg overflow-hidden group select-none"
           >
             {/* Ambient Radial Foil Glow in Center */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/5 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#5B3E57]/5 dark:bg-[#D1A7CC]/5 blur-[120px] rounded-full pointer-events-none" />
 
             {/* Corner Decorative Guilloche SVG Accents */}
             <svg
-              className="absolute top-4 left-4 w-16 h-16 text-cyan-500/20 pointer-events-none"
+              className="absolute top-4 left-4 w-16 h-16 text-[#9A6B56]/30 dark:text-[#D1A7CC]/20 pointer-events-none"
               viewBox="0 0 100 100"
               fill="none"
               stroke="currentColor"
@@ -405,7 +405,7 @@ export const CertificateVerification = () => {
               <circle cx="50" cy="50" r="30" strokeDasharray="4 4" />
             </svg>
             <svg
-              className="absolute top-4 right-4 w-16 h-16 text-cyan-500/20 pointer-events-none"
+              className="absolute top-4 right-4 w-16 h-16 text-[#9A6B56]/30 dark:text-[#D1A7CC]/20 pointer-events-none"
               viewBox="0 0 100 100"
               fill="none"
               stroke="currentColor"
@@ -415,7 +415,7 @@ export const CertificateVerification = () => {
               <circle cx="50" cy="50" r="30" strokeDasharray="4 4" />
             </svg>
             <svg
-              className="absolute bottom-4 left-4 w-16 h-16 text-cyan-500/20 pointer-events-none"
+              className="absolute bottom-4 left-4 w-16 h-16 text-[#9A6B56]/30 dark:text-[#D1A7CC]/20 pointer-events-none"
               viewBox="0 0 100 100"
               fill="none"
               stroke="currentColor"
@@ -425,7 +425,7 @@ export const CertificateVerification = () => {
               <circle cx="50" cy="50" r="30" strokeDasharray="4 4" />
             </svg>
             <svg
-              className="absolute bottom-4 right-4 w-16 h-16 text-cyan-500/20 pointer-events-none"
+              className="absolute bottom-4 right-4 w-16 h-16 text-[#9A6B56]/30 dark:text-[#D1A7CC]/20 pointer-events-none"
               viewBox="0 0 100 100"
               fill="none"
               stroke="currentColor"
@@ -436,14 +436,14 @@ export const CertificateVerification = () => {
             </svg>
 
             {/* Guilloche Inner Border Frame */}
-            <div className="relative border-2 border-cyan-500/20 rounded-2xl p-6 md:p-10 space-y-8 backdrop-blur-md">
+            <div className="relative border-2 border-[#9A6B56]/30 dark:border-[#D1A7CC]/25 rounded-2xl p-6 md:p-10 space-y-8 backdrop-blur-md">
               {/* Certificate Header Branding */}
               <div className="text-center space-y-3">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-950/40 border border-cyan-500/40 text-cyan-400 font-mono text-xs font-bold tracking-widest uppercase shadow-glow shadow-cyan-500/10">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC] font-mono text-xs font-bold tracking-widest uppercase shadow-glow shadow-cyan-500/10">
                   <Sparkles className="w-3.5 h-3.5" /> Cyberlearnix Institute of Engineering
                 </div>
 
-                <h2 className="text-2xl md:text-4xl font-extrabold tracking-widest uppercase text-[#F5F5F7] font-serif">
+                <h2 className="text-2xl md:text-4xl font-extrabold tracking-widest uppercase text-[#282521] dark:text-[#EDE8E1] font-serif">
                   Certificate of Architectural Mastery
                 </h2>
 
@@ -465,7 +465,7 @@ export const CertificateVerification = () => {
                   <div className="h-0.5 w-full bg-[#C5A880]/30 mt-2 opacity-60" />
                 </div>
 
-                <p className="text-sm text-ink-300 font-light leading-relaxed max-w-2xl mx-auto">
+                <p className="text-sm text-[#635E56] dark:text-[#A69F94] font-light leading-relaxed max-w-2xl mx-auto">
                   has thoroughly mastered the rigorous curriculum, production-grade failure scenarios,
                   and consensus topologies required to achieve certified distinction in
                 </p>
@@ -476,17 +476,17 @@ export const CertificateVerification = () => {
               </div>
 
               {/* Signatures & Seal Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-8 pt-8 border-t border-obsidian-800">
+              <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-8 pt-8 border-t border-[#E3DCD3] dark:border-white/[0.08]">
                 {/* Left: Lead Instructor Signature */}
                 <div className="text-center md:text-left space-y-1">
                   <div className="h-10 flex items-center justify-center md:justify-start">
-                    <span className="font-serif italic text-2xl text-cyan-400/90 font-bold tracking-wider">
+                    <span className="font-serif italic text-2xl text-[#5B3E57] dark:text-[#D1A7CC] font-bold tracking-wider">
                       M. Rostova
                     </span>
                   </div>
                   <div className="h-[1px] w-44 bg-obsidian-700 mx-auto md:mx-0" />
                   <p className="text-xs font-bold text-white">Elena Rostova, Ph.D.</p>
-                  <p className="text-[10px] font-mono text-ink-500 uppercase">
+                  <p className="text-[10px] font-mono text-[#756E64] dark:text-[#7A7368] uppercase">
                     Lead Systems Architect & Faculty Dean
                   </p>
                 </div>
@@ -506,32 +506,32 @@ export const CertificateVerification = () => {
 
                 {/* Right: Date & Verification QR Anchor */}
                 <div className="text-center md:text-right space-y-1">
-                  <p className="text-xs font-mono text-ink-300">
+                  <p className="text-xs font-mono text-[#635E56] dark:text-[#A69F94]">
                     Conferred: <span className="font-bold text-white">{issueDate}</span>
                   </p>
                   <p className="text-[10px] font-mono text-emerald-400 font-bold">
                     Cumulative Metric: 98.4% (Highest Distinction)
                   </p>
-                  <p className="text-[10px] font-mono text-ink-500">
+                  <p className="text-[10px] font-mono text-[#756E64] dark:text-[#7A7368]">
                     Authorized by Academic Senate
                   </p>
                 </div>
               </div>
 
               {/* Cryptographic Footprint Telemetry Bar */}
-              <div className="p-4 rounded-xl bg-obsidian-950/90 border border-obsidian-850 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs">
+              <div className="p-4 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A]/90 border border-obsidian-850 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs">
                 <div className="flex items-center gap-3 min-w-0">
-                  <Terminal className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <Terminal className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC] shrink-0" />
                   <div className="truncate">
-                    <span className="text-ink-500 uppercase text-[10px]">SHA-256 Ledger Anchor: </span>
-                    <span className="text-ink-200 select-all">{credentialSignature}</span>
+                    <span className="text-[#756E64] dark:text-[#7A7368] uppercase text-[10px]">SHA-256 Ledger Anchor: </span>
+                    <span className="text-[#282521] dark:text-[#EDE8E1] select-all">{credentialSignature}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     onClick={handleCopyHash}
-                    className="p-1.5 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 text-ink-400 hover:text-white transition-colors"
+                    className="p-1.5 rounded-lg bg-[#EAE5DC] dark:bg-[#272523] hover:bg-obsidian-700 text-[#635E56] dark:text-[#A69F94] hover:text-white transition-colors"
                     title="Copy Cryptographic Hash"
                   >
                     {copiedHash ? (
@@ -552,13 +552,13 @@ export const CertificateVerification = () => {
           {/* ===================================================================
               4. PUBLIC VERIFICATION INTEGRITY PANEL
               =================================================================== */}
-          <div className="p-6 rounded-2xl bg-obsidian-900/30 border border-obsidian-800/80 space-y-4 print:hidden">
+          <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] space-y-4 print:hidden">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h4 className="text-sm font-mono tracking-widest text-cyan-400 uppercase font-bold flex items-center gap-2">
+                <h4 className="text-sm font-mono tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] uppercase font-bold flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4" /> Public Telemetry & Ledger Validation Node
                 </h4>
-                <p className="text-xs text-ink-400 font-light mt-1">
+                <p className="text-xs text-[#635E56] dark:text-[#A69F94] font-light mt-1">
                   Anyone possessing this certificate ID can independently verify cryptographic authenticity
                   without requiring account login credentials.
                 </p>
@@ -577,18 +577,18 @@ export const CertificateVerification = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 text-xs font-mono">
-              <div className="p-3.5 rounded-xl bg-obsidian-950 border border-obsidian-850 space-y-1">
-                <span className="text-ink-500 uppercase text-[10px]">Verification Path</span>
-                <p className="text-cyan-400 font-bold truncate">
+              <div className="p-3.5 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-obsidian-850 space-y-1">
+                <span className="text-[#756E64] dark:text-[#7A7368] uppercase text-[10px]">Verification Path</span>
+                <p className="text-[#5B3E57] dark:text-[#D1A7CC] font-bold truncate">
                   /verify-certificate/{verificationCode}
                 </p>
               </div>
-              <div className="p-3.5 rounded-xl bg-obsidian-950 border border-obsidian-850 space-y-1">
-                <span className="text-ink-500 uppercase text-[10px]">Consensus Protocol</span>
+              <div className="p-3.5 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-obsidian-850 space-y-1">
+                <span className="text-[#756E64] dark:text-[#7A7368] uppercase text-[10px]">Consensus Protocol</span>
                 <p className="text-emerald-400 font-bold">PoA Merkle Tree Anchor</p>
               </div>
-              <div className="p-3.5 rounded-xl bg-obsidian-950 border border-obsidian-850 space-y-1">
-                <span className="text-ink-500 uppercase text-[10px]">Tamper Protection</span>
+              <div className="p-3.5 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-obsidian-850 space-y-1">
+                <span className="text-[#756E64] dark:text-[#7A7368] uppercase text-[10px]">Tamper Protection</span>
                 <p className="text-white font-bold">Immutable SHA-256 Digest</p>
               </div>
             </div>

@@ -108,7 +108,7 @@ const GradeSubmissionForm = ({ assignmentId, submission, onGraded }) => {
           <input type="text" value={feedback} onChange={e => setFeedback(e.target.value)} placeholder="Optional feedback" className="w-full border border-slate-200 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
         </div>
       </div>
-      <button onClick={handleGrade} disabled={saving} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition disabled:opacity-60">
+      <button onClick={handleGrade} disabled={saving} className="flex items-center gap-2 px-4 py-2 bg-[#5B3E57] dark:bg-[#D1A7CC] text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition disabled:opacity-60">
         {saving ? <Loader2 size={12} className="animate-spin" /> : <Star size={12} />} {submission.grade != null ? "Update Grade" : "Submit Grade"}
       </button>
     </div>

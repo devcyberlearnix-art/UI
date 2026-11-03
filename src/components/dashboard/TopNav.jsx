@@ -110,7 +110,7 @@ const TopNav = ({ setSidebarOpen, sidebarOpen }) => {
                 placeholder="Search for courses, skills, or instructors..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-72 pl-9 pr-4 py-2 text-xs rounded-lg border border-slate-200 bg-slate-50 text-slate-800 placeholder:text-slate-400 outline-none focus:border-[#2563EB] focus:bg-white focus:ring-2 focus:ring-[#2563EB]/10 transition-all"
+                className="w-72 pl-9 pr-4 py-2 text-xs rounded-lg border border-[#E3DCD3] dark:border-white/[0.08] bg-[#FFFEFA] dark:bg-[#1D1C1A] text-[#282521] dark:text-[#EDE8E1] placeholder:text-[#756E64] dark:placeholder-[#7A7368] outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] focus:ring-2 focus:ring-[#5B3E57]/15 dark:focus:ring-[#D1A7CC]/20 transition-all"
               />
             </div>
           </div>

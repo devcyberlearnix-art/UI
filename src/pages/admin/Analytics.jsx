@@ -33,7 +33,7 @@ import Skeleton from '../../design-system/primitives/Skeleton';
 const SPRING = { type: 'spring', stiffness: 280, damping: 26 };
 
 // Ink & Onyx Curated Chart Palette
-const CHART_PALETTE = ['#C5A880', '#06b6d4', '#6366f1', '#10b981', '#f59e0b', '#ec4899'];
+const CHART_PALETTE = ['#5B3E57', '#37654F', '#A36750', '#436A84', '#A87E38', '#9A6B56'];
 
 export default function Analytics() {
   const {
@@ -249,7 +249,7 @@ export default function Analytics() {
                     fontSize: '12px',
                   }}
                 />
-                <Bar dataKey="orders" fill="#06b6d4" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="orders" fill="#5B3E57" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

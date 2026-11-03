@@ -368,7 +368,7 @@ const Roles = () => {
               <p className="text-sm text-gray-500">Total Users</p>
               <p className="text-2xl font-bold">{roles.reduce((sum, r) => sum + r.users, 0)}</p>
             </div>
-            <Users className="text-blue-500" size={24} />
+            <Users className="text-[#5B3E57] dark:text-[#D1A7CC]" size={24} />
           </div>
         </div>
       </div>
@@ -413,7 +413,7 @@ const Roles = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleOpenModal(role)}
-                    className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition"
+                    className="p-2 text-[#5B3E57] dark:text-[#D1A7CC] hover:bg-[#F2ECF1] dark:hover:bg-[#D1A7CC]/15 rounded-lg transition"
                   >
                     <Edit size={18} />
                   </button>

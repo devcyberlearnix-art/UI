@@ -250,7 +250,7 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
           {/* Wishlist Icon with Tooltip */}
           <Link
             to="/wishlist"
-            className="p-2 rounded-xl text-slate-600 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] border border-transparent hover:border-slate-200 dark:hover:border-white/[0.06] transition-all hidden sm:flex"
+            className="p-2 rounded-xl text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.04] border border-transparent hover:border-[#E3DCD3] dark:hover:border-white/[0.06] transition-all hidden sm:flex"
             aria-label="View saved courses wishlist"
             title="Saved Wishlist"
           >
@@ -264,14 +264,14 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
                 type="button"
                 whileTap={{ scale: 0.96 }}
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-[#14141A] hover:bg-[#1B1B24] border border-white/[0.08] hover:border-[#C5A880]/40 transition-all text-xs font-semibold text-[#F5F5F7]"
+                className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] hover:bg-[#E1DBD0] dark:hover:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 transition-all text-xs font-semibold text-[#282521] dark:text-[#EDE8E1]"
                 aria-label="User profile menu"
                 aria-expanded={userDropdownOpen}
               >
-                <div className="w-6 h-6 rounded-lg bg-[#C5A880]/15 border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] text-xs font-bold uppercase shadow-sm">
+                <div className="w-6 h-6 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-bold uppercase shadow-2xs">
                   {(user.name || user.email || 'U').charAt(0)}
                 </div>
-                <span className="hidden sm:inline max-w-[90px] truncate text-white">
+                <span className="hidden sm:inline max-w-[90px] truncate text-[#282521] dark:text-[#EDE8E1]">
                   {user.name || user.email?.split('@')[0]}
                 </span>
               </motion.button>
@@ -283,32 +283,32 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.96 }}
                     transition={{ duration: 0.18 }}
-                    className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#0F0F13]/98 border border-white/[0.08] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.9)] backdrop-blur-2xl p-2 z-50 text-xs"
+                    className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] shadow-card backdrop-blur-2xl p-2 z-50 text-xs text-[#282521] dark:text-[#EDE8E1]"
                   >
-                    <div className="px-3 py-2 border-b border-white/[0.04] mb-1">
-                      <p className="font-semibold text-white truncate">{user.name || 'User'}</p>
-                      <p className="text-[#71717A] text-[10px] truncate">{user.email}</p>
+                    <div className="px-3 py-2 border-b border-[#E3DCD3] dark:border-white/[0.06] mb-1">
+                      <p className="font-semibold text-[#282521] dark:text-white truncate">{user.name || 'User'}</p>
+                      <p className="text-[#756E64] dark:text-[#7A7368] text-[10px] truncate">{user.email}</p>
                     </div>
 
                     <Link
                       to={getDashboardPath()}
                       onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] transition-colors"
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.04] transition-colors"
                     >
-                      <LayoutDashboard className="w-4 h-4 text-[#C5A880]" />
+                      <LayoutDashboard className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                       <span>Workspace Dashboard</span>
                     </Link>
 
                     <Link
                       to="/profile"
                       onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] transition-colors"
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.04] transition-colors"
                     >
-                      <User className="w-4 h-4 text-[#E5E5E7]" />
+                      <User className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                       <span>Account Settings</span>
                     </Link>
 
-                    <div className="border-t border-white/[0.04] my-1" />
+                    <div className="border-t border-[#E3DCD3] dark:border-white/[0.06] my-1" />
 
                     <button
                       type="button"
@@ -317,7 +317,7 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
                         logout();
                         navigate('/');
                       }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors text-left"
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#9B3835] dark:text-[#D66B67] hover:bg-[#FAECEB] dark:hover:bg-[#D66B67]/15 transition-colors text-left cursor-pointer"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>Sign Out</span>
@@ -332,7 +332,7 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
                 variant="secondary"
                 size="sm"
                 onClick={() => navigate('/login')}
-                className="text-white hover:text-[#C5A880] border-white/10 hover:border-white/20 px-3.5 font-semibold text-xs"
+                className="px-3.5 font-semibold text-xs"
               >
                 Sign In
               </Button>
@@ -340,7 +340,7 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
                 variant="primary"
                 size="sm"
                 onClick={() => navigate('/register')}
-                className="px-4 font-bold text-xs shadow-md shadow-[#C5A880]/10"
+                className="px-4 font-bold text-xs"
               >
                 Get Started
               </Button>
@@ -351,7 +351,7 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-xl text-[#A1A1AA] hover:text-white"
+            className="md:hidden p-2 rounded-xl text-[#635E56] hover:text-[#282521] dark:text-[#A69F94] dark:hover:text-white"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -367,11 +367,11 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={SPRING_TRANSITION}
-            className="md:hidden mt-2 rounded-2xl bg-white dark:bg-[#0F0F13]/98 border border-slate-200 dark:border-white/[0.08] p-4 shadow-lg dark:shadow-2xl backdrop-blur-2xl overflow-hidden"
+            className="md:hidden mt-2 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] p-4 shadow-card backdrop-blur-2xl overflow-hidden"
           >
             <div className="flex flex-col gap-2">
-              <div className="pb-2 border-b border-slate-200 dark:border-white/[0.06] flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Appearance</span>
+              <div className="pb-2 border-b border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#635E56] dark:text-[#A69F94]">Appearance</span>
                 <ThemeToggle size="sm" showLabel />
               </div>
               {dynamicNavLinks.map((link) => (
@@ -379,7 +379,7 @@ export const HeaderNav = ({ onSearchClick, initialNav = null, initialSettings = 
                   key={link.href}
                   to={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors"
+                  className="px-3 py-2 rounded-xl text-sm font-semibold text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.04] transition-colors"
                 >
                   {link.label}
                 </Link>

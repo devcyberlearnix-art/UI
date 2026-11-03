@@ -269,12 +269,12 @@ const AdminNavbar = ({ sidebarOpen, setSidebarOpen }) => {
                   </div>
                   
                   {/* Upload overlay */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
+                  <div className="absolute inset-0 bg-[#282521]/30 dark:bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
                     <Camera size={16} className="text-white" />
                   </div>
                   
                   {uploadingPhoto && (
-                    <div className="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center">
+                    <div className="absolute inset-0 bg-[#282521]/45 dark:bg-black/75 rounded-xl flex items-center justify-center">
                       <Loader2 size={16} className="text-white animate-spin" />
                     </div>
                   )}

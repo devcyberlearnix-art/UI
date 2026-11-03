@@ -14,10 +14,10 @@ export function ThemeToggle({ className = '', showLabel = false, size = 'md' }) 
       onClick={toggleTheme}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className={`relative inline-flex items-center justify-center gap-2 rounded-xl transition-all duration-200 cursor-pointer select-none border focus:outline-none focus:ring-2 focus:ring-blue-500/40 ${
+      className={`relative inline-flex items-center justify-center gap-2 rounded-xl transition-all duration-200 cursor-pointer select-none border focus:outline-none focus:ring-2 focus:ring-[#5B3E57]/20 dark:focus:ring-[#D1A7CC]/30 ${
         isDark
-          ? 'bg-[#14141A] text-[#E5E5E7] hover:text-white border-white/[0.08] hover:border-white/20'
-          : 'bg-white text-slate-700 hover:text-slate-900 border-slate-200 hover:border-slate-300 shadow-sm'
+          ? 'bg-[#1D1C1A] text-[#EDE8E1] hover:text-[#D1A7CC] border-white/[0.08] hover:border-white/20'
+          : 'bg-[#FFFEFA] text-[#282521] hover:text-[#5B3E57] border-[#E3DCD3] hover:border-[#D8D0C5] shadow-xs'
       } ${isSmall ? 'p-1.5 text-xs' : 'p-2 text-sm'} ${className}`}
       title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
       aria-label={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}

@@ -188,10 +188,10 @@ export const AuthShell = ({
           >
             {showCardBrand && (
               <div className="flex items-center justify-center gap-2 mb-6">
-                <div className="w-7 h-7 rounded-xl bg-slate-100 dark:bg-[#14141A] border border-blue-500/20 dark:border-[#C5A880]/30 flex items-center justify-center overflow-hidden">
+                <div className="w-7 h-7 rounded-xl bg-slate-100 dark:bg-[#14141A] border border-[#5B3E57] dark:border-[#D1A7CC]/20 dark:border-[#C5A880]/30 flex items-center justify-center overflow-hidden">
                   <img src="/assets/asivo-symbol-64.png" alt="Asivo" className="w-4 h-4 object-contain" />
                 </div>
-                <span className="text-xs font-bold tracking-widest text-blue-600 dark:text-[#C5A880] uppercase">
+                <span className="text-xs font-bold tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#C5A880] uppercase">
                   ASIVO AUTH
                 </span>
               </div>
@@ -202,11 +202,11 @@ export const AuthShell = ({
             {showTerms && (
               <div className="mt-6 pt-4 border-t border-slate-200 dark:border-white/[0.04] text-center text-[11px] text-slate-500 dark:text-[#71717A] leading-relaxed">
                 By continuing, you agree to our{' '}
-                <Link to="/terms" className="text-blue-600 dark:text-[#C5A880] hover:underline font-medium">
+                <Link to="/terms" className="text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#C5A880] hover:underline font-medium">
                   Terms of Service
                 </Link>{' '}
                 and{' '}
-                <Link to="/privacy" className="text-blue-600 dark:text-[#C5A880] hover:underline font-medium">
+                <Link to="/privacy" className="text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#C5A880] hover:underline font-medium">
                   Privacy Policy
                 </Link>.
               </div>
@@ -218,7 +218,7 @@ export const AuthShell = ({
             <div className="hidden lg:flex justify-center mt-6">
               <Link
                 to="/"
-                className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-blue-600 dark:text-[#71717A] dark:hover:text-[#C5A880] transition-colors"
+                className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#71717A] dark:hover:text-[#C5A880] transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Return to discovery catalog</span>

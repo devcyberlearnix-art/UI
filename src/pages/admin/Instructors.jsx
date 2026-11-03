@@ -294,7 +294,7 @@ const Instructors = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleViewDetails(instructor)}
-                    className="px-3 py-1 text-xs text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium"
+                    className="px-3 py-1 text-xs text-[#5B3E57] dark:text-[#D1A7CC] hover:bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 rounded-lg transition-colors font-medium"
                   >
                     View
                   </button>
@@ -340,7 +340,7 @@ const Instructors = () => {
       {/* Instructor Details Modal (Ink & Onyx) */}
       {showModal && selectedInstructor && (
         <Portal>
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setShowModal(false)}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#282521]/45 dark:bg-black/75 backdrop-blur-sm" onClick={() => setShowModal(false)}>
             <div className="bg-[#0F0F13] border border-white/10 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden text-left" onClick={(e) => e.stopPropagation()}>
               <div className="p-6 border-b border-white/5 flex items-center justify-between">
                 <div>

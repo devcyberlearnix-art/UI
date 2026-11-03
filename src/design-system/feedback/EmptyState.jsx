@@ -18,27 +18,27 @@ export const EmptyState = ({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className={`flex flex-col items-center justify-center text-center p-8 sm:p-12 rounded-3xl bg-[#0B0B0F]/90 border border-white/5 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.8),0_0_40px_rgba(0,240,255,0.03)] backdrop-blur-2xl max-w-lg mx-auto ${className}`}
+      className={`flex flex-col items-center justify-center text-center p-8 sm:p-12 rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] shadow-sm max-w-lg mx-auto ${className}`}
     >
       <div className="relative mb-5">
-        <div className="w-16 h-16 rounded-2xl bg-[#00F0FF]/10 border border-[#00F0FF]/25 flex items-center justify-center text-[#00F0FF] shadow-[0_0_25px_rgba(0,240,255,0.2)]">
+        <div className="w-16 h-16 rounded-2xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] shadow-xs">
           <Icon className="w-8 h-8" />
         </div>
-        <div className="absolute -inset-2 bg-[#00F0FF]/15 rounded-3xl blur-xl -z-10" />
+        <div className="absolute -inset-2 bg-[#5B3E57]/5 dark:bg-[#D1A7CC]/10 rounded-3xl blur-xl -z-10" />
       </div>
 
-      <h3 className="text-xl font-bold text-[#F5F5F7] tracking-tight mb-2">
+      <h3 className="text-xl font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight mb-2">
         {title}
       </h3>
 
-      <p className="text-sm text-[#8E8E93] leading-relaxed mb-6 max-w-sm">
+      <p className="text-sm text-[#635E56] dark:text-[#A69F94] leading-relaxed mb-6 max-w-sm">
         {description}
       </p>
 
       <div className="flex flex-wrap items-center justify-center gap-3">
         {actionLabel && onAction && (
           <Button
-            variant="cyan"
+            variant="primary"
             size="md"
             onClick={onAction}
             rightIcon={ArrowRight}

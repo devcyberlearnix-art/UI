@@ -293,7 +293,7 @@ export const AdminCommandCenter = () => {
   }, []);
 
   return (
-    <div className="space-y-8 font-sans text-ink-100 max-w-7xl mx-auto pb-24">
+    <div className="space-y-8 font-sans text-[#282521] dark:text-[#EDE8E1] max-w-7xl mx-auto pb-24">
       {/* ===================================================================
           1. SYSTEM RUNTIME BANNER (TOGGLEABLE BROADCAST)
           =================================================================== */}
@@ -336,14 +336,14 @@ export const AdminCommandCenter = () => {
       {/* ===================================================================
           2. COMMAND CENTER HEADER & MASTER SWITCHES
           =================================================================== */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-6 rounded-2xl bg-obsidian-900/60 border border-obsidian-800/80 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-xl shadow-2xl relative overflow-hidden">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center text-black font-black text-xl shadow-glow shadow-cyan-500/30">
-            <Radio className="w-6 h-6 text-black animate-pulse" />
+          <div className="w-12 h-12 rounded-2xl bg-[#5B3E57] dark:bg-[#D1A7CC] flex items-center justify-center text-[#FFFEFA] dark:text-[#151413] shadow-xs">
+            <Radio className="w-6 h-6 text-current animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono font-bold tracking-widest text-cyan-400 uppercase">
+              <span className="text-[11px] font-mono font-bold tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] uppercase">
                 Admin Command Hub
               </span>
               <span className="text-obsidian-600">•</span>
@@ -351,7 +351,7 @@ export const AdminCommandCenter = () => {
                 ALL 5 MICROSERVICES HEALTHY
               </Badge>
             </div>
-            <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-black text-[#282521] dark:text-[#EDE8E1] tracking-tight">
               Enterprise Operations & Signal Matrix
             </h1>
           </div>
@@ -364,8 +364,8 @@ export const AdminCommandCenter = () => {
             onClick={() => setAutoRefreshActive((p) => !p)}
             className={`px-3 py-1.5 rounded-xl border font-mono text-xs font-semibold flex items-center gap-2 transition-colors ${
               autoRefreshActive
-                ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-300'
-                : 'bg-obsidian-800 border-obsidian-700 text-ink-400'
+                ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC]'
+                : 'bg-[#EAE5DC] dark:bg-[#272523] border-[#E3DCD3] dark:border-white/[0.08] text-[#635E56] dark:text-[#A69F94]'
             }`}
           >
             <RefreshCw className={`w-3.5 h-3.5 ${autoRefreshActive ? 'animate-spin' : ''}`} />
@@ -378,7 +378,7 @@ export const AdminCommandCenter = () => {
             size="sm"
             onClick={handleToggleBanner}
             leftIcon={Sliders}
-            className="text-xs border-obsidian-700"
+            className="text-xs border-[#E3DCD3] dark:border-white/[0.08]"
           >
             {warningBanner.enabled ? 'Mute Warning Banner' : 'Broadcast Warning Banner'}
           </Button>
@@ -389,7 +389,7 @@ export const AdminCommandCenter = () => {
             size="sm"
             onClick={() => setIsPingModalOpen(true)}
             leftIcon={Bell}
-            className="text-xs font-bold shadow-glow-cyan"
+            className="text-xs font-bold shadow-xs"
           >
             Issue System Ping
           </Button>
@@ -405,25 +405,25 @@ export const AdminCommandCenter = () => {
           return (
             <div
               key={kpi.id}
-              className="p-5 rounded-2xl bg-obsidian-900/40 border border-obsidian-800/80 backdrop-blur-md space-y-3 relative overflow-hidden group hover:border-cyan-500/40 transition-all duration-300"
+              className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-3 relative overflow-hidden group hover:border-[#D5C0D1] dark:border-[#D1A7CC]/30 transition-all duration-300"
             >
-              <div className="flex items-center justify-between text-ink-400">
+              <div className="flex items-center justify-between text-[#635E56] dark:text-[#A69F94]">
                 <span className="text-xs font-mono font-semibold uppercase">{kpi.label}</span>
-                <div className="w-8 h-8 rounded-lg bg-obsidian-800/80 border border-obsidian-700/60 flex items-center justify-center text-cyan-400">
+                <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
                   <Icon className="w-4 h-4" />
                 </div>
               </div>
 
               <div>
                 <div className="flex items-baseline gap-2">
-                  <h3 className="text-2xl font-black font-mono text-white tracking-tight">
+                  <h3 className="text-2xl font-black font-mono text-[#282521] dark:text-[#EDE8E1] tracking-tight">
                     {kpi.value}
                   </h3>
                   <span className="text-xs font-mono font-bold text-emerald-400">
                     {kpi.change}
                   </span>
                 </div>
-                <p className="text-[11px] text-ink-500 font-light mt-1 truncate">{kpi.sub}</p>
+                <p className="text-[11px] text-[#756E64] dark:text-[#7A7368] font-light mt-1 truncate">{kpi.sub}</p>
               </div>
             </div>
           );
@@ -435,19 +435,19 @@ export const AdminCommandCenter = () => {
           =================================================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 Cols: Enrollment Velocity Vectors */}
-        <div className="lg:col-span-2 p-6 rounded-2xl bg-obsidian-900/40 border border-obsidian-800/80 backdrop-blur-md space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-obsidian-800">
+        <div className="lg:col-span-2 p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E3DCD3] dark:border-white/[0.08]">
             <div>
-              <span className="text-[10px] font-mono tracking-widest text-cyan-400 uppercase font-bold">
+              <span className="text-[10px] font-mono tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] uppercase font-bold">
                 Telemetry Signal Vector
               </span>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Activity className="w-4 h-4 text-cyan-400" /> Platform Intake Velocity & P95 Latency Curve
+              <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1] flex items-center gap-2">
+                <Activity className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" /> Platform Intake Velocity & P95 Latency Curve
               </h3>
             </div>
             <div className="flex items-center gap-2 font-mono text-xs">
-              <span className="inline-flex items-center gap-1 text-cyan-400">
-                <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" /> Intake Rate
+              <span className="inline-flex items-center gap-1 text-[#5B3E57] dark:text-[#D1A7CC]">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#5B3E57] dark:bg-[#D1A7CC]" /> Intake Rate
               </span>
               <span className="inline-flex items-center gap-1 text-indigo-400 ml-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" /> Latency (ms)
@@ -503,12 +503,12 @@ export const AdminCommandCenter = () => {
         </div>
 
         {/* Right Col: Global Revenue Distribution Factors */}
-        <div className="p-6 rounded-2xl bg-obsidian-900/40 border border-obsidian-800/80 backdrop-blur-md space-y-4">
-          <div className="pb-3 border-b border-obsidian-800">
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-4">
+          <div className="pb-3 border-b border-[#E3DCD3] dark:border-white/[0.08]">
             <span className="text-[10px] font-mono tracking-widest text-emerald-400 uppercase font-bold">
               Capital Distribution
             </span>
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
+            <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1] flex items-center gap-2">
               <DollarSign className="w-4 h-4 text-emerald-400" /> Revenue Factor Segmentation
             </h3>
           </div>
@@ -549,14 +549,14 @@ export const AdminCommandCenter = () => {
             </ResponsiveContainer>
           </div>
 
-          <div className="space-y-2 pt-2 border-t border-obsidian-800 text-xs font-mono">
+          <div className="space-y-2 pt-2 border-t border-[#E3DCD3] dark:border-white/[0.08] text-xs font-mono">
             {REVENUE_DISTRIBUTION_DATA.map((item) => (
               <div key={item.category} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="text-ink-300">{item.category}</span>
+                  <span className="text-[#635E56] dark:text-[#A69F94]">{item.category}</span>
                 </div>
-                <span className="font-bold text-white">${item.amount.toLocaleString()}</span>
+                <span className="font-bold text-[#282521] dark:text-[#EDE8E1]">${item.amount.toLocaleString()}</span>
               </div>
             ))}
           </div>
@@ -568,14 +568,14 @@ export const AdminCommandCenter = () => {
           =================================================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Microservice Latency Cluster */}
-        <div className="p-6 rounded-2xl bg-obsidian-900/40 border border-obsidian-800/80 backdrop-blur-md space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-obsidian-800">
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-white/[0.08]">
             <div>
-              <span className="text-[10px] font-mono tracking-widest text-cyan-400 uppercase font-bold">
+              <span className="text-[10px] font-mono tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] uppercase font-bold">
                 Mesh Topology
               </span>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Server className="w-4 h-4 text-cyan-400" /> Infrastructure Node Latency & Uptime
+              <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1] flex items-center gap-2">
+                <Server className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" /> Infrastructure Node Latency & Uptime
               </h3>
             </div>
             <Badge variant="success" className="font-mono text-[10px]">
@@ -587,16 +587,16 @@ export const AdminCommandCenter = () => {
             {servicesList.map((svc) => (
               <div
                 key={svc.id}
-                className="p-3.5 rounded-xl bg-obsidian-950 border border-white/[0.04] flex items-center justify-between text-xs font-mono"
+                className="p-3.5 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-white/[0.04] flex items-center justify-between text-xs font-mono"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-emerald-400" />
-                  <span className="text-ink-100 font-bold">{svc.name}</span>
+                  <span className="text-[#282521] dark:text-[#EDE8E1] font-bold">{svc.name}</span>
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <span className="text-cyan-400 font-bold">{svc.latency}</span>
-                  <span className="text-ink-500">{svc.uptime}</span>
+                  <span className="text-[#5B3E57] dark:text-[#D1A7CC] font-bold">{svc.latency}</span>
+                  <span className="text-[#756E64] dark:text-[#7A7368]">{svc.uptime}</span>
                 </div>
               </div>
             ))}
@@ -604,14 +604,14 @@ export const AdminCommandCenter = () => {
         </div>
 
         {/* Real-time Rolling Session Audit Logs with Ingest Pause/Play Switch */}
-        <div className="p-6 rounded-2xl bg-obsidian-900/40 border border-white/[0.04] backdrop-blur-md space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-obsidian-800">
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-white/[0.04] backdrop-blur-md space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-white/[0.08]">
             <div>
-              <span className="text-[10px] font-mono tracking-widest text-cyan-400 uppercase font-bold">
+              <span className="text-[10px] font-mono tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] uppercase font-bold">
                 Live Audit Stream
               </span>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-cyan-400" /> Active User Session Ingest Logs
+              <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1] flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" /> Active User Session Ingest Logs
               </h3>
             </div>
             
@@ -619,7 +619,7 @@ export const AdminCommandCenter = () => {
             <button
               type="button"
               onClick={() => setAutoRefreshActive(!autoRefreshActive)}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-[10px] font-mono text-[#E5E5E7] hover:text-white hover:border-[#C5A880]/30 transition-colors"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-[10px] font-mono text-[#E5E5E7] hover:text-[#282521] dark:text-[#EDE8E1] hover:border-[#C5A880]/30 transition-colors"
               title={autoRefreshActive ? 'Pause live audit ingest' : 'Resume live audit ingest'}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${autoRefreshActive ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
@@ -637,22 +637,22 @@ export const AdminCommandCenter = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                  className="p-2.5 rounded-lg bg-obsidian-950 border border-white/[0.04] flex items-center justify-between gap-3"
+                  className="p-2.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-white/[0.04] flex items-center justify-between gap-3"
                 >
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-ink-500 shrink-0">{log.time}</span>
+                    <span className="text-[#756E64] dark:text-[#7A7368] shrink-0">{log.time}</span>
                     <span
                       className={`font-bold px-1.5 py-0.5 rounded text-[10px] shrink-0 ${
                         log.level === 'SUCCESS'
                           ? 'bg-emerald-500/20 text-emerald-400'
                           : log.level === 'WARN'
                           ? 'bg-amber-500/20 text-amber-400'
-                          : 'bg-cyan-500/20 text-cyan-400'
+                          : 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 text-[#5B3E57] dark:text-[#D1A7CC]'
                       }`}
                     >
                       {log.event}
                     </span>
-                    <span className="text-ink-300 truncate">{log.user}</span>
+                    <span className="text-[#635E56] dark:text-[#A69F94] truncate">{log.user}</span>
                   </div>
                   <span className="text-ink-600 text-[10px] shrink-0 hidden sm:block">{log.ip}</span>
                 </motion.div>
@@ -665,39 +665,39 @@ export const AdminCommandCenter = () => {
       {/* ===================================================================
           6. UNIFIED SECURITY CONTROL GRID: TENANT ACCESS MANIPULATION
           =================================================================== */}
-      <div className="p-6 rounded-2xl bg-obsidian-900/40 border border-obsidian-800/80 backdrop-blur-md space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-obsidian-800">
+      <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E3DCD3] dark:border-white/[0.08]">
           <div>
-            <span className="text-[10px] font-mono tracking-widest text-cyan-400 uppercase font-bold">
+            <span className="text-[10px] font-mono tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] uppercase font-bold">
               Access Governance Grid
             </span>
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <Shield className="w-5 h-5 text-cyan-400" /> Tenant Access Profiles & Security Controls
+            <h3 className="text-lg font-bold text-[#282521] dark:text-[#EDE8E1] flex items-center gap-2">
+              <Shield className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" /> Tenant Access Profiles & Security Controls
             </h3>
           </div>
 
           {/* Search & Filter */}
           <div className="flex items-center gap-2">
             <div className="relative">
-              <Search className="w-3.5 h-3.5 text-ink-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-3.5 h-3.5 text-[#756E64] dark:text-[#7A7368] absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search tenant by ID, name, email..."
-                className="pl-8 pr-3 py-1.5 bg-obsidian-950 border border-obsidian-800 rounded-xl text-xs text-ink-100 placeholder-ink-600 focus:outline-none focus:border-cyan-500/50 w-56"
+                className="pl-8 pr-3 py-1.5 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] placeholder:text-[#756E64] dark:placeholder-[#7A7368] focus:outline-none focus:border-cyan-500/50 w-56"
               />
             </div>
 
-            <div className="flex rounded-xl bg-obsidian-950 p-1 border border-obsidian-800 text-xs font-mono">
+            <div className="flex rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] p-1 border border-[#E3DCD3] dark:border-white/[0.08] text-xs font-mono">
               {['ALL', 'ACTIVE', 'QUARANTINED'].map((f) => (
                 <button
                   key={f}
                   onClick={() => setTenantFilter(f)}
                   className={`px-2.5 py-1 rounded-lg transition-colors ${
                     tenantFilter === f
-                      ? 'bg-cyan-500/20 text-cyan-300 font-bold'
-                      : 'text-ink-500 hover:text-ink-200'
+                      ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 text-[#5B3E57] dark:text-[#D1A7CC] font-bold'
+                      : 'text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:text-[#EDE8E1]'
                   }`}
                 >
                   {f}
@@ -711,7 +711,7 @@ export const AdminCommandCenter = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left font-mono text-xs">
             <thead>
-              <tr className="border-b border-obsidian-800 text-ink-500 uppercase text-[10px]">
+              <tr className="border-b border-[#E3DCD3] dark:border-white/[0.08] text-[#756E64] dark:text-[#7A7368] uppercase text-[10px]">
                 <th className="pb-3 font-semibold">Tenant ID / Name</th>
                 <th className="pb-3 font-semibold">Email Anchor</th>
                 <th className="pb-3 font-semibold">Privilege Tier</th>
@@ -724,10 +724,10 @@ export const AdminCommandCenter = () => {
               {filteredTenants.map((t) => (
                 <tr key={t.id} className="hover:bg-obsidian-850/40 transition-colors">
                   <td className="py-3.5">
-                    <p className="font-bold text-white">{t.name}</p>
-                    <p className="text-[10px] text-ink-500">{t.id}</p>
+                    <p className="font-bold text-[#282521] dark:text-[#EDE8E1]">{t.name}</p>
+                    <p className="text-[10px] text-[#756E64] dark:text-[#7A7368]">{t.id}</p>
                   </td>
-                  <td className="py-3.5 text-ink-300">{t.email}</td>
+                  <td className="py-3.5 text-[#635E56] dark:text-[#A69F94]">{t.email}</td>
                   <td className="py-3.5">
                     <Badge variant="secondary" className="text-[10px]">
                       {t.tier}
@@ -745,7 +745,7 @@ export const AdminCommandCenter = () => {
                       {t.status}
                     </span>
                   </td>
-                  <td className="py-3.5 text-ink-500">{t.lastActive}</td>
+                  <td className="py-3.5 text-[#756E64] dark:text-[#7A7368]">{t.lastActive}</td>
                   <td className="py-3.5 text-right">
                     <Button
                       variant={t.status === 'ACTIVE' ? 'danger' : 'cyan'}
@@ -778,16 +778,16 @@ export const AdminCommandCenter = () => {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-lg bg-obsidian-950 border border-obsidian-800 rounded-2xl p-6 space-y-5 shadow-2xl relative"
+              className="w-full max-w-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-2xl p-6 space-y-5 shadow-2xl relative"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-obsidian-800">
+              <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-white/[0.08]">
                 <div className="flex items-center gap-2">
-                  <Bell className="w-5 h-5 text-cyan-400" />
-                  <h3 className="text-base font-bold text-white">Broadcast System-Wide Ping</h3>
+                  <Bell className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" />
+                  <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1]">Broadcast System-Wide Ping</h3>
                 </div>
                 <button
                   onClick={() => setIsPingModalOpen(false)}
-                  className="text-ink-500 hover:text-white"
+                  className="text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:text-[#EDE8E1]"
                 >
                   ✕
                 </button>
@@ -795,23 +795,23 @@ export const AdminCommandCenter = () => {
 
               <form onSubmit={handleDispatchPing} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-ink-300">Broadcast Title</label>
+                  <label className="text-xs font-bold text-[#635E56] dark:text-[#A69F94]">Broadcast Title</label>
                   <input
                     type="text"
                     value={pingPayload.title}
                     onChange={(e) => setPingPayload((p) => ({ ...p, title: e.target.value }))}
-                    className="w-full px-3 py-2 bg-obsidian-900 border border-obsidian-800 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-500/60"
+                    className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-cyan-500/60"
                     required
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-ink-300">Audience Scope</label>
+                    <label className="text-xs font-bold text-[#635E56] dark:text-[#A69F94]">Audience Scope</label>
                     <select
                       value={pingPayload.audience}
                       onChange={(e) => setPingPayload((p) => ({ ...p, audience: e.target.value }))}
-                      className="w-full px-3 py-2 bg-obsidian-900 border border-obsidian-800 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-500/60 font-mono"
+                      className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-cyan-500/60 font-mono"
                     >
                       <option value="ALL">All Active Tenants</option>
                       <option value="STUDENTS">Students Only</option>
@@ -820,11 +820,11 @@ export const AdminCommandCenter = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-ink-300">Severity Tier</label>
+                    <label className="text-xs font-bold text-[#635E56] dark:text-[#A69F94]">Severity Tier</label>
                     <select
                       value={pingPayload.severity}
                       onChange={(e) => setPingPayload((p) => ({ ...p, severity: e.target.value }))}
-                      className="w-full px-3 py-2 bg-obsidian-900 border border-obsidian-800 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-500/60 font-mono"
+                      className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-cyan-500/60 font-mono"
                     >
                       <option value="HIGH">CRITICAL / HIGH</option>
                       <option value="MEDIUM">ADVISORY / MEDIUM</option>
@@ -834,12 +834,12 @@ export const AdminCommandCenter = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-ink-300">Broadcast Payload</label>
+                  <label className="text-xs font-bold text-[#635E56] dark:text-[#A69F94]">Broadcast Payload</label>
                   <textarea
                     rows={3}
                     value={pingPayload.message}
                     onChange={(e) => setPingPayload((p) => ({ ...p, message: e.target.value }))}
-                    className="w-full p-3 bg-obsidian-900 border border-obsidian-800 rounded-xl text-xs text-ink-200 focus:outline-none focus:border-cyan-500/60 resize-none font-light leading-relaxed"
+                    className="w-full p-3 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-cyan-500/60 resize-none font-light leading-relaxed"
                     required
                   />
                 </div>

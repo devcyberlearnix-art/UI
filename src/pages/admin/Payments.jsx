@@ -7,7 +7,7 @@ import Portal from "../../components/ui/Portal";
 
 const Modal = ({ title, children, onClose }) => (
   <Portal>
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#282521]/40 dark:bg-black/70 flex items-center justify-center z-50 p-4" onClick={onClose}>
       <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-white rounded-2xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-4"><h2 className="text-xl font-bold">{title}</h2><button onClick={onClose}><X size={20} /></button></div>
         {children}
@@ -140,7 +140,7 @@ const Payments = () => {
         <div className="bg-white p-4 rounded-xl border">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 rounded-lg">
-              <CheckCircle className="w-6 h-6 text-blue-600" />
+              <CheckCircle className="w-6 h-6 text-[#5B3E57] dark:text-[#D1A7CC]" />
             </div>
             <div>
               <p className="text-sm text-gray-500">Completed</p>
@@ -220,7 +220,7 @@ const Payments = () => {
                 <td className="px-6 py-4 text-right">
                   <button 
                     onClick={() => { setSelected(p); setShowModal(true); }} 
-                    className="p-1 text-gray-400 hover:text-blue-600 transition"
+                    className="p-1 text-gray-400 hover:text-[#5B3E57] dark:text-[#D1A7CC] transition"
                     title="View Details"
                   >
                     <Eye size={16} />

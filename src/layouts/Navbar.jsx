@@ -121,7 +121,7 @@ const Navbar = () => {
       {/* Skip to Main Content Link for Keyboard Accessibility */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-4 z-[100] px-4 py-2 rounded-xl bg-[#C5A880] text-[#070709] font-bold text-xs shadow-xl outline-none ring-2 ring-white"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-4 z-[100] px-4 py-2 rounded-xl bg-[#5B3E57] text-[#FFFEFA] dark:bg-[#D1A7CC] dark:text-[#151413] font-bold text-xs shadow-xl outline-none ring-2 ring-white"
       >
         Skip to main content
       </a>

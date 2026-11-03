@@ -531,7 +531,7 @@ const Courses = () => {
                   </button>
                   <button
                     onClick={() => handleViewContent(course)}
-                    className="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition"
+                    className="p-1.5 text-gray-400 hover:text-[#5B3E57] dark:text-[#D1A7CC] rounded-lg hover:bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 transition"
                     title="View Details"
                   >
                     <FileText size={16} />
@@ -578,7 +578,7 @@ const Courses = () => {
       {/* EDIT COURSE MODAL */}
       {showEditModal && (
         <Portal>
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+          <div className="fixed inset-0 bg-[#282521]/40 dark:bg-black/70 backdrop-blur-sm flex justify-center items-center z-50 p-4">
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-6 w-full max-w-xl shadow-2xl border border-gray-100 space-y-4">
             <div className="flex justify-between items-center border-b border-gray-100 pb-3">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
@@ -686,7 +686,7 @@ const Courses = () => {
       {/* QUICK PATCH PRICE MODAL (PATCH /api/v1/courses/:id) */}
       {showPatchModal && (
         <Portal>
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+          <div className="fixed inset-0 bg-[#282521]/40 dark:bg-black/70 backdrop-blur-sm flex justify-center items-center z-50 p-4">
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl border border-gray-100 space-y-4">
             <div className="flex justify-between items-center border-b border-gray-100 pb-3">
               <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
@@ -740,7 +740,7 @@ const Courses = () => {
       {/* CREATE COURSE MODAL */}
       {showCreateModal && (
         <Portal>
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+          <div className="fixed inset-0 bg-[#282521]/40 dark:bg-black/70 backdrop-blur-sm flex justify-center items-center z-50 p-4">
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-6 w-full max-w-xl shadow-2xl border border-gray-100 space-y-4">
             <div className="flex justify-between items-center border-b border-gray-100 pb-3">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
@@ -848,7 +848,7 @@ const Courses = () => {
       {/* Course Details Modal */}
       {showModal && selectedCourse && (
         <Portal>
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+          <div className="fixed inset-0 bg-[#282521]/30 dark:bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
             <div className="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-xl max-h-[85vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-gray-100 pb-3">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">

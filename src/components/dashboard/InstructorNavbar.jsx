@@ -36,8 +36,8 @@ const InstructorNavbar = ({ setSidebarOpen, sidebarOpen }) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
-              <Activity size={16} className="text-blue-600" />
+            <div className="w-8 h-8 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 flex items-center justify-center">
+              <Activity size={16} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
             </div>
             <div>
               <p className="text-[10px] uppercase font-bold text-gray-400 leading-none">Active Students</p>

@@ -335,7 +335,7 @@ const StudentCourseDetail = () => {
           <div className="lg:col-span-2 space-y-6">
             {/* Video Player */}
             <div className="bg-black rounded-2xl overflow-hidden shadow-xl">
-              <div className="relative aspect-video bg-slate-900">
+              <div className="relative aspect-video bg-[#FFFEFA] dark:bg-[#1D1C1A]">
                 {currentLecture?.videoUrl ? (
                   <video
                     ref={videoRef}
@@ -592,9 +592,9 @@ const StudentCourseDetail = () => {
                 </Link>
                 <Link
                   to={`/student/courses/${courseId}/live-classes`}
-                  className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/50 text-slate-700 hover:text-blue-600 transition text-xs font-semibold"
+                  className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-[#F2ECF1] dark:bg-[#D1A7CC]/15/50 text-slate-700 hover:text-[#5B3E57] dark:text-[#D1A7CC] transition text-xs font-semibold"
                 >
-                  <Radio size={15} className="text-blue-500" />
+                  <Radio size={15} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <span>Live Classes</span>
                 </Link>
                 <Link

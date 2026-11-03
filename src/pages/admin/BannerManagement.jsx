@@ -538,7 +538,7 @@ const BannerManagement = () => {
         {/* ── BANNER CREATE / EDIT MODAL DRAWER ─────────────────────────── */}
         <AnimatePresence>
           {showForm && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#282521]/45 dark:bg-black/75 backdrop-blur-sm">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -902,7 +902,7 @@ const BannerManagement = () => {
         {/* ── DOUBLE CONFIRMATION MODAL ─────────────────────────────────── */}
         <AnimatePresence>
           {confirmModal.isOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#282521]/45 dark:bg-black/75 backdrop-blur-sm">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -992,7 +992,7 @@ const BannerManagement = () => {
                       <span className="px-2 py-0.5 rounded-md bg-[#14141A]/80 backdrop-blur-md border border-white/[0.08] text-[10px] font-mono font-bold text-[#C5A880]">
                         #{idx + 1}
                       </span>
-                      <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md border border-white/[0.08] text-[10px] font-semibold text-white uppercase">
+                      <span className="px-2 py-0.5 rounded-md bg-[#282521]/45 dark:bg-black/75 backdrop-blur-md border border-white/[0.08] text-[10px] font-semibold text-white uppercase">
                         {banner.targetType || "COURSE"}
                       </span>
                     </div>

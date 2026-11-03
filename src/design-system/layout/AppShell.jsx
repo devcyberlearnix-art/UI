@@ -550,7 +550,7 @@ export const AppShell = ({ children }) => {
                   <button
                     type="button"
                     onClick={() => setNotificationsOpen(!notificationsOpen)}
-                    className="relative p-2 rounded-xl bg-slate-100 dark:bg-[#14141A] text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/[0.04] hover:border-blue-400 dark:hover:border-[#C5A880]/30 transition-all cursor-pointer"
+                    className="relative p-2 rounded-xl bg-slate-100 dark:bg-[#14141A] text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/[0.04] hover:border-[#5B3E57] dark:border-[#D1A7CC] dark:hover:border-[#C5A880]/30 transition-all cursor-pointer"
                     title="Notifications"
                     aria-label="View notifications"
                   >
@@ -586,7 +586,7 @@ export const AppShell = ({ children }) => {
                             <button
                               type="button"
                               onClick={handleMarkAllRead}
-                              className="text-[10px] text-blue-600 dark:text-[#C5A880] hover:underline font-mono flex items-center gap-1 cursor-pointer"
+                              className="text-[10px] text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#C5A880] hover:underline font-mono flex items-center gap-1 cursor-pointer"
                             >
                               <CheckCheck className="w-3 h-3" /> Mark Read
                             </button>
@@ -609,7 +609,7 @@ export const AppShell = ({ children }) => {
                                 className={`p-3 rounded-xl border text-xs transition-colors ${
                                   n.status === 'READ' || n.isRead
                                     ? 'bg-slate-50 dark:bg-white/[0.01] border-slate-200 dark:border-white/[0.02] text-slate-500 dark:text-[#8E8E93]'
-                                    : 'bg-blue-50/60 dark:bg-[#C5A880]/5 border-blue-200/60 dark:border-[#C5A880]/20 text-slate-800 dark:text-[#E5E5E7]'
+                                    : 'bg-[#5B3E57] dark:bg-[#D1A7CC]/60 dark:bg-[#C5A880]/5 border-[#5B3E57] dark:border-[#D1A7CC]/60 dark:border-[#C5A880]/20 text-slate-800 dark:text-[#E5E5E7]'
                                 }`}
                               >
                                 <p className="font-semibold text-slate-900 dark:text-white truncate">
@@ -630,7 +630,7 @@ export const AppShell = ({ children }) => {
                               setNotificationsOpen(false);
                               handleNavigate('/student/notifications');
                             }}
-                            className="text-[11px] font-semibold text-blue-600 dark:text-[#C5A880] hover:text-blue-700 dark:hover:text-white transition-colors cursor-pointer"
+                            className="text-[11px] font-semibold text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#C5A880] hover:text-[#5B3E57] dark:text-[#D1A7CC] dark:hover:text-white transition-colors cursor-pointer"
                           >
                             View All Telemetry Alerts &rarr;
                           </button>
