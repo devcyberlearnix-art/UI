@@ -67,10 +67,10 @@ const INITIAL_VELOCITY_DATA = [
 ];
 
 const REVENUE_DISTRIBUTION_DATA = [
-  { category: 'Distributed Systems', share: 44, amount: 81400, color: '#06b6d4' },
-  { category: 'Cloud & Kubernetes', share: 26, amount: 48100, color: '#6366f1' },
-  { category: 'Cybersecurity Mesh', share: 18, amount: 33280, color: '#10b981' },
-  { category: 'AI & Data Platforms', share: 12, amount: 22140, color: '#f59e0b' },
+  { category: 'Distributed Systems', share: 44, amount: 81400, color: '#5B3E57' },
+  { category: 'Cloud & Kubernetes', share: 26, amount: 48100, color: '#9A6B56' },
+  { category: 'Cybersecurity Mesh', share: 18, amount: 33280, color: '#2B6747' },
+  { category: 'AI & Data Platforms', share: 12, amount: 22140, color: '#935E1E' },
 ];
 
 const INITIAL_SERVICE_HEALTH = [
