@@ -469,7 +469,7 @@ export const AppShell = ({ children }) => {
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(true)}
-                  className="md:hidden p-2 rounded-xl bg-slate-100 dark:bg-[#14141A] text-slate-600 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/[0.04] cursor-pointer"
+                  className="md:hidden p-2 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white border border-[#E3DCD3] dark:border-white/[0.06] cursor-pointer"
                   aria-label="Open navigation menu"
                 >
                   <Menu className="w-4 h-4" />
@@ -478,7 +478,7 @@ export const AppShell = ({ children }) => {
                 {/* Dynamic Breadcrumb Trail */}
                 <nav
                   aria-label="Breadcrumbs"
-                  className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-[#71717A] overflow-hidden whitespace-nowrap"
+                  className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-[#756E64] dark:text-[#7A7368] overflow-hidden whitespace-nowrap"
                 >
                   <button
                     type="button"
@@ -489,22 +489,22 @@ export const AppShell = ({ children }) => {
                         ? '/instructor/dashboard'
                         : '/student/dashboard'
                     )}
-                    className="hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+                    className="hover:text-[#282521] dark:hover:text-white transition-colors cursor-pointer"
                   >
                     Platform
                   </button>
                   {breadcrumbs.map((crumb, idx) => (
                     <React.Fragment key={crumb.href}>
-                      <span className="text-slate-300 dark:text-white/20">/</span>
+                      <span className="text-[#D8D0C5] dark:text-white/20">/</span>
                       {idx === breadcrumbs.length - 1 ? (
-                        <span className="text-slate-900 dark:text-white font-semibold truncate max-w-[200px]">
+                        <span className="text-[#282521] dark:text-[#EDE8E1] font-semibold truncate max-w-[200px]">
                           {crumb.label}
                         </span>
                       ) : (
                         <button
                           type="button"
                           onClick={() => handleNavigate(crumb.href)}
-                          className="hover:text-slate-900 dark:hover:text-white transition-colors truncate max-w-[150px] cursor-pointer"
+                          className="hover:text-[#282521] dark:hover:text-white transition-colors truncate max-w-[150px] cursor-pointer"
                         >
                           {crumb.label}
                         </button>
@@ -550,13 +550,13 @@ export const AppShell = ({ children }) => {
                   <button
                     type="button"
                     onClick={() => setNotificationsOpen(!notificationsOpen)}
-                    className="relative p-2 rounded-xl bg-slate-100 dark:bg-[#14141A] text-slate-700 dark:text-[#A1A1AA] hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/[0.04] hover:border-[#5B3E57] dark:border-[#D1A7CC] dark:hover:border-[#C5A880]/30 transition-all cursor-pointer"
+                    className="relative p-2 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC]/30 transition-all cursor-pointer"
                     title="Notifications"
                     aria-label="View notifications"
                   >
                     <Bell className="w-4 h-4" />
                     {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center animate-pulse">
+                      <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-[#9B3835] text-[#FFFEFA] text-[9px] font-black flex items-center justify-center animate-pulse">
                         {unreadCount}
                       </span>
                     )}
@@ -569,11 +569,11 @@ export const AppShell = ({ children }) => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={SPRING_TRANSITION}
-                        className="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl bg-white dark:bg-[#0F0F13] border border-slate-200 dark:border-white/[0.06] shadow-xl dark:shadow-2xl p-4 z-50 overflow-hidden text-slate-900 dark:text-white"
+                        className="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] shadow-card p-4 z-50 overflow-hidden text-[#282521] dark:text-[#EDE8E1]"
                       >
-                        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-white/[0.04]">
+                        <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-white/[0.06]">
                           <div className="flex items-center gap-2">
-                            <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                            <h4 className="text-xs font-bold text-[#282521] dark:text-[#EDE8E1] uppercase tracking-wider">
                               Real-Time Telemetry
                             </h4>
                             {unreadCount > 0 && (
@@ -586,7 +586,7 @@ export const AppShell = ({ children }) => {
                             <button
                               type="button"
                               onClick={handleMarkAllRead}
-                              className="text-[10px] text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#C5A880] hover:underline font-mono flex items-center gap-1 cursor-pointer"
+                              className="text-[10px] text-[#5B3E57] dark:text-[#D1A7CC] hover:underline font-mono flex items-center gap-1 cursor-pointer"
                             >
                               <CheckCheck className="w-3 h-3" /> Mark Read
                             </button>
@@ -595,11 +595,11 @@ export const AppShell = ({ children }) => {
 
                         <div className="py-2 max-h-72 overflow-y-auto space-y-2 scrollbar-none">
                           {loadingNotifications ? (
-                            <div className="p-6 text-center text-xs text-slate-500 dark:text-[#71717A] font-mono">
+                            <div className="p-6 text-center text-xs text-[#756E64] dark:text-[#7A7368] font-mono">
                               Querying notifications feed...
                             </div>
                           ) : notifications.length === 0 ? (
-                            <div className="p-6 text-center text-xs text-slate-500 dark:text-[#71717A]">
+                            <div className="p-6 text-center text-xs text-[#756E64] dark:text-[#7A7368]">
                               All operational signals cleared.
                             </div>
                           ) : (
@@ -608,14 +608,14 @@ export const AppShell = ({ children }) => {
                                 key={n.id || n.notificationId}
                                 className={`p-3 rounded-xl border text-xs transition-colors ${
                                   n.status === 'READ' || n.isRead
-                                    ? 'bg-slate-50 dark:bg-white/[0.01] border-slate-200 dark:border-white/[0.02] text-slate-500 dark:text-[#8E8E93]'
-                                    : 'bg-[#5B3E57] dark:bg-[#D1A7CC]/60 dark:bg-[#C5A880]/5 border-[#5B3E57] dark:border-[#D1A7CC]/60 dark:border-[#C5A880]/20 text-slate-800 dark:text-[#E5E5E7]'
+                                    ? 'bg-[#F5F2EC] dark:bg-white/[0.02] border-[#E3DCD3] dark:border-white/[0.04] text-[#756E64] dark:text-[#A69F94]'
+                                    : 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[#282521] dark:text-[#EDE8E1]'
                                 }`}
                               >
-                                <p className="font-semibold text-slate-900 dark:text-white truncate">
+                                <p className="font-semibold text-[#282521] dark:text-white truncate">
                                   {n.title || n.subject || 'System Notification'}
                                 </p>
-                                <p className="text-[11px] text-slate-600 dark:text-[#A1A1AA] mt-0.5 line-clamp-2">
+                                <p className="text-[11px] text-[#635E56] dark:text-[#A69F94] mt-0.5 line-clamp-2">
                                   {n.message || n.content}
                                 </p>
                               </div>
@@ -623,14 +623,14 @@ export const AppShell = ({ children }) => {
                           )}
                         </div>
 
-                        <div className="pt-2 border-t border-slate-200 dark:border-white/[0.04] text-center">
+                        <div className="pt-2 border-t border-[#E3DCD3] dark:border-white/[0.06] text-center">
                           <button
                             type="button"
                             onClick={() => {
                               setNotificationsOpen(false);
                               handleNavigate('/student/notifications');
                             }}
-                            className="text-[11px] font-semibold text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#C5A880] hover:text-[#5B3E57] dark:text-[#D1A7CC] dark:hover:text-white transition-colors cursor-pointer"
+                            className="text-[11px] font-semibold text-[#5B3E57] dark:text-[#D1A7CC] hover:text-[#462D42] dark:hover:text-[#E0BFDC] transition-colors cursor-pointer"
                           >
                             View All Telemetry Alerts &rarr;
                           </button>
@@ -776,22 +776,22 @@ export const AppShell = ({ children }) => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={SPRING_TRANSITION}
-              className="relative w-full rounded-t-3xl bg-[#0F0F13] border-t border-white/[0.06] p-5 shadow-2xl z-10 max-h-[85vh] overflow-y-auto"
+              className="relative w-full rounded-t-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border-t border-[#E3DCD3] dark:border-white/[0.08] p-5 shadow-2xl z-10 max-h-[85vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-white/[0.04]">
+              <div className="flex items-center justify-between pb-4 border-b border-[#E3DCD3] dark:border-white/[0.06]">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880]">
+                  <div className="w-8 h-8 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
                     <GraduationCap className="w-4 h-4" />
                   </div>
-                  <span className="font-extrabold text-white text-sm">
-                    FD_LMS {userRole.toUpperCase()} RAIL
+                  <span className="font-extrabold text-[#282521] dark:text-white text-sm">
+                    ASIVO {userRole.toUpperCase()} RAIL
                   </span>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-1.5 rounded-xl text-[#71717A] hover:text-white cursor-pointer"
+                  className="p-1.5 rounded-xl text-[#756E64] hover:text-[#282521] dark:text-[#7A7368] dark:hover:text-white cursor-pointer"
                   aria-label="Close menu"
                 >
                   <X className="w-5 h-5" />
