@@ -585,7 +585,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                 onClick={() => setFilterMode(tab.id)}
                 className={`px-3 py-1.5 rounded-lg font-mono font-medium transition-all ${
                   active
-                    ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#5B3E57] dark:text-[#D1A7CC] border border-[#D5C0D1] dark:border-[#D1A7CC]/30 shadow-glow shadow-cyan-500/10'
+                    ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#5B3E57] dark:text-[#D1A7CC] border border-[#D5C0D1] dark:border-[#D1A7CC]/30 shadow-xs'
                     : 'text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:text-[#EDE8E1]'
                 }`}
               >
@@ -605,7 +605,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
             />
             <span
               className={`relative inline-flex rounded-full h-2 w-2 ${
-                isLiveConnected ? 'bg-emerald-500' : 'bg-cyan-500'
+                isLiveConnected ? 'bg-[#2B6747]' : 'bg-[#365D75]'
               }`}
             />
           </span>
@@ -659,7 +659,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                         </Badge>
                       )}
                       {msg.type === 'stream' && (
-                        <Badge variant="cyan" className="text-[10px] font-mono py-0">
+                        <Badge variant="primary" className="text-[10px] font-mono py-0">
                           LIVE STREAM
                         </Badge>
                       )}
@@ -857,7 +857,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
               disabled={!messageInput.trim()}
               isLoading={postMessageMutation.isPending}
               rightIcon={Send}
-              className="bg-cyan-500 hover:bg-[#5B3E57] dark:bg-[#D1A7CC] text-black font-mono font-bold text-xs shadow-glow shadow-cyan-500/20"
+              className="bg-[#5B3E57] hover:bg-[#462D42] dark:bg-[#D1A7CC] dark:hover:bg-[#C092BB] text-[#FFFEFA] dark:text-[#151413] font-mono font-bold text-xs shadow-xs"
             >
               Broadcast
             </Button>
