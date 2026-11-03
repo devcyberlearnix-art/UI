@@ -244,12 +244,12 @@ const Navbar = () => {
                     type="button"
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                    className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-[#0F0F13] border border-white/[0.06] hover:border-[#C5A880]/30 text-xs font-semibold text-[#F5F5F7] transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C5A880]"
+                    className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#5B3E57]"
                   >
-                    <div className="w-6 h-6 rounded-lg bg-[#14141A] border border-white/15 flex items-center justify-center text-[#E5E5E7] text-[10px] font-bold uppercase shadow-sm">
+                    <div className="w-6 h-6 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] text-[10px] font-bold uppercase shadow-2xs">
                       {(user.name || user.email || 'U').charAt(0)}
                     </div>
-                    <span className="max-w-[100px] truncate text-xs text-[#F5F5F7]">
+                    <span className="max-w-[100px] truncate text-xs text-[#282521] dark:text-[#EDE8E1]">
                       {user.name || user.email?.split('@')[0]}
                     </span>
                   </motion.button>
@@ -261,32 +261,32 @@ const Navbar = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 8, scale: 0.96 }}
                         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                        className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#0F0F13]/98 border border-white/[0.06] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.9)] backdrop-blur-2xl p-2 z-50 text-xs"
+                        className="absolute right-0 mt-2 w-56 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] shadow-card backdrop-blur-2xl p-2 z-50 text-xs text-[#282521] dark:text-[#EDE8E1]"
                       >
-                      <div className="px-3 py-2 border-b border-white/[0.04] mb-1">
-                        <p className="font-semibold text-[#F5F5F7] truncate">{user.name || 'User'}</p>
-                        <p className="text-[#71717A] text-[10px] truncate font-mono">{user.email}</p>
+                      <div className="px-3 py-2 border-b border-[#E3DCD3] dark:border-white/[0.06] mb-1">
+                        <p className="font-semibold text-[#282521] dark:text-white truncate">{user.name || 'User'}</p>
+                        <p className="text-[#756E64] dark:text-[#7A7368] text-[10px] truncate font-mono">{user.email}</p>
                       </div>
 
                       <Link
                         to={getDashboardPath()}
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#8E8E93] hover:text-[#F5F5F7] hover:bg-white/[0.04] transition-colors"
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.04] transition-colors"
                       >
-                        <LayoutDashboard className="w-4 h-4 text-[#C5A880]" />
+                        <LayoutDashboard className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                         <span>Workspace Dashboard</span>
                       </Link>
 
                       <Link
                         to="/profile"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#8E8E93] hover:text-[#F5F5F7] hover:bg-white/[0.04] transition-colors"
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white hover:bg-[#EAE5DC]/60 dark:hover:bg-white/[0.04] transition-colors"
                       >
-                        <User className="w-4 h-4 text-[#E5E5E7]" />
+                        <User className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                         <span>Account Profile</span>
                       </Link>
 
-                      <div className="border-t border-white/[0.04] my-1" />
+                      <div className="border-t border-[#E3DCD3] dark:border-white/[0.06] my-1" />
 
                       <button
                         type="button"
@@ -294,7 +294,7 @@ const Navbar = () => {
                           setUserDropdownOpen(false);
                           handleLogout();
                         }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors text-left"
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#9B3835] dark:text-[#D66B67] hover:bg-[#FAECEB] dark:hover:bg-[#D66B67]/15 transition-colors text-left cursor-pointer"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Terminate Session</span>
@@ -308,14 +308,14 @@ const Navbar = () => {
                 <button
                   type="button"
                   onClick={() => navigate('/login')}
-                  className="px-3.5 py-1.5 text-xs font-semibold text-[#8E8E93] hover:text-[#F5F5F7] transition-colors cursor-pointer"
+                  className="px-3.5 py-1.5 text-xs font-semibold text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-[#EDE8E1] transition-colors cursor-pointer"
                 >
                   Sign In
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate('/register')}
-                  className="px-4 py-1.5 bg-[#C5A880] text-[#070709] hover:bg-[#D4BC98] rounded-xl text-xs font-bold transition-all shadow-sm active:scale-98 cursor-pointer"
+                  className="px-4 py-1.5 bg-[#5B3E57] text-[#FFFEFA] hover:bg-[#462D42] dark:bg-[#D1A7CC] dark:text-[#151413] dark:hover:bg-[#E0BFDC] rounded-xl text-xs font-bold transition-all shadow-xs active:scale-98 cursor-pointer"
                 >
                   Get Started
                 </button>
