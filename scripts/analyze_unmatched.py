@@ -15,3 +15,4 @@ for f, apis in sorted(by_file.items(), key=lambda x: len(x[1]), reverse=True):
     print(f"\n{f} ({len(apis)} unmatched):")
     for m, p in apis[:10]:
         print(f"  {m} {p}")
+
