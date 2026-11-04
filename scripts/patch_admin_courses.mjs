@@ -36,3 +36,4 @@ if (file.includes(target)) {
     console.log('Target not found in Courses.jsx');
   }
 }
+

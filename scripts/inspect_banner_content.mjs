@@ -25,3 +25,4 @@ async function checkBanner() {
 }
 
 checkBanner().catch(console.error);
+

@@ -24,3 +24,4 @@ async function checkLanding() {
 }
 
 checkLanding().catch(console.error);
+

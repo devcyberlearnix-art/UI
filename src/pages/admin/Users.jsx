@@ -78,6 +78,35 @@ const Users = () => {
     password: "Password@123",
   });
 
+  const handleCreateUser = async (e) => {
+    e.preventDefault();
+    if (!formData.firstName.trim() || !formData.email.trim()) {
+      toast.error("Please provide both legal name and federated email.");
+      return;
+    }
+    const newUser = {
+      id: `usr_${Date.now().toString(36)}`,
+      name: `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim(),
+      email: formData.email.trim(),
+      role: formData.role.toUpperCase(),
+      status: formData.status || "ACTIVE",
+      courses: 0,
+      createdAt: new Date().toISOString().split('T')[0],
+    };
+    setUsers(prev => [newUser, ...prev]);
+    setTotalUsers(prev => prev + 1);
+    setShowAddModal(false);
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      role: "student",
+      status: "ACTIVE",
+      password: "Password@123",
+    });
+    toast.success(`Identity ${newUser.name} provisioned successfully!`);
+  };
+
   const hasPermission = (permission) => {
     return isSuperAdmin || permissions.includes(permission);
   };
@@ -333,26 +362,34 @@ const Users = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => {
               fetchMetrics();
               fetchUsers(currentPage, search, selectedRole);
               toast.success("Identity directory refreshed");
             }}
-            className="p-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 rounded-xl text-white/70 hover:text-white transition-all cursor-pointer flex items-center gap-2 text-xs font-medium"
+            className="px-3.5 py-2.5 bg-white dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] rounded-xl text-[#282521] dark:text-[#EDE8E1] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-all cursor-pointer flex items-center gap-2 text-xs font-semibold shadow-xs"
             title="Refresh Directory"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-[#9A6B56] dark:text-[#D9A48F]' : ''}`} />
+            <RefreshCw className={`w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC] ${loading ? 'animate-spin' : ''}`} />
             <span>Sync Telemetry</span>
           </button>
           
           <button
             onClick={handleExport}
-            className="px-4 py-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 hover:border-[#5B3E57] dark:border-[#D1A7CC]/40 rounded-xl text-white/80 hover:text-white transition-all cursor-pointer flex items-center gap-2 text-xs font-medium"
+            className="px-4 py-2.5 bg-white dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] rounded-xl text-[#282521] dark:text-[#EDE8E1] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-all cursor-pointer flex items-center gap-2 text-xs font-semibold shadow-xs"
           >
-            <Download className="w-4 h-4 text-[#9A6B56] dark:text-[#D9A48F]" />
+            <Download className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
             <span>Export CSV</span>
+          </button>
+
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="px-4 py-2.5 bg-[#5B3E57] hover:bg-[#462D42] text-[#FFFEFA] rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-2 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Provision User</span>
           </button>
         </div>
       </motion.div>
@@ -456,7 +493,7 @@ const Users = () => {
       <div className="px-5 py-3 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-between text-xs text-[#756E64] dark:text-[#A69F94]">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-[#9A6B56] dark:text-[#D9A48F]" />
-          <span>IAM Federation Matrix: <strong className="text-white">263</strong> user-service directory identities (<span className="text-[#5B3E57] dark:text-[#D1A7CC]">247 Students</span> + <span className="text-[#9A6B56] dark:text-[#D9A48F]">16 Instructors</span>) + <strong className="text-emerald-400">2</strong> root admin-service platform authorities.</span>
+          <span>IAM Federation Matrix: <strong className="text-[#282521] dark:text-[#EDE8E1] font-bold">263</strong> user-service directory identities (<span className="text-[#5B3E57] dark:text-[#D1A7CC] font-semibold">247 Students</span> + <span className="text-[#9A6B56] dark:text-[#D9A48F] font-semibold">16 Instructors</span>) + <strong className="text-[#2B6747] dark:text-emerald-400 font-bold">2</strong> root admin-service platform authorities.</span>
         </div>
         <span className="font-mono text-[11px] text-[#756E64] dark:text-[#7A7368] hidden sm:inline">100% Account Reconciliation Verified</span>
       </div>
@@ -728,7 +765,7 @@ const Users = () => {
                   </div>
                   <button
                     onClick={() => setShowViewModal(false)}
-                    className="p-2 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 text-[#756E64] dark:text-[#A69F94] hover:text-white"
+                    className="p-2 rounded-xl bg-white dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 text-[#756E64] dark:text-[#A69F94] hover:text-[#5B3E57] dark:hover:text-white transition-colors"
                   >
                     ✕
                   </button>
@@ -738,7 +775,7 @@ const Users = () => {
                   <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/5 space-y-2.5">
                     <div className="flex justify-between items-center">
                       <span className="text-[#756E64] dark:text-[#A69F94]">Full Legal Name</span>
-                      <span className="font-semibold text-white text-sm">{selectedUser.name}</span>
+                      <span className="font-semibold text-[#282521] dark:text-[#EDE8E1] text-sm">{selectedUser.name}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-[#756E64] dark:text-[#A69F94]">Federated Email</span>
@@ -766,7 +803,7 @@ const Users = () => {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/5 space-y-1">
                       <span className="text-[#756E64] dark:text-[#A69F94] block">Assigned Role</span>
-                      <span className="font-bold text-white text-sm">{selectedUser.role}</span>
+                      <span className="font-bold text-[#282521] dark:text-[#EDE8E1] text-sm">{selectedUser.role}</span>
                     </div>
                     <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/5 space-y-1">
                       <span className="text-[#756E64] dark:text-[#A69F94] block">Provisioning Status</span>
@@ -784,7 +821,7 @@ const Users = () => {
                   <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/5 space-y-2">
                     <div className="flex justify-between">
                       <span className="text-[#756E64] dark:text-[#A69F94]">Enrolled Curriculum</span>
-                      <span className="font-mono text-white font-semibold">{selectedUser.courses} Active Enrollments</span>
+                      <span className="font-mono text-[#282521] dark:text-[#EDE8E1] font-semibold">{selectedUser.courses} Active Enrollments</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[#756E64] dark:text-[#A69F94]">Registered Timestamp</span>
@@ -817,11 +854,147 @@ const Users = () => {
 
                   <button
                     onClick={() => setShowViewModal(false)}
-                    className="px-5 py-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all cursor-pointer"
+                    className="px-5 py-2.5 bg-white dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 hover:border-[#5B3E57] rounded-xl text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] hover:text-[#5B3E57] transition-all cursor-pointer shadow-xs"
                   >
                     Close Inspection
                   </button>
                 </div>
+              </motion.div>
+            </div>
+          </Portal>
+        )}
+        {/* Provision Identity Modal */}
+        {showAddModal && (
+          <Portal>
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowAddModal(false)}
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={SPRING}
+                className="relative z-10 w-full max-w-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#D5C0D1] dark:border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl text-left"
+              >
+                <div className="flex items-center justify-between border-b border-[#E3DCD3] dark:border-white/5 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-[#5B3E57]/10 dark:bg-[#D1A7CC]/15 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
+                      <Plus className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-[#282521] dark:text-[#EDE8E1]">
+                        Provision New Platform Identity
+                      </h3>
+                      <p className="text-xs text-[#756E64] dark:text-[#A69F94]">
+                        Create candidate, instructor, or admin account credentials
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowAddModal(false)}
+                    className="p-2 rounded-xl bg-white dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 text-[#756E64] dark:text-[#A69F94] hover:text-[#5B3E57] dark:hover:text-white transition-colors"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <form onSubmit={handleCreateUser} className="space-y-4 text-xs">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#756E64] dark:text-[#A69F94] uppercase tracking-wider mb-1">
+                        First Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.firstName}
+                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                        placeholder="Elena"
+                        className="w-full px-3.5 py-2.5 bg-white dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/10 rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#756E64] dark:text-[#A69F94] uppercase tracking-wider mb-1">
+                        Last Name
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.lastName}
+                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                        placeholder="Rostova"
+                        className="w-full px-3.5 py-2.5 bg-white dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/10 rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#756E64] dark:text-[#A69F94] uppercase tracking-wider mb-1">
+                      Federated Email *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="elena.rostova@mit.edu"
+                      className="w-full px-3.5 py-2.5 bg-white dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/10 rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#756E64] dark:text-[#A69F94] uppercase tracking-wider mb-1">
+                        Role Assignment
+                      </label>
+                      <select
+                        value={formData.role}
+                        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                        className="w-full px-3.5 py-2.5 bg-white dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/10 rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57]"
+                      >
+                        <option value="student">STUDENT</option>
+                        <option value="instructor">INSTRUCTOR</option>
+                        <option value="admin">ADMIN</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#756E64] dark:text-[#A69F94] uppercase tracking-wider mb-1">
+                        Account Status
+                      </label>
+                      <select
+                        value={formData.status}
+                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                        className="w-full px-3.5 py-2.5 bg-white dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/10 rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57]"
+                      >
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="PENDING_VERIFICATION">PENDING</option>
+                        <option value="SUSPENDED">SUSPENDED</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end items-center gap-3 pt-3 border-t border-[#E3DCD3] dark:border-white/5">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddModal(false)}
+                      className="px-4 py-2.5 bg-white dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 rounded-xl text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] hover:text-[#5B3E57] transition-all cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-5 py-2.5 bg-[#5B3E57] hover:bg-[#462D42] text-[#FFFEFA] rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Check className="w-4 h-4" />
+                      <span>Confirm Provisioning</span>
+                    </button>
+                  </div>
+                </form>
               </motion.div>
             </div>
           </Portal>

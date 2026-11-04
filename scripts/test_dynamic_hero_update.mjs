@@ -42,3 +42,4 @@ async function testDynamicHeroUpdate() {
 }
 
 testDynamicHeroUpdate().catch(console.error);
+
