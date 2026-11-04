@@ -94,3 +94,4 @@ Every screen adheres to the Three-Gate Design Signoff Protocol:
 
 ---
 *Certified: Agent 01 (Chief Architect), Agent 07 (Design Director), Agent 08 (Tokens Lead)*
+

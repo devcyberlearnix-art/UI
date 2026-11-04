@@ -163,6 +163,7 @@ const HeroEditor = () => {
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -215,6 +216,9 @@ const HeroEditor = () => {
           search: {
             placeholder: data.searchPlaceholder || data.search?.placeholder || DEFAULT_HERO.search.placeholder,
             isVisible: data.searchVisible ?? data.search?.isVisible ?? true,
+          },
+          stats: {
+            isVisible: data.stats?.isVisible ?? DEFAULT_HERO.stats.isVisible,
           },
           appearance: {
             alignment: data.textAlignment || data.appearance?.alignment || 'center',
@@ -729,7 +733,7 @@ const HeroEditor = () => {
 
             <VisibilityToggle
               label="Show platform statistics bar"
-              checked={hero.stats.isVisible}
+              checked={hero.stats?.isVisible ?? true}
               onChange={(v) => update('stats.isVisible', v)}
             />
           </FieldGroup>

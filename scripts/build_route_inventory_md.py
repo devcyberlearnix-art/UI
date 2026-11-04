@@ -69,3 +69,4 @@ with open('docs/asivo-2/PHASE2/02_ROUTE_INVENTORY.md', 'w', encoding='utf-8') as
     out.write(content)
 
 print(f"Wrote docs/asivo-2/PHASE2/02_ROUTE_INVENTORY.md successfully with {len(routes)} routes.")
+

@@ -43,3 +43,4 @@ for k, v in by_type.items():
 print(f"\nTop 10 Files with Findings:")
 for f, count in sorted(by_file.items(), key=lambda x: x[1], reverse=True)[:10]:
     print(f"  {count} in {f}")
+

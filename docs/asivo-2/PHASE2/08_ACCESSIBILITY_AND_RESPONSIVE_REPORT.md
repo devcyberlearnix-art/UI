@@ -57,3 +57,4 @@ All text color pairings against Quiet Atelier surfaces were audited with KaTeX K
 
 ---
 *Signed: Agent 11 (Responsive Lead) & Agent 45 (Accessibility Lead)*
+

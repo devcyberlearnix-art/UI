@@ -30,6 +30,9 @@ import {
   Bell,
   CheckCheck,
   Tag,
+  Terminal,
+  ShieldCheck,
+  Globe,
 } from 'lucide-react';
 import { useAuth, normalizeRole } from '../../context/AuthContext';
 import { useOrder } from '../../context/OrderContext';
@@ -134,14 +137,19 @@ export const AppShell = ({ children }) => {
   // =========================================================================
   const navigationItems = useMemo(() => {
     // 1. ADMIN COMMAND CENTER RAIL
-    if (userRole === 'admin' || userRole === 'subadmin') {
+    if (userRole?.includes('admin')) {
       return [
         { label: 'Global Telemetry', href: '/admin/dashboard', icon: LayoutDashboard },
+        { label: 'Command Center', href: '/admin/command-center', icon: Terminal },
         { label: 'User Governance', href: '/admin/users', icon: Users },
+        { label: 'Faculty Verification', href: '/admin/instructors', icon: ShieldCheck },
         { label: 'Curriculum Audit', href: '/admin/courses', icon: BookOpen },
         { label: 'Order Ledger', href: '/admin/orders', icon: CreditCard },
-        { label: 'Marketing Banners', href: '/admin/banners', icon: Image },
         { label: 'Promotions & Coupons', href: '/admin/coupons', icon: Tag },
+        { label: 'Marketing Banners', href: '/admin/banners', icon: Image },
+        { label: 'Website CMS Hub', href: '/admin/website-management', icon: Globe },
+        { label: 'Reports & Audits', href: '/admin/reports', icon: FileText },
+        { label: 'System Settings', href: '/admin/settings', icon: Settings },
       ];
     }
 

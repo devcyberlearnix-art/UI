@@ -19,6 +19,7 @@ import {
   UserX,
   AlertCircle,
   Save,
+  BookOpen,
   X
 } from "lucide-react";
 import { adminApi } from "../../api/adminApi";

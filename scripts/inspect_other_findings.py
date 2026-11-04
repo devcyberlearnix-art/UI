@@ -15,3 +15,4 @@ for fname, items in by_file.items():
         for it in items:
             safe = it['content'].encode('ascii', 'backslashreplace').decode('ascii')
             print(f"L{it['line']}: {safe}")
+

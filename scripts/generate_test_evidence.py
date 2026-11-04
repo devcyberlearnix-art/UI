@@ -175,3 +175,4 @@ for fname, content in evidence_files.items():
         f.write(content)
 
 print(f"Generated {len(evidence_files)} test evidence files in {target_dir}")
+
