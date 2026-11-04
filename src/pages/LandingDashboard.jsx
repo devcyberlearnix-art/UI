@@ -233,6 +233,44 @@ export const LandingDashboard = () => {
     return () => { isMounted = false; };
   }, []);
 
+  // Dynamic Admin Hero Override Sync (supports live changes across tabs & instant offline publishing)
+  useEffect(() => {
+    const syncAdminHeroOverride = () => {
+      try {
+        const raw = localStorage.getItem('asivo_admin_hero_config');
+        if (raw) {
+          const customHero = JSON.parse(raw);
+          if (customHero && typeof customHero === 'object') {
+            setCmsData((prev) => ({
+              ...prev,
+              hero: {
+                ...prev.hero,
+                ...customHero,
+                badgeText: customHero.badgeText || customHero.badge?.text || prev.hero.badgeText,
+                verificationLabel: (typeof customHero.verificationLabel === 'object' ? customHero.verificationLabel?.text : customHero.verificationLabel) || prev.hero.verificationLabel,
+                heading: customHero.heading?.text || customHero.heading || prev.hero.heading,
+                headingEmphasis: customHero.heading?.emphasisText || customHero.headingEmphasis || prev.hero.headingEmphasis,
+                description: (typeof customHero.description === 'object' ? customHero.description?.text : customHero.description) || prev.hero.description,
+                primaryCta: customHero.primaryCta || prev.hero.primaryCta,
+                secondaryCta: customHero.secondaryCta || prev.hero.secondaryCta,
+              },
+            }));
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to hydrate local hero override:', err);
+      }
+    };
+
+    syncAdminHeroOverride();
+    window.addEventListener('asivo:hero-updated', syncAdminHeroOverride);
+    window.addEventListener('storage', syncAdminHeroOverride);
+    return () => {
+      window.removeEventListener('asivo:hero-updated', syncAdminHeroOverride);
+      window.removeEventListener('storage', syncAdminHeroOverride);
+    };
+  }, []);
+
   // Query live courses from backend microservice
   const { data, isLoading, isError, error, refetch, isFetching } = useCourses({
     page: 0,
