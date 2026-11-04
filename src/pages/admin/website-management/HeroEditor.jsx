@@ -1,13 +1,14 @@
 // src/pages/admin/website-management/HeroEditor.jsx
 // Hero Section Editor — edit all hero content fields
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Layout,
   Save,
   Zap,
+  ExternalLink,
   Eye,
   EyeOff,
   Upload,
@@ -23,7 +24,7 @@ import {
   Palette,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { cmsAdminApi } from '../../../api/cmsApi';
+import { cmsAdminApi, cmsPublicApi } from '../../../api/cmsApi';
 import Button from '../../../design-system/primitives/Button';
 import Badge from '../../../design-system/primitives/Badge';
 
@@ -158,11 +159,132 @@ const VisibilityToggle = ({ label, checked, onChange }) => (
 const HeroEditor = () => {
   const navigate = useNavigate();
   const [hero, setHero] = useState(DEFAULT_HERO);
+  const [isLoading, setIsLoading] = useState(true);
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const fileInputRef = useRef(null);
+
+  // ── Hydrate current hero settings on mount ────────────────────────────
+  useEffect(() => {
+    let isMounted = true;
+    async function loadHeroConfig() {
+      try {
+        setIsLoading(true);
+        let data = null;
+        try {
+          const draftRes = await cmsAdminApi.getHero();
+          data = draftRes?.data || draftRes;
+        } catch {
+          // Fallback to public landing page endpoint
+          const pubRes = await cmsPublicApi.getLandingPage();
+          const p = pubRes?.data || pubRes;
+          data = p?.hero;
+        }
+
+        if (!isMounted || !data) return;
+
+        setHero({
+          badge: {
+            text: data.badge?.text || data.badgeText || DEFAULT_HERO.badge.text,
+            isVisible: data.badge?.isVisible ?? true,
+          },
+          verificationLabel: {
+            text: (typeof data.verificationLabel === 'object' ? data.verificationLabel?.text : data.verificationLabel) || DEFAULT_HERO.verificationLabel.text,
+            isVisible: (typeof data.verificationLabel === 'object' ? data.verificationLabel?.isVisible : true) ?? true,
+          },
+          heading: {
+            text: data.heading?.text || data.heading || DEFAULT_HERO.heading.text,
+            emphasisText: data.heading?.emphasisText || data.headingEmphasis || DEFAULT_HERO.heading.emphasisText,
+          },
+          description: {
+            text: (typeof data.description === 'object' ? data.description?.text : data.description) || DEFAULT_HERO.description.text,
+            isVisible: (typeof data.description === 'object' ? data.description?.isVisible : true) ?? true,
+          },
+          primaryCta: {
+            label: data.primaryCta?.label || DEFAULT_HERO.primaryCta.label,
+            destination: data.primaryCta?.destination || DEFAULT_HERO.primaryCta.destination,
+            isVisible: data.primaryCta?.visible ?? data.primaryCta?.isVisible ?? true,
+          },
+          secondaryCta: {
+            label: data.secondaryCta?.label || DEFAULT_HERO.secondaryCta.label,
+            destination: data.secondaryCta?.destination || DEFAULT_HERO.secondaryCta.destination,
+            isVisible: data.secondaryCta?.visible ?? data.secondaryCta?.isVisible ?? true,
+          },
+          search: {
+            placeholder: data.searchPlaceholder || data.search?.placeholder || DEFAULT_HERO.search.placeholder,
+            isVisible: data.searchVisible ?? data.search?.isVisible ?? true,
+          },
+          appearance: {
+            alignment: data.textAlignment || data.appearance?.alignment || 'center',
+            backgroundImageUrl: data.appearance?.backgroundImageUrl || '',
+            overlayOpacity: data.appearance?.overlayOpacity || 0.3,
+          },
+        });
+      } catch (err) {
+        console.warn('Failed to hydrate hero from CMS:', err);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    }
+    loadHeroConfig();
+  
+  // ── Save and Publish to Live Landing Page Immediately ─────────────────
+  const handlePublishLive = useCallback(async () => {
+    if (!hero.heading?.text?.trim()) {
+      toast.error('Hero heading is required.');
+      return;
+    }
+    if (!hero.primaryCta?.label?.trim()) {
+      toast.error('Primary CTA label is required.');
+      return;
+    }
+
+    setIsPublishing(true);
+    try {
+      // 1. Prepare payload conforming to backend DTO
+      const payload = {
+        ...hero,
+        badgeText: hero.badge?.text,
+        verificationLabel: typeof hero.verificationLabel === 'object' ? hero.verificationLabel.text : hero.verificationLabel,
+        heading: hero.heading?.text,
+        headingEmphasis: hero.heading?.emphasisText,
+        description: typeof hero.description === 'object' ? hero.description.text : hero.description,
+        primaryCta: {
+          label: hero.primaryCta?.label,
+          destination: hero.primaryCta?.destination,
+          visible: hero.primaryCta?.isVisible ?? true,
+        },
+        secondaryCta: {
+          label: hero.secondaryCta?.label,
+          destination: hero.secondaryCta?.destination,
+          visible: hero.secondaryCta?.isVisible ?? true,
+        },
+        searchPlaceholder: hero.search?.placeholder,
+        searchVisible: hero.search?.isVisible ?? true,
+        textAlignment: hero.appearance?.alignment || 'center',
+      };
+
+      // 2. Update Draft
+      await cmsAdminApi.updateHero(payload);
+
+      // 3. Publish to Live Site
+      await cmsAdminApi.publishPage(`Hero banner updated by admin: "${hero.heading?.text?.slice(0, 50)}"`);
+
+      setIsDirty(false);
+      setSaveSuccess(true);
+      toast.success('Hero banner published live! Public site updated immediately.', { icon: '🚀' });
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to publish hero banner. Please check server.');
+    } finally {
+      setIsPublishing(false);
+    }
+  }, [hero]);
+
+  return () => { isMounted = false; };
+  }, []);
 
   // ── Field update helpers ───────────────────────────────────────────────
 
@@ -275,7 +397,7 @@ const HeroEditor = () => {
               <Badge variant="emerald" dot>Saved</Badge>
             )}
             <Button
-              variant="primary"
+              variant="secondary"
               size="sm"
               leftIcon={isSaving ? Loader2 : (saveSuccess ? CheckCircle2 : Save)}
               isLoading={isSaving}
@@ -284,21 +406,86 @@ const HeroEditor = () => {
             >
               Save Draft
             </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              leftIcon={isPublishing ? Loader2 : Zap}
+              isLoading={isPublishing}
+              onClick={handlePublishLive}
+              className="bg-[#5B3E57] hover:bg-[#462D42] text-[#FFFEFA] shadow-md shadow-[#5B3E57]/20"
+            >
+              Publish Live
+            </Button>
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-xl border border-[#E3DCD3] dark:border-white/10 hover:bg-[#F5F2EC] dark:hover:bg-[#1D1C1A] text-[#635E56] dark:text-[#A8A196] transition-colors"
+              title="Open public landing page in new tab"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </a>
           </div>
         </motion.div>
 
-        {/* ── NOTE ABOUT BACKEND ───────────────────────────────── */}
+        {/* ── LIVE PREVIEW CANVAS ───────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.05, ease: EASING }}
-          className="flex items-start gap-2.5 p-3.5 rounded-xl bg-amber-500/5 border border-amber-500/20 text-xs text-amber-200/80"
+          className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/10 shadow-sm space-y-4"
         >
-          <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-          <span>
-            <strong className="text-amber-300">Backend required:</strong> Changes are saved to the CMS API.
-            Current values show hardcoded defaults — they'll be replaced with live data once the backend is implemented.
-          </span>
+          <div className="flex items-center justify-between border-b border-[#E3DCD3] dark:border-white/10 pb-3">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#5B3E57] dark:text-[#D1A7CC] flex items-center gap-1.5">
+              <Eye className="w-3.5 h-3.5" /> Live Hero Banner Preview
+            </span>
+            <span className="text-[10px] font-mono text-[#756E64] dark:text-[#7A7368]">
+              Reflects live as you type
+            </span>
+          </div>
+
+          <div className="text-center py-4 space-y-4 max-w-2xl mx-auto">
+            {hero.badge.isVisible && (
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[10px] font-bold text-[#5B3E57] dark:text-[#D1A7CC]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#2B6747] animate-pulse" />
+                <span>{hero.badge.text || 'ARCHITECTURE CURRICULUM'}</span>
+                {hero.verificationLabel.isVisible && (
+                  <>
+                    <span className="w-1 h-1 rounded-full bg-[#E3DCD3]" />
+                    <span className="text-[#635E56] font-normal">{hero.verificationLabel.text || 'Verified Track'}</span>
+                  </>
+                )}
+              </div>
+            )}
+
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight leading-tight">
+              {hero.heading.text}{' '}
+              {hero.heading.emphasisText && hero.heading.text.includes(hero.heading.emphasisText) && (
+                <span className="text-[#5B3E57] dark:text-[#D1A7CC] underline decoration-[#9A6B56]/40 underline-offset-4 block sm:inline">
+                  {hero.heading.emphasisText}
+                </span>
+              )}
+            </h2>
+
+            {hero.description.isVisible && (
+              <p className="text-xs text-[#635E56] dark:text-[#A8A196] leading-relaxed max-w-xl mx-auto">
+                {hero.description.text}
+              </p>
+            )}
+
+            <div className="flex items-center justify-center gap-3 pt-2">
+              {hero.primaryCta.isVisible && (
+                <span className="px-4 py-2 rounded-xl bg-[#5B3E57] text-[#FFFEFA] text-xs font-bold shadow-sm inline-flex items-center gap-1.5">
+                  {hero.primaryCta.label || 'Explore Courses'}
+                </span>
+              )}
+              {hero.secondaryCta.isVisible && (
+                <span className="px-4 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/10 text-[#282521] dark:text-[#EDE8E1] text-xs font-semibold">
+                  {hero.secondaryCta.label || 'Interactive Sandbox'}
+                </span>
+              )}
+            </div>
+          </div>
         </motion.div>
 
         {/* ── CONTENT GROUP ────────────────────────────────────── */}

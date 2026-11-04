@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   Search,
+  Edit3,
   Sparkles,
   ArrowRight,
   ShieldCheck,
@@ -89,9 +90,46 @@ const sanitizeCustomerFacingText = (text = '') => {
     .trim();
 };
 
+
+// Dynamic Heading Renderer supporting Admin CMS emphasis highlights
+const renderDynamicHeading = (heading = '', emphasis = '') => {
+  const cleanHeading = sanitizeCustomerFacingText(heading);
+  if (!cleanHeading) {
+    return (
+      <>
+        Master Production Systems.{' '}
+        <span className="text-[#5B3E57] dark:text-[#D1A7CC] underline decoration-[#9A6B56]/40 underline-offset-8">
+          On Real Architecture.
+        </span>
+      </>
+    );
+  }
+
+  const cleanEmphasis = sanitizeCustomerFacingText(emphasis);
+  if (cleanEmphasis && cleanHeading.toLowerCase().includes(cleanEmphasis.toLowerCase())) {
+    const idx = cleanHeading.toLowerCase().indexOf(cleanEmphasis.toLowerCase());
+    const before = cleanHeading.slice(0, idx);
+    const matched = cleanHeading.slice(idx, idx + cleanEmphasis.length);
+    const after = cleanHeading.slice(idx + cleanEmphasis.length);
+
+    return (
+      <>
+        {before}
+        <span className="text-[#5B3E57] dark:text-[#D1A7CC] underline decoration-[#9A6B56]/40 underline-offset-8">
+          {matched}
+        </span>
+        {after}
+      </>
+    );
+  }
+
+  return cleanHeading;
+};
+
 export const LandingDashboard = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
+  const isAdmin = Boolean(isAuthenticated && user && (user.role === 'ADMIN' || user.role === 'MAIN_ADMIN' || user.role === 'SUB_ADMIN'));
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedLevel, setSelectedLevel] = useState('ALL');
@@ -540,17 +578,33 @@ export const LandingDashboard = () => {
               </span>
             </motion.div>
 
-            {/* Main Title with Sculpted Typography */}
+            {/* Admin Live CMS Control Pill */}
+            {isAdmin && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-4 flex items-center justify-center"
+              >
+                <button
+                  type="button"
+                  onClick={() => navigate('/admin/website-management/hero')}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#5B3E57]/10 dark:bg-[#D1A7CC]/15 hover:bg-[#5B3E57]/20 border border-[#5B3E57]/30 dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-semibold transition-all cursor-pointer shadow-xs"
+                  title="Configure Hero Banner dynamically in Admin Console"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Admin: Edit Dynamic Hero Banner</span>
+                </button>
+              </motion.div>
+            )}
+
+            {/* Main Title with Sculpted Typography (100% Dynamic from Admin CMS) */}
             <motion.h1
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.08, ease: LUXURY_EASING }}
               className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-[#282521] dark:text-[#EDE8E1] max-w-4xl mx-auto leading-[1.08]"
             >
-              Master Production Systems.{' '}
-              <span className="text-[#5B3E57] dark:text-[#D1A7CC] underline decoration-[#9A6B56]/40 underline-offset-8">
-                On Real Architecture.
-              </span>
+              {renderDynamicHeading(hero.heading, hero.headingEmphasis)}
             </motion.h1>
 
             {/* Subtitle in Constrained Measure */}
