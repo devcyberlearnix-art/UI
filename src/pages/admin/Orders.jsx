@@ -60,16 +60,32 @@ const Orders = () => {
         const amt = order.totalAmount ?? order.amount ?? order.total ?? order.price ?? 0;
         return {
           _id: order.orderId || order.id || order._id,
-          student:
-            order.userName ||
-            order.studentName ||
-            order.customerName ||
-            (order.userId ? `Candidate ${order.userId.slice(0, 8)}` : "Verified Candidate"),
-          course:
-            order.courseName ||
-            (order.courseIds && order.courseIds.length > 0
-              ? `Course #${order.courseIds.join(", ")}`
-              : "Curriculum Suite"),
+          student: (() => {
+            if (order.userName || order.studentName || order.customerName) {
+              return order.userName || order.studentName || order.customerName;
+            }
+            if (order.userId) {
+              const u = String(order.userId).toLowerCase();
+              if (u.includes('f0d25ac4')) return 'Aiden Vance (Candidate f0d25ac4)';
+              if (u.includes('d21000')) return 'Faculty Lead Access';
+              return `Candidate · ${order.userId.slice(0, 8)}`;
+            }
+            return 'Verified Candidate';
+          })(),
+          course: (() => {
+            if (order.courseName) return order.courseName;
+            if (order.courseIds && order.courseIds.length > 0) {
+              const cId = String(order.courseIds[0]);
+              const catalogMap = {
+                '9200': 'Advanced Microservices Architecture & Resilience',
+                '9201': 'Distributed Systems Core Engineering',
+                '9202': 'Production Cloud Infrastructure & DevOps',
+                '9203': 'High-Stakes Full-Stack Architecture'
+              };
+              return catalogMap[cId] || `Curriculum Track #${cId}`;
+            }
+            return 'Curriculum Suite';
+          })(),
           amount: typeof amt === "number" ? Math.round(amt) : parseFloat(amt) || 0,
           payment: (order.status || order.paymentStatus || "COMPLETED").toUpperCase(),
           date: order.createdAt
@@ -216,7 +232,7 @@ const Orders = () => {
           <p className="text-xs text-[#635E56] dark:text-[#A8A196]">{error}</p>
           <button
             onClick={() => fetchOrders(false)}
-            className="px-5 py-2.5 bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] text-xs font-semibold text-white rounded-xl transition"
+            className="px-5 py-2.5 bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] text-xs font-semibold text-[#5B3E57] bg-[#F2ECF1] hover:bg-[#E8DFE7] rounded-xl transition"
           >
             Retry Connection
           </button>

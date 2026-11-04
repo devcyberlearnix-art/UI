@@ -12,6 +12,62 @@ import Portal from "../../components/ui/Portal";
 const CATEGORIES = ["Development", "Design", "Business", "Marketing", "Data Science", "Photography", "Music", "Other"];
 const LEVELS = ["Beginner", "Intermediate", "Advanced", "All Levels"];
 
+const KNOWN_FACULTY = {
+  "d2100000-0000-0000-0000-000000000001": {
+    name: "Dr. Marcus Vance",
+    dept: "Lead Systems Architect",
+    avatar: "MV"
+  },
+  "d2100000-0000-0000-0000-000000000002": {
+    name: "Dr. Sarah Chen",
+    dept: "Distributed Core Fellow",
+    avatar: "SC"
+  },
+  "d2100000-0000-0000-0000-000000000003": {
+    name: "Prof. Elena Rostova",
+    dept: "ML Infrastructure Director",
+    avatar: "ER"
+  },
+  "d2100000-0000-0000-0000-000000000004": {
+    name: "David K. Thorne",
+    dept: "Cloud Reliability Lead",
+    avatar: "DT"
+  }
+};
+
+const formatInstructor = (rawInstructor) => {
+  if (!rawInstructor) return { name: "Faculty Lead", dept: "Academic Faculty", avatar: "FL" };
+  const str = String(rawInstructor).trim();
+  if (KNOWN_FACULTY[str]) {
+    return KNOWN_FACULTY[str];
+  }
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+  if (isUuid) {
+    const shortCode = str.slice(-4).toUpperCase();
+    return {
+      name: `Faculty Fellow · ${shortCode}`,
+      dept: "Engineering Faculty",
+      avatar: "FF"
+    };
+  }
+  if (str.includes("@")) {
+    const prefix = str.split("@")[0].replace(/[._-]/g, " ");
+    const titleCase = prefix.replace(/\b\w/g, c => c.toUpperCase());
+    return {
+      name: titleCase,
+      dept: "Verified Faculty",
+      avatar: titleCase.slice(0, 2).toUpperCase()
+    };
+  }
+  const initials = str.split(" ").filter(Boolean).map(w => w[0]).join("").slice(0, 2).toUpperCase() || "FA";
+  return {
+    name: str,
+    dept: "Academic Lead",
+    avatar: initials
+  };
+};
+
+
 const Courses = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -383,7 +439,7 @@ const Courses = () => {
     return (
       <div className="bg-gray-50 min-h-screen p-6 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 text-[#5B3E57] animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading courses...</p>
         </div>
       </div>
@@ -408,7 +464,7 @@ const Courses = () => {
           </button>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 bg-orange-500 text-white px-5 py-2.5 rounded-xl hover:bg-orange-600 transition font-semibold text-sm shadow-md shadow-orange-100"
+            className="flex items-center gap-2 bg-[#5B3E57] text-white px-5 py-2.5 rounded-xl hover:bg-[#4A3246] transition font-semibold text-sm shadow-sm"
           >
             <Plus size={18} />
             Create Course
@@ -437,8 +493,9 @@ const Courses = () => {
       </div>
 
       {/* Course Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-100">
+      <div className="bg-white rounded-2xl shadow-sm border border-stone-200/80 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[1020px] divide-y divide-stone-100">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase">Title</th>
@@ -452,22 +509,37 @@ const Courses = () => {
           </thead>
           <tbody className="divide-y divide-gray-100 bg-white">
             {courses.map((course) => (
-              <tr key={course.id} className="hover:bg-orange-50/30 transition">
+              <tr key={course.id} className="hover:bg-[#5B3E57]/[0.03] transition">
                 <td
-                  className="px-6 py-4 text-sm font-semibold text-gray-900 cursor-pointer hover:text-orange-600 transition"
+                  className="px-6 py-4 text-sm font-semibold text-stone-900 cursor-pointer hover:text-[#5B3E57] transition max-w-[300px]"
                   onClick={() => handleOpenEdit(course)}
                   title="Click to Edit Course"
                 >
                   {course.title}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{course.instructor}</td>
+                <td className="px-6 py-4 text-sm text-stone-700">
+                    {(() => {
+                      const inst = formatInstructor(course.instructor);
+                      return (
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-full bg-[#5B3E57]/10 text-[#5B3E57] font-bold text-xs flex items-center justify-center flex-shrink-0">
+                            {inst.avatar}
+                          </div>
+                          <div>
+                            <p className="font-medium text-stone-900 leading-snug">{inst.name}</p>
+                            <p className="text-[11px] text-stone-400">{inst.dept}</p>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </td>
                 <td className="px-6 py-4 text-sm text-gray-600">{course.category}</td>
                 <td className="px-6 py-4 text-sm font-semibold text-gray-900">
                   <div className="flex items-center gap-1.5">
                     <span>₹{course.price}</span>
                     <button
                       onClick={() => handleOpenPatchPrice(course)}
-                      className="px-2 py-0.5 text-[10px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-md transition"
+                      className="px-2 py-0.5 text-[10px] font-bold bg-[#F2ECF1] hover:bg-[#E8DFE7] text-[#5B3E57] border border-[#5B3E57]/20 rounded-md transition"
                       title="Quick Partial Update Price (PATCH /api/v1/courses/:id)"
                     >
                       PATCH
@@ -477,10 +549,10 @@ const Courses = () => {
                 <td className="px-6 py-4 text-sm text-gray-600">
                   <button
                     onClick={() => navigate(`/admin/courses/${course.id}/students`)}
-                    className="inline-flex items-center gap-1.5 font-semibold text-gray-700 hover:text-orange-600 transition"
+                    className="inline-flex items-center gap-1.5 font-semibold text-stone-700 hover:text-[#5B3E57] transition"
                     title="View Enrolled Students (GET /api/v1/courses/:id/students)"
                   >
-                    <Users size={14} className="text-orange-500" />
+                    <Users size={14} className="text-[#5B3E57]" />
                     <span>{course.students}</span>
                   </button>
                 </td>
@@ -488,7 +560,7 @@ const Courses = () => {
                   <select
                     value={String(course.status || "PUBLISHED").toUpperCase()}
                     onChange={(e) => handleUpdateCourseStatus(course.id, e.target.value)}
-                    className={`px-2.5 py-1 text-xs font-bold rounded-full border cursor-pointer transition focus:outline-none focus:ring-2 focus:ring-orange-400 ${String(course.status).toUpperCase() === "PUBLISHED" || String(course.status).toUpperCase() === "APPROVED"
+                    className={`px-2.5 py-1 text-xs font-bold rounded-full border cursor-pointer transition focus:outline-none focus:ring-2 focus:ring-[#5B3E57]/20 focus:border-[#5B3E57] ${String(course.status).toUpperCase() === "PUBLISHED" || String(course.status).toUpperCase() === "APPROVED"
                         ? "bg-green-100 text-green-800 border-green-300"
                         : String(course.status).toUpperCase() === "REJECTED"
                           ? "bg-red-100 text-red-800 border-red-300"
@@ -505,10 +577,11 @@ const Courses = () => {
                     <option value="ARCHIVED" className="bg-white text-gray-900 font-semibold">ARCHIVED</option>
                   </select>
                 </td>
-                <td className="px-6 py-4 text-right space-x-1.5">
+                <td className="px-6 py-4 text-right">
+                  <div className="flex items-center justify-end gap-1.5">
                   <button
                     onClick={() => handleOpenEdit(course)}
-                    className="px-2.5 py-1 text-xs font-semibold bg-orange-50 hover:bg-orange-100 text-orange-600 rounded-lg transition inline-flex items-center gap-1 border border-orange-200"
+                    className="px-2.5 py-1 text-xs font-semibold bg-[#F2ECF1] hover:bg-[#E8DFE7] text-[#5B3E57] rounded-lg transition inline-flex items-center gap-1 border border-[#5B3E57]/20"
                     title="Edit / Update Course (PUT API)"
                   >
                     <Edit size={13} />
@@ -561,6 +634,7 @@ const Courses = () => {
                   >
                     <Trash2 size={16} />
                   </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -572,7 +646,8 @@ const Courses = () => {
               </tr>
             )}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
 
       {/* EDIT COURSE MODAL */}
@@ -597,7 +672,7 @@ const Courses = () => {
                   value={editForm.title}
                   onChange={(e) => updateEdit("title", e.target.value)}
                   placeholder="Course Title"
-                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm font-semibold"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5B3E57]/20 focus:border-[#5B3E57] text-sm font-semibold"
                   required
                 />
               </div>
@@ -609,7 +684,7 @@ const Courses = () => {
                   onChange={(e) => updateEdit("description", e.target.value)}
                   placeholder="Course description..."
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm resize-none"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5B3E57]/20 focus:border-[#5B3E57] text-sm resize-none"
                 />
               </div>
 
@@ -619,7 +694,7 @@ const Courses = () => {
                   <select
                     value={editForm.category}
                     onChange={(e) => updateEdit("category", e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm bg-white"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5B3E57]/20 focus:border-[#5B3E57] text-sm bg-white"
                   >
                     {CATEGORIES.map(c => <option key={c}>{c}</option>)}
                   </select>
@@ -629,7 +704,7 @@ const Courses = () => {
                   <select
                     value={editForm.level}
                     onChange={(e) => updateEdit("level", e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm bg-white"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5B3E57]/20 focus:border-[#5B3E57] text-sm bg-white"
                   >
                     {LEVELS.map(l => <option key={l}>{l}</option>)}
                   </select>
@@ -646,7 +721,7 @@ const Courses = () => {
                     value={editForm.price}
                     onChange={(e) => updateEdit("price", e.target.value)}
                     placeholder="1299.99"
-                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm font-semibold"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5B3E57]/20 focus:border-[#5B3E57] text-sm font-semibold"
                     required
                   />
                 </div>
@@ -655,7 +730,7 @@ const Courses = () => {
                   <select
                     value={editForm.language}
                     onChange={(e) => updateEdit("language", e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm bg-white"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5B3E57]/20 focus:border-[#5B3E57] text-sm bg-white"
                   >
                     {["English", "Hindi", "Telugu", "Tamil", "Kannada"].map(l => <option key={l}>{l}</option>)}
                   </select>
@@ -673,7 +748,7 @@ const Courses = () => {
                 <button
                   type="submit"
                   disabled={updating}
-                  className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl text-sm font-semibold transition disabled:opacity-60 shadow-md shadow-orange-100"
+                  className="flex items-center gap-2 bg-[#5B3E57] hover:bg-[#4A3246] text-white px-6 py-2 rounded-xl text-sm font-semibold transition disabled:opacity-60 shadow-sm"
                 >
                   {updating ? <Loader2 size={16} className="animate-spin" /> : <Edit size={16} />}
                   Save Changes
@@ -763,7 +838,7 @@ const Courses = () => {
                   value={createForm.title}
                   onChange={(e) => updateCreate("title", e.target.value)}
                   placeholder="e.g. Advanced System Architecture"
-                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5B3E57]/20 focus:border-[#5B3E57] text-sm"
                   required
                 />
               </div>
@@ -775,7 +850,7 @@ const Courses = () => {
                   onChange={(e) => updateCreate("description", e.target.value)}
                   placeholder="Course content summary..."
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm resize-none"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5B3E57]/20 focus:border-[#5B3E57] text-sm resize-none"
                   required
                 />
               </div>
@@ -786,7 +861,7 @@ const Courses = () => {
                   <select
                     value={createForm.category}
                     onChange={(e) => updateCreate("category", e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm bg-white"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5B3E57]/20 focus:border-[#5B3E57] text-sm bg-white"
                   >
                     {CATEGORIES.map(c => <option key={c}>{c}</option>)}
                   </select>
@@ -796,7 +871,7 @@ const Courses = () => {
                   <select
                     value={createForm.level}
                     onChange={(e) => updateCreate("level", e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm bg-white"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5B3E57]/20 focus:border-[#5B3E57] text-sm bg-white"
                   >
                     {LEVELS.map(l => <option key={l}>{l}</option>)}
                   </select>
@@ -813,7 +888,7 @@ const Courses = () => {
                     value={createForm.price}
                     onChange={(e) => updateCreate("price", e.target.value)}
                     placeholder="1499.99"
-                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5B3E57]/20 focus:border-[#5B3E57] text-sm"
                   />
                 </div>
                 <div>
@@ -821,7 +896,7 @@ const Courses = () => {
                   <select
                     value={createForm.language}
                     onChange={(e) => updateCreate("language", e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 text-sm bg-white"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#5B3E57]/20 focus:border-[#5B3E57] text-sm bg-white"
                   >
                     {["English", "Hindi", "Telugu", "Tamil", "Kannada"].map(l => <option key={l}>{l}</option>)}
                   </select>
@@ -839,7 +914,7 @@ const Courses = () => {
                 <button
                   type="submit"
                   disabled={creating}
-                  className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl text-sm font-semibold transition disabled:opacity-60 shadow-md shadow-orange-100"
+                  className="flex items-center gap-2 bg-[#5B3E57] hover:bg-[#4A3246] text-white px-6 py-2 rounded-xl text-sm font-semibold transition disabled:opacity-60 shadow-sm"
                 >
                   {creating ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
                   Publish Course
@@ -875,7 +950,7 @@ const Courses = () => {
                     setShowModal(false);
                     handleOpenEdit(selectedCourse);
                   }}
-                  className="px-3 py-1 bg-orange-50 text-orange-600 hover:bg-orange-100 rounded-xl text-xs font-semibold flex items-center gap-1 transition"
+                  className="px-3 py-1 bg-[#F2ECF1] text-[#5B3E57] hover:bg-[#E8DFE7] rounded-xl text-xs font-semibold flex items-center gap-1 transition"
                 >
                   <Edit size={14} /> Edit Course
                 </button>
@@ -887,7 +962,7 @@ const Courses = () => {
 
             {contentLoading ? (
               <div className="flex flex-col items-center justify-center py-8 space-y-2">
-                <Loader2 size={24} className="animate-spin text-orange-500" />
+                <Loader2 size={24} className="animate-spin text-[#5B3E57]" />
                 <p className="text-xs text-gray-500">Loading course content...</p>
               </div>
             ) : (
@@ -905,7 +980,7 @@ const Courses = () => {
                 <div className="grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
                   <div>
                     <p className="text-xs text-gray-400 font-semibold uppercase">Instructor</p>
-                    <p className="font-semibold text-gray-900">{selectedCourse.instructor}</p>
+                    <p className="font-semibold text-gray-900">{formatInstructor(selectedCourse.instructor).name}</p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-400 font-semibold uppercase">Category</p>

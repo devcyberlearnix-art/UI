@@ -59,7 +59,7 @@ const Reports = () => {
       id: "revenue", 
       label: "Revenue Report", 
       icon: DollarSign, 
-      color: "text-orange-500",
+      color: "text-[#5B3E57]",
       endpoint: "/admin/reports/revenue",
       apiMethod: adminApi.getRevenueReport,
       description: "Revenue and payment insights"
@@ -328,7 +328,7 @@ const Reports = () => {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5B3E57] mx-auto mb-4"></div>
           <p className="text-gray-600">Generating report...</p>
         </div>
       </div>
@@ -375,18 +375,18 @@ const Reports = () => {
             type="date"
             value={dateRange.startDate}
             onChange={(e) => setDateRange({ ...dateRange, startDate: e.target.value })}
-            className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+            className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#5B3E57] focus:border-transparent outline-none"
           />
           <span className="text-gray-500">to</span>
           <input
             type="date"
             value={dateRange.endDate}
             onChange={(e) => setDateRange({ ...dateRange, endDate: e.target.value })}
-            className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+            className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#5B3E57] focus:border-transparent outline-none"
           />
           <button
             onClick={() => generateReport(activeTab)}
-            className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition text-sm"
+            className="px-4 py-2 bg-[#5B3E57] text-white rounded-lg hover:bg-[#4A3246] transition text-sm font-medium shadow-sm"
           >
             Apply Filter
           </button>
@@ -403,13 +403,13 @@ const Reports = () => {
               onClick={() => setActiveTab(type.id)}
               className={`p-4 rounded-xl border transition-all ${
                 activeTab === type.id
-                  ? "bg-orange-50 border-orange-500 shadow-md"
+                  ? "bg-[#5B3E57]/10 border-[#5B3E57] shadow-sm ring-1 ring-[#5B3E57]/20"
                   : "bg-white border-gray-200 hover:border-gray-300 hover:shadow"
               }`}
             >
               <Icon className={`w-6 h-6 mx-auto mb-2 ${activeTab === type.id ? type.color : "text-gray-400"}`} />
               <p className={`text-xs font-medium text-center ${
-                activeTab === type.id ? "text-orange-700" : "text-gray-600"
+                activeTab === type.id ? "text-[#5B3E57] font-semibold" : "text-gray-600"
               }`}>
                 {type.label}
               </p>
@@ -456,7 +456,7 @@ const Reports = () => {
                 <select
                   value={exportFormat}
                   onChange={(e) => setExportFormat(e.target.value)}
-                  className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                  className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#5B3E57] focus:border-transparent outline-none"
                 >
                   <option value="csv">CSV</option>
                   <option value="pdf">Text File</option>
@@ -464,7 +464,7 @@ const Reports = () => {
                 <button
                   onClick={() => handleExport(exportFormat)}
                   disabled={isGenerating || !reportData.data || reportData.data.length === 0}
-                  className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#5B3E57] text-white rounded-lg hover:bg-[#4A3246] transition disabled:opacity-50 font-medium shadow-sm"
                 >
                   {isGenerating ? (
                     <>
@@ -550,7 +550,7 @@ const Reports = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <button
                 onClick={() => handleExport('csv')}
-                className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition text-center"
+                className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#5B3E57] hover:bg-[#5B3E57]/5 transition text-center"
               >
                 <FileText className="w-8 h-8 text-green-500 mx-auto mb-2" />
                 <p className="text-sm font-medium">CSV</p>
@@ -558,7 +558,7 @@ const Reports = () => {
               </button>
               <button
                 onClick={() => handleExport('pdf')}
-                className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition text-center"
+                className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#5B3E57] hover:bg-[#5B3E57]/5 transition text-center"
               >
                 <FileText className="w-8 h-8 text-red-500 mx-auto mb-2" />
                 <p className="text-sm font-medium">Text File</p>
@@ -566,7 +566,7 @@ const Reports = () => {
               </button>
               <button
                 onClick={() => toast.info("Scheduled report will be sent daily")}
-                className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition text-center"
+                className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#5B3E57] hover:bg-[#5B3E57]/5 transition text-center"
               >
                 <Clock className="w-8 h-8 text-purple-500 mx-auto mb-2" />
                 <p className="text-sm font-medium">Schedule</p>
@@ -585,7 +585,7 @@ const Reports = () => {
             </p>
             <button
               onClick={() => generateReport(activeTab)}
-              className="mt-4 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+              className="mt-4 px-6 py-2 bg-[#5B3E57] text-white rounded-lg hover:bg-[#4A3246] transition font-medium shadow-sm"
             >
               Generate Report
             </button>

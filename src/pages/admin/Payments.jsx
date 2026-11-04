@@ -83,7 +83,7 @@ const Payments = () => {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 text-[#5B3E57] animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading payments...</p>
         </div>
       </div>
@@ -99,7 +99,7 @@ const Payments = () => {
           <p className="text-gray-500 text-sm mb-4">{error}</p>
           <button
             onClick={fetchPayments}
-            className="px-6 py-2.5 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition"
+            className="px-6 py-2.5 bg-[#5B3E57] text-white rounded-xl hover:bg-[#4A3246] transition"
           >
             Try Again
           </button>
@@ -117,7 +117,7 @@ const Payments = () => {
         </div>
         <button
           onClick={fetchPayments}
-          className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition"
+          className="flex items-center gap-2 px-4 py-2 bg-[#5B3E57] text-white rounded-xl hover:bg-[#4A3246] transition"
         >
           <RefreshCw size={18} />
           Refresh

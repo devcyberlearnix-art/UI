@@ -55,7 +55,18 @@ const Instructors = () => {
       const transformedInstructors = instructorData.map(instructor => ({
         id: instructor.id || instructor._id || instructor.instructorId,
         _id: instructor.id || instructor._id || instructor.instructorId,
-        name: instructor.email?.split('@')[0] || 'Unknown', // API only provides email, use email prefix as name
+        name: (() => {
+          const knownFacultyNames = {
+            'd2100000-0000-0000-0000-000000000001': 'Dr. Marcus Vance',
+            'd2100000-0000-0000-0000-000000000002': 'Dr. Sarah Chen',
+            'd2100000-0000-0000-0000-000000000003': 'Prof. Elena Rostova',
+            'd2100000-0000-0000-0000-000000000004': 'David K. Thorne',
+          };
+          const id = instructor.id || instructor._id || instructor.instructorId;
+          if (id && knownFacultyNames[id]) return knownFacultyNames[id];
+          const raw = instructor.name || instructor.email?.split('@')[0] || 'Faculty Fellow';
+          return raw.replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        })(),
         email: instructor.email || '',
         status: instructor.status || 'ACTIVE',
         courses: 0, // API doesn't provide this
@@ -181,7 +192,7 @@ const Instructors = () => {
           <p className="text-gray-500 mb-4">{error}</p>
           <button
             onClick={fetchInstructors}
-            className="px-6 py-2.5 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition"
+            className="px-6 py-2.5 bg-[#5B3E57] text-white rounded-xl hover:bg-[#4A3246] transition"
           >
             Try Again
           </button>

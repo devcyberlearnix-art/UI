@@ -144,7 +144,7 @@ const AdminManagement = () => {
           <p className="text-gray-600">You don't have permission to manage admins.</p>
           <button
             onClick={() => navigate("/admin/dashboard")}
-            className="mt-4 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+            className="mt-4 px-6 py-2 bg-[#5B3E57] text-white rounded-lg hover:bg-[#4A3246] transition"
           >
             Go to Dashboard
           </button>
@@ -157,7 +157,7 @@ const AdminManagement = () => {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5B3E57] mx-auto mb-4"></div>
           <p className="text-gray-600">Loading admins...</p>
         </div>
       </div>
@@ -328,7 +328,7 @@ const AdminManagement = () => {
                       {admin.role !== "super_admin" && admin.role !== "admin" && (
                         <>
                           <button
-                            className="p-2 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition"
+                            className="p-2 text-gray-400 hover:text-[#5B3E57] hover:bg-[#5B3E57]/10 rounded-lg transition"
                             title="Edit"
                           >
                             <Edit size={16} />
@@ -364,7 +364,7 @@ const AdminManagement = () => {
               <p className="text-gray-400 text-sm mt-1">Try adjusting your search or filters</p>
               <button
                 onClick={fetchAdmins}
-                className="mt-4 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+                className="mt-4 px-6 py-2 bg-[#5B3E57] text-white rounded-lg hover:bg-[#4A3246] transition"
               >
                 Refresh
               </button>
