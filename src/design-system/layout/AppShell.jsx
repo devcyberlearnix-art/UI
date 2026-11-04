@@ -155,7 +155,17 @@ export const AppShell = ({ children }) => {
       ];
     }
 
-    // 3. STUDENT RAIL (Default Authenticated Candidate)
+    // 3. PARENT OBSERVATORY RAIL
+    if (userRole === 'parent') {
+      return [
+        { label: 'Learning Observatory', href: '/parent/dashboard', icon: LayoutDashboard },
+        { label: 'Academic Timelines', href: '/parent/dashboard', icon: Clock },
+        { label: 'Verified Credentials', href: '/certifications', icon: CheckCircle2 },
+        { label: 'Digest Preferences', href: '/parent/dashboard', icon: Settings },
+      ];
+    }
+
+    // 4. STUDENT RAIL (Default Authenticated Candidate)
     return [
       { label: 'My Learning Hub', href: '/student/dashboard', icon: LayoutDashboard },
       { label: 'My Active Courses', href: '/student/my-learning', icon: BookOpen },
@@ -196,6 +206,7 @@ export const AppShell = ({ children }) => {
       admin: 'Administration',
       student: 'Student',
       instructor: 'Instructor',
+      parent: 'Parent Observatory',
       dashboard: 'Dashboard',
       courses: 'Courses',
       classroom: 'Classroom',

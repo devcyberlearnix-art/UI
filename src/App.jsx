@@ -8,6 +8,7 @@ import PageLoader from './components/common/PageLoader';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
 import { OrderProvider } from './context/OrderContext';
+import { ExperienceProvider } from './core/experience';
 import ScrollToTop from './components/ScrollToTop';
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -61,6 +62,9 @@ const CertificateVerification = withFallback(() => import('./pages/student/Certi
 const StudentDashboard = withFallback(() => import('./pages/student/StudentDashboard'));
 const MyLearning = withFallback(() => import('./pages/student/MyLearning'));
 const InstructorApplication = withFallback(() => import('./pages/student/InstructorApplication'));
+
+// Code-split Parent Learning Observatory
+const ParentDashboard = withFallback(() => import('./pages/parent/ParentDashboard'));
 
 // Code-split Instructor Hub
 const InstructorDashboard = withFallback(() => import('./pages/instructor/Dashboard'));
@@ -123,6 +127,7 @@ function ProfileRedirect() {
   const role = (user.role || '').toLowerCase();
   if (role.includes('admin')) return <Navigate to="/admin/profile" replace />;
   if (role === 'instructor') return <Navigate to="/instructor/profile" replace />;
+  if (role === 'parent') return <Navigate to="/parent/dashboard" replace />;
   return <Navigate to="/student/profile" replace />;
 }
 
@@ -139,16 +144,18 @@ export default function App() {
     const role = (user.role || '').toLowerCase();
     if (role.includes('admin')) return '/admin/dashboard';
     if (role === 'instructor') return '/instructor/dashboard';
+    if (role === 'parent') return '/parent/dashboard';
     return '/student/dashboard';
   };
 
   return (
     <ErrorBoundary>
       <OrderProvider>
-        <ScrollToTop />
-        <WebSocketNotificationBridge />
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
+        <ExperienceProvider>
+          <ScrollToTop />
+          <WebSocketNotificationBridge />
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
             {/* =========================================================================
                 PUBLIC ENTRY LAYER: Open to all unauthenticated network scopes by default
                 ========================================================================= */}
@@ -248,6 +255,20 @@ export default function App() {
             </Route>
 
             {/* =========================================================================
+                AUTHENTICATED SECURE TIERS: Parent Learning Observatory
+                ========================================================================= */}
+            <Route
+              element={
+                <ProtectedRoute allowedRoles={['parent', 'admin', 'super_admin']}>
+                  <DashboardLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="/parent/dashboard" element={<ParentDashboard />} />
+              <Route path="/parent/observatory" element={<ParentDashboard />} />
+            </Route>
+
+            {/* =========================================================================
                 AUTHENTICATED SECURE TIERS: Admin Command Center
                 ========================================================================= */}
             <Route
@@ -309,6 +330,7 @@ export default function App() {
             <Route path="*" element={<Navigate to={user ? getDashboardRedirect() : '/'} replace />} />
           </Routes>
         </Suspense>
+        </ExperienceProvider>
       </OrderProvider>
     </ErrorBoundary>
   );

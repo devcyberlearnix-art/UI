@@ -18,6 +18,7 @@ export const normalizeRole = (roleValue = '') => {
   if (role.includes('main')) return 'admin';
   if (role.includes('admin')) return 'admin';
   if (role.includes('instructor')) return 'instructor';
+  if (role.includes('parent')) return 'parent';
   if (role.includes('student')) return 'student';
   return role || 'student';
 };
@@ -27,6 +28,7 @@ export const getDashboardPath = (roleValue = '') => {
   if (role === 'super_admin' || role === 'admin') return '/admin/dashboard';
   if (role === 'sub_admin') return '/admin/sub-dashboard';
   if (role === 'instructor') return '/instructor/dashboard';
+  if (role === 'parent') return '/parent/dashboard';
   return '/student/dashboard';
 };
 
