@@ -54,3 +54,4 @@ Asivo 2.0 was designed from the token layer up to be fully inclusive, accessible
 | **4. Robust** | Valid HTML5, ARIA attributes, live regions | Full DOM tree audit | **100% COMPLIANT (AA)** |
 
 *Audited and Attested by Agent 52 & Agent 60*
+

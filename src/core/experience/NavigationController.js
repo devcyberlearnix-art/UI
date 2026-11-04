@@ -71,3 +71,4 @@ export class NavigationController {
 }
 
 export default NavigationController;
+

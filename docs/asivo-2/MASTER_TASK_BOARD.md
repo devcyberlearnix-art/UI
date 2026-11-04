@@ -45,6 +45,7 @@
 - [x] **TASK-B06:** Publish `DESIGN_SYSTEM_REGISTRY.md` establishing Quiet Atelier tokens. *(Agent 07)*
 - [x] **TASK-B07:** Publish `DEFECT_REGISTRY.md` establishing defect lifecycle. *(Agent 51)*
 - [x] **TASK-B08:** Publish `RELEASE_READINESS.md` establishing release criteria. *(Agent 60)*
+- [x] **TASK-B09:** Install `unslop` skill and publish `UNSLOP_DESIGN_GOVERNANCE.md`. *(Agent 07)*
 
 ### Stage C — Shared Experience Engine Core
 - [ ] **TASK-C01:** Implement `ExperienceProvider.jsx` & `useExperience` hook with explicit modes (`EXPLORATION`, `LEARNING`, `FOCUS`, `ACHIEVEMENT`). *(Agent 37)*
@@ -91,3 +92,4 @@
 ---
 
 *Updated by Agent 01 — Chief Architect*
+

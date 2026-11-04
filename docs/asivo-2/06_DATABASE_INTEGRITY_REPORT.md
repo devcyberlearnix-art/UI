@@ -60,3 +60,4 @@ erDiagram
 - Order checkout and enrollment creation execute in an atomic `@Transactional` boundary; payment gateway failures trigger automatic rollback with zero orphaned enrollment records.
 
 *Audited and Attested by Agent 34 & Agent 01*
+

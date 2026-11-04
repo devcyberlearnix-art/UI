@@ -55,3 +55,4 @@ graph TD
 - **Cleanup Verification:** All `useEffect` hooks in `ExperienceProvider`, `BannerSlider`, and `LandingDashboard` properly unregister event listeners (`asivo:hero-updated`, `storage`, WebSocket connections) on unmount.
 
 *Audited and Attested by Agent 44 & Agent 45*
+

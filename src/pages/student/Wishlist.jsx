@@ -39,7 +39,7 @@ export default function Wishlist() {
           </div>
 
           <div className="px-3 py-1 rounded-full bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 font-mono text-[10px] text-[#5B3E57] dark:text-[#D1A7CC] font-bold">
-            💖 {wishlist.length} Monitored Tracks
+            {wishlist.length} {wishlist.length === 1 ? 'Track' : 'Tracks'}
           </div>
         </div>
 

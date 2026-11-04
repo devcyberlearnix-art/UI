@@ -82,3 +82,4 @@ If two agents disagree on an architectural approach (e.g., state management in C
 ---
 
 *Signed: Agent 01 — Chief Architect & System Director*
+

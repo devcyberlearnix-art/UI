@@ -289,7 +289,7 @@ const HeroEditor = () => {
 
       setIsDirty(false);
       setSaveSuccess(true);
-      toast.success('Hero banner published live! Public site updated immediately.', { icon: '🚀' });
+      toast.success('Hero banner published live! Public site updated immediately.');
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Failed to publish hero banner.');

@@ -30,7 +30,10 @@ scratch/
 
 # Agent & tool directories
 .agent/
+!.agent/skills/unslop/**
 .agents/
+!.agents/skills/unslop/**
+!.claude/skills/unslop/**
 .codex/
 .impeccable/
 telemetry_snapshots/

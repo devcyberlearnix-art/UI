@@ -46,3 +46,4 @@ All previous visual checkpoints have been purged. The current visual state is va
 - **Card Radius:** Standard cards feature uniform `rounded-2xl` geometry with `border border-[#E3DCD3]`.
 
 *Audited and Certified by Agent 11 & Agent 07*
+

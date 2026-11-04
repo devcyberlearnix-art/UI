@@ -131,7 +131,7 @@ export default function ShoppingCartWorkspace() {
       toast.error('Failed to sync cart modification.');
     },
     onSuccess: () => {
-      toast.success('Course dropped from pipeline queue.', { icon: '✨' });
+      toast.success('Course removed from cart.');
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: cartQueryKey });

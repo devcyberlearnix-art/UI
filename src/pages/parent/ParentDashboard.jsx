@@ -159,7 +159,7 @@ export const ParentDashboard = () => {
       setIsLinkingModalOpen(false);
       setPairingCodeInput('');
       setStudentEmailInput('');
-      toast.success(`Successfully verified relationship with ${studentEmailInput}!`, { icon: '🤝' });
+      toast.success(`Successfully verified relationship with ${studentEmailInput}.`);
     }, 800);
   }, [pairingCodeInput, studentEmailInput, relationshipType]);
 
@@ -545,3 +545,4 @@ export const ParentDashboard = () => {
 };
 
 export default ParentDashboard;
+

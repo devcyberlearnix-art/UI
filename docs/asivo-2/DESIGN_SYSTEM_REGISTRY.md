@@ -79,3 +79,4 @@ Asivo 2.0 rejects the sterile, repetitive, high-saturation look of generic AI-ge
 ---
 
 *Governed by Agent 07 & Agent 01*
+

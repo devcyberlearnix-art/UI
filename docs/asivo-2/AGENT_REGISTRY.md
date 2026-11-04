@@ -60,22 +60,22 @@ flowchart TD
 
 ---
 
-### Division 02: Design & User Experience (Agents 07–11)
-- **Agent 07 — Quiet Atelier Design Director**
-  - *Primary Responsibility:* Art-directing the scholarly aesthetic, typography scale, and luxury ergonomics.
-  - *Deliverable:* Refined visual hierarchy, reading comfort metrics, and surface elevation rules.
-- **Agent 08 — Spatial Layout & Flow Designer**
-  - *Primary Responsibility:* Responsive grid ergonomics, adaptive sidebars, and fluid dashboard panels.
-  - *Deliverable:* Layout templates for mobile, tablet, desktop, and ultra-wide viewports.
-- **Agent 09 — Component Standardization Lead**
-  - *Primary Responsibility:* Harmonizing primitives (`Button`, `Card`, `Badge`, `Input`, `Dialog`, `Table`).
-  - *Deliverable:* 100% adherence to design tokens and zero non-standard element definitions.
-- **Agent 10 — Micro-Interactions & Transitions Specialist**
-  - *Primary Responsibility:* Natural motion curves (`LUXURY_EASING`), reduced-motion fallbacks, and micro-delights.
-  - *Deliverable:* Framer-motion configurations with zero animation jank or layout shifts.
-- **Agent 11 — Design QA & Visual Regression Lead**
-  - *Primary Responsibility:* Independent pixel auditing and cross-theme contrast verification.
-  - *Deliverable:* Visual regression comparisons and contrast compliance reports.
+### Division 02: Design & User Experience — Unslop Governance (Agents 07–11)
+- **Agent 07 — Lead Unslop Design Director**
+  - *Primary Responsibility:* Direct the Unslop design methodology (`.agents/skills/unslop/`), approve 5-line direction statements, and eliminate generic AI dashboard patterns.
+  - *Deliverable:* Unified Unslop design direction across all screens, adhering to Quiet Atelier aesthetic.
+- **Agent 08 — Canonical Design Token Architect**
+  - *Primary Responsibility:* Preserve, enforce, and govern canonical Quiet Atelier design tokens; eliminate arbitrary inline colors and gradients.
+  - *Deliverable:* Strict token adherence across Light (`#F5F2EC`) and Nocturnal Dark (`#151413`) themes.
+- **Agent 09 — Typography & Visual Hierarchy Auditor**
+  - *Primary Responsibility:* Audit typography scale, enforce sentence case, eliminate exclamation points and hype copy, enforce 4px spatial grid.
+  - *Deliverable:* Refined typographic measure and consistent information density.
+- **Agent 10 — Animation & Motion Refinement Specialist**
+  - *Primary Responsibility:* Refine motion curves with `LUXURY_EASING`, eliminate gratuitous floating blobs or parallax, implement reduced-motion fallbacks.
+  - *Deliverable:* Framer-motion configurations with purposeful, natural transitions.
+- **Agent 11 — Responsive Visual Refinement Specialist**
+  - *Primary Responsibility:* Execute responsive visual refinement across mobile (375px), tablet (768px), and desktop (1440px) viewports.
+  - *Deliverable:* Responsive visual consistency reports and touch-target verifications.
 
 ---
 
@@ -203,9 +203,9 @@ flowchart TD
 - **Agent 44 — Web Vitals & Bundle Performance Optimizer**
   - *Primary Responsibility:* Optimizing LCP, FID, CLS, chunk sizes, dynamic imports, and asset compression.
   - *Deliverable:* Lighthouse performance score ≥ 90 and sub-1s First Contentful Paint.
-- **Agent 45 — Memory & Event Listener Leak Inspector**
-  - *Primary Responsibility:* Inspecting `useEffect` cleanup handlers, WebSocket teardowns, and observer unmounts.
-  - *Deliverable:* Zero heap leaks across 100 consecutive route navigations.
+- **Agent 45 — Accessibility & Sensory Verification Specialist (Post-Unslop)**
+  - *Primary Responsibility:* Accessibility verification, contrast checks, and sensory testing after Unslop visual changes; zero DOM memory leaks.
+  - *Deliverable:* Post-refinement WCAG 2.1 AA accessibility verification and event listener cleanup audits.
 - **Agent 46 — Data Privacy & Cryptographic Ledger Specialist**
   - *Primary Responsibility:* Verifying certificate hashes, salt rounds, and PII masking.
   - *Deliverable:* Audited PII sanitization in logs and encrypted sensitive local storage.
@@ -222,9 +222,9 @@ flowchart TD
 - **Agent 49 — Network Resilience & Offline Fallback Tester**
   - *Primary Responsibility:* Chaos testing under simulated offline states, 3G throttling, and backend 500s.
   - *Deliverable:* Graceful degradation verification and toast error transparency.
-- **Agent 50 — Build & CI/CD Release Specialist**
-  - *Primary Responsibility:* Vite production build optimization, Rollup chunk splitting, and lint checks.
-  - *Deliverable:* Clean zero-warning builds with deterministic asset hashing.
+- **Agent 50 — Screenshot & Visual Regression Specialist (Unslop)**
+  - *Primary Responsibility:* Capture before-and-after screenshots, compare desktop/tablet/mobile viewports, and audit visual regression across Light and Dark themes.
+  - *Deliverable:* Verified visual diff evidence under `ASIVO_DESIGN_SCREENSHOTS/`.
 - **Agent 51 — Defect Remediation Coordinator**
   - *Primary Responsibility:* Tracking defects in `docs/asivo-2/DEFECT_REGISTRY.md` from identification to re-test verification.
   - *Deliverable:* 100% defect closure rate before release authorization.
@@ -251,20 +251,21 @@ flowchart TD
 ---
 
 ### Division 12: Independent Reverification Authority (Agents 57–60)
-- **Agent 57 — Independent Student Persona Verifier**
-  - *Primary Responsibility:* End-to-end black-box verification of student exploration, enrollment, learning, and certification.
-  - *Deliverable:* Independent Student Persona Audit Report.
-- **Agent 58 — Independent Instructor, Admin & Parent Verifier**
-  - *Primary Responsibility:* End-to-end black-box verification of teaching workflows, administrative operations, and parental observatory access.
-  - *Deliverable:* Independent Operator Audit Report.
+- **Agent 57 — Independent Student Experience Reviewer (Unslop QA)**
+  - *Primary Responsibility:* End-to-end black-box verification of student exploration, enrollment, learning, and certification following Unslop design direction.
+  - *Deliverable:* Independent Student Persona Audit Report & Spatial Ergonomics Verification.
+- **Agent 58 — Independent Role Experience Reviewer (Unslop QA)**
+  - *Primary Responsibility:* End-to-end black-box verification of teaching studio workflows, admin operations, and parent observatory access following Unslop design direction.
+  - *Deliverable:* Independent Operator & Parent Persona Audit Report.
 - **Agent 59 — Independent Security, Data & API Verifier**
   - *Primary Responsibility:* Independent validation of JWT security, IDOR protection, database transactions, and API contracts.
   - *Deliverable:* Independent Security & Integrity Verification Report.
-- **Agent 60 — Final Release Gatekeeper & Auditor**
-  - *Primary Responsibility:* Final audit of all evidence, logs, and artifacts before presenting release authorization to Agent 01.
-  - *Deliverable:* Production Readiness Verdict & Release Gate Signoff.
+- **Agent 60 — Final Visual & Release Acceptance Gatekeeper**
+  - *Primary Responsibility:* Final audit of Unslop design quality, functional correctness, and regression evidence before presenting release authorization to Agent 01.
+  - *Deliverable:* Final Visual Acceptance & Three-Gate Production Readiness Signoff.
 
 ---
 
 **Certified by Agent 01 — Chief Architect**  
 *Mission Execution: In Progress*
+

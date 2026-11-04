@@ -47,3 +47,4 @@ The Asivo 2.0 security audit executed safe, non-destructive penetration testing 
 - Pairing codes expire automatically after 15 minutes and can be revoked by the student at any time from `ProfileWorkspace.jsx`.
 
 *Audited and Attested by Agent 42 & Agent 59*
+
