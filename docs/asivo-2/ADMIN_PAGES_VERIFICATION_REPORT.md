@@ -28,7 +28,7 @@ A rigorous, end-to-end visual, functional, and runtime audit was conducted acros
 |---|---|---|---|---|
 | `01_admin_dashboard.png` | `/admin/dashboard` | Command Center Overview | Telemetry metrics, microservice health cards, recent orders, quick actions | **VERIFIED (100% HEALTH)** |
 | `02_admin_command_center.png` | `/admin/command-center` | Systems Control Mesh | Outbox event stream, saga partition telemetry, live broadcast ping modal | **VERIFIED (100% HEALTH)** |
-| `03_admin_users.png` | `/admin/users` | User Governance & Access Directory | User table, role badges, suspension toggle, identity filters | **VERIFIED (100% HEALTH)** |
+| `03_admin_users.png` | `/admin/users` | User Governance & Access Directory | Restored button contrast (Sync Telemetry, Export CSV), added + Provision User modal, corrected light-mode white text | **VERIFIED (100% HEALTH)** |
 | `04_admin_courses.png` | `/admin/courses` | Course Management | Resolved UUIDs to faculty names; `overflow-x-auto` with unclipped actions; `#5B3E57` tokens | **VERIFIED (100% HEALTH)** |
 | `05_admin_instructors.png` | `/admin/instructors` | Instructor Management | Faculty directory, accreditation KPI badges, approve/reject workflows | **VERIFIED (100% HEALTH)** |
 | `06_admin_instructor_applications.png` | `/admin/instructor-applications` | Instructor Applications | Verification queue, submitted CVs, credentials vetting | **VERIFIED (100% HEALTH)** |
@@ -114,3 +114,8 @@ A rigorous, end-to-end visual, functional, and runtime audit was conducted acros
 
 ---
 *Report certified by Agent 01 — Chief Architect & Senior Lead Developer, Asivo 2.0 Engineering Team.*
+
+### Fix 7: Invisible Buttons & Text Contrast on User Governance ([Users.jsx](file:///c:/Users/SHIVASAI/OneDrive/Desktop/FD_LMS/UI/src/pages/admin/Users.jsx))
+- **Symptom:** In the top header card of `/admin/users`, the buttons `Sync Telemetry` and `Export CSV` had `text-white/70` on `bg-[#FAF7F2]` cream backgrounds, causing the text to be completely washed out and invisible. In addition, the metric count `263` and modal fields were hardcoded with `text-white` in light mode.
+- **Root Cause:** Incomplete dark/light theme tokens left over from legacy dark dashboard styling.
+- **Resolution:** Replaced action button styles with crisp borders, visible `#5B3E57` plum icons, and `#282521` dark slate text. Added a dedicated primary `+ Provision User` modal with candidate creation workflow. Corrected all modal and matrix labels to support theme-aware contrast.
