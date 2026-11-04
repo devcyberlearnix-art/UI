@@ -79,6 +79,7 @@ export const CourseCard = forwardRef(function CourseCard({ course = {} }, ref) {
   const category = course.category || course.categoryName || 'Engineering';
   const rating = Number(course.rating || course.avgRating || 4.5).toFixed(1);
   const duration = course.duration || course.estimatedDuration || '12 Weeks';
+  const subtitle = course.subtitle || course.subTitle || course.shortDescription || course.tagline || (course.description && course.description.length > 75 ? course.description.slice(0, 75) + '…' : course.description) || '';
   const imageUrl = resolveCoverImage(category, title, course.imageUrl || course.thumbnailUrl || course.thumbnail, courseId);
 
   // Invokes the optimized backend checking endpoint (GET /api/v1/wishlist/check/{id})
@@ -195,6 +196,13 @@ export const CourseCard = forwardRef(function CourseCard({ course = {} }, ref) {
           <h4 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight group-hover:text-[#5B3E57] dark:group-hover:text-[#D1A7CC] transition-colors line-clamp-2 leading-snug">
             {title}
           </h4>
+
+          {/* Subtitle / Focus Track */}
+          {subtitle && (
+            <p className="text-xs text-[#635E56] dark:text-[#A69F94] line-clamp-1 leading-normal font-normal">
+              {subtitle}
+            </p>
+          )}
 
           {/* Instructor & Rating Row */}
           <div className="flex items-center justify-between text-xs text-[#635E56] dark:text-[#A69F94]">

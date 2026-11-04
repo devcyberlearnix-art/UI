@@ -298,9 +298,9 @@ export const CourseDetail = () => {
                 {course.title}
               </h1>
 
-              {course.subtitle && (
+              {(course.subtitle || course.shortDescription || course.description) && (
                 <p className="text-sm sm:text-base text-[#9A6B56] dark:text-[#D9A48F] font-medium leading-relaxed">
-                  {course.subtitle}
+                  {course.subtitle || course.shortDescription || (course.description && course.description.length > 130 ? course.description.slice(0, 130) + '…' : course.description)}
                 </p>
               )}
 

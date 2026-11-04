@@ -107,9 +107,21 @@ const normalizeCourseItem = (c, index) => {
   const rawImg = c.image || c.thumbnail || c.coverImage || c.banner || "";
   const image = resolveCoverImage(category, title, rawImg, courseId);
 
+  const description =
+    c.description ||
+    c.summary ||
+    "Comprehensive architectural curriculum crafted for enterprise software engineers.";
+  const subtitle =
+    c.subtitle ||
+    c.subTitle ||
+    c.shortDescription ||
+    c.tagline ||
+    (description.length > 85 ? description.slice(0, 85) + "…" : description);
+
   return {
     id: courseId,
     title,
+    subtitle,
     category,
     level: c.level || c.difficultyLevel || "All Levels",
     price: c.price != null ? Number(c.price) : (c.amount != null ? Number(c.amount) : 0),

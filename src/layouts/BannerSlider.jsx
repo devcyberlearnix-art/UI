@@ -222,7 +222,7 @@ export const BannerSlider = ({ onBannerLoaded }) => {
                     ...getTextShadowStyle(currentBanner.textShadowEnabled !== false),
                   }}
                 >
-                  {currentBanner.title}
+                  {currentBanner.title || currentBanner.heading || currentBanner.bannerTitle || "Specialized Engineering Track"}
                 </h2>
 
                 {/* Banner Description */}
@@ -233,7 +233,7 @@ export const BannerSlider = ({ onBannerLoaded }) => {
                     ...getTextShadowStyle(currentBanner.textShadowEnabled !== false),
                   }}
                 >
-                  {currentBanner.description}
+                  {currentBanner.description || currentBanner.subtitle || currentBanner.subTitle || "Zero synthetic boilerplate. Learn distributed microservices, fullstack design systems, and cloud-native resilience."}
                 </p>
 
                 {/* CTA Action Bar */}

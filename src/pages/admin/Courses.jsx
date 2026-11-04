@@ -511,11 +511,14 @@ const Courses = () => {
             {courses.map((course) => (
               <tr key={course.id} className="hover:bg-[#5B3E57]/[0.03] transition">
                 <td
-                  className="px-6 py-4 text-sm font-semibold text-stone-900 cursor-pointer hover:text-[#5B3E57] transition max-w-[300px]"
+                  className="px-6 py-4 text-sm font-semibold text-stone-900 cursor-pointer hover:text-[#5B3E57] transition max-w-[320px]"
                   onClick={() => handleOpenEdit(course)}
                   title="Click to Edit Course"
                 >
-                  {course.title}
+                  <p className="font-semibold text-stone-900 line-clamp-1 hover:text-[#5B3E57]">{course.title}</p>
+                  <p className="text-xs text-stone-500 font-normal line-clamp-1 mt-0.5">
+                    {course.subtitle || course.description || "Production engineering curriculum track"}
+                  </p>
                 </td>
                 <td className="px-6 py-4 text-sm text-stone-700">
                     {(() => {

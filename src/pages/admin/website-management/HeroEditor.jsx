@@ -33,29 +33,29 @@ const EASING = [0.16, 1, 0.3, 1];
 // ── Default hero content (current hardcoded values as fallbacks) ─────────
 const DEFAULT_HERO = {
   badge: {
-    text: 'ENGINEERING LEARNING PLATFORM',
+    text: 'ARCHITECTURE CURRICULUM • Verified Production Track',
     isVisible: true,
   },
   verificationLabel: {
-    text: 'Production Standards',
+    text: 'Verified Production Track',
     isVisible: true,
   },
   heading: {
-    text: 'Build Production-Ready Engineering Skills.',
-    emphasisText: 'Production-Ready',
+    text: 'Master Production Systems. On Real Architecture.',
+    emphasisText: 'On Real Architecture.',
   },
   description: {
-    text: 'Master backend engineering, distributed systems, cloud architecture, and application security through practical projects and real-world engineering workflows.',
+    text: 'Zero synthetic boilerplate. Learn distributed microservices, fullstack design systems, security verification, and cloud-native resilience directly from verified engineering leads.',
     isVisible: true,
   },
   primaryCta: {
-    label: 'Explore Courses',
+    label: 'Explore Courses (Get Started)',
     destination: '/courses',
     isVisible: true,
   },
   secondaryCta: {
-    label: 'Get Started',
-    destination: '/register',
+    label: 'Admin Command Center',
+    destination: '/admin/command-center',
     isVisible: true,
   },
   search: {
@@ -174,14 +174,28 @@ const HeroEditor = () => {
       try {
         setIsLoading(true);
         let data = null;
+
+        // 1. Check local storage override first for instant administrative preview
         try {
-          const draftRes = await cmsAdminApi.getHero();
-          data = draftRes?.data || draftRes;
-        } catch {
-          // Fallback to public landing page endpoint
-          const pubRes = await cmsPublicApi.getLandingPage();
-          const p = pubRes?.data || pubRes;
-          data = p?.hero;
+          const cached = localStorage.getItem('asivo_admin_hero_config');
+          if (cached) {
+            data = JSON.parse(cached);
+          }
+        } catch (e) {
+          console.warn('Local hero cache read warning:', e);
+        }
+
+        // 2. Fetch authoritative backend draft if available
+        if (!data) {
+          try {
+            const draftRes = await cmsAdminApi.getHero();
+            data = draftRes?.data || draftRes;
+          } catch {
+            // Fallback to public landing page endpoint
+            const pubRes = await cmsPublicApi.getLandingPage();
+            const p = pubRes?.data || pubRes;
+            data = p?.hero;
+          }
         }
 
         if (!isMounted || !data) return;
@@ -258,8 +272,10 @@ const HeroEditor = () => {
         badgeText: hero.badge?.text,
         verificationLabel: typeof hero.verificationLabel === 'object' ? hero.verificationLabel.text : hero.verificationLabel,
         heading: hero.heading?.text,
+        title: hero.heading?.text,
         headingEmphasis: hero.heading?.emphasisText,
         description: typeof hero.description === 'object' ? hero.description.text : hero.description,
+        subtitle: typeof hero.description === 'object' ? hero.description.text : hero.description,
         primaryCta: {
           label: hero.primaryCta?.label,
           destination: hero.primaryCta?.destination,
@@ -477,17 +493,17 @@ const HeroEditor = () => {
             )}
 
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight leading-tight">
-              {hero.heading.text}{' '}
-              {hero.heading.emphasisText && hero.heading.text.includes(hero.heading.emphasisText) && (
+              {hero.heading.text || 'Master Production Systems. On Real Architecture.'}{' '}
+              {hero.heading.emphasisText && (hero.heading.text || '').includes(hero.heading.emphasisText) && (
                 <span className="text-[#5B3E57] dark:text-[#D1A7CC] underline decoration-[#9A6B56]/40 underline-offset-4 block sm:inline">
                   {hero.heading.emphasisText}
                 </span>
               )}
             </h2>
 
-            {hero.description.isVisible && (
+            {hero.description.isVisible !== false && (
               <p className="text-xs text-[#635E56] dark:text-[#A8A196] leading-relaxed max-w-xl mx-auto">
-                {hero.description.text}
+                {hero.description.text || 'Zero synthetic boilerplate. Learn distributed microservices, fullstack design systems, security verification, and cloud-native resilience directly from verified engineering leads.'}
               </p>
             )}
 
@@ -545,34 +561,35 @@ const HeroEditor = () => {
             <div className="pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]" />
 
             <TextField
-              label="Main Heading *"
+              label="Banner Title / Main Heading *"
               value={hero.heading.text}
               onChange={(v) => update('heading.text', v)}
-              placeholder="e.g. Master Engineering On Real Architecture."
+              placeholder="e.g. Master Production Systems. On Real Architecture."
               maxLength={200}
-              hint="The large H1 heading displayed prominently in the hero"
+              hint="The primary H1 title displayed prominently in the hero banner"
             />
             <TextField
-              label="Heading Emphasis (underlined portion)"
+              label="Title Emphasis (Underlined highlight words)"
               value={hero.heading.emphasisText}
               onChange={(v) => update('heading.emphasisText', v)}
               placeholder="e.g. On Real Architecture."
               maxLength={100}
-              hint="This portion of the heading receives the gold underline treatment"
+              hint="This exact phrase receives the plum/gold underline highlight"
             />
 
             <div className="pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]" />
 
             <TextField
-              label="Description"
+              label="Banner Subtitle / Description *"
               value={hero.description.text}
               onChange={(v) => update('description.text', v)}
-              placeholder="Write a compelling description of the platform..."
+              placeholder="e.g. Zero synthetic boilerplate. Learn distributed microservices..."
               maxLength={600}
               multiline
+              hint="The subtitle text displayed directly underneath the main banner title"
             />
             <VisibilityToggle
-              label="Show description"
+              label="Show subtitle / description"
               checked={hero.description.isVisible}
               onChange={(v) => update('description.isVisible', v)}
             />

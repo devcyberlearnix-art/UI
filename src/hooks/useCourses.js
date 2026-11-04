@@ -18,12 +18,14 @@ export const normalizeCoursePayload = (item, index = 0) => {
   const level = item.level || item.difficultyLevel || 'All Levels';
   const instructor = item.instructor || item.instructorName || item.creator || 'Lead Instructor';
   const description = item.description || item.summary || 'Comprehensive masterclass designed by industry practitioners.';
+  const subtitle = item.subtitle || item.subTitle || item.shortDescription || item.tagline || (description && description.length > 85 ? description.slice(0, 85) + '…' : description);
   const rawThumbnail = item.image || item.thumbnail || item.banner || null;
   const thumbnail = (rawThumbnail && !rawThumbnail.includes('placehold.co')) ? rawThumbnail : null;
 
   return {
     id,
     title,
+    subtitle,
     category,
     price,
     rating,

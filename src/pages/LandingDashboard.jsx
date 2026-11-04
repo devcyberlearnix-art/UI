@@ -77,8 +77,10 @@ const SPRING_TRANSITION = {
 const LUXURY_EASING = [0.16, 1, 0.3, 1];
 
 const sanitizeCustomerFacingText = (text = '') => {
-  if (!text || typeof text !== 'string') return '';
-  return text
+  if (!text) return '';
+  const str = typeof text === 'object' ? (text.text || text.title || text.label || text.heading || text.description || '') : String(text);
+  if (!str || typeof str !== 'string') return '';
+  return str
     .replace(/#\d+/g, '')
     .replace(/\b(FD_LMS|CyberLearnix|Initialize Portal Matrix|Access Authenticated Node|Start Track|Curriculum Discovery Matrix)\b/gi, (match) => {
       const lower = match.toLowerCase();
@@ -147,13 +149,13 @@ export const LandingDashboard = () => {
   // Dynamic CMS state initialized with senior product content
   const [cmsData, setCmsData] = useState({
     hero: {
-      badgeText: 'ENGINEERING LEARNING PLATFORM',
-      verificationLabel: 'Production Standards',
-      heading: 'Master Production Systems. Engineered on Real Architecture.',
-      headingEmphasis: 'Real Architecture.',
-      description: 'Deploy, debug, and scale real Spring Boot microservices, Kafka event pipelines, and PostgreSQL multi-tenant databases with automated production PR reviews. Zero toy projects.',
-      primaryCta: { label: 'Explore 400+ Tracks', destination: '/courses', visible: true },
-      secondaryCta: { label: 'Interactive Sandbox', destination: '#architecture-sandbox', visible: true },
+      badgeText: '● ARCHITECTURE CURRICULUM • Verified Production Track',
+      verificationLabel: 'Verified Production Track',
+      heading: 'Master Production Systems. On Real Architecture.',
+      headingEmphasis: 'On Real Architecture.',
+      description: 'Zero synthetic boilerplate. Learn distributed microservices, fullstack design systems, security verification, and cloud-native resilience directly from verified engineering leads.',
+      primaryCta: { label: 'Explore Courses (Get Started)', destination: '/courses', visible: true },
+      secondaryCta: { label: 'Admin Command Center', destination: '/admin/command-center', visible: true },
       searchPlaceholder: 'Search topics, distributed architectures, or instructors (e.g. Kafka, Spring Boot, K8s)...',
       searchVisible: true,
       textAlignment: 'center',
@@ -642,7 +644,10 @@ export const LandingDashboard = () => {
               transition={{ duration: 0.5, delay: 0.08, ease: LUXURY_EASING }}
               className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-[#282521] dark:text-[#EDE8E1] max-w-4xl mx-auto leading-[1.08]"
             >
-              {renderDynamicHeading(hero.heading, hero.headingEmphasis)}
+              {renderDynamicHeading(
+                hero.heading || 'Master Production Systems. On Real Architecture.',
+                hero.headingEmphasis || 'On Real Architecture.'
+              )}
             </motion.h1>
 
             {/* Subtitle in Constrained Measure */}
@@ -652,7 +657,8 @@ export const LandingDashboard = () => {
               transition={{ duration: 0.5, delay: 0.14, ease: LUXURY_EASING }}
               className="mt-6 text-base sm:text-lg text-[#635E56] dark:text-[#A69F94] max-w-2xl mx-auto leading-relaxed"
             >
-              {hero.description || 'Deploy, debug, and scale real Spring Boot microservices, Kafka event pipelines, and PostgreSQL multi-tenant databases with automated production PR reviews. Zero toy projects.'}
+              {sanitizeCustomerFacingText(hero.description) ||
+                'Zero synthetic boilerplate. Learn distributed microservices, fullstack design systems, security verification, and cloud-native resilience directly from verified engineering leads.'}
             </motion.p>
 
             {/* Primary & Secondary Call to Action Deck */}

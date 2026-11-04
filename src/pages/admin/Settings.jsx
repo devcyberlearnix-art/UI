@@ -275,7 +275,7 @@ const Settings = () => {
                   <input
                     type="text"
                     className="w-full border border-stone-200 focus:border-[#5B3E57] focus:ring-2 focus:ring-[#5B3E57]/20 rounded-xl px-4 py-2.5 text-sm font-medium text-stone-900 outline-none transition"
-                    value={platformSettings.siteName}
+                    value={platformSettings.siteName || DEFAULT_PLATFORM.siteName}
                     onChange={(e) => setPlatformSettings({ ...platformSettings, siteName: e.target.value })}
                     placeholder="Asivo Learning Ecosystem"
                   />
@@ -290,7 +290,7 @@ const Settings = () => {
                     <input
                       type="email"
                       className="w-full border border-stone-200 focus:border-[#5B3E57] focus:ring-2 focus:ring-[#5B3E57]/20 rounded-xl px-4 py-2.5 text-sm font-medium text-stone-900 outline-none transition"
-                      value={platformSettings.supportEmail}
+                      value={platformSettings.supportEmail || DEFAULT_PLATFORM.supportEmail}
                       onChange={(e) => setPlatformSettings({ ...platformSettings, supportEmail: e.target.value })}
                       placeholder="support@asivo.internal"
                     />
