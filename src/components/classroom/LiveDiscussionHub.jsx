@@ -268,7 +268,7 @@ circuit_breakers:
     time: '4 mins ago',
     type: 'stream',
     upvotes: 2,
-    content: `Verified idempotency keys on node cluster 03. Total write latency plummeted from 42ms down to **6.4ms**! 🚀`,
+    content: `Verified idempotency keys on node cluster 03. Total write latency plummeted from 42ms down to **6.4ms**!`,
     replies: [],
   },
   {
@@ -392,7 +392,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
               ...prev,
               payload.message,
             ]);
-            toast('Live technical transmission received', { icon: '📡' });
+            toast('Live technical transmission received');
           }
         } catch (e) {
           // non-critical
@@ -474,7 +474,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
     },
     onSuccess: () => {
       setTimeout(() => scrollToBottom(true), 100);
-      toast.success('Query registered into session log.', { icon: '🚀' });
+      toast.success('Query registered into session log.');
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['classroom-discussion', courseId] });

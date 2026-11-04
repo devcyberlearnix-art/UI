@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle, Shield, Star } from "lucide-react";
+import { CheckCircle, Shield, Star, BookOpen, Zap, Crown } from "lucide-react";
+import toast from "react-hot-toast";
 
 const Subscription = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const Subscription = () => {
       price: "₹749",
       period: "/mo",
       features: ["Access to 50+ courses", "Community support", "Certificate of completion"],
-      icon: "⭐",
+      icon: BookOpen,
     },
     {
       id: "pro",
@@ -29,7 +30,7 @@ const Subscription = () => {
         "Unlimited certificates",
       ],
       popular: true,
-      icon: "🚀",
+      icon: Zap,
     },
     {
       id: "premium",
@@ -42,7 +43,7 @@ const Subscription = () => {
         "Career guidance",
         "Resume review",
       ],
-      icon: "👑",
+      icon: Crown,
     },
   ];
 
@@ -50,13 +51,8 @@ const Subscription = () => {
     // Check if user is logged in
     const user = localStorage.getItem("lms_user");
     if (!user) {
-      alert("Please log in to subscribe.");
+      toast.error("Please log in to subscribe.");
       navigate("/login");
-      return;
-    }
-
-    // Confirm subscription
-    if (!window.confirm(`Are you sure you want to subscribe to the ${planName} plan?`)) {
       return;
     }
 
@@ -76,73 +72,87 @@ const Subscription = () => {
       // Dispatch custom event (optional)
       window.dispatchEvent(new Event("subscriptionUpdated"));
 
-      alert(`🎉 Subscribed to ${planName} plan successfully!`);
+      toast.success(`Subscribed to ${planName} plan successfully.`);
       setLoading(null);
 
       // Redirect to dashboard
       navigate("/student/dashboard");
-    }, 1500);
+    }, 1200);
   };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="min-h-screen bg-gray-50 py-12 px-4"
+      className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] py-12 px-4 transition-colors"
     >
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-purple-100 mb-4">
-            <Star className="w-8 h-8 text-purple-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#F2ECF1] dark:bg-[#5B3E57]/20 mb-4 text-[#5B3E57] dark:text-[#D1A7CC]">
+            <Star className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Choose Your Plan</h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Unlock your full learning potential with our subscription plans.
-            Upgrade anytime – cancel anytime.
+          <h1 className="text-3xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight mb-2">Institutional Curriculum Tiers</h1>
+          <p className="text-sm text-[#635E56] dark:text-[#A8A196] max-w-2xl mx-auto">
+            Direct production architecture paths with verifiable engineering credentials. Upgrade or adjust anytime.
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {plans.map((plan) => (
-            <motion.div
-              key={plan.id}
-              whileHover={{ y: -4 }}
-              className={`bg-white rounded-xl shadow-sm border p-6 text-center relative ${
-                plan.popular
-                  ? "border-purple-500 shadow-lg ring-2 ring-purple-500/20"
-                  : "border-gray-200"
-              }`}
-            >
-              {plan.popular && (
-                <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] text-xs font-bold px-4 py-1 rounded-full shadow-sm">
-                  Most Popular
-                </span>
-              )}
-              <div className="text-4xl mb-3">{plan.icon}</div>
-              <h3 className="text-xl font-bold text-gray-800 mb-1">{plan.name}</h3>
-              <div className="mb-4">
-                <span className="text-3xl font-bold font-mono text-[#5B3E57] dark:text-[#D1A7CC]">{plan.price}</span>
-                <span className="text-gray-500 text-sm">{plan.period}</span>
-              </div>
-              <ul className="text-sm text-gray-600 space-y-2 mb-6">
-                {plan.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-center gap-2 justify-center">
-                    <CheckCircle size={16} className="text-emerald-500 flex-shrink-0" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => handleSubscribe(plan.id, plan.name)}
-                disabled={loading === plan.id}
-                className={`w-full py-2.5 rounded-lg font-semibold transition ${
+          {plans.map((plan) => {
+            const Icon = plan.icon;
+            return (
+              <motion.div
+                key={plan.id}
+                whileHover={{ y: -4 }}
+                className={`bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border p-6 text-center relative transition-shadow ${
                   plan.popular
-                    ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] hover:bg-[#462D42] dark:hover:bg-[#C293BD] font-bold shadow-sm"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    ? "border-[#5B3E57] dark:border-[#D1A7CC] shadow-md ring-1 ring-[#5B3E57]/30"
+                    : "border-[#E3DCD3] dark:border-white/[0.08] shadow-sm"
+                }`}
               >
-                {loading === plan.id ? (
-                  <span className="flex items-center justify-center gap-2">
+                {plan.popular && (
+                  <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] text-xs font-semibold px-3 py-0.5 rounded-full shadow-sm">
+                    Most Popular
+                  </span>
+                )}
+                <div className="w-12 h-12 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] flex items-center justify-center mx-auto mb-4 text-[#5B3E57] dark:text-[#D1A7CC]">
+                  <Icon className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-bold text-[#282521] dark:text-[#EDE8E1] mb-1">{plan.name}</h3>
+                <div className="mb-4">
+                  <span className="text-3xl font-extrabold font-mono text-[#5B3E57] dark:text-[#D1A7CC]">{plan.price}</span>
+                  <span className="text-xs text-[#71717A] ml-1">{plan.period}</span>
+                </div>
+                <ul className="text-xs text-[#635E56] dark:text-[#A8A196] space-y-2.5 mb-6 text-left">
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-center gap-2">
+                      <CheckCircle size={14} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => handleSubscribe(plan.id, plan.name)}
+                  disabled={loading === plan.id}
+                  className={`w-full py-2.5 rounded-xl font-medium text-xs transition-colors shadow-sm ${
+                    plan.popular
+                      ? "bg-[#5B3E57] hover:bg-[#4A3246] dark:bg-[#D1A7CC] dark:hover:bg-[#C296BD] text-white dark:text-[#151413]"
+                      : "bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] hover:bg-[#EAE4DC] border border-[#E3DCD3] dark:border-white/[0.08]"
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  {loading === plan.id ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      <span>Activating...</span>
+                    </span>
+                  ) : (
+                    `Enroll in ${plan.name}`
+                  )}
+                </button>
+              </motion.div>
+            );
+          })}
+        </div>
                     <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />

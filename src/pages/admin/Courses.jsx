@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, CheckCircle, XCircle, Trash2, FileText, Loader2, AlertCircle, Plus, Star, RefreshCw, Edit, Users } from "lucide-react";
+import { Eye, CheckCircle, XCircle, Trash2, FileText, Loader2, AlertCircle, Plus, Star, RefreshCw, Edit, Users, X } from "lucide-react";
 import { adminApi } from "../../api/adminApi";
 import { instructorApi } from "../../api/instructorApi";
 import { courseApi } from "../../api/courseApi";
@@ -584,7 +584,9 @@ const Courses = () => {
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <Edit size={18} className="text-orange-500" /> Edit & Update Course (PUT /api/v1/courses/:id)
               </h2>
-              <button onClick={() => setShowEditModal(false)} className="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
+              <button onClick={() => setShowEditModal(false)} className="text-gray-400 hover:text-gray-600 p-1" aria-label="Close">
+                <X size={18} />
+              </button>
             </div>
 
             <form onSubmit={handleAdminUpdateCourse} className="space-y-4">
@@ -692,7 +694,9 @@ const Courses = () => {
               <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
                 <Star size={18} className="text-amber-500" /> Partial Course Update (PATCH API)
               </h2>
-              <button onClick={() => setShowPatchModal(false)} className="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
+              <button onClick={() => setShowPatchModal(false)} className="text-gray-400 hover:text-gray-600 p-1" aria-label="Close">
+                <X size={18} />
+              </button>
             </div>
 
             <p className="text-xs text-gray-500">
@@ -746,7 +750,9 @@ const Courses = () => {
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <Star size={18} className="text-orange-500" /> Create New Course
               </h2>
-              <button onClick={() => setShowCreateModal(false)} className="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
+              <button onClick={() => setShowCreateModal(false)} className="text-gray-400 hover:text-gray-600 p-1" aria-label="Close">
+                <X size={18} />
+              </button>
             </div>
 
             <form onSubmit={handleAdminCreateCourse} className="space-y-4">
@@ -873,7 +879,9 @@ const Courses = () => {
                 >
                   <Edit size={14} /> Edit Course
                 </button>
-                <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600 font-bold text-lg">✕</button>
+                <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600 p-1" aria-label="Close">
+                  <X size={18} />
+                </button>
               </div>
             </div>
 

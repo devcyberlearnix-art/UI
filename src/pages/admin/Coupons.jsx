@@ -18,6 +18,7 @@ import {
   Loader2,
   Send,
   Zap,
+  X,
 } from 'lucide-react';
 import { couponApi } from '../../api/couponApi';
 import toast from 'react-hot-toast';
@@ -518,9 +519,10 @@ export const Coupons = () => {
                 </h3>
                 <button
                   onClick={() => setShowCreateModal(false)}
-                  className="text-white/40 hover:text-white transition-colors cursor-pointer"
+                  className="text-white/40 hover:text-white transition-colors cursor-pointer p-1"
+                  aria-label="Close"
                 >
-                  ✕
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
@@ -640,9 +642,10 @@ export const Coupons = () => {
                 </h3>
                 <button
                   onClick={() => setShowBulkModal(false)}
-                  className="text-white/40 hover:text-white transition-colors cursor-pointer"
+                  className="text-white/40 hover:text-white transition-colors cursor-pointer p-1"
+                  aria-label="Close"
                 >
-                  ✕
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 

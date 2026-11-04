@@ -23,6 +23,7 @@ import {
   Send,
   Sliders,
   ExternalLink,
+  X,
   ChevronDown,
   Flame,
   Globe,
@@ -225,10 +226,10 @@ export const AdminCommandCenter = () => {
       if (adminApi.broadcastNotification) {
         await adminApi.broadcastNotification(pingPayload);
       }
-      toast.success('System-wide notification broadcast emitted to all gateways!', { icon: '📡' });
+      toast.success('System-wide notification broadcast emitted to all gateways.');
       setIsPingModalOpen(false);
     } catch {
-      toast.success('Notification ping simulated to live tenant mesh.', { icon: '📡' });
+      toast.success('Notification ping simulated to live tenant mesh.');
       setIsPingModalOpen(false);
     } finally {
       setIsDispatchingPing(false);
@@ -787,9 +788,10 @@ export const AdminCommandCenter = () => {
                 </div>
                 <button
                   onClick={() => setIsPingModalOpen(false)}
-                  className="text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:text-[#EDE8E1]"
+                  className="text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:hover:text-[#EDE8E1] p-1"
+                  aria-label="Close modal"
                 >
-                  ✕
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 

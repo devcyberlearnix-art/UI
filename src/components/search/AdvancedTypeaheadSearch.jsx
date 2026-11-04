@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Search, X, BookOpen, Book, Tag, User } from 'lucide-react';
 import axiosInstance from '../../api/axiosInstance';
 
 export default function AdvancedTypeaheadSearch({ onExecuteSearch, placeholder, initialValue = '', className = '' }) {
@@ -103,7 +104,7 @@ export default function AdvancedTypeaheadSearch({ onExecuteSearch, placeholder, 
     <div ref={containerWrapper} className={`relative w-full ${className}`}>
       {/* Structural Input Shell Container with Integrated Action Controls */}
       <div className="flex items-center bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl pl-3.5 pr-1.5 py-1.5 focus-within:border-[#5B3E57] dark:border-[#D1A7CC]/70 focus-within:ring-1 focus-within:ring-[#5B3E57]/30 dark:ring-[#D1A7CC]/30 transition-all shadow-md">
-        <span className="text-gray-400 mr-2.5 text-base select-none" aria-hidden="true">🔍</span>
+        <Search className="w-4 h-4 text-gray-400 mr-2.5 shrink-0" aria-hidden="true" />
         <input
           type="text"
           value={inputVal}
@@ -120,7 +121,7 @@ export default function AdvancedTypeaheadSearch({ onExecuteSearch, placeholder, 
             onClick={() => { setInputVal(''); setPredictions([]); setDropdownActive(false); if (onExecuteSearch) onExecuteSearch(''); }} 
             className="text-gray-500 hover:text-white transition-colors mr-1.5 p-1 cursor-pointer"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         )}
         <button
@@ -146,10 +147,10 @@ export default function AdvancedTypeaheadSearch({ onExecuteSearch, placeholder, 
             >
               <div className="flex items-center space-x-2.5 truncate mr-2">
                 <span className="opacity-80 shrink-0 text-sm">
-                  {item.type === 'TITLE' && '📘'}
-                  {item.type === 'SUBTITLE' && '📖'}
-                  {item.type === 'CATEGORY' && '🏷️'}
-                  {item.type === 'INSTRUCTOR' && '👨‍🏫'}
+                  {item.type === 'TITLE' && <BookOpen className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />}
+                  {item.type === 'SUBTITLE' && <Book className="w-4 h-4 text-[#71717A]" />}
+                  {item.type === 'CATEGORY' && <Tag className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />}
+                  {item.type === 'INSTRUCTOR' && <User className="w-4 h-4 text-amber-600 dark:text-amber-400" />}
                 </span>
                 <span className="font-light tracking-wide truncate">{item.value}</span>
               </div>

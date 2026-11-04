@@ -366,7 +366,7 @@ export const CreateCourse = ({ isEditing: propIsEditing = false }) => {
       modules: [...prev.modules, newMod],
     }));
     setExpandedModules((prev) => ({ ...prev, [newModId]: true }));
-    toast.success('New Module Node added to matrix.', { icon: '📦' });
+    toast.success('New Module Node added to matrix.');
   };
 
   const handleDeleteModule = (modId) => {
@@ -478,7 +478,7 @@ export const CreateCourse = ({ isEditing: propIsEditing = false }) => {
             handleUpdateLecture(modId, lecId, 'uploadStatus', 'ready');
             handleUpdateLecture(modId, lecId, 'videoUrl', SAMPLE_VIDEO_STREAM);
             setUploadingLectureId(null);
-            toast.success('HLS multi-bitrate video ingest completed.', { icon: '🎬' });
+            toast.success('HLS multi-bitrate video ingest completed.');
           }, 1200);
 
           return prev;
@@ -826,7 +826,7 @@ export const CreateCourse = ({ isEditing: propIsEditing = false }) => {
         publishImmediate
           ? 'Course published cleanly to active master catalog!'
           : 'Course draft saved successfully.',
-        { id: toastId, icon: '🚀' }
+        { id: toastId }
       );
 
       setTimeout(() => {
@@ -1336,7 +1336,7 @@ export const CreateCourse = ({ isEditing: propIsEditing = false }) => {
 
                         {module.quiz && (
                           <Badge variant="cyan" className="font-mono text-[10px]">
-                            ⚡ Quiz
+                            Quiz Module
                           </Badge>
                         )}
 
@@ -1892,7 +1892,7 @@ export const CreateCourse = ({ isEditing: propIsEditing = false }) => {
                           : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
                       }`}
                     >
-                      {auditMetrics.score === 100 ? <Check className="w-5 h-5" /> : '⚡'}
+                      {auditMetrics.score === 100 ? <Check className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
                     </div>
                   </div>
                 </div>

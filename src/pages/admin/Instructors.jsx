@@ -1,7 +1,7 @@
 // src/pages/admin/Instructors.jsx
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, XCircle, Trash2, Loader2, AlertCircle, User, Mail, BookOpen, Search, Filter, Download, Users as UsersIcon, Shield, GraduationCap } from "lucide-react";
+import { CheckCircle, XCircle, Trash2, Loader2, AlertCircle, User, Mail, BookOpen, Search, Filter, Download, Users as UsersIcon, Shield, GraduationCap, Calendar, Clock, AlertTriangle, X } from "lucide-react";
 import { adminApi } from "../../api/adminApi";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
@@ -206,25 +206,25 @@ const Instructors = () => {
       <div className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-sm">
         <p className="text-xs font-bold uppercase tracking-wider text-[#5B3E57] dark:text-[#D1A7CC] mb-4">Faculty Overview</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] rounded-2xl p-4 text-center">
-            <p className="text-2xl font-bold text-gray-900">👥</p>
-            <p className="text-xl font-extrabold font-mono text-[#282521] dark:text-[#EDE8E1] mt-1">{instructors.length}</p>
-            <p className="text-xs text-gray-500 mt-1">All</p>
+          <div className="bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] rounded-2xl p-4 text-center">
+            <UsersIcon className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC] mx-auto" />
+            <p className="text-xl font-extrabold font-mono text-[#282521] dark:text-[#EDE8E1] mt-2">{instructors.length}</p>
+            <p className="text-xs text-gray-500 mt-0.5">Total Registered</p>
           </div>
           <div className="bg-[#F5F2EC] dark:bg-[#151413] border border-emerald-500/20 rounded-2xl p-4 text-center">
-            <p className="text-2xl font-bold text-green-600">✅</p>
-            <p className="text-xl font-bold text-green-600 mt-1">{instructors.filter(i => i.status?.toUpperCase() === 'ACTIVE').length}</p>
-            <p className="text-xs text-gray-500 mt-1">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'ACTIVE').length / instructors.length) * 100).toFixed(1) : 0}%</p>
+            <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400 mx-auto" />
+            <p className="text-xl font-bold text-emerald-600 mt-2">{instructors.filter(i => i.status?.toUpperCase() === 'ACTIVE').length}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'ACTIVE').length / instructors.length) * 100).toFixed(1) : 0}% Active</p>
           </div>
           <div className="bg-[#F5F2EC] dark:bg-[#151413] border border-amber-500/20 rounded-2xl p-4 text-center">
-            <p className="text-2xl font-bold text-yellow-600">⚠️</p>
-            <p className="text-xl font-bold text-yellow-600 mt-1">{instructors.filter(i => i.status?.toUpperCase() === 'SUSPENDED').length}</p>
-            <p className="text-xs text-gray-500 mt-1">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'SUSPENDED').length / instructors.length) * 100).toFixed(1) : 0}%</p>
+            <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 mx-auto" />
+            <p className="text-xl font-bold text-yellow-600 mt-2">{instructors.filter(i => i.status?.toUpperCase() === 'SUSPENDED').length}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'SUSPENDED').length / instructors.length) * 100).toFixed(1) : 0}% Suspended</p>
           </div>
           <div className="bg-[#F5F2EC] dark:bg-[#151413] border border-red-500/20 rounded-2xl p-4 text-center">
-            <p className="text-2xl font-bold text-red-600">⏳</p>
-            <p className="text-xl font-bold text-red-600 mt-1">{instructors.filter(i => i.status?.toUpperCase() === 'PENDING_VERIFICATION').length}</p>
-            <p className="text-xs text-gray-500 mt-1">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'PENDING_VERIFICATION').length / instructors.length) * 100).toFixed(1) : 0}%</p>
+            <Clock className="w-5 h-5 text-rose-600 dark:text-rose-400 mx-auto" />
+            <p className="text-xl font-bold text-red-600 mt-2">{instructors.filter(i => i.status?.toUpperCase() === 'PENDING_VERIFICATION').length}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'PENDING_VERIFICATION').length / instructors.length) * 100).toFixed(1) : 0}% Pending</p>
           </div>
         </div>
       </div>
@@ -254,43 +254,50 @@ const Instructors = () => {
                 <option value="PENDING_VERIFICATION">Pending</option>
                 <option value="SUSPENDED">Suspended</option>
               </select>
-              <button className="px-4 py-2.5 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors font-medium">
+              <button className="px-4 py-2.5 bg-[#5B3E57] hover:bg-[#4A3246] dark:bg-[#D1A7CC] dark:hover:bg-[#C296BD] text-white dark:text-[#151413] rounded-xl transition-colors font-medium text-xs shadow-sm">
                 + Add Instructor
               </button>
             </div>
           </div>
         </div>
         <div className="p-6">
-          <p className="text-sm font-medium text-gray-700 mb-4">Instructor Cards ({filteredInstructors.length})</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-[#EDE8E1] mb-4">Instructor Directory ({filteredInstructors.length})</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {filteredInstructors
               .slice((currentPage - 1) * instructorsPerPage, currentPage * instructorsPerPage)
               .map((instructor) => (
-              <div key={instructor.id} className="bg-[#F5F2EC] dark:bg-[#151413] rounded-2xl p-5 hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 transition-all border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] group">
+              <div key={instructor.id} className="bg-[#F5F2EC] dark:bg-[#151413] rounded-2xl p-5 hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 transition-all border border-[#E3DCD3] dark:border-white/[0.06] group">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold">
-                    👤
+                  <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-neutral-800 flex items-center justify-center text-gray-600 dark:text-gray-300">
+                    <User className="w-5 h-5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-[#282521] dark:text-[#EDE8E1] text-sm group-hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors">{instructor.name}</p>
-                    <p className="text-xs text-gray-400">────────</p>
+                    <p className="font-semibold text-[#282521] dark:text-[#EDE8E1] text-sm group-hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors truncate">{instructor.name}</p>
+                    <p className="text-xs text-gray-400">Verified Author</p>
                   </div>
                 </div>
                 <div className="mb-2">
-                  <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                    instructor.status?.toUpperCase() === 'ACTIVE' ? 'bg-green-100 text-green-700' :
-                    instructor.status?.toUpperCase() === 'SUSPENDED' ? 'bg-yellow-100 text-yellow-700' :
-                    instructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? 'bg-red-100 text-red-700' :
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-medium rounded-full ${
+                    instructor.status?.toUpperCase() === 'ACTIVE' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40' :
+                    instructor.status?.toUpperCase() === 'SUSPENDED' ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40' :
+                    instructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200 dark:border-rose-800/40' :
                     'bg-gray-100 text-gray-700'
                   }`}>
-                    {instructor.status?.toUpperCase() === 'ACTIVE' ? '🟢 ACTIVE' :
-                     instructor.status?.toUpperCase() === 'SUSPENDED' ? '🟡 SUSPENDED' :
-                     instructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? '🔴 PENDING' : instructor.status}
+                    <span className={`w-1.5 h-1.5 rounded-full ${
+                      instructor.status?.toUpperCase() === 'ACTIVE' ? 'bg-emerald-500' :
+                      instructor.status?.toUpperCase() === 'SUSPENDED' ? 'bg-amber-500' :
+                      'bg-rose-500'
+                    }`} />
+                    {instructor.status?.toUpperCase() === 'ACTIVE' ? 'Active' :
+                     instructor.status?.toUpperCase() === 'SUSPENDED' ? 'Suspended' :
+                     instructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? 'Pending' : instructor.status}
                   </span>
                 </div>
-                <p className="text-xs text-[#635E56] dark:text-[#A8A196] mb-2 font-mono break-all">{instructor.email}</p>
-                <p className="text-xs text-gray-500 mb-3">📅 {instructor.createdAt}</p>
-                <p className="text-xs text-gray-400 mb-3">────────</p>
+                <p className="text-xs text-[#635E56] dark:text-[#A8A196] mb-2 font-mono truncate">{instructor.email}</p>
+                <p className="text-xs text-gray-500 mb-3 flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                  <span>{instructor.createdAt}</span>
+                </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleViewDetails(instructor)}
@@ -349,9 +356,10 @@ const Instructors = () => {
                 </div>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="p-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 text-[#635E56] dark:text-[#A8A196] hover:text-white"
+                  className="p-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:hover:text-[#EDE8E1]"
+                  aria-label="Close"
                 >
-                  ✕
+                  <X className="w-4 h-4" />
                 </button>
               </div>
               <div className="p-6 space-y-4 text-xs">

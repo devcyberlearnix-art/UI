@@ -76,7 +76,7 @@ const CourseModal = ({ isOpen, onClose, course }) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {course.highlights?.map((item, idx) => (
                       <div key={idx} className="flex items-start gap-2 text-sm text-gray-600">
-                        <IoCheckmarkCircle className="text-purple-600 mt-0.5 flex-shrink-0" size={18} />
+                        <IoCheckmarkCircle className="text-[#5B3E57] dark:text-[#D1A7CC] mt-0.5 flex-shrink-0" size={18} />
                         <span>{item}</span>
                       </div>
                     ))}
@@ -92,7 +92,7 @@ const CourseModal = ({ isOpen, onClose, course }) => {
                     <span className="text-3xl font-bold text-gray-900">${course.price}</span>
                     <span className="text-sm text-gray-400 line-through">${course.originalPrice}</span>
                   </div>
-                  <button className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg shadow-purple-200 transition-all transform hover:-translate-y-1 active:translate-y-0">
+                  <button className="px-8 py-3.5 bg-[#5B3E57] hover:bg-[#4A3246] dark:bg-[#D1A7CC] dark:hover:bg-[#C296BD] dark:text-[#151413] text-white font-semibold rounded-xl shadow-sm transition-colors text-sm">
                     Add to Cart
                   </button>
                 </div>

@@ -48,7 +48,7 @@ const RegistrationSuccess = () => {
           </div>
         </div>
         
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">🎉 Registration Successful!</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Registration Completed</h1>
         <p className="text-gray-600 mb-2">
           {role === "super_admin" ? "Super Admin" : "Sub-Admin"} has been created successfully.
         </p>

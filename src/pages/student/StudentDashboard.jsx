@@ -23,6 +23,7 @@ import {
   Eye,
   X,
   Loader2,
+  Sparkles,
   Compass,
   Target,
   Trophy,
@@ -220,12 +221,10 @@ export const StudentDashboard = () => {
     let updated;
     if (exists) {
       updated = wishlist.filter((id) => String(id) !== courseId);
-      toast.success('Removed from saved curriculum', { icon: '🤍' });
+      toast.success('Removed from saved curriculum');
     } else {
       updated = [...wishlist, courseId];
-      toast.success(`Saved "${course.title?.slice(0, 24) || 'Course'}..." to wishlist`, {
-        icon: '⭐',
-      });
+      toast.success(`Saved "${course.title?.slice(0, 24) || 'Course'}..." to wishlist`);
     }
     setWishlist(updated);
     try {
@@ -407,7 +406,7 @@ export const StudentDashboard = () => {
 
           {/* Streak Counter pill */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] text-[10px] font-mono text-[#635E56] dark:text-[#A69F94]">
-            <span className="text-[#9A6B56] dark:text-[#D9A48F] animate-pulse">⚡</span>
+            <Sparkles className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
             <span className="font-bold text-[#282521] dark:text-[#EDE8E1]">12-Day Engineering Streak</span>
             <span className="opacity-40">•</span>
             <span>Consistent daily commits</span>
