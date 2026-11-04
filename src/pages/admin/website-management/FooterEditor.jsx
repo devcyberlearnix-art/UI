@@ -82,23 +82,23 @@ export default function FooterEditor() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] p-6 lg:p-8">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] p-6 lg:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between pb-6 border-b border-white/[0.04]">
+        <div className="flex items-center justify-between pb-6 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/admin/website-management')}
-              className="p-2 rounded-xl bg-[#0F0F13] border border-white/[0.06] hover:border-[#C5A880]/30 text-[#A1A1AA] hover:text-white"
+              className="p-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 text-[#A1A1AA] hover:text-white"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-[#F5F5F7] flex items-center gap-2">
-                <Globe className="w-5 h-5 text-[#C5A880]" />
+              <h1 className="text-xl font-bold tracking-tight text-[#282521] dark:text-[#EDE8E1] flex items-center gap-2">
+                <Globe className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" />
                 Footer Configuration
               </h1>
-              <p className="text-xs text-[#71717A] mt-0.5">
+              <p className="text-xs text-[#756E64] dark:text-[#7A7368] mt-0.5">
                 Brand narrative, copyright notice, and categorical footer navigation links
               </p>
             </div>
@@ -115,8 +115,8 @@ export default function FooterEditor() {
         </div>
 
         {/* Global Footer Details */}
-        <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-4">
-          <h2 className="text-sm font-bold text-[#F5F5F7]">Footer Narrative & Legal</h2>
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
+          <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Footer Narrative & Legal</h2>
           <div className="space-y-3">
             <div>
               <label className="text-xs font-semibold text-[#A1A1AA] block mb-1.5">Brand Description</label>
@@ -124,7 +124,7 @@ export default function FooterEditor() {
                 rows={3}
                 value={footer.brandDescription || ''}
                 onChange={e => setFooter({ ...footer, brandDescription: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] text-sm text-[#F5F5F7] outline-none focus:border-[#C5A880]/60"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-sm text-[#282521] dark:text-[#EDE8E1] outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC]"
               />
             </div>
             <div>
@@ -133,16 +133,16 @@ export default function FooterEditor() {
                 type="text"
                 value={footer.copyright || ''}
                 onChange={e => setFooter({ ...footer, copyright: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] text-sm text-[#F5F5F7] outline-none focus:border-[#C5A880]/60"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-sm text-[#282521] dark:text-[#EDE8E1] outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC]"
               />
             </div>
           </div>
         </div>
 
         {/* Links Matrix */}
-        <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-4">
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-[#F5F5F7]">Categorical Links</h2>
+            <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Categorical Links</h2>
             <Button variant="secondary" size="sm" onClick={handleAddLink} leftIcon={Plus}>
               Add Link
             </Button>
@@ -152,7 +152,7 @@ export default function FooterEditor() {
             {footer.links.map((link, idx) => (
               <div
                 key={idx}
-                className="p-3.5 rounded-xl bg-[#14141A] border border-white/[0.04] flex flex-col sm:flex-row items-center gap-3"
+                className="p-3.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex flex-col sm:flex-row items-center gap-3"
               >
                 <div className="w-full sm:w-1/4">
                   <input
@@ -160,7 +160,7 @@ export default function FooterEditor() {
                     placeholder="Group (e.g. Legal)"
                     value={link.groupName || ''}
                     onChange={e => handleLinkChange(idx, 'groupName', e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg bg-[#0F0F13] border border-white/[0.06] text-xs text-[#F5F5F7] outline-none"
+                    className="w-full px-3 py-1.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none"
                   />
                 </div>
                 <div className="w-full sm:w-1/3">
@@ -169,7 +169,7 @@ export default function FooterEditor() {
                     placeholder="Link Label"
                     value={link.label || ''}
                     onChange={e => handleLinkChange(idx, 'label', e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg bg-[#0F0F13] border border-white/[0.06] text-xs text-[#F5F5F7] outline-none"
+                    className="w-full px-3 py-1.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none"
                   />
                 </div>
                 <div className="w-full sm:w-1/3">
@@ -178,13 +178,13 @@ export default function FooterEditor() {
                     placeholder="Destination (e.g. /terms)"
                     value={link.destination || ''}
                     onChange={e => handleLinkChange(idx, 'destination', e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg bg-[#0F0F13] border border-white/[0.06] text-xs text-[#F5F5F7] outline-none"
+                    className="w-full px-3 py-1.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none"
                   />
                 </div>
                 <button
                   type="button"
                   onClick={() => handleRemoveLink(idx)}
-                  className="p-1.5 rounded-lg text-[#71717A] hover:text-rose-400 hover:bg-rose-500/10"
+                  className="p-1.5 rounded-lg text-[#756E64] dark:text-[#7A7368] hover:text-rose-400 hover:bg-rose-500/10"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>

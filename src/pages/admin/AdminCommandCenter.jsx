@@ -336,7 +336,7 @@ export const AdminCommandCenter = () => {
       {/* ===================================================================
           2. COMMAND CENTER HEADER & MASTER SWITCHES
           =================================================================== */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-xl shadow-2xl relative overflow-hidden">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-xl shadow-2xl relative overflow-hidden">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-[#5B3E57] dark:bg-[#D1A7CC] flex items-center justify-center text-[#FFFEFA] dark:text-[#151413] shadow-xs">
             <Radio className="w-6 h-6 text-current animate-pulse" />
@@ -365,7 +365,7 @@ export const AdminCommandCenter = () => {
             className={`px-3 py-1.5 rounded-xl border font-mono text-xs font-semibold flex items-center gap-2 transition-colors ${
               autoRefreshActive
                 ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC]'
-                : 'bg-[#EAE5DC] dark:bg-[#272523] border-[#E3DCD3] dark:border-white/[0.08] text-[#635E56] dark:text-[#A69F94]'
+                : 'bg-[#EAE5DC] dark:bg-[#272523] border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] text-[#635E56] dark:text-[#A69F94]'
             }`}
           >
             <RefreshCw className={`w-3.5 h-3.5 ${autoRefreshActive ? 'animate-spin' : ''}`} />
@@ -378,7 +378,7 @@ export const AdminCommandCenter = () => {
             size="sm"
             onClick={handleToggleBanner}
             leftIcon={Sliders}
-            className="text-xs border-[#E3DCD3] dark:border-white/[0.08]"
+            className="text-xs border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08]"
           >
             {warningBanner.enabled ? 'Mute Warning Banner' : 'Broadcast Warning Banner'}
           </Button>
@@ -405,11 +405,11 @@ export const AdminCommandCenter = () => {
           return (
             <div
               key={kpi.id}
-              className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-3 relative overflow-hidden group hover:border-[#D5C0D1] dark:border-[#D1A7CC]/30 transition-all duration-300"
+              className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-3 relative overflow-hidden group hover:border-[#D5C0D1] dark:border-[#D1A7CC]/30 transition-all duration-300"
             >
               <div className="flex items-center justify-between text-[#635E56] dark:text-[#A69F94]">
                 <span className="text-xs font-mono font-semibold uppercase">{kpi.label}</span>
-                <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
+                <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
                   <Icon className="w-4 h-4" />
                 </div>
               </div>
@@ -435,8 +435,8 @@ export const AdminCommandCenter = () => {
           =================================================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 Cols: Enrollment Velocity Vectors */}
-        <div className="lg:col-span-2 p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E3DCD3] dark:border-white/[0.08]">
+        <div className="lg:col-span-2 p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08]">
             <div>
               <span className="text-[10px] font-mono tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] uppercase font-bold">
                 Telemetry Signal Vector
@@ -503,8 +503,8 @@ export const AdminCommandCenter = () => {
         </div>
 
         {/* Right Col: Global Revenue Distribution Factors */}
-        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-4">
-          <div className="pb-3 border-b border-[#E3DCD3] dark:border-white/[0.08]">
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-4">
+          <div className="pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08]">
             <span className="text-[10px] font-mono tracking-widest text-emerald-400 uppercase font-bold">
               Capital Distribution
             </span>
@@ -549,7 +549,7 @@ export const AdminCommandCenter = () => {
             </ResponsiveContainer>
           </div>
 
-          <div className="space-y-2 pt-2 border-t border-[#E3DCD3] dark:border-white/[0.08] text-xs font-mono">
+          <div className="space-y-2 pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] text-xs font-mono">
             {REVENUE_DISTRIBUTION_DATA.map((item) => (
               <div key={item.category} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -568,8 +568,8 @@ export const AdminCommandCenter = () => {
           =================================================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Microservice Latency Cluster */}
-        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-white/[0.08]">
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08]">
             <div>
               <span className="text-[10px] font-mono tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] uppercase font-bold">
                 Mesh Topology
@@ -587,7 +587,7 @@ export const AdminCommandCenter = () => {
             {servicesList.map((svc) => (
               <div
                 key={svc.id}
-                className="p-3.5 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-white/[0.04] flex items-center justify-between text-xs font-mono"
+                className="p-3.5 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between text-xs font-mono"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-emerald-400" />
@@ -604,8 +604,8 @@ export const AdminCommandCenter = () => {
         </div>
 
         {/* Real-time Rolling Session Audit Logs with Ingest Pause/Play Switch */}
-        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-white/[0.04] backdrop-blur-md space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-white/[0.08]">
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] backdrop-blur-md space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08]">
             <div>
               <span className="text-[10px] font-mono tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] uppercase font-bold">
                 Live Audit Stream
@@ -619,7 +619,7 @@ export const AdminCommandCenter = () => {
             <button
               type="button"
               onClick={() => setAutoRefreshActive(!autoRefreshActive)}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-[10px] font-mono text-[#E5E5E7] hover:text-[#282521] dark:text-[#EDE8E1] hover:border-[#C5A880]/30 transition-colors"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-[10px] font-mono text-[#282521] dark:text-[#EDE8E1] hover:text-[#282521] dark:text-[#EDE8E1] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 transition-colors"
               title={autoRefreshActive ? 'Pause live audit ingest' : 'Resume live audit ingest'}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${autoRefreshActive ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
@@ -637,7 +637,7 @@ export const AdminCommandCenter = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                  className="p-2.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-white/[0.04] flex items-center justify-between gap-3"
+                  className="p-2.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between gap-3"
                 >
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="text-[#756E64] dark:text-[#7A7368] shrink-0">{log.time}</span>
@@ -665,8 +665,8 @@ export const AdminCommandCenter = () => {
       {/* ===================================================================
           6. UNIFIED SECURITY CONTROL GRID: TENANT ACCESS MANIPULATION
           =================================================================== */}
-      <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E3DCD3] dark:border-white/[0.08]">
+      <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] backdrop-blur-md space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08]">
           <div>
             <span className="text-[10px] font-mono tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] uppercase font-bold">
               Access Governance Grid
@@ -685,11 +685,11 @@ export const AdminCommandCenter = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search tenant by ID, name, email..."
-                className="pl-8 pr-3 py-1.5 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] placeholder:text-[#756E64] dark:placeholder-[#7A7368] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] w-56"
+                className="pl-8 pr-3 py-1.5 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] placeholder:text-[#756E64] dark:placeholder-[#7A7368] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] w-56"
               />
             </div>
 
-            <div className="flex rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] p-1 border border-[#E3DCD3] dark:border-white/[0.08] text-xs font-mono">
+            <div className="flex rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] p-1 border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] text-xs font-mono">
               {['ALL', 'ACTIVE', 'QUARANTINED'].map((f) => (
                 <button
                   key={f}
@@ -711,7 +711,7 @@ export const AdminCommandCenter = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left font-mono text-xs">
             <thead>
-              <tr className="border-b border-[#E3DCD3] dark:border-white/[0.08] text-[#756E64] dark:text-[#7A7368] uppercase text-[10px]">
+              <tr className="border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] text-[#756E64] dark:text-[#7A7368] uppercase text-[10px]">
                 <th className="pb-3 font-semibold">Tenant ID / Name</th>
                 <th className="pb-3 font-semibold">Email Anchor</th>
                 <th className="pb-3 font-semibold">Privilege Tier</th>
@@ -778,9 +778,9 @@ export const AdminCommandCenter = () => {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-2xl p-6 space-y-5 shadow-2xl relative"
+              className="w-full max-w-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] rounded-2xl p-6 space-y-5 shadow-2xl relative"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-white/[0.08]">
+              <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08]">
                 <div className="flex items-center gap-2">
                   <Bell className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1]">Broadcast System-Wide Ping</h3>
@@ -800,7 +800,7 @@ export const AdminCommandCenter = () => {
                     type="text"
                     value={pingPayload.title}
                     onChange={(e) => setPingPayload((p) => ({ ...p, title: e.target.value }))}
-                    className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC]"
+                    className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC]"
                     required
                   />
                 </div>
@@ -811,7 +811,7 @@ export const AdminCommandCenter = () => {
                     <select
                       value={pingPayload.audience}
                       onChange={(e) => setPingPayload((p) => ({ ...p, audience: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] font-mono"
+                      className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] font-mono"
                     >
                       <option value="ALL">All Active Tenants</option>
                       <option value="STUDENTS">Students Only</option>
@@ -824,7 +824,7 @@ export const AdminCommandCenter = () => {
                     <select
                       value={pingPayload.severity}
                       onChange={(e) => setPingPayload((p) => ({ ...p, severity: e.target.value }))}
-                      className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] font-mono"
+                      className="w-full px-3 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] font-mono"
                     >
                       <option value="HIGH">CRITICAL / HIGH</option>
                       <option value="MEDIUM">ADVISORY / MEDIUM</option>
@@ -839,7 +839,7 @@ export const AdminCommandCenter = () => {
                     rows={3}
                     value={pingPayload.message}
                     onChange={(e) => setPingPayload((p) => ({ ...p, message: e.target.value }))}
-                    className="w-full p-3 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] resize-none font-light leading-relaxed"
+                    className="w-full p-3 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] resize-none font-light leading-relaxed"
                     required
                   />
                 </div>
@@ -881,18 +881,18 @@ export const AdminCommandCenter = () => {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-md bg-[#0F0F13] border border-white/[0.08] rounded-3xl p-6 space-y-4 shadow-2xl relative"
+              className="w-full max-w-md bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-3xl p-6 space-y-4 shadow-2xl relative"
             >
               <div className="w-10 h-10 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400">
                 <ShieldAlert className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#F5F5F7]">
+                <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1]">
                   {tenantToConfirm.status === 'ACTIVE'
                     ? 'Confirm Security Quarantine'
                     : 'Restore Tenant Capabilities'}
                 </h3>
-                <p className="text-xs text-[#8E8E93] mt-1.5 leading-relaxed">
+                <p className="text-xs text-[#635E56] dark:text-[#A8A196] mt-1.5 leading-relaxed">
                   {tenantToConfirm.status === 'ACTIVE'
                     ? `Are you sure you want to quarantine runtime capabilities for tenant "${tenantToConfirm.name}" (${tenantToConfirm.email})? This immediately invalidates active sessions, revokes API keys, and restricts access to platform microservices.`
                     : `Restore full platform capabilities for tenant "${tenantToConfirm.name}" (${tenantToConfirm.email})? The user will regain access to enrolled curriculums and live microservice clusters.`}

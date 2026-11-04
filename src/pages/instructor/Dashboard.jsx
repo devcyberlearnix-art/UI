@@ -117,24 +117,24 @@ const InstructorDashboard = () => {
   ], [courses.length, dashboard, earnings]);
 
   return (
-    <div className="w-full space-y-8 font-sans selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="w-full space-y-8 font-sans selection:bg-[#5B3E57]/20 dark:selection:bg-[#D1A7CC]/30">
       {/* ===================== HERO BANNER ===================== */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={SPRING_TRANSITION}
-        className="relative overflow-hidden rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 sm:p-8 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.85)]"
+        className="relative overflow-hidden rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 sm:p-8 shadow-card"
       >
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14141A] border border-[#C5A880]/30 text-xs font-semibold text-[#C5A880]">
-              <GraduationCap className="w-3.5 h-3.5 text-[#C5A880]" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-xs font-semibold text-[#5B3E57] dark:text-[#D1A7CC]">
+              <GraduationCap className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
               <span className="tracking-wider uppercase text-[10px] font-bold">Faculty Leadership Studio</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F5F5F7] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
               Welcome back, {user?.firstName || user?.name || 'Faculty Member'}
             </h1>
-            <p className="text-xs sm:text-sm text-[#8E8E93] max-w-xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#635E56] dark:text-[#A69F94] max-w-xl leading-relaxed">
               Manage your engineering course architecture, review candidate progress, and inspect real-time billing performance across distributed classroom clusters.
             </p>
           </div>
@@ -144,7 +144,6 @@ const InstructorDashboard = () => {
               variant="primary"
               size="md"
               onClick={() => navigate('/instructor/create-course')}
-              className="shadow-[0_4px_20px_rgba(197,168,128,0.2)]"
             >
               <Plus className="w-4 h-4 mr-2" />
               <span>Create Curriculum</span>
@@ -158,7 +157,7 @@ const InstructorDashboard = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-4 flex items-center gap-3 text-rose-400 text-xs"
+          className="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-4 flex items-center gap-3 text-rose-500 text-xs"
         >
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
@@ -171,14 +170,14 @@ const InstructorDashboard = () => {
           [1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="p-5 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-3"
+              className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] space-y-3"
             >
               <div className="flex justify-between items-center">
-                <Skeleton className="h-4 w-24 bg-[#14141A]" />
-                <Skeleton className="h-8 w-8 rounded-xl bg-[#14141A]" />
+                <Skeleton className="h-4 w-24 bg-[#EAE5DC] dark:bg-[#272523]" />
+                <Skeleton className="h-8 w-8 rounded-xl bg-[#EAE5DC] dark:bg-[#272523]" />
               </div>
-              <Skeleton className="h-7 w-20 bg-[#14141A]" />
-              <Skeleton className="h-3 w-16 bg-[#14141A]" />
+              <Skeleton className="h-7 w-20 bg-[#EAE5DC] dark:bg-[#272523]" />
+              <Skeleton className="h-3 w-16 bg-[#EAE5DC] dark:bg-[#272523]" />
             </div>
           ))
         ) : (
@@ -190,21 +189,21 @@ const InstructorDashboard = () => {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...SPRING_TRANSITION, delay: idx * 0.05 }}
-                className="p-5 rounded-2xl bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all duration-300 group"
+                className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/30 dark:hover:border-[#D1A7CC]/30 transition-all duration-300 shadow-card group"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-[#8E8E93] tracking-wide">
+                  <span className="text-xs font-semibold text-[#635E56] dark:text-[#A69F94] tracking-wide">
                     {stat.label}
                   </span>
-                  <div className="w-9 h-9 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#C5A880] group-hover:scale-105 transition-transform">
+                  <div className="w-9 h-9 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] group-hover:scale-105 transition-transform">
                     <Icon className="w-4 h-4" />
                   </div>
                 </div>
-                <p className="text-2xl font-extrabold text-[#F5F5F7] tracking-tight font-mono">
+                <p className="text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight font-mono">
                   {stat.value}
                 </p>
-                <div className="flex items-center gap-1.5 mt-2 text-[11px] text-[#A1A1AA]">
-                  <TrendingUp className="w-3 h-3 text-[#C5A880]" />
+                <div className="flex items-center gap-1.5 mt-2 text-[11px] text-[#2B6747] dark:text-[#529E73]">
+                  <TrendingUp className="w-3 h-3 text-[#2B6747] dark:text-[#529E73]" />
                   <span>{stat.change}</span>
                 </div>
               </motion.div>
@@ -221,20 +220,20 @@ const InstructorDashboard = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={SPRING_TRANSITION}
-            className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-sm"
+            className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-card"
           >
-            <div className="flex items-center justify-between pb-4 border-b border-white/[0.04] mb-5">
+            <div className="flex items-center justify-between pb-4 border-b border-[#E3DCD3] dark:border-white/[0.06] mb-5">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880]">
+                <div className="w-8 h-8 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
                   <BookOpen className="w-4 h-4" />
                 </div>
-                <h2 className="text-base font-bold text-[#F5F5F7]">
+                <h2 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1]">
                   Curriculum Deployments
                 </h2>
               </div>
               <Link
                 to="/instructor/my-courses"
-                className="text-xs font-semibold text-[#C5A880] hover:text-[#D4BC98] flex items-center gap-1 transition-colors"
+                className="text-xs font-semibold text-[#5B3E57] hover:text-[#462D42] dark:text-[#D1A7CC] dark:hover:text-[#E0BFDC] flex items-center gap-1 transition-colors"
               >
                 <span>Full Catalog</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -246,23 +245,23 @@ const InstructorDashboard = () => {
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="p-4 rounded-2xl bg-[#14141A]/50 border border-white/[0.02] flex items-center gap-4"
+                    className="p-4 rounded-2xl bg-[#EAE5DC]/50 dark:bg-[#272523]/50 border border-[#E3DCD3] dark:border-white/[0.02] flex items-center gap-4"
                   >
-                    <Skeleton className="w-12 h-12 rounded-xl bg-[#14141A]" />
+                    <Skeleton className="w-12 h-12 rounded-xl bg-[#EAE5DC] dark:bg-[#272523]" />
                     <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-1/3 bg-[#14141A]" />
-                      <Skeleton className="h-3 w-1/4 bg-[#14141A]" />
+                      <Skeleton className="h-4 w-1/3 bg-[#EAE5DC] dark:bg-[#272523]" />
+                      <Skeleton className="h-3 w-1/4 bg-[#EAE5DC] dark:bg-[#272523]" />
                     </div>
                   </div>
                 ))}
               </div>
             ) : courses.length === 0 ? (
               <div className="text-center py-12 px-4 space-y-3">
-                <div className="w-12 h-12 mx-auto rounded-2xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#71717A]">
+                <div className="w-12 h-12 mx-auto rounded-2xl bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.04] flex items-center justify-center text-[#756E64] dark:text-[#7A7368]">
                   <BookOpen className="w-6 h-6" />
                 </div>
-                <h3 className="text-sm font-bold text-[#F5F5F7]">No Curriculum Modules Yet</h3>
-                <p className="text-xs text-[#8E8E93] max-w-sm mx-auto">
+                <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">No Curriculum Modules Yet</h3>
+                <p className="text-xs text-[#635E56] dark:text-[#A69F94] max-w-sm mx-auto">
                   Architect your first syllabus module, upload HD video lectures, and launch interactive tests.
                 </p>
                 <div className="pt-2">
@@ -281,43 +280,43 @@ const InstructorDashboard = () => {
                 {courses.slice(0, 5).map((course, idx) => (
                   <div
                     key={course.id || course.courseId || idx}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-[#14141A]/60 border border-white/[0.04] hover:border-white/[0.08] transition-all group"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-[#EAE5DC]/60 dark:bg-[#272523]/60 border border-[#E3DCD3] dark:border-white/[0.04] hover:border-[#5B3E57]/30 dark:hover:border-white/[0.08] transition-all group"
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="w-12 h-12 rounded-xl bg-[#1B1B24] border border-white/[0.06] flex items-center justify-center font-extrabold text-[#C5A880] text-base shrink-0 group-hover:scale-105 transition-transform">
+                      <div className="w-12 h-12 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center font-extrabold text-[#5B3E57] dark:text-[#D1A7CC] text-base shrink-0 group-hover:scale-105 transition-transform">
                         {(course.title || course.courseName || 'C').charAt(0)}
                       </div>
                       <div className="min-w-0">
-                        <h3 className="text-xs sm:text-sm font-bold text-[#F5F5F7] truncate group-hover:text-[#C5A880] transition-colors">
+                        <h3 className="text-xs sm:text-sm font-bold text-[#282521] dark:text-[#EDE8E1] truncate group-hover:text-[#5B3E57] dark:group-hover:text-[#D1A7CC] transition-colors">
                           {course.title || course.courseName || 'Untitled Curriculum'}
                         </h3>
-                        <div className="flex items-center gap-3 mt-1 text-[11px] text-[#8E8E93]">
+                        <div className="flex items-center gap-3 mt-1 text-[11px] text-[#635E56] dark:text-[#A69F94]">
                           <Badge
-                            variant={course.status === 'PUBLISHED' ? 'gold' : 'neutral'}
+                            variant={course.status === 'PUBLISHED' ? 'success' : 'neutral'}
                             size="sm"
                           >
                             {course.status || 'DRAFT'}
                           </Badge>
                           <span className="flex items-center gap-1">
-                            <Users className="w-3 h-3 text-[#71717A]" />
+                            <Users className="w-3 h-3 text-[#756E64] dark:text-[#7A7368]" />
                             <span>{course.students || course.enrolledStudents || 0} candidates</span>
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/[0.02]">
+                    <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E3DCD3] dark:border-white/[0.02]">
                       <div className="text-left sm:text-right">
-                        <span className="text-sm font-bold text-[#F5F5F7] font-mono block">
+                        <span className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] font-mono block">
                           ₹{(course.price || 0).toLocaleString()}
                         </span>
-                        <span className="text-[10px] text-[#71717A]">
+                        <span className="text-[10px] text-[#756E64] dark:text-[#7A7368]">
                           {course.rating ? `${Number(course.rating).toFixed(1)} ★` : 'Unrated'}
                         </span>
                       </div>
                       <Link
                         to={`/instructor/courses/${course.id || course.courseId}/edit`}
-                        className="p-2 rounded-xl bg-[#0F0F13] border border-white/[0.04] text-[#A1A1AA] hover:text-white hover:border-[#C5A880]/30 transition-all"
+                        className="p-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.04] text-[#635E56] dark:text-[#A69F94] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] hover:border-[#5B3E57]/30 transition-all"
                         aria-label="Edit course"
                       >
                         <ArrowUpRight className="w-4 h-4" />
@@ -337,43 +336,43 @@ const InstructorDashboard = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={SPRING_TRANSITION}
-            className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-sm space-y-5"
+            className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-card space-y-5"
           >
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-white/[0.06]">
               <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-[#C5A880]" />
-                <h2 className="text-sm font-bold text-[#F5F5F7]">Revenue Settlement</h2>
+                <DollarSign className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
+                <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Revenue Settlement</h2>
               </div>
-              <Badge variant="gold" dot>Settled</Badge>
+              <Badge variant="success" dot>Settled</Badge>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#14141A] border border-white/[0.04] space-y-1">
-              <span className="text-[11px] text-[#8E8E93] font-medium uppercase tracking-wider block">
+            <div className="p-4 rounded-2xl bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] space-y-1">
+              <span className="text-[11px] text-[#635E56] dark:text-[#A69F94] font-medium uppercase tracking-wider block">
                 Current Fiscal Period
               </span>
-              <p className="text-2xl font-black text-[#F5F5F7] font-mono tracking-tight">
+              <p className="text-2xl font-black text-[#282521] dark:text-[#EDE8E1] font-mono tracking-tight">
                 ₹{Number(earnings?.monthlyEarnings || 0).toLocaleString()}
               </p>
-              <div className="flex items-center gap-1.5 text-[11px] text-[#C5A880] pt-1">
+              <div className="flex items-center gap-1.5 text-[11px] text-[#2B6747] dark:text-[#529E73] pt-1">
                 <TrendingUp className="w-3 h-3" />
                 <span>+{earnings?.growth || 12}% month-over-month yield</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3 pt-1">
-              <div className="p-3 rounded-2xl bg-[#14141A]/50 border border-white/[0.02]">
-                <span className="text-[10px] text-[#71717A] uppercase font-bold block">
+              <div className="p-3 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06]">
+                <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] uppercase font-bold block">
                   Cumulative
                 </span>
-                <p className="text-sm font-bold text-[#F5F5F7] font-mono mt-1">
+                <p className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] font-mono mt-1">
                   ₹{Number(earnings?.totalEarnings || 0).toLocaleString()}
                 </p>
               </div>
-              <div className="p-3 rounded-2xl bg-[#14141A]/50 border border-white/[0.02]">
-                <span className="text-[10px] text-[#71717A] uppercase font-bold block">
+              <div className="p-3 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06]">
+                <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] uppercase font-bold block">
                   Pending Clear
                 </span>
-                <p className="text-sm font-bold text-[#C5A880] font-mono mt-1">
+                <p className="text-sm font-bold text-[#5B3E57] dark:text-[#D1A7CC] font-mono mt-1">
                   ₹{Number(earnings?.pendingEarnings || 0).toLocaleString()}
                 </p>
               </div>
@@ -385,43 +384,43 @@ const InstructorDashboard = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={SPRING_TRANSITION}
-            className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-sm space-y-3"
+            className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-card space-y-3"
           >
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[#8E8E93] mb-2">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-[#635E56] dark:text-[#A69F94] mb-2">
               Studio Quick Launch
             </h2>
 
             <Link
               to="/instructor/create-course"
-              className="flex items-center justify-between p-3 rounded-2xl bg-[#14141A]/60 border border-white/[0.04] hover:border-[#C5A880]/30 transition-all text-xs font-semibold text-[#F5F5F7] group"
+              className="flex items-center justify-between p-3 rounded-2xl bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/30 dark:hover:border-[#D1A7CC]/30 transition-all text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] group"
             >
               <span className="flex items-center gap-2.5">
-                <Plus className="w-4 h-4 text-[#C5A880]" />
+                <Plus className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                 <span>Deploy New Course</span>
               </span>
-              <ArrowRight className="w-3.5 h-3.5 text-[#71717A] group-hover:text-white transition-colors" />
+              <ArrowRight className="w-3.5 h-3.5 text-[#756E64] group-hover:text-[#282521] dark:group-hover:text-white transition-colors" />
             </Link>
 
             <Link
               to="/instructor/my-courses"
-              className="flex items-center justify-between p-3 rounded-2xl bg-[#14141A]/60 border border-white/[0.04] hover:border-[#C5A880]/30 transition-all text-xs font-semibold text-[#F5F5F7] group"
+              className="flex items-center justify-between p-3 rounded-2xl bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/30 dark:hover:border-[#D1A7CC]/30 transition-all text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] group"
             >
               <span className="flex items-center gap-2.5">
-                <Layers className="w-4 h-4 text-[#E5E5E7]" />
+                <Layers className="w-4 h-4 text-[#635E56] dark:text-[#A69F94]" />
                 <span>Manage Course Registry</span>
               </span>
-              <ArrowRight className="w-3.5 h-3.5 text-[#71717A] group-hover:text-white transition-colors" />
+              <ArrowRight className="w-3.5 h-3.5 text-[#756E64] group-hover:text-[#282521] dark:group-hover:text-white transition-colors" />
             </Link>
 
             <Link
               to="/instructor/analytics"
-              className="flex items-center justify-between p-3 rounded-2xl bg-[#14141A]/60 border border-white/[0.04] hover:border-[#C5A880]/30 transition-all text-xs font-semibold text-[#F5F5F7] group"
+              className="flex items-center justify-between p-3 rounded-2xl bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/30 dark:hover:border-[#D1A7CC]/30 transition-all text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] group"
             >
               <span className="flex items-center gap-2.5">
-                <BarChart3 className="w-4 h-4 text-[#C5A880]" />
+                <BarChart3 className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                 <span>Candidate Telemetry</span>
               </span>
-              <ArrowRight className="w-3.5 h-3.5 text-[#71717A] group-hover:text-white transition-colors" />
+              <ArrowRight className="w-3.5 h-3.5 text-[#756E64] group-hover:text-[#282521] dark:group-hover:text-white transition-colors" />
             </Link>
           </motion.div>
         </div>

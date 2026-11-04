@@ -420,17 +420,17 @@ const ProfilePhotoModal = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: 'spring', stiffness: 280, damping: 26 }}
-            className="w-full max-w-lg bg-[#0F0F13] border border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden z-[70] max-h-[calc(100vh-32px)] flex flex-col"
+            className="w-full max-w-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden z-[70] max-h-[calc(100vh-32px)] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.04]">
-              <h2 id="modal-title" className="text-base font-bold text-[#F5F5F7] tracking-tight">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+              <h2 id="modal-title" className="text-base font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
                 Profile Identity Vector Configuration
               </h2>
               <button
                 onClick={onClose}
-                className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-[#8E8E93] hover:text-[#F5F5F7]"
+                className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:text-[#EDE8E1]"
                 aria-label="Close modal"
               >
                 <X size={18} />
@@ -442,19 +442,19 @@ const ProfilePhotoModal = ({
               {/* Mode Selection */}
               {!mode && !showRemoveConfirm && (
                 <div className="space-y-4">
-                  <p className="text-xs text-[#8E8E93] text-center font-light">
+                  <p className="text-xs text-[#635E56] dark:text-[#A8A196] text-center font-light">
                     Select a high-resolution media ingest mode for your profile representation
                   </p>
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       onClick={() => handleModeChange('upload')}
-                      className="flex flex-col items-center gap-3 p-6 border border-white/[0.06] rounded-xl hover:border-[#C5A880]/50 bg-[#14141A] hover:bg-[#1B1B24] transition-all group"
+                      className="flex flex-col items-center gap-3 p-6 border border-[#E3DCD3] dark:border-white/[0.06] rounded-xl hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] bg-[#F5F2EC] dark:bg-[#151413] hover:bg-[#EAE5DC] dark:bg-[#1D1C1A] transition-all group"
                     >
-                      <Upload className="w-7 h-7 text-[#8E8E93] group-hover:text-[#C5A880] transition-colors" />
-                      <span className="font-semibold text-xs text-[#F5F5F7] tracking-wide">
+                      <Upload className="w-7 h-7 text-[#635E56] dark:text-[#A8A196] group-hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors" />
+                      <span className="font-semibold text-xs text-[#282521] dark:text-[#EDE8E1] tracking-wide">
                         Upload Media
                       </span>
-                      <span className="text-[10px] text-[#8E8E93] font-mono">
+                      <span className="text-[10px] text-[#635E56] dark:text-[#A8A196] font-mono">
                         Direct Local File
                       </span>
                     </button>
@@ -462,13 +462,13 @@ const ProfilePhotoModal = ({
                     <button
                       onClick={() => handleModeChange('camera')}
                       disabled={!isCameraSupported}
-                      className="flex flex-col items-center gap-3 p-6 border border-white/[0.06] rounded-xl hover:border-[#C5A880]/50 bg-[#14141A] hover:bg-[#1B1B24] transition-all group disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="flex flex-col items-center gap-3 p-6 border border-[#E3DCD3] dark:border-white/[0.06] rounded-xl hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] bg-[#F5F2EC] dark:bg-[#151413] hover:bg-[#EAE5DC] dark:bg-[#1D1C1A] transition-all group disabled:opacity-40 disabled:cursor-not-allowed"
                     >
-                      <Camera className="w-7 h-7 text-[#8E8E93] group-hover:text-[#C5A880] transition-colors" />
-                      <span className="font-semibold text-xs text-[#F5F5F7] tracking-wide">
+                      <Camera className="w-7 h-7 text-[#635E56] dark:text-[#A8A196] group-hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors" />
+                      <span className="font-semibold text-xs text-[#282521] dark:text-[#EDE8E1] tracking-wide">
                         Capture Live
                       </span>
-                      <span className="text-[10px] text-[#8E8E93] font-mono">
+                      <span className="text-[10px] text-[#635E56] dark:text-[#A8A196] font-mono">
                         Hardware Viewfinder
                       </span>
                     </button>
@@ -476,7 +476,7 @@ const ProfilePhotoModal = ({
                   
                   {/* Remove Current Photo option */}
                   {currentPhotoUrl && (
-                    <div className="pt-2 border-t border-white/[0.04]">
+                    <div className="pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
                       <button
                         onClick={() => handleModeChange('remove')}
                         className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-rose-500/20 bg-rose-500/5 rounded-xl hover:bg-rose-500/10 transition-colors text-xs font-semibold text-rose-300"
@@ -488,7 +488,7 @@ const ProfilePhotoModal = ({
                   )}
                   
                   <div className="text-center">
-                    <p className="text-[10px] text-[#8E8E93] font-mono">
+                    <p className="text-[10px] text-[#635E56] dark:text-[#A8A196] font-mono">
                       Supported: JPEG, PNG, WEBP • Sub-5MB Allocation
                     </p>
                   </div>
@@ -499,7 +499,7 @@ const ProfilePhotoModal = ({
               {mode === 'upload' && (
                 <div className="space-y-4">
                   {/* Preview Area */}
-                  <div className="relative aspect-square max-w-[260px] mx-auto bg-[#14141A] rounded-2xl overflow-hidden border border-white/[0.08] flex items-center justify-center">
+                  <div className="relative aspect-square max-w-[260px] mx-auto bg-[#F5F2EC] dark:bg-[#151413] rounded-2xl overflow-hidden border border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center">
                     {previewUrl ? (
                       <img
                         src={previewUrl}
@@ -507,7 +507,7 @@ const ProfilePhotoModal = ({
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="flex flex-col items-center justify-center h-full text-[#8E8E93]">
+                      <div className="flex flex-col items-center justify-center h-full text-[#635E56] dark:text-[#A8A196]">
                         <Upload className="w-10 h-10 mb-2 opacity-50" />
                         <p className="text-xs">No media asset buffered</p>
                       </div>
@@ -517,8 +517,8 @@ const ProfilePhotoModal = ({
                   {/* File Info */}
                   {selectedFile && (
                     <div className="text-center space-y-0.5">
-                      <p className="text-xs font-medium text-[#F5F5F7]">{selectedFile.name}</p>
-                      <p className="text-[10px] text-[#C5A880] font-mono">{formatFileSize(selectedFile.size)}</p>
+                      <p className="text-xs font-medium text-[#282521] dark:text-[#EDE8E1]">{selectedFile.name}</p>
+                      <p className="text-[10px] text-[#5B3E57] dark:text-[#D1A7CC] font-mono">{formatFileSize(selectedFile.size)}</p>
                     </div>
                   )}
 
@@ -534,14 +534,14 @@ const ProfilePhotoModal = ({
                   {uploading && (
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-[#8E8E93] font-mono">Syncing Payload...</span>
-                        <span className="text-[#C5A880] font-mono font-bold">{uploadProgress}%</span>
+                        <span className="text-[#635E56] dark:text-[#A8A196] font-mono">Syncing Payload...</span>
+                        <span className="text-[#5B3E57] dark:text-[#D1A7CC] font-mono font-bold">{uploadProgress}%</span>
                       </div>
-                      <div className="w-full bg-[#14141A] rounded-full h-1.5 overflow-hidden border border-white/5">
+                      <div className="w-full bg-[#F5F2EC] dark:bg-[#151413] rounded-full h-1.5 overflow-hidden border border-[#E3DCD3] dark:border-white/5">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${uploadProgress}%` }}
-                          className="h-full bg-[#C5A880]"
+                          className="h-full bg-[#5B3E57] dark:bg-[#D1A7CC]"
                         />
                       </div>
                     </div>
@@ -553,14 +553,14 @@ const ProfilePhotoModal = ({
                       <>
                         <button
                           onClick={handleUpload}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#C5A880] text-[#070709] rounded-xl hover:bg-[#D4BC98] transition-colors text-xs font-bold shadow-[0_4px_20px_rgba(197,168,128,0.22)]"
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] rounded-xl hover:bg-[#462D42] dark:hover:bg-[#C293BD] transition-colors text-xs font-bold shadow-[0_4px_20px_rgba(197,168,128,0.22)]"
                         >
                           <ArrowRight size={15} />
                           <span>Commit Profile Media</span>
                         </button>
                         <button
                           onClick={handleReplaceFile}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-white/[0.08] bg-[#14141A] hover:bg-[#1B1B24] rounded-xl transition-colors text-xs text-[#E5E5E7]"
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-[#E3DCD3] dark:border-white/[0.08] bg-[#F5F2EC] dark:bg-[#151413] hover:bg-[#EAE5DC] dark:bg-[#1D1C1A] rounded-xl transition-colors text-xs text-[#282521] dark:text-[#EDE8E1]"
                         >
                           <RefreshCw size={14} />
                           <span>Choose Alternate Media</span>
@@ -569,7 +569,7 @@ const ProfilePhotoModal = ({
                     ) : !previewUrl && !uploading ? (
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#C5A880] text-[#070709] rounded-xl hover:bg-[#D4BC98] transition-colors text-xs font-bold shadow-[0_4px_20px_rgba(197,168,128,0.22)]"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] rounded-xl hover:bg-[#462D42] dark:hover:bg-[#C293BD] transition-colors text-xs font-bold shadow-[0_4px_20px_rgba(197,168,128,0.22)]"
                       >
                         <Upload size={15} />
                         <span>Select File Chunk</span>
@@ -579,7 +579,7 @@ const ProfilePhotoModal = ({
                     {!uploading && (
                       <button
                         onClick={() => setMode(null)}
-                        className="w-full px-4 py-1.5 text-xs text-[#8E8E93] hover:text-[#F5F5F7] transition-colors text-center"
+                        className="w-full px-4 py-1.5 text-xs text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:text-[#EDE8E1] transition-colors text-center"
                       >
                         Cancel Selection
                       </button>
@@ -601,7 +601,7 @@ const ProfilePhotoModal = ({
               {mode === 'camera' && (
                 <div className="space-y-4">
                   {/* Camera or Captured Preview */}
-                  <div className="relative aspect-square max-w-[260px] mx-auto bg-[#14141A] rounded-2xl overflow-hidden border border-white/[0.08]">
+                  <div className="relative aspect-square max-w-[260px] mx-auto bg-[#F5F2EC] dark:bg-[#151413] rounded-2xl overflow-hidden border border-[#E3DCD3] dark:border-white/[0.08]">
                     {cameraStream && !capturedImage ? (
                       <>
                         <video
@@ -613,7 +613,7 @@ const ProfilePhotoModal = ({
                         />
                         <div className="absolute top-3 left-3 flex items-center gap-1.5">
                           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                          <span className="px-2 py-0.5 bg-[#070709]/80 border border-white/10 text-[#F5F5F7] text-[10px] font-mono rounded-md">
+                          <span className="px-2 py-0.5 bg-[#F5F2EC] dark:bg-[#151413]/80 border border-[#D5C0D1] dark:border-white/10 text-[#282521] dark:text-[#EDE8E1] text-[10px] font-mono rounded-md">
                             VIEWFINDER ACTIVE
                           </span>
                         </div>
@@ -625,7 +625,7 @@ const ProfilePhotoModal = ({
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="flex flex-col items-center justify-center h-full text-[#8E8E93]">
+                      <div className="flex flex-col items-center justify-center h-full text-[#635E56] dark:text-[#A8A196]">
                         <VideoOff className="w-10 h-10 mb-2 opacity-50" />
                         <p className="text-xs text-center px-4">
                           {error || 'Optical sensor unavailable'}
@@ -649,14 +649,14 @@ const ProfilePhotoModal = ({
                   {uploading && (
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-[#8E8E93] font-mono">Transmitting Vector...</span>
-                        <span className="text-[#C5A880] font-mono font-bold">{uploadProgress}%</span>
+                        <span className="text-[#635E56] dark:text-[#A8A196] font-mono">Transmitting Vector...</span>
+                        <span className="text-[#5B3E57] dark:text-[#D1A7CC] font-mono font-bold">{uploadProgress}%</span>
                       </div>
-                      <div className="w-full bg-[#14141A] rounded-full h-1.5 overflow-hidden border border-white/5">
+                      <div className="w-full bg-[#F5F2EC] dark:bg-[#151413] rounded-full h-1.5 overflow-hidden border border-[#E3DCD3] dark:border-white/5">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${uploadProgress}%` }}
-                          className="h-full bg-[#C5A880]"
+                          className="h-full bg-[#5B3E57] dark:bg-[#D1A7CC]"
                         />
                       </div>
                     </div>
@@ -668,7 +668,7 @@ const ProfilePhotoModal = ({
                       <>
                         <button
                           onClick={capturePhoto}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#C5A880] text-[#070709] rounded-xl hover:bg-[#D4BC98] transition-colors text-xs font-bold shadow-[0_4px_20px_rgba(197,168,128,0.22)]"
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] rounded-xl hover:bg-[#462D42] dark:hover:bg-[#C293BD] transition-colors text-xs font-bold shadow-[0_4px_20px_rgba(197,168,128,0.22)]"
                         >
                           <Camera size={15} />
                           <span>Capture Frame</span>
@@ -681,7 +681,7 @@ const ProfilePhotoModal = ({
                             }
                             setMode(null);
                           }}
-                          className="w-full px-4 py-1.5 text-xs text-[#8E8E93] hover:text-[#F5F5F7] transition-colors text-center"
+                          className="w-full px-4 py-1.5 text-xs text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:text-[#EDE8E1] transition-colors text-center"
                         >
                           Disengage Camera
                         </button>
@@ -691,7 +691,7 @@ const ProfilePhotoModal = ({
                         <button
                           onClick={handleUpload}
                           disabled={uploading}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#C5A880] text-[#070709] rounded-xl hover:bg-[#D4BC98] transition-colors text-xs font-bold shadow-[0_4px_20px_rgba(197,168,128,0.22)] disabled:opacity-50"
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] rounded-xl hover:bg-[#462D42] dark:hover:bg-[#C293BD] transition-colors text-xs font-bold shadow-[0_4px_20px_rgba(197,168,128,0.22)] disabled:opacity-50"
                         >
                           {uploading ? (
                             <>
@@ -707,7 +707,7 @@ const ProfilePhotoModal = ({
                         </button>
                         <button
                           onClick={retakePhoto}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-white/[0.08] bg-[#14141A] hover:bg-[#1B1B24] rounded-xl transition-colors text-xs text-[#E5E5E7]"
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-[#E3DCD3] dark:border-white/[0.08] bg-[#F5F2EC] dark:bg-[#151413] hover:bg-[#EAE5DC] dark:bg-[#1D1C1A] rounded-xl transition-colors text-xs text-[#282521] dark:text-[#EDE8E1]"
                         >
                           <RefreshCw size={14} />
                           <span>Retake Live Frame</span>
@@ -717,14 +717,14 @@ const ProfilePhotoModal = ({
                       <>
                         <button
                           onClick={() => handleModeChange('upload')}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#C5A880] text-[#070709] rounded-xl hover:bg-[#D4BC98] transition-colors text-xs font-bold"
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] rounded-xl hover:bg-[#462D42] dark:hover:bg-[#C293BD] transition-colors text-xs font-bold"
                         >
                           <Upload size={15} />
                           <span>Fallback to File Upload</span>
                         </button>
                         <button
                           onClick={() => setMode(null)}
-                          className="w-full px-4 py-1.5 text-xs text-[#8E8E93] hover:text-[#F5F5F7] transition-colors text-center"
+                          className="w-full px-4 py-1.5 text-xs text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:text-[#EDE8E1] transition-colors text-center"
                         >
                           Cancel
                         </button>
@@ -742,7 +742,7 @@ const ProfilePhotoModal = ({
                       <AlertCircle size={16} />
                       <span>Confirm Identity Media Deletion</span>
                     </div>
-                    <p className="text-xs text-[#8E8E93] leading-relaxed">
+                    <p className="text-xs text-[#635E56] dark:text-[#A8A196] leading-relaxed">
                       Are you sure you want to remove your profile photo? Your account will revert to the monogram initials fallback.
                     </p>
                   </div>
@@ -750,8 +750,8 @@ const ProfilePhotoModal = ({
                   {/* Removal Progress */}
                   {removing && (
                     <div className="space-y-2">
-                      <div className="flex items-center justify-center gap-2 text-xs text-[#8E8E93]">
-                        <Loader2 className="w-4 h-4 animate-spin text-[#C5A880]" />
+                      <div className="flex items-center justify-center gap-2 text-xs text-[#635E56] dark:text-[#A8A196]">
+                        <Loader2 className="w-4 h-4 animate-spin text-[#5B3E57] dark:text-[#D1A7CC]" />
                         <span>Purging photo payload...</span>
                       </div>
                     </div>
@@ -762,7 +762,7 @@ const ProfilePhotoModal = ({
                     <button
                       onClick={() => setShowRemoveConfirm(false)}
                       disabled={removing}
-                      className="flex-1 px-4 py-2.5 border border-white/[0.08] bg-[#14141A] hover:bg-[#1B1B24] transition-colors text-xs text-[#E5E5E7] rounded-xl font-semibold disabled:opacity-50"
+                      className="flex-1 px-4 py-2.5 border border-[#E3DCD3] dark:border-white/[0.08] bg-[#F5F2EC] dark:bg-[#151413] hover:bg-[#EAE5DC] dark:bg-[#1D1C1A] transition-colors text-xs text-[#282521] dark:text-[#EDE8E1] rounded-xl font-semibold disabled:opacity-50"
                     >
                       Cancel
                     </button>

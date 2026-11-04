@@ -310,13 +310,13 @@ const Users = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#282521] dark:text-[#EDE8E1] p-6 lg:p-10 space-y-8 font-sans selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] p-6 lg:p-10 space-y-8 font-sans selection:bg-[#5B3E57] dark:bg-[#D1A7CC]/30 selection:text-white">
       {/* Header Telemetry Node */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={SPRING}
-        className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] p-6 sm:p-8 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.85)] flex flex-col md:flex-row md:items-center justify-between gap-6"
+        className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] p-6 sm:p-8 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.85)] flex flex-col md:flex-row md:items-center justify-between gap-6"
       >
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FAF7F2] dark:bg-[#272523] border border-[#5B3E57] dark:border-[#D1A7CC]/30 text-xs font-semibold text-[#9A6B56] dark:text-[#D9A48F]">
@@ -340,7 +340,7 @@ const Users = () => {
               fetchUsers(currentPage, search, selectedRole);
               toast.success("Identity directory refreshed");
             }}
-            className="p-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-white/10 hover:border-white/20 rounded-xl text-white/70 hover:text-white transition-all cursor-pointer flex items-center gap-2 text-xs font-medium"
+            className="p-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 rounded-xl text-white/70 hover:text-white transition-all cursor-pointer flex items-center gap-2 text-xs font-medium"
             title="Refresh Directory"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-[#9A6B56] dark:text-[#D9A48F]' : ''}`} />
@@ -349,7 +349,7 @@ const Users = () => {
           
           <button
             onClick={handleExport}
-            className="px-4 py-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-white/10 hover:border-[#5B3E57] dark:border-[#D1A7CC]/40 rounded-xl text-white/80 hover:text-white transition-all cursor-pointer flex items-center gap-2 text-xs font-medium"
+            className="px-4 py-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 hover:border-[#5B3E57] dark:border-[#D1A7CC]/40 rounded-xl text-white/80 hover:text-white transition-all cursor-pointer flex items-center gap-2 text-xs font-medium"
           >
             <Download className="w-4 h-4 text-[#9A6B56] dark:text-[#D9A48F]" />
             <span>Export CSV</span>
@@ -364,13 +364,13 @@ const Users = () => {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...SPRING, delay: 0.02 }}
-          className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:border-[#D1A7CC]/30 transition-all duration-300 group"
+          className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:border-[#D1A7CC]/30 transition-all duration-300 group"
         >
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-[#756E64] dark:text-[#A69F94] tracking-wide">
               Total Platform Users
             </span>
-            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-[#9A6B56] dark:text-[#D9A48F] group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-[#9A6B56] dark:text-[#D9A48F] group-hover:scale-105 transition-transform">
               <UsersIcon className="w-4 h-4" />
             </div>
           </div>
@@ -387,13 +387,13 @@ const Users = () => {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...SPRING, delay: 0.04 }}
-          className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:border-[#D1A7CC]/30 transition-all duration-300 group"
+          className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:border-[#D1A7CC]/30 transition-all duration-300 group"
         >
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-[#756E64] dark:text-[#A69F94] tracking-wide">
               Candidate Students
             </span>
-            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] group-hover:scale-105 transition-transform">
               <GraduationCap className="w-4 h-4" />
             </div>
           </div>
@@ -410,13 +410,13 @@ const Users = () => {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...SPRING, delay: 0.06 }}
-          className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:border-[#D1A7CC]/30 transition-all duration-300 group"
+          className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:border-[#D1A7CC]/30 transition-all duration-300 group"
         >
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-[#756E64] dark:text-[#A69F94] tracking-wide">
               Verified Instructors
             </span>
-            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-[#9A6B56] dark:text-[#D9A48F] group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-[#9A6B56] dark:text-[#D9A48F] group-hover:scale-105 transition-transform">
               <BookOpen className="w-4 h-4" />
             </div>
           </div>
@@ -433,13 +433,13 @@ const Users = () => {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...SPRING, delay: 0.08 }}
-          className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:border-[#D1A7CC]/30 transition-all duration-300 group"
+          className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:border-[#D1A7CC]/30 transition-all duration-300 group"
         >
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-[#756E64] dark:text-[#A69F94] tracking-wide">
               Security Pipeline
             </span>
-            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-amber-400 group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-amber-400 group-hover:scale-105 transition-transform">
               <Shield className="w-4 h-4" />
             </div>
           </div>
@@ -453,7 +453,7 @@ const Users = () => {
       </div>
 
       {/* IAM Federation Authority Notice */}
-      <div className="px-5 py-3 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-between text-xs text-[#756E64] dark:text-[#A69F94]">
+      <div className="px-5 py-3 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-between text-xs text-[#756E64] dark:text-[#A69F94]">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-[#9A6B56] dark:text-[#D9A48F]" />
           <span>IAM Federation Matrix: <strong className="text-white">263</strong> user-service directory identities (<span className="text-[#5B3E57] dark:text-[#D1A7CC]">247 Students</span> + <span className="text-[#9A6B56] dark:text-[#D9A48F]">16 Instructors</span>) + <strong className="text-emerald-400">2</strong> root admin-service platform authorities.</span>
@@ -462,7 +462,7 @@ const Users = () => {
       </div>
 
       {/* Control Matrix Toolbar */}
-      <div className="rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] p-4 flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Search */}
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#756E64] dark:text-[#A69F94]" />
@@ -474,7 +474,7 @@ const Users = () => {
               setCurrentPage(1);
             }}
             placeholder="Search by candidate name or email..."
-            className="w-full pl-10 pr-4 py-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-sm text-[#282521] dark:text-[#EDE8E1] placeholder:text-[#756E64] dark:placeholder-[#7A7368] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-sm text-[#282521] dark:text-[#EDE8E1] placeholder:text-[#756E64] dark:placeholder-[#7A7368] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition-colors"
           />
         </div>
 
@@ -489,7 +489,7 @@ const Users = () => {
                 setSelectedRole(e.target.value);
                 setCurrentPage(1);
               }}
-              className="px-3 py-2 bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] cursor-pointer"
+              className="px-3 py-2 bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] cursor-pointer"
             >
               <option value="All">All Roles</option>
               <option value="STUDENT">Student</option>
@@ -504,7 +504,7 @@ const Users = () => {
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="px-3 py-2 bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] cursor-pointer"
+              className="px-3 py-2 bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] cursor-pointer"
             >
               <option value="All">All Statuses</option>
               <option value="ACTIVE">Active</option>
@@ -516,10 +516,10 @@ const Users = () => {
       </div>
 
       {/* Primary User Data Table */}
-      <div className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] shadow-sm overflow-hidden">
+      <div className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#FAF7F2] dark:bg-[#272523] text-[#756E64] dark:text-[#A69F94] border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08]">
+            <thead className="bg-[#FAF7F2] dark:bg-[#272523] text-[#756E64] dark:text-[#A69F94] border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08]">
               <tr>
                 <th className="px-6 py-4 font-bold uppercase tracking-wider text-[10px]">#</th>
                 <th className="px-6 py-4 font-bold uppercase tracking-wider text-[10px]">Candidate Identity</th>
@@ -603,7 +603,7 @@ const Users = () => {
                             userObj.role.includes("ADMIN")
                               ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                               : userObj.role === "INSTRUCTOR"
-                              ? "bg-[#C5A880]/10 text-[#9A6B56] dark:text-[#D9A48F] border-[#5B3E57] dark:border-[#D1A7CC]/30"
+                              ? "bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#9A6B56] dark:text-[#D9A48F] border-[#5B3E57] dark:border-[#D1A7CC]/30"
                               : "bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#5B3E57] dark:text-[#D1A7CC] border-[#D5C0D1] dark:border-[#D1A7CC]/30"
                           }`}
                         >
@@ -642,7 +642,7 @@ const Users = () => {
                           {/* View Modal */}
                           <button
                             onClick={() => handleViewUser(userObj)}
-                            className="p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#272523] border border-white/5 hover:border-[#5B3E57] dark:border-[#D1A7CC]/40 text-[#756E64] dark:text-[#A69F94] hover:text-[#9A6B56] dark:text-[#D9A48F] transition-colors"
+                            className="p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/5 hover:border-[#5B3E57] dark:border-[#D1A7CC]/40 text-[#756E64] dark:text-[#A69F94] hover:text-[#9A6B56] dark:text-[#D9A48F] transition-colors"
                             title="Inspect Identity Profile"
                           >
                             <Eye className="w-4 h-4" />
@@ -651,7 +651,7 @@ const Users = () => {
                           {/* Revoke */}
                           <button
                             onClick={() => handleDeleteUser(userObj)}
-                            className="p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#272523] border border-white/5 hover:border-red-500/40 text-[#756E64] dark:text-[#A69F94] hover:text-red-400 transition-colors"
+                            className="p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/5 hover:border-red-500/40 text-[#756E64] dark:text-[#A69F94] hover:text-red-400 transition-colors"
                             title="Revoke Identity"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -667,7 +667,7 @@ const Users = () => {
         </div>
 
         {/* Server Pagination Matrix */}
-        <div className="px-6 py-4 bg-[#FAF7F2] dark:bg-[#272523]/50 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+        <div className="px-6 py-4 bg-[#FAF7F2] dark:bg-[#272523]/50 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
           <span className="text-[#756E64] dark:text-[#A69F94]">
             Showing <strong className="text-[#282521] dark:text-[#EDE8E1]">{(currentPage - 1) * usersPerPage + 1}</strong> to{" "}
             <strong className="text-[#282521] dark:text-[#EDE8E1]">{Math.min(currentPage * usersPerPage, totalUsers)}</strong> of{" "}
@@ -678,7 +678,7 @@ const Users = () => {
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage <= 1 || loading}
-              className="p-2 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.08] hover:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed text-[#282521] dark:text-[#EDE8E1] transition-all"
+              className="p-2 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed text-[#282521] dark:text-[#EDE8E1] transition-all"
               title="Previous Page"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -691,7 +691,7 @@ const Users = () => {
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage >= totalPages || loading}
-              className="p-2 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.08] hover:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed text-[#282521] dark:text-[#EDE8E1] transition-all"
+              className="p-2 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] hover:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed text-[#282521] dark:text-[#EDE8E1] transition-all"
               title="Next Page"
             >
               <ChevronRight className="w-4 h-4" />
@@ -710,9 +710,9 @@ const Users = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={SPRING}
-                className="w-full max-w-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl text-left"
+                className="w-full max-w-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#D5C0D1] dark:border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl text-left"
               >
-                <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                <div className="flex items-center justify-between border-b border-[#E3DCD3] dark:border-white/5 pb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#5B3E57] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#9A6B56] dark:text-[#D9A48F]">
                       <UsersIcon className="w-5 h-5" />
@@ -728,14 +728,14 @@ const Users = () => {
                   </div>
                   <button
                     onClick={() => setShowViewModal(false)}
-                    className="p-2 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-white/10 text-[#756E64] dark:text-[#A69F94] hover:text-white"
+                    className="p-2 rounded-xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 text-[#756E64] dark:text-[#A69F94] hover:text-white"
                   >
                     ✕
                   </button>
                 </div>
 
                 <div className="space-y-4 text-xs">
-                  <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-white/5 space-y-2.5">
+                  <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/5 space-y-2.5">
                     <div className="flex justify-between items-center">
                       <span className="text-[#756E64] dark:text-[#A69F94]">Full Legal Name</span>
                       <span className="font-semibold text-white text-sm">{selectedUser.name}</span>
@@ -764,11 +764,11 @@ const Users = () => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-white/5 space-y-1">
+                    <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/5 space-y-1">
                       <span className="text-[#756E64] dark:text-[#A69F94] block">Assigned Role</span>
                       <span className="font-bold text-white text-sm">{selectedUser.role}</span>
                     </div>
-                    <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-white/5 space-y-1">
+                    <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/5 space-y-1">
                       <span className="text-[#756E64] dark:text-[#A69F94] block">Provisioning Status</span>
                       <div className="flex items-center gap-2">
                         <span className={`font-bold text-sm ${
@@ -781,7 +781,7 @@ const Users = () => {
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-white/5 space-y-2">
+                  <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/5 space-y-2">
                     <div className="flex justify-between">
                       <span className="text-[#756E64] dark:text-[#A69F94]">Enrolled Curriculum</span>
                       <span className="font-mono text-white font-semibold">{selectedUser.courses} Active Enrollments</span>
@@ -797,7 +797,7 @@ const Users = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center gap-3 pt-2 border-t border-white/5">
+                <div className="flex justify-between items-center gap-3 pt-2 border-t border-[#E3DCD3] dark:border-white/5">
                   <button
                     onClick={() => {
                       handleToggleStatus(selectedUser);
@@ -817,7 +817,7 @@ const Users = () => {
 
                   <button
                     onClick={() => setShowViewModal(false)}
-                    className="px-5 py-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all cursor-pointer"
+                    className="px-5 py-2.5 bg-[#FAF7F2] dark:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all cursor-pointer"
                   >
                     Close Inspection
                   </button>

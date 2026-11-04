@@ -27,11 +27,25 @@ import {
   Check,
   AlertTriangle,
   Monitor,
-  Smartphone
+  Smartphone,
+  Sliders,
+  Palette,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  ShieldCheck
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { adminApi } from "../../api/adminApi";
 import { useAuth } from "../../context/AuthContext";
+import {
+  DEFAULT_BANNER_APPEARANCE,
+  getOverlayStyle,
+  getContentAlignmentClasses,
+  getVerticalAlignmentClasses,
+  getTextShadowStyle,
+  calculateContrast,
+} from "../../utils/bannerAppearance";
 
 const SPRING_TRANSITION = {
   type: "spring",
@@ -80,6 +94,8 @@ const BannerManagement = () => {
     action: null,
   });
 
+  const [formPreviewDevice, setFormPreviewDevice] = useState("desktop"); // 'desktop' | 'mobile'
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -95,7 +111,39 @@ const BannerManagement = () => {
     targetType: "COURSE",
     startDate: "",
     endDate: "",
+    overlayType: DEFAULT_BANNER_APPEARANCE.overlayType,
+    overlayColor: DEFAULT_BANNER_APPEARANCE.overlayColor,
+    overlayOpacity: DEFAULT_BANNER_APPEARANCE.overlayOpacity,
+    gradientDirection: DEFAULT_BANNER_APPEARANCE.gradientDirection,
+    headingColor: DEFAULT_BANNER_APPEARANCE.headingColor,
+    descriptionColor: DEFAULT_BANNER_APPEARANCE.descriptionColor,
+    textShadowEnabled: DEFAULT_BANNER_APPEARANCE.textShadowEnabled,
+    contentAlignment: DEFAULT_BANNER_APPEARANCE.contentAlignment,
+    verticalAlignment: DEFAULT_BANNER_APPEARANCE.verticalAlignment,
   });
+
+  // Calculate live text-to-overlay contrast ratio
+  const contrastInfo = useMemo(() => {
+    return calculateContrast(
+      formData.headingColor,
+      formData.overlayColor,
+      formData.overlayOpacity
+    );
+  }, [formData.headingColor, formData.overlayColor, formData.overlayOpacity]);
+
+  const applyRecommendedAppearance = () => {
+    setFormData((prev) => ({
+      ...prev,
+      overlayType: "GRADIENT",
+      overlayColor: "#000000",
+      overlayOpacity: 60,
+      gradientDirection: "LEFT_TO_RIGHT",
+      headingColor: "#FFFFFF",
+      descriptionColor: "#EAE5DC",
+      textShadowEnabled: true,
+    }));
+    toast.success("Applied recommended readability settings!");
+  };
 
   // Fetch all active banners
   const fetchBanners = useCallback(async () => {
@@ -253,6 +301,16 @@ const BannerManagement = () => {
         targetType: formData.targetType || "COURSE",
         startDate: formData.startDate ? new Date(formData.startDate).toISOString() : null,
         endDate: formData.endDate ? new Date(formData.endDate).toISOString() : null,
+        // Appearance & Readability Persistence
+        overlayType: formData.overlayType || "GRADIENT",
+        overlayColor: formData.overlayColor || "#000000",
+        overlayOpacity: Number(formData.overlayOpacity ?? 50),
+        gradientDirection: formData.gradientDirection || "LEFT_TO_RIGHT",
+        headingColor: formData.headingColor || "#FFFFFF",
+        descriptionColor: formData.descriptionColor || "#EAE5DC",
+        textShadowEnabled: Boolean(formData.textShadowEnabled),
+        contentAlignment: formData.contentAlignment || "LEFT",
+        verticalAlignment: formData.verticalAlignment || "CENTER",
       };
 
       if (editingBanner) {
@@ -292,6 +350,15 @@ const BannerManagement = () => {
       targetType: "COURSE",
       startDate: "",
       endDate: "",
+      overlayType: DEFAULT_BANNER_APPEARANCE.overlayType,
+      overlayColor: DEFAULT_BANNER_APPEARANCE.overlayColor,
+      overlayOpacity: DEFAULT_BANNER_APPEARANCE.overlayOpacity,
+      gradientDirection: DEFAULT_BANNER_APPEARANCE.gradientDirection,
+      headingColor: DEFAULT_BANNER_APPEARANCE.headingColor,
+      descriptionColor: DEFAULT_BANNER_APPEARANCE.descriptionColor,
+      textShadowEnabled: DEFAULT_BANNER_APPEARANCE.textShadowEnabled,
+      contentAlignment: DEFAULT_BANNER_APPEARANCE.contentAlignment,
+      verticalAlignment: DEFAULT_BANNER_APPEARANCE.verticalAlignment,
     });
   };
 
@@ -312,6 +379,15 @@ const BannerManagement = () => {
       targetType: banner.targetType || "COURSE",
       startDate: banner.startDate ? banner.startDate.slice(0, 10) : "",
       endDate: banner.endDate ? banner.endDate.slice(0, 10) : "",
+      overlayType: banner.overlayType || DEFAULT_BANNER_APPEARANCE.overlayType,
+      overlayColor: banner.overlayColor || DEFAULT_BANNER_APPEARANCE.overlayColor,
+      overlayOpacity: banner.overlayOpacity !== undefined && banner.overlayOpacity !== null ? Number(banner.overlayOpacity) : DEFAULT_BANNER_APPEARANCE.overlayOpacity,
+      gradientDirection: banner.gradientDirection || DEFAULT_BANNER_APPEARANCE.gradientDirection,
+      headingColor: banner.headingColor || DEFAULT_BANNER_APPEARANCE.headingColor,
+      descriptionColor: banner.descriptionColor || DEFAULT_BANNER_APPEARANCE.descriptionColor,
+      textShadowEnabled: banner.textShadowEnabled !== undefined && banner.textShadowEnabled !== null ? Boolean(banner.textShadowEnabled) : DEFAULT_BANNER_APPEARANCE.textShadowEnabled,
+      contentAlignment: banner.contentAlignment || DEFAULT_BANNER_APPEARANCE.contentAlignment,
+      verticalAlignment: banner.verticalAlignment || DEFAULT_BANNER_APPEARANCE.verticalAlignment,
     });
     setShowForm(true);
   };
@@ -404,17 +480,17 @@ const BannerManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] font-sans p-4 sm:p-6 lg:p-8 selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] font-sans p-4 sm:p-6 lg:p-8 selection:bg-[#5B3E57] dark:bg-[#D1A7CC]/30 selection:text-white">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* ── HEADER BANNER: OBSIDIAN LUXURY ────────────────────────────── */}
-        <div className="relative overflow-hidden rounded-3xl bg-[#0F0F13] p-6 sm:p-8 border border-white/[0.04] shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)]">
+        <div className="relative overflow-hidden rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] p-6 sm:p-8 border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)]">
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14141A] border border-white/[0.06] text-xs font-semibold text-[#C5A880]">
-                <Layers size={13} className="text-[#C5A880]" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs font-semibold text-[#5B3E57] dark:text-[#D1A7CC]">
+                <Layers size={13} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
                 <span>Enterprise Marketing Telemetry • Admin Core</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#F5F5F7]">
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#282521] dark:text-[#EDE8E1]">
                 Banner & Promotional Management
               </h1>
               <p className="text-xs sm:text-sm text-[#A1A1AA] max-w-xl">
@@ -430,9 +506,9 @@ const BannerManagement = () => {
                   fetchDeletedBanners();
                 }}
                 disabled={loading}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#14141A] hover:bg-[#1B1B24] border border-white/[0.06] text-[#F5F5F7] font-semibold text-xs transition active:scale-95 cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] hover:bg-[#EAE5DC] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] text-[#282521] dark:text-[#EDE8E1] font-semibold text-xs transition active:scale-95 cursor-pointer disabled:opacity-50"
               >
-                <RefreshCw size={14} className={loading ? "animate-spin text-[#C5A880]" : ""} />
+                <RefreshCw size={14} className={loading ? "animate-spin text-[#5B3E57] dark:text-[#D1A7CC]" : ""} />
                 <span>Refresh Matrix</span>
               </button>
 
@@ -443,7 +519,7 @@ const BannerManagement = () => {
                   resetFormData();
                   setShowForm(true);
                 }}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#C5A880] to-[#E5CCA8] text-[#070709] font-bold text-xs shadow-[0_0_20px_rgba(197,168,128,0.25)] hover:brightness-110 transition active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#5B3E57] to-[#9A6B56] text-[#FFFEFA] text-[#FFFEFA] dark:text-[#151413] font-bold text-xs shadow-md hover:brightness-110 transition active:scale-95 cursor-pointer"
               >
                 <Plus size={16} />
                 <span>Create Banner</span>
@@ -454,69 +530,69 @@ const BannerManagement = () => {
 
         {/* ── AUTHORITATIVE ANALYTICS TELEMETRY CARDS ───────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-[#0F0F13] rounded-2xl border border-white/[0.04] p-5 space-y-2">
-            <div className="flex items-center justify-between text-[#8E8E93]">
+          <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-5 space-y-2">
+            <div className="flex items-center justify-between text-[#635E56] dark:text-[#A8A196]">
               <span className="text-xs font-semibold">Total Impressions</span>
-              <div className="p-1.5 rounded-lg bg-[#14141A] text-emerald-400">
+              <div className="p-1.5 rounded-lg bg-[#F5F2EC] dark:bg-[#151413] text-emerald-400">
                 <TrendingUp size={16} />
               </div>
             </div>
             <p className="text-2xl font-mono font-bold text-white">
               {telemetryStats.totalImpressions.toLocaleString()}
             </p>
-            <p className="text-[11px] text-[#71717A]">Verified viewport exposures</p>
+            <p className="text-[11px] text-[#756E64] dark:text-[#7A7368]">Verified viewport exposures</p>
           </div>
 
-          <div className="bg-[#0F0F13] rounded-2xl border border-white/[0.04] p-5 space-y-2">
-            <div className="flex items-center justify-between text-[#8E8E93]">
+          <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-5 space-y-2">
+            <div className="flex items-center justify-between text-[#635E56] dark:text-[#A8A196]">
               <span className="text-xs font-semibold">CTA Clicks</span>
-              <div className="p-1.5 rounded-lg bg-[#14141A] text-sky-400">
+              <div className="p-1.5 rounded-lg bg-[#F5F2EC] dark:bg-[#151413] text-sky-400">
                 <Users size={16} />
               </div>
             </div>
             <p className="text-2xl font-mono font-bold text-white">
               {telemetryStats.totalClicks.toLocaleString()}
             </p>
-            <p className="text-[11px] text-[#71717A]">Verified button interactions</p>
+            <p className="text-[11px] text-[#756E64] dark:text-[#7A7368]">Verified button interactions</p>
           </div>
 
-          <div className="bg-[#0F0F13] rounded-2xl border border-white/[0.04] p-5 space-y-2">
-            <div className="flex items-center justify-between text-[#8E8E93]">
+          <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-5 space-y-2">
+            <div className="flex items-center justify-between text-[#635E56] dark:text-[#A8A196]">
               <span className="text-xs font-semibold">Click-Through Rate</span>
-              <div className="p-1.5 rounded-lg bg-[#14141A] text-purple-400">
+              <div className="p-1.5 rounded-lg bg-[#F5F2EC] dark:bg-[#151413] text-purple-400">
                 <BarChart3 size={16} />
               </div>
             </div>
             <p className="text-2xl font-mono font-bold text-white">
               {telemetryStats.avgCtr}
             </p>
-            <p className="text-[11px] text-[#71717A]">Aggregate CTR velocity</p>
+            <p className="text-[11px] text-[#756E64] dark:text-[#7A7368]">Aggregate CTR velocity</p>
           </div>
 
-          <div className="bg-[#0F0F13] rounded-2xl border border-white/[0.04] p-5 space-y-2">
-            <div className="flex items-center justify-between text-[#8E8E93]">
+          <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-5 space-y-2">
+            <div className="flex items-center justify-between text-[#635E56] dark:text-[#A8A196]">
               <span className="text-xs font-semibold">Active Campaigns</span>
-              <div className="p-1.5 rounded-lg bg-[#14141A] text-[#C5A880]">
+              <div className="p-1.5 rounded-lg bg-[#F5F2EC] dark:bg-[#151413] text-[#5B3E57] dark:text-[#D1A7CC]">
                 <Sparkles size={16} />
               </div>
             </div>
             <p className="text-2xl font-mono font-bold text-white">
               {telemetryStats.activeCount}
             </p>
-            <p className="text-[11px] text-[#71717A]">Serving on public storefront</p>
+            <p className="text-[11px] text-[#756E64] dark:text-[#7A7368]">Serving on public storefront</p>
           </div>
         </div>
 
         {/* ── TAB SELECTOR & CATALOG SCOPE ──────────────────────────────── */}
-        <div className="flex items-center justify-between border-b border-white/[0.04] pb-4">
-          <div className="flex items-center gap-2 p-1 rounded-xl bg-[#0F0F13] border border-white/[0.04]">
+        <div className="flex items-center justify-between border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] pb-4">
+          <div className="flex items-center gap-2 p-1 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
             <button
               type="button"
               onClick={() => setActiveTab("active")}
               className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === "active"
-                  ? "bg-[#C5A880] text-[#070709] font-bold shadow-sm"
-                  : "text-[#8E8E93] hover:text-white"
+                  ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold shadow-sm"
+                  : "text-[#635E56] dark:text-[#A8A196] hover:text-white"
               }`}
             >
               Active Banners ({banners.length})
@@ -526,8 +602,8 @@ const BannerManagement = () => {
               onClick={() => setActiveTab("deleted")}
               className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === "deleted"
-                  ? "bg-[#C5A880] text-[#070709] font-bold shadow-sm"
-                  : "text-[#8E8E93] hover:text-white"
+                  ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold shadow-sm"
+                  : "text-[#635E56] dark:text-[#A8A196] hover:text-white"
               }`}
             >
               Archived / Deleted ({deletedBanners.length})
@@ -544,22 +620,22 @@ const BannerManagement = () => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
                 transition={SPRING_TRANSITION}
-                className="w-full max-w-2xl bg-[#0F0F13] border border-white/[0.08] rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden"
+                className="w-full max-w-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden"
               >
                 {/* Fixed Header */}
-                <div className="flex items-center justify-between p-6 pb-4 border-b border-white/[0.06] bg-[#0F0F13] flex-shrink-0">
+                <div className="flex items-center justify-between p-6 pb-4 border-b border-[#E3DCD3] dark:border-white/[0.06] bg-[#FFFEFA] dark:bg-[#1D1C1A] flex-shrink-0">
                   <div>
                     <h2 className="text-lg font-bold text-white">
                       {editingBanner ? "Edit Promotional Banner" : "Create Promotional Banner"}
                     </h2>
-                    <p className="text-xs text-[#8E8E93]">
+                    <p className="text-xs text-[#635E56] dark:text-[#A8A196]">
                       Authoritative persistence via Course Service on Port 8083
                     </p>
                   </div>
                   <button
                     type="button"
                     onClick={() => setShowForm(false)}
-                    className="p-2 rounded-xl text-[#8E8E93] hover:text-white hover:bg-white/[0.04] transition cursor-pointer"
+                    className="p-2 rounded-xl text-[#635E56] dark:text-[#A8A196] hover:text-white hover:bg-white/[0.04] transition cursor-pointer"
                   >
                     <X size={18} />
                   </button>
@@ -579,7 +655,7 @@ const BannerManagement = () => {
                         value={formData.title}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         placeholder="e.g. Master Distributed Systems with Go"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880]/30 transition"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] focus:ring-1 focus:ring-[#5B3E57] dark:focus:ring-[#D1A7CC]/30 transition"
                         required
                       />
                     </div>
@@ -591,10 +667,10 @@ const BannerManagement = () => {
                       <select
                         value={formData.targetType}
                         onChange={(e) => setFormData({ ...formData, targetType: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white outline-none focus:border-[#C5A880] transition cursor-pointer"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition cursor-pointer"
                       >
                         {TARGET_TYPES.map((t) => (
-                          <option key={t.value} value={t.value} className="bg-[#14141A]">
+                          <option key={t.value} value={t.value} className="bg-[#F5F2EC] dark:bg-[#151413]">
                             {t.label}
                           </option>
                         ))}
@@ -612,7 +688,7 @@ const BannerManagement = () => {
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       rows={2}
                       placeholder="Brief overview explaining course outcome, credential level, or exclusive promotional tier..."
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880]/30 transition resize-none"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] focus:ring-1 focus:ring-[#5B3E57] dark:focus:ring-[#D1A7CC]/30 transition resize-none"
                     />
                   </div>
 
@@ -625,7 +701,7 @@ const BannerManagement = () => {
                     {/* Drag & Drop Upload Zone */}
                     <div
                       onClick={() => fileInputRef.current?.click()}
-                      className="border border-dashed border-white/[0.1] hover:border-[#C5A880]/50 rounded-2xl p-4 bg-[#14141A]/50 hover:bg-[#14141A] transition flex flex-col items-center justify-center gap-2 cursor-pointer group"
+                      className="border border-dashed border-white/[0.1] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] rounded-2xl p-4 bg-[#F5F2EC] dark:bg-[#151413]/50 hover:bg-[#F5F2EC] dark:bg-[#151413] transition flex flex-col items-center justify-center gap-2 cursor-pointer group"
                     >
                       <input
                         ref={fileInputRef}
@@ -636,20 +712,20 @@ const BannerManagement = () => {
                       />
                       {uploadingImage ? (
                         <div className="flex flex-col items-center gap-2 py-2">
-                          <Loader2 size={24} className="animate-spin text-[#C5A880]" />
-                          <span className="text-xs text-[#C5A880] font-semibold">
+                          <Loader2 size={24} className="animate-spin text-[#5B3E57] dark:text-[#D1A7CC]" />
+                          <span className="text-xs text-[#5B3E57] dark:text-[#D1A7CC] font-semibold">
                             Validating dimensions & uploading to Cloud Storage...
                           </span>
                         </div>
                       ) : (
                         <>
-                          <div className="p-2.5 rounded-xl bg-[#0F0F13] border border-white/[0.04] text-[#C5A880] group-hover:scale-105 transition-transform">
+                          <div className="p-2.5 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[#5B3E57] dark:text-[#D1A7CC] group-hover:scale-105 transition-transform">
                             <Upload size={18} />
                           </div>
-                          <p className="text-xs text-[#F5F5F7] font-semibold">
+                          <p className="text-xs text-[#282521] dark:text-[#EDE8E1] font-semibold">
                             Click to upload or drag & drop 16:9 banner
                           </p>
-                          <p className="text-[10px] text-[#71717A]">
+                          <p className="text-[10px] text-[#756E64] dark:text-[#7A7368]">
                             PNG, JPG, WebP up to 1MB (Enforces 16:9 aspect ratio and 800×450 minimum)
                           </p>
                         </>
@@ -662,26 +738,388 @@ const BannerManagement = () => {
                       value={formData.imageUrl}
                       onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                       placeholder="Or enter direct image CDN URL: https://images.unsplash.com/..."
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] transition"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition"
                       required
                     />
 
-                    {/* Live Preview */}
-                    {formData.imageUrl && (
-                      <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden border border-white/[0.06] bg-black">
-                        <img
-                          src={formData.imageUrl}
-                          alt="Banner Preview"
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                          }}
-                        />
-                        <div className="absolute bottom-2 right-2 px-2 py-1 rounded bg-black/70 backdrop-blur-md text-[10px] text-white">
-                          Live 16:9 Preview
+                    {/* Mobile Banner Image URL input */}
+                    <div>
+                      <label className="block text-[11px] font-semibold text-[#A1A1AA] mb-1">
+                        Mobile Specific Banner Image URL (Optional 9:16 portrait crop)
+                      </label>
+                      <input
+                        type="url"
+                        value={formData.mobileImageUrl}
+                        onChange={(e) => setFormData({ ...formData, mobileImageUrl: e.target.value })}
+                        placeholder="Optional mobile image URL (defaults to main desktop image)"
+                        className="w-full px-3.5 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition"
+                      />
+                    </div>
+                  </div>
+
+                  {/* ── BANNER APPEARANCE & READABILITY SETTINGS ──────────────── */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413]/70 border border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
+                    <div className="flex items-center justify-between pb-2 border-b border-[#E3DCD3] dark:border-white/[0.06]">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 rounded-lg bg-[#5B3E57]/40 text-[#5B3E57] dark:text-[#D1A7CC] border border-[#5B3E57]">
+                          <Palette size={16} />
+                        </div>
+                        <div>
+                          <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                            Banner Appearance & Readability
+                          </h3>
+                          <p className="text-[11px] text-[#635E56] dark:text-[#A8A196]">
+                            Dynamic overlay, text contrast safeguards, typography colors, and layout positioning
+                          </p>
                         </div>
                       </div>
-                    )}
+
+                      {/* Device switch for form preview */}
+                      <div className="flex items-center gap-1 p-0.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06]">
+                        <button
+                          type="button"
+                          onClick={() => setFormPreviewDevice("desktop")}
+                          className={`px-2 py-1 rounded text-[10px] font-semibold transition cursor-pointer flex items-center gap-1 ${
+                            formPreviewDevice === "desktop"
+                              ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold"
+                              : "text-[#635E56] dark:text-[#A8A196] hover:text-white"
+                          }`}
+                        >
+                          <Monitor size={11} />
+                          <span>16:9</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setFormPreviewDevice("mobile")}
+                          className={`px-2 py-1 rounded text-[10px] font-semibold transition cursor-pointer flex items-center gap-1 ${
+                            formPreviewDevice === "mobile"
+                              ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold"
+                              : "text-[#635E56] dark:text-[#A8A196] hover:text-white"
+                          }`}
+                        >
+                          <Smartphone size={11} />
+                          <span>9:16</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* LIVE INTERACTIVE READABILITY PREVIEW */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-semibold text-[#A1A1AA]">Live Readability Preview</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] text-[#635E56] dark:text-[#A8A196]">
+                            Calculated Ratio: <strong className="text-white font-mono">{contrastInfo.ratio}:1</strong>
+                          </span>
+                          <span
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              contrastInfo.isAccessible
+                                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                                : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                            }`}
+                          >
+                            {contrastInfo.isAccessible ? (
+                              <>
+                                <ShieldCheck size={12} />
+                                <span>WCAG AA Pass</span>
+                              </>
+                            ) : (
+                              <>
+                                <AlertTriangle size={12} />
+                                <span>Low Contrast</span>
+                              </>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Live Canvas Box */}
+                      <div className="flex justify-center p-2 rounded-xl bg-black/60 border border-[#E3DCD3] dark:border-white/[0.06] overflow-hidden">
+                        <div
+                          className={`relative overflow-hidden rounded-xl border border-[#E3DCD3] dark:border-white/[0.08] transition-all duration-300 ${
+                            formPreviewDevice === "desktop"
+                              ? "w-full aspect-[16/9] max-h-[220px]"
+                              : "w-[200px] aspect-[9/16] max-h-[300px]"
+                          }`}
+                        >
+                          <img
+                            src={
+                              formPreviewDevice === "mobile" && formData.mobileImageUrl
+                                ? formData.mobileImageUrl
+                                : (formData.imageUrl || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1600")
+                            }
+                            alt="Readability Preview"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src = "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1600";
+                            }}
+                          />
+
+                          {/* Dynamic Admin-Configured Overlay */}
+                          <div className="absolute inset-0 transition-all duration-200" style={getOverlayStyle(formData)} />
+
+                          {/* Dynamic Positioned Content */}
+                          <div
+                            className={`absolute inset-0 p-4 flex flex-col ${getContentAlignmentClasses(
+                              formData.contentAlignment
+                            )} ${getVerticalAlignmentClasses(formData.verticalAlignment)}`}
+                          >
+                            <span className="px-2 py-0.5 rounded-full bg-[#F5F2EC] dark:bg-[#151413]/80 border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 text-[9px] font-bold text-[#5B3E57] dark:text-[#D1A7CC] uppercase w-fit">
+                              {formData.targetType || "CURRICULUM"}
+                            </span>
+                            <h4
+                              className="text-sm font-extrabold leading-snug mt-1.5 transition-colors"
+                              style={{
+                                color: formData.headingColor || "#FFFFFF",
+                                textShadow: getTextShadowStyle(formData.textShadowEnabled),
+                              }}
+                            >
+                              {formData.title || "Banner Headline Preview"}
+                            </h4>
+                            <p
+                              className="text-[11px] line-clamp-2 mt-1 transition-colors"
+                              style={{
+                                color: formData.descriptionColor || "#EAE5DC",
+                                textShadow: getTextShadowStyle(formData.textShadowEnabled),
+                              }}
+                            >
+                              {formData.description || "Course synopsis and key learning takeaways preview..."}
+                            </p>
+                            <div className="pt-2">
+                              <span className="inline-flex items-center px-3 py-1 rounded-lg bg-gradient-to-r from-[#5B3E57] to-[#9A6B56] text-[#FFFEFA] text-[#FFFEFA] dark:text-[#151413] font-bold text-[10px] shadow-sm">
+                                {formData.buttonText || "Explore Curriculum"}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Low Contrast Warning & Recommendation Banner */}
+                      {!contrastInfo.isAccessible && (
+                        <div className="flex items-center justify-between p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs">
+                          <div className="flex items-center gap-2">
+                            <AlertTriangle size={15} className="shrink-0 text-amber-400" />
+                            <span>
+                              Contrast ratio ({contrastInfo.ratio}:1) is below WCAG standard (4.5:1). Increase overlay opacity or adjust text colors.
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={applyRecommendedAppearance}
+                            className="px-2.5 py-1 rounded-lg bg-amber-500 text-black font-bold text-[11px] hover:bg-amber-400 transition cursor-pointer shrink-0"
+                          >
+                            Apply Safe Settings
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* CONTROLS GRID */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                      {/* Overlay Type */}
+                      <div>
+                        <label className="block text-xs font-semibold text-[#A1A1AA] mb-1.5">
+                          Overlay Type
+                        </label>
+                        <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06]">
+                          {["NONE", "SOLID", "GRADIENT"].map((type) => (
+                            <button
+                              key={type}
+                              type="button"
+                              onClick={() => setFormData({ ...formData, overlayType: type })}
+                              className={`py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                                (formData.overlayType || "GRADIENT") === type
+                                  ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold shadow-sm"
+                                  : "text-[#635E56] dark:text-[#A8A196] hover:text-white"
+                              }`}
+                            >
+                              {type}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Overlay Color */}
+                      <div>
+                        <label className="block text-xs font-semibold text-[#A1A1AA] mb-1.5">
+                          Overlay Color
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="color"
+                            value={formData.overlayColor || "#000000"}
+                            onChange={(e) => setFormData({ ...formData, overlayColor: e.target.value })}
+                            className="w-10 h-9 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] cursor-pointer p-0.5"
+                          />
+                          <input
+                            type="text"
+                            value={formData.overlayColor || "#000000"}
+                            onChange={(e) => setFormData({ ...formData, overlayColor: e.target.value })}
+                            className="flex-1 px-3 py-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] text-xs font-mono text-white focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Overlay Opacity Slider */}
+                      <div>
+                        <div className="flex items-center justify-between text-xs mb-1.5">
+                          <label className="font-semibold text-[#A1A1AA]">
+                            Overlay Opacity
+                          </label>
+                          <span className="font-mono text-white font-bold">{formData.overlayOpacity ?? 50}%</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="0"
+                          max="90"
+                          step="5"
+                          value={formData.overlayOpacity ?? 50}
+                          onChange={(e) => setFormData({ ...formData, overlayOpacity: Number(e.target.value) })}
+                          className="w-full accent-[#5B3E57] cursor-pointer"
+                        />
+                        <div className="flex justify-between text-[10px] text-[#756E64] dark:text-[#7A7368] mt-1 font-mono">
+                          <span>0% (Transparent)</span>
+                          <span>45%</span>
+                          <span>90% (Maximum)</span>
+                        </div>
+                      </div>
+
+                      {/* Gradient Direction (Visible if GRADIENT) */}
+                      <div>
+                        <label className="block text-xs font-semibold text-[#A1A1AA] mb-1.5">
+                          Gradient Direction
+                        </label>
+                        <select
+                          value={formData.gradientDirection || "LEFT_TO_RIGHT"}
+                          onChange={(e) => setFormData({ ...formData, gradientDirection: e.target.value })}
+                          disabled={formData.overlayType !== "GRADIENT"}
+                          className="w-full px-3 py-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition cursor-pointer disabled:opacity-40"
+                        >
+                          <option value="LEFT_TO_RIGHT">Left-to-Right (Standard)</option>
+                          <option value="RIGHT_TO_LEFT">Right-to-Left</option>
+                          <option value="TOP_TO_BOTTOM">Top-to-Bottom</option>
+                          <option value="BOTTOM_TO_TOP">Bottom-to-Top</option>
+                        </select>
+                      </div>
+
+                      {/* Heading Color */}
+                      <div>
+                        <label className="block text-xs font-semibold text-[#A1A1AA] mb-1.5">
+                          Headline Color
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="color"
+                            value={formData.headingColor || "#FFFFFF"}
+                            onChange={(e) => setFormData({ ...formData, headingColor: e.target.value })}
+                            className="w-10 h-9 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] cursor-pointer p-0.5"
+                          />
+                          <input
+                            type="text"
+                            value={formData.headingColor || "#FFFFFF"}
+                            onChange={(e) => setFormData({ ...formData, headingColor: e.target.value })}
+                            className="flex-1 px-3 py-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] text-xs font-mono text-white focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Description Color */}
+                      <div>
+                        <label className="block text-xs font-semibold text-[#A1A1AA] mb-1.5">
+                          Sub-Headline / Description Color
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="color"
+                            value={formData.descriptionColor || "#EAE5DC"}
+                            onChange={(e) => setFormData({ ...formData, descriptionColor: e.target.value })}
+                            className="w-10 h-9 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] cursor-pointer p-0.5"
+                          />
+                          <input
+                            type="text"
+                            value={formData.descriptionColor || "#EAE5DC"}
+                            onChange={(e) => setFormData({ ...formData, descriptionColor: e.target.value })}
+                            className="flex-1 px-3 py-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] text-xs font-mono text-white focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Horizontal Alignment */}
+                      <div>
+                        <label className="block text-xs font-semibold text-[#A1A1AA] mb-1.5">
+                          Horizontal Content Alignment
+                        </label>
+                        <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06]">
+                          {[
+                            { value: "LEFT", label: "Left", icon: AlignLeft },
+                            { value: "CENTER", label: "Center", icon: AlignCenter },
+                            { value: "RIGHT", label: "Right", icon: AlignRight },
+                          ].map(({ value, label, icon: Icon }) => (
+                            <button
+                              key={value}
+                              type="button"
+                              onClick={() => setFormData({ ...formData, contentAlignment: value })}
+                              className={`py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-1 ${
+                                (formData.contentAlignment || "LEFT") === value
+                                  ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold shadow-sm"
+                                  : "text-[#635E56] dark:text-[#A8A196] hover:text-white"
+                              }`}
+                            >
+                              <Icon size={12} />
+                              <span>{label}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Vertical Alignment */}
+                      <div>
+                        <label className="block text-xs font-semibold text-[#A1A1AA] mb-1.5">
+                          Vertical Content Alignment
+                        </label>
+                        <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06]">
+                          {["TOP", "CENTER", "BOTTOM"].map((pos) => (
+                            <button
+                              key={pos}
+                              type="button"
+                              onClick={() => setFormData({ ...formData, verticalAlignment: pos })}
+                              className={`py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                                (formData.verticalAlignment || "CENTER") === pos
+                                  ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold shadow-sm"
+                                  : "text-[#635E56] dark:text-[#A8A196] hover:text-white"
+                              }`}
+                            >
+                              {pos}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Text Shadow Toggle */}
+                      <div className="sm:col-span-2 flex items-center justify-between p-3 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06]">
+                        <div>
+                          <span className="text-xs font-semibold text-white block">
+                            Obsidian Soft Text Shadow
+                          </span>
+                          <span className="text-[11px] text-[#635E56] dark:text-[#A8A196]">
+                            Applies subtle shadow around letters to guarantee readability over diverse photographic imagery
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, textShadowEnabled: !formData.textShadowEnabled })}
+                          className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer p-0.5 ${
+                            formData.textShadowEnabled ? "bg-[#5B3E57] dark:bg-[#D1A7CC]" : "bg-[#27272A]"
+                          }`}
+                        >
+                          <div
+                            className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                              formData.textShadowEnabled ? "translate-x-5" : "translate-x-0"
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
                   {/* CTA Text & Action Route */}
@@ -695,7 +1133,7 @@ const BannerManagement = () => {
                         value={formData.buttonText}
                         onChange={(e) => setFormData({ ...formData, buttonText: e.target.value })}
                         placeholder="e.g. Explore Curriculum"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] transition"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition"
                       />
                     </div>
 
@@ -708,7 +1146,7 @@ const BannerManagement = () => {
                         value={formData.actionUrl}
                         onChange={(e) => setFormData({ ...formData, actionUrl: e.target.value })}
                         placeholder="/courses/20 or /courses?search=backend"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] transition"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition"
                       />
                     </div>
                   </div>
@@ -722,12 +1160,12 @@ const BannerManagement = () => {
                       <select
                         value={formData.status}
                         onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white outline-none focus:border-[#C5A880] transition cursor-pointer"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition cursor-pointer"
                       >
-                        <option value="ACTIVE" className="bg-[#14141A]">
+                        <option value="ACTIVE" className="bg-[#F5F2EC] dark:bg-[#151413]">
                           ACTIVE (Visible on Storefront)
                         </option>
-                        <option value="INACTIVE" className="bg-[#14141A]">
+                        <option value="INACTIVE" className="bg-[#F5F2EC] dark:bg-[#151413]">
                           INACTIVE (Draft / Unpublished)
                         </option>
                       </select>
@@ -742,7 +1180,7 @@ const BannerManagement = () => {
                         value={formData.courseId}
                         onChange={(e) => setFormData({ ...formData, courseId: e.target.value })}
                         placeholder="e.g. 20"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] transition"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition"
                       />
                     </div>
                   </div>
@@ -757,7 +1195,7 @@ const BannerManagement = () => {
                         type="date"
                         value={formData.startDate}
                         onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white outline-none focus:border-[#C5A880] transition"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition"
                       />
                     </div>
 
@@ -769,25 +1207,25 @@ const BannerManagement = () => {
                         type="date"
                         value={formData.endDate}
                         onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white outline-none focus:border-[#C5A880] transition"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition"
                       />
                     </div>
                   </div>
                 </div>
 
                 {/* Fixed Footer Action Bar */}
-                <div className="flex items-center justify-end gap-3 p-4 sm:p-5 border-t border-white/[0.06] bg-[#0F0F13]/95 backdrop-blur-md flex-shrink-0">
+                <div className="flex items-center justify-end gap-3 p-4 sm:p-5 border-t border-[#E3DCD3] dark:border-white/[0.06] bg-[#FFFEFA] dark:bg-[#1D1C1A]/95 backdrop-blur-md flex-shrink-0">
                   <button
                     type="button"
                     onClick={() => setShowForm(false)}
-                    className="px-4 py-2.5 rounded-xl bg-[#14141A] hover:bg-[#1B1B24] border border-white/[0.06] text-xs font-semibold text-[#A1A1AA] hover:text-white transition cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] hover:bg-[#EAE5DC] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] text-xs font-semibold text-[#A1A1AA] hover:text-white transition cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submitting || uploadingImage}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#C5A880] to-[#E5CCA8] text-[#070709] font-bold text-xs shadow-md hover:brightness-110 transition active:scale-95 disabled:opacity-50 cursor-pointer"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#5B3E57] to-[#9A6B56] text-[#FFFEFA] text-[#FFFEFA] dark:text-[#151413] font-bold text-xs shadow-md hover:brightness-110 transition active:scale-95 disabled:opacity-50 cursor-pointer"
                   >
                     {submitting ? (
                       <>
@@ -816,17 +1254,17 @@ const BannerManagement = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="w-full max-w-4xl bg-[#0F0F13] border border-white/[0.08] rounded-3xl p-6 shadow-2xl space-y-6"
+                className="w-full max-w-4xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-3xl p-6 shadow-2xl space-y-6"
               >
-                <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+                <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-white/[0.06]">
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-bold text-white">Live Storefront Preview</span>
-                    <div className="flex items-center gap-1 p-1 rounded-xl bg-[#14141A] border border-white/[0.06]">
+                    <div className="flex items-center gap-1 p-1 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06]">
                       <button
                         type="button"
                         onClick={() => setPreviewDevice("desktop")}
                         className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                          previewDevice === "desktop" ? "bg-[#C5A880] text-[#070709] font-bold" : "text-[#8E8E93]"
+                          previewDevice === "desktop" ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold" : "text-[#635E56] dark:text-[#A8A196]"
                         }`}
                       >
                         <Monitor size={13} />
@@ -836,7 +1274,7 @@ const BannerManagement = () => {
                         type="button"
                         onClick={() => setPreviewDevice("mobile")}
                         className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                          previewDevice === "mobile" ? "bg-[#C5A880] text-[#070709] font-bold" : "text-[#8E8E93]"
+                          previewDevice === "mobile" ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold" : "text-[#635E56] dark:text-[#A8A196]"
                         }`}
                       >
                         <Smartphone size={13} />
@@ -847,16 +1285,16 @@ const BannerManagement = () => {
                   <button
                     type="button"
                     onClick={() => setPreviewBanner(null)}
-                    className="p-1.5 rounded-xl text-[#8E8E93] hover:text-white hover:bg-white/[0.04] transition cursor-pointer"
+                    className="p-1.5 rounded-xl text-[#635E56] dark:text-[#A8A196] hover:text-white hover:bg-white/[0.04] transition cursor-pointer"
                   >
                     <X size={18} />
                   </button>
                 </div>
 
                 {/* Device Frame */}
-                <div className="flex justify-center py-4 bg-[#070709] rounded-2xl border border-white/[0.04] overflow-hidden">
+                <div className="flex justify-center py-4 bg-[#F5F2EC] dark:bg-[#151413] rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] overflow-hidden">
                   <div
-                    className={`relative overflow-hidden rounded-2xl bg-[#0F0F13] border border-white/[0.08] shadow-2xl transition-all duration-300 ${
+                    className={`relative overflow-hidden rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] shadow-2xl transition-all duration-300 ${
                       previewDevice === "desktop" ? "w-full max-w-3xl aspect-[16/9]" : "w-[360px] aspect-[9/16] max-h-[500px]"
                     }`}
                   >
@@ -865,19 +1303,36 @@ const BannerManagement = () => {
                       alt={previewBanner.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#070709] via-[#070709]/80 to-transparent" />
-                    <div className="absolute inset-0 p-6 flex flex-col justify-center space-y-3 max-w-md">
-                      <span className="px-2.5 py-0.5 rounded-full bg-[#14141A] border border-[#C5A880]/30 text-[10px] font-bold text-[#C5A880] uppercase w-fit">
+                    {/* Dynamic Admin Configured Overlay */}
+                    <div className="absolute inset-0" style={getOverlayStyle(previewBanner)} />
+                    <div
+                      className={`absolute inset-0 p-6 flex flex-col max-w-lg ${getContentAlignmentClasses(
+                        previewBanner.contentAlignment
+                      )} ${getVerticalAlignmentClasses(previewBanner.verticalAlignment)}`}
+                    >
+                      <span className="px-2.5 py-0.5 rounded-full bg-[#F5F2EC] dark:bg-[#151413]/90 border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 text-[10px] font-bold text-[#5B3E57] dark:text-[#D1A7CC] uppercase w-fit">
                         {previewBanner.targetType || "Special Campaign"}
                       </span>
-                      <h2 className="text-xl sm:text-2xl font-extrabold text-[#F5F5F7] leading-tight">
+                      <h2
+                        className="text-xl sm:text-2xl font-extrabold leading-tight mt-2"
+                        style={{
+                          color: previewBanner.headingColor || "#FFFFFF",
+                          textShadow: getTextShadowStyle(previewBanner.textShadowEnabled),
+                        }}
+                      >
                         {previewBanner.title}
                       </h2>
-                      <p className="text-xs text-[#A1A1AA] line-clamp-3">
+                      <p
+                        className="text-xs line-clamp-3 mt-1.5"
+                        style={{
+                          color: previewBanner.descriptionColor || "#EAE5DC",
+                          textShadow: getTextShadowStyle(previewBanner.textShadowEnabled),
+                        }}
+                      >
                         {previewBanner.description}
                       </p>
-                      <div className="pt-2">
-                        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#C5A880] to-[#E5CCA8] text-[#070709] font-bold text-xs shadow-md">
+                      <div className="pt-3">
+                        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#5B3E57] to-[#9A6B56] text-[#FFFEFA] text-[#FFFEFA] dark:text-[#151413] font-bold text-xs shadow-md">
                           {previewBanner.ctaText || "Explore Curriculum"}
                         </span>
                       </div>
@@ -889,7 +1344,7 @@ const BannerManagement = () => {
                   <button
                     type="button"
                     onClick={() => setPreviewBanner(null)}
-                    className="px-4 py-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs font-semibold text-white"
+                    className="px-4 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs font-semibold text-white"
                   >
                     Close Preview
                   </button>
@@ -907,21 +1362,21 @@ const BannerManagement = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="w-full max-w-md bg-[#0F0F13] border border-white/[0.08] rounded-3xl p-6 shadow-2xl space-y-4"
+                className="w-full max-w-md bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-3xl p-6 shadow-2xl space-y-4"
               >
                 <div className="flex items-center gap-3">
                   <div
                     className={`p-3 rounded-2xl ${
                       confirmModal.isDestructive
                         ? "bg-rose-500/15 border border-rose-500/30 text-rose-400"
-                        : "bg-[#C5A880]/15 border border-[#C5A880]/30 text-[#C5A880]"
+                        : "bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 text-[#5B3E57] dark:text-[#D1A7CC]"
                     }`}
                   >
                     <AlertTriangle size={20} />
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white">{confirmModal.title}</h3>
-                    <p className="text-xs text-[#8E8E93]">Admin Authoritative Operation</p>
+                    <p className="text-xs text-[#635E56] dark:text-[#A8A196]">Admin Authoritative Operation</p>
                   </div>
                 </div>
 
@@ -929,11 +1384,11 @@ const BannerManagement = () => {
                   {confirmModal.message}
                 </p>
 
-                <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/[0.04]">
+                <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
                   <button
                     type="button"
                     onClick={() => setConfirmModal({ ...confirmModal, isOpen: false })}
-                    className="px-4 py-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs font-semibold text-[#8E8E93] hover:text-white transition cursor-pointer"
+                    className="px-4 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs font-semibold text-[#635E56] dark:text-[#A8A196] hover:text-white transition cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -947,7 +1402,7 @@ const BannerManagement = () => {
                     className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
                       confirmModal.isDestructive
                         ? "bg-rose-500 hover:bg-rose-600 text-white"
-                        : "bg-[#C5A880] hover:bg-[#D4BC98] text-[#070709]"
+                        : "bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#462D42] dark:hover:bg-[#C293BD] text-[#FFFEFA] dark:text-[#151413]"
                     }`}
                   >
                     {confirmModal.confirmLabel}
@@ -969,10 +1424,10 @@ const BannerManagement = () => {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2, delay: idx * 0.04 }}
-                  className="group relative rounded-2xl overflow-hidden bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all shadow-sm flex flex-col justify-between"
+                  className="group relative rounded-2xl overflow-hidden bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 transition-all shadow-sm flex flex-col justify-between"
                 >
                   {/* 16:9 Image Frame */}
-                  <div className="relative aspect-[16/9] w-full bg-[#14141A] overflow-hidden">
+                  <div className="relative aspect-[16/9] w-full bg-[#F5F2EC] dark:bg-[#151413] overflow-hidden">
                     {banner.imageUrl ? (
                       <img
                         src={banner.imageUrl}
@@ -980,20 +1435,23 @@ const BannerManagement = () => {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#71717A]">
+                      <div className="w-full h-full flex items-center justify-center text-[#756E64] dark:text-[#7A7368]">
                         <ImageIcon size={36} />
                       </div>
                     )}
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F13] via-transparent to-black/30" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
 
                     {/* Badges */}
-                    <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                      <span className="px-2 py-0.5 rounded-md bg-[#14141A]/80 backdrop-blur-md border border-white/[0.08] text-[10px] font-mono font-bold text-[#C5A880]">
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
+                      <span className="px-2 py-0.5 rounded-md bg-[#F5F2EC] dark:bg-[#151413]/80 backdrop-blur-md border border-[#E3DCD3] dark:border-white/[0.08] text-[10px] font-mono font-bold text-[#5B3E57] dark:text-[#D1A7CC]">
                         #{idx + 1}
                       </span>
-                      <span className="px-2 py-0.5 rounded-md bg-[#282521]/45 dark:bg-black/75 backdrop-blur-md border border-white/[0.08] text-[10px] font-semibold text-white uppercase">
+                      <span className="px-2 py-0.5 rounded-md bg-[#282521]/45 dark:bg-black/75 backdrop-blur-md border border-[#E3DCD3] dark:border-white/[0.08] text-[10px] font-semibold text-white uppercase">
                         {banner.targetType || "COURSE"}
+                      </span>
+                      <span className="px-2 py-0.5 rounded-md bg-[#5B3E57]/80 backdrop-blur-md border border-[#E3DCD3] dark:border-white/[0.08] text-[10px] font-mono text-[#EAE5DC]">
+                        {banner.overlayType || "GRADIENT"} {banner.overlayOpacity !== undefined ? `${banner.overlayOpacity}%` : "50%"}
                       </span>
                     </div>
 
@@ -1013,16 +1471,16 @@ const BannerManagement = () => {
                   {/* Information Body */}
                   <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-sm font-bold text-white group-hover:text-[#C5A880] transition line-clamp-1">
+                      <h3 className="text-sm font-bold text-white group-hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition line-clamp-1">
                         {banner.title}
                       </h3>
-                      <p className="text-xs text-[#8E8E93] line-clamp-2 mt-1">
+                      <p className="text-xs text-[#635E56] dark:text-[#A8A196] line-clamp-2 mt-1">
                         {banner.description || "No campaign description registered."}
                       </p>
                     </div>
 
                     {/* Live Row Telemetry */}
-                    <div className="pt-2 border-t border-white/[0.04] grid grid-cols-3 gap-2 text-[10px] font-mono text-[#71717A]">
+                    <div className="pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] grid grid-cols-3 gap-2 text-[10px] font-mono text-[#756E64] dark:text-[#7A7368]">
                       <div>
                         <span className="block text-[#A1A1AA]">Views</span>
                         <span className="font-bold text-white">{Number(banner.impressions || 0).toLocaleString()}</span>
@@ -1043,7 +1501,7 @@ const BannerManagement = () => {
                   </div>
 
                   {/* Footer Controls: Reorder, Preview, Status Toggle, Edit, Delete */}
-                  <div className="px-4 py-3 bg-[#14141A]/50 border-t border-white/[0.04] flex items-center justify-between">
+                  <div className="px-4 py-3 bg-[#F5F2EC] dark:bg-[#151413]/50 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between">
                     {/* Reordering Up / Down */}
                     <div className="flex items-center gap-1">
                       <button
@@ -1051,7 +1509,7 @@ const BannerManagement = () => {
                         disabled={idx === 0}
                         onClick={() => handleReorder(idx, "up")}
                         title="Move Banner Up"
-                        className="p-1.5 rounded-lg bg-[#0F0F13] border border-white/[0.04] text-[#8E8E93] hover:text-white disabled:opacity-30 disabled:hover:text-[#8E8E93] transition cursor-pointer"
+                        className="p-1.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A8A196] hover:text-white disabled:opacity-30 disabled:hover:text-[#635E56] dark:text-[#A8A196] transition cursor-pointer"
                       >
                         <ArrowUp size={13} />
                       </button>
@@ -1060,7 +1518,7 @@ const BannerManagement = () => {
                         disabled={idx === banners.length - 1}
                         onClick={() => handleReorder(idx, "down")}
                         title="Move Banner Down"
-                        className="p-1.5 rounded-lg bg-[#0F0F13] border border-white/[0.04] text-[#8E8E93] hover:text-white disabled:opacity-30 disabled:hover:text-[#8E8E93] transition cursor-pointer"
+                        className="p-1.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A8A196] hover:text-white disabled:opacity-30 disabled:hover:text-[#635E56] dark:text-[#A8A196] transition cursor-pointer"
                       >
                         <ArrowDown size={13} />
                       </button>
@@ -1073,7 +1531,7 @@ const BannerManagement = () => {
                         type="button"
                         onClick={() => setPreviewBanner(banner)}
                         title="Preview Banner"
-                        className="p-1.5 rounded-lg bg-[#0F0F13] border border-white/[0.04] text-[#8E8E93] hover:text-white transition cursor-pointer"
+                        className="p-1.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A8A196] hover:text-white transition cursor-pointer"
                       >
                         <Eye size={14} />
                       </button>
@@ -1083,7 +1541,7 @@ const BannerManagement = () => {
                         type="button"
                         onClick={() => handleToggleStatus(banner)}
                         title={isActive ? "Deactivate (Unpublish)" : "Activate (Publish)"}
-                        className="p-1.5 rounded-lg bg-[#0F0F13] border border-white/[0.04] text-[#8E8E93] hover:text-[#C5A880] transition cursor-pointer"
+                        className="p-1.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A8A196] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition cursor-pointer"
                       >
                         {isActive ? <EyeOff size={14} /> : <CheckCircle2 size={14} className="text-emerald-400" />}
                       </button>
@@ -1093,7 +1551,7 @@ const BannerManagement = () => {
                         type="button"
                         onClick={() => handleEdit(banner)}
                         title="Edit Banner Payload"
-                        className="p-1.5 rounded-lg bg-[#0F0F13] border border-white/[0.04] text-[#8E8E93] hover:text-white transition cursor-pointer"
+                        className="p-1.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A8A196] hover:text-white transition cursor-pointer"
                       >
                         <Edit size={14} />
                       </button>
@@ -1103,7 +1561,7 @@ const BannerManagement = () => {
                         type="button"
                         onClick={() => requestDelete(banner)}
                         title="Archive / Soft-Delete"
-                        className="p-1.5 rounded-lg bg-[#0F0F13] border border-white/[0.04] text-[#8E8E93] hover:text-rose-400 transition cursor-pointer"
+                        className="p-1.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A8A196] hover:text-rose-400 transition cursor-pointer"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -1114,16 +1572,16 @@ const BannerManagement = () => {
             })}
 
             {banners.length === 0 && !loading && (
-              <div className="col-span-full py-16 text-center rounded-3xl border border-dashed border-white/[0.08] bg-[#0F0F13] p-8 space-y-3">
-                <ImageIcon size={40} className="mx-auto text-[#71717A]" />
+              <div className="col-span-full py-16 text-center rounded-3xl border border-dashed border-[#E3DCD3] dark:border-white/[0.08] bg-[#FFFEFA] dark:bg-[#1D1C1A] p-8 space-y-3">
+                <ImageIcon size={40} className="mx-auto text-[#756E64] dark:text-[#7A7368]" />
                 <h3 className="text-sm font-bold text-white">No Active Banners Found</h3>
-                <p className="text-xs text-[#8E8E93] max-w-md mx-auto">
+                <p className="text-xs text-[#635E56] dark:text-[#A8A196] max-w-md mx-auto">
                   No promotional banners are currently active in the database. Create a new campaign banner to display on the storefront hero.
                 </p>
                 <button
                   type="button"
                   onClick={() => setShowForm(true)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#C5A880] text-[#070709] font-bold text-xs mt-2 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold text-xs mt-2 cursor-pointer"
                 >
                   <Plus size={14} /> Create First Banner
                 </button>
@@ -1141,9 +1599,9 @@ const BannerManagement = () => {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, delay: idx * 0.04 }}
-                className="relative rounded-2xl overflow-hidden bg-[#0F0F13] border border-white/[0.04] opacity-80 hover:opacity-100 transition-all flex flex-col justify-between"
+                className="relative rounded-2xl overflow-hidden bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] opacity-80 hover:opacity-100 transition-all flex flex-col justify-between"
               >
-                <div className="relative aspect-[16/9] w-full bg-[#14141A] overflow-hidden grayscale">
+                <div className="relative aspect-[16/9] w-full bg-[#F5F2EC] dark:bg-[#151413] overflow-hidden grayscale">
                   {banner.imageUrl && (
                     <img
                       src={banner.imageUrl}
@@ -1151,7 +1609,7 @@ const BannerManagement = () => {
                       className="w-full h-full object-cover"
                     />
                   )}
-                  <div className="absolute inset-0 bg-[#070709]/70 backdrop-blur-[2px]" />
+                  <div className="absolute inset-0 bg-[#F5F2EC] dark:bg-[#151413]/70 backdrop-blur-[2px]" />
                   <span className="absolute top-3 right-3 px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-bold">
                     Archived
                   </span>
@@ -1159,19 +1617,19 @@ const BannerManagement = () => {
 
                 <div className="p-4 space-y-2">
                   <h3 className="text-sm font-bold text-white line-clamp-1">{banner.title}</h3>
-                  <p className="text-xs text-[#8E8E93] line-clamp-2">
+                  <p className="text-xs text-[#635E56] dark:text-[#A8A196] line-clamp-2">
                     {banner.description || "Archived banner snapshot."}
                   </p>
                 </div>
 
-                <div className="px-4 py-3 bg-[#14141A]/50 border-t border-white/[0.04] flex items-center justify-between">
-                  <span className="text-[11px] text-[#71717A] font-mono">
+                <div className="px-4 py-3 bg-[#F5F2EC] dark:bg-[#151413]/50 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between">
+                  <span className="text-[11px] text-[#756E64] dark:text-[#7A7368] font-mono">
                     ID #{banner.id}
                   </span>
                   <button
                     type="button"
                     onClick={() => requestRestore(banner)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#C5A880]/15 hover:bg-[#C5A880]/30 border border-[#C5A880]/30 text-[#C5A880] text-xs font-bold transition cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 hover:bg-[#5B3E57] dark:bg-[#D1A7CC]/30 border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-bold transition cursor-pointer"
                   >
                     <RotateCcw size={12} />
                     <span>Restore Banner</span>
@@ -1181,10 +1639,10 @@ const BannerManagement = () => {
             ))}
 
             {deletedBanners.length === 0 && (
-              <div className="col-span-full py-16 text-center rounded-3xl border border-dashed border-white/[0.08] bg-[#0F0F13] p-8 space-y-2">
+              <div className="col-span-full py-16 text-center rounded-3xl border border-dashed border-[#E3DCD3] dark:border-white/[0.08] bg-[#FFFEFA] dark:bg-[#1D1C1A] p-8 space-y-2">
                 <Check size={36} className="mx-auto text-emerald-400" />
                 <h3 className="text-sm font-bold text-white">No Archived Banners</h3>
-                <p className="text-xs text-[#8E8E93]">
+                <p className="text-xs text-[#635E56] dark:text-[#A8A196]">
                   All promotional banners are currently active or unarchived.
                 </p>
               </div>

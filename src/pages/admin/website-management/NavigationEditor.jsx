@@ -58,8 +58,8 @@ const NavItemRow = ({ item, index, total, onEdit, onDelete, onMove, onToggleVisi
     exit={{ opacity: 0, y: -6, scale: 0.98 }}
     transition={{ duration: 0.2 }}
     className={`flex items-center gap-3 p-3.5 rounded-xl border transition-colors ${item.isVisible
-      ? 'bg-[#0F0F13] border-white/[0.04] hover:border-white/[0.08]'
-      : 'bg-[#0F0F13]/50 border-white/[0.02] opacity-60'
+      ? 'bg-[#FFFEFA] dark:bg-[#1D1C1A] border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#E3DCD3] dark:border-white/[0.08]'
+      : 'bg-[#FFFEFA] dark:bg-[#1D1C1A]/50 border-white/[0.02] opacity-60'
       }`}
   >
     {/* Order controls */}
@@ -68,7 +68,7 @@ const NavItemRow = ({ item, index, total, onEdit, onDelete, onMove, onToggleVisi
         type="button"
         onClick={() => onMove(index, 'up')}
         disabled={index === 0}
-        className="p-1 rounded text-[#52525B] hover:text-[#F5F5F7] hover:bg-white/[0.04] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+        className="p-1 rounded text-[#52525B] hover:text-[#282521] dark:text-[#EDE8E1] hover:bg-white/[0.04] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
       >
         <ArrowUp className="w-3 h-3" />
       </button>
@@ -76,21 +76,21 @@ const NavItemRow = ({ item, index, total, onEdit, onDelete, onMove, onToggleVisi
         type="button"
         onClick={() => onMove(index, 'down')}
         disabled={index === total - 1}
-        className="p-1 rounded text-[#52525B] hover:text-[#F5F5F7] hover:bg-white/[0.04] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+        className="p-1 rounded text-[#52525B] hover:text-[#282521] dark:text-[#EDE8E1] hover:bg-white/[0.04] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
       >
         <ArrowDown className="w-3 h-3" />
       </button>
     </div>
 
     {/* Icon */}
-    <div className="w-7 h-7 rounded-lg bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#71717A] shrink-0">
+    <div className="w-7 h-7 rounded-lg bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center text-[#756E64] dark:text-[#7A7368] shrink-0">
       {item.openInNewTab ? <ExternalLink className="w-3.5 h-3.5" /> : <LinkIcon className="w-3.5 h-3.5" />}
     </div>
 
     {/* Content */}
     <div className="flex-1 min-w-0">
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-sm font-semibold text-[#F5F5F7] truncate">{item.label}</span>
+        <span className="text-sm font-semibold text-[#282521] dark:text-[#EDE8E1] truncate">{item.label}</span>
         <ItemTypeBadge type={item.itemType} />
         {item.openInNewTab && (
           <Badge variant="default">New Tab</Badge>
@@ -115,14 +115,14 @@ const NavItemRow = ({ item, index, total, onEdit, onDelete, onMove, onToggleVisi
       <button
         type="button"
         onClick={() => onEdit(item)}
-        className="p-1.5 rounded-lg text-[#A1A1AA] hover:text-[#F5F5F7] hover:bg-white/[0.04] transition-colors"
+        className="p-1.5 rounded-lg text-[#A1A1AA] hover:text-[#282521] dark:text-[#EDE8E1] hover:bg-white/[0.04] transition-colors"
       >
         <Edit2 className="w-4 h-4" />
       </button>
       <button
         type="button"
         onClick={() => onDelete(item)}
-        className="p-1.5 rounded-lg text-[#71717A] hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+        className="p-1.5 rounded-lg text-[#756E64] dark:text-[#7A7368] hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
       >
         <Trash2 className="w-4 h-4" />
       </button>
@@ -161,16 +161,16 @@ const ItemFormModal = ({ item, onSave, onClose, isSaving }) => {
         initial={{ opacity: 0, scale: 0.96, y: 8 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 8 }}
-        className="w-full max-w-md bg-[#0F0F13] border border-white/[0.08] rounded-2xl p-6 shadow-[0_24px_64px_rgba(0,0,0,0.9)]"
+        className="w-full max-w-md bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-2xl p-6 shadow-[0_24px_64px_rgba(0,0,0,0.9)]"
       >
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-base font-bold text-[#F5F5F7]">
+          <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1]">
             {isEdit ? 'Edit Navigation Item' : 'Add Navigation Item'}
           </h3>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#71717A] hover:text-[#F5F5F7] hover:bg-white/[0.04] transition-colors"
+            className="p-1.5 rounded-lg text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:text-[#EDE8E1] hover:bg-white/[0.04] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -218,7 +218,7 @@ const ItemFormModal = ({ item, onSave, onClose, isSaving }) => {
             <label className="flex items-center gap-3 cursor-pointer select-none">
               <div
                 onClick={() => handleChange('isVisible', !form.isVisible)}
-                className={`relative w-9 h-5 rounded-full transition-colors ${form.isVisible ? 'bg-[#C5A880]' : 'bg-[#1B1B24] border border-white/[0.08]'
+                className={`relative w-9 h-5 rounded-full transition-colors ${form.isVisible ? 'bg-[#5B3E57] dark:bg-[#D1A7CC]' : 'bg-[#EAE5DC] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08]'
                   }`}
               >
                 <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${form.isVisible ? 'translate-x-4' : 'translate-x-0.5'
@@ -230,7 +230,7 @@ const ItemFormModal = ({ item, onSave, onClose, isSaving }) => {
             <label className="flex items-center gap-3 cursor-pointer select-none">
               <div
                 onClick={() => handleChange('openInNewTab', !form.openInNewTab)}
-                className={`relative w-9 h-5 rounded-full transition-colors ${form.openInNewTab ? 'bg-[#C5A880]' : 'bg-[#1B1B24] border border-white/[0.08]'
+                className={`relative w-9 h-5 rounded-full transition-colors ${form.openInNewTab ? 'bg-[#5B3E57] dark:bg-[#D1A7CC]' : 'bg-[#EAE5DC] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08]'
                   }`}
               >
                 <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${form.openInNewTab ? 'translate-x-4' : 'translate-x-0.5'
@@ -260,14 +260,14 @@ const DeleteConfirmModal = ({ item, onConfirm, onClose, isDeleting }) => (
     <motion.div
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="w-full max-w-sm bg-[#0F0F13] border border-white/[0.08] rounded-2xl p-6 shadow-2xl"
+      className="w-full max-w-sm bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-2xl p-6 shadow-2xl"
     >
       <div className="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mb-4">
         <Trash2 className="w-5 h-5 text-rose-400" />
       </div>
-      <h3 className="text-base font-bold text-[#F5F5F7] mb-1">Remove Navigation Item</h3>
+      <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1] mb-1">Remove Navigation Item</h3>
       <p className="text-sm text-[#A1A1AA] mb-5">
-        Remove <strong className="text-[#F5F5F7]">"{item?.label}"</strong> from the navigation?
+        Remove <strong className="text-[#282521] dark:text-[#EDE8E1]">"{item?.label}"</strong> from the navigation?
         This will take effect after you publish.
       </p>
       <div className="flex gap-2">
@@ -374,7 +374,7 @@ const NavigationEditor = () => {
   }, [items]);
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] p-6 lg:p-8">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] p-6 lg:p-8">
       <div className="max-w-3xl mx-auto space-y-6">
 
         {/* ── HEADER ──────────────────────────────────────────── */}
@@ -387,17 +387,17 @@ const NavigationEditor = () => {
           <button
             type="button"
             onClick={() => navigate('/admin/website-management')}
-            className="p-2 rounded-xl text-[#71717A] hover:text-[#F5F5F7] hover:bg-white/[0.04] transition-colors"
+            className="p-2 rounded-xl text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:text-[#EDE8E1] hover:bg-white/[0.04] transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2.5 flex-1 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-[#C5A880]/10 border border-[#C5A880]/20 flex items-center justify-center">
-              <Navigation className="w-4 h-4 text-[#C5A880]" />
+            <div className="w-8 h-8 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/30 dark:border-[#D1A7CC]/30 flex items-center justify-center">
+              <Navigation className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
             </div>
             <div>
-              <h1 className="text-xl font-extrabold tracking-tight text-[#F5F5F7]">Header Navigation</h1>
-              <p className="text-xs text-[#71717A]">Manage the public navigation bar links and order</p>
+              <h1 className="text-xl font-extrabold tracking-tight text-[#282521] dark:text-[#EDE8E1]">Header Navigation</h1>
+              <p className="text-xs text-[#756E64] dark:text-[#7A7368]">Manage the public navigation bar links and order</p>
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
@@ -442,10 +442,10 @@ const NavigationEditor = () => {
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.08, ease: EASING }}
-          className="p-5 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-4"
+          className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-4"
         >
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-[#F5F5F7]">Navigation Items</h3>
+            <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Navigation Items</h3>
             <span className="text-xs text-[#52525B]">{items.length} items · {items.filter(i => i.isVisible).length} visible</span>
           </div>
 
@@ -468,7 +468,7 @@ const NavigationEditor = () => {
             {items.length === 0 && (
               <div className="flex flex-col items-center justify-center py-10 text-center">
                 <Navigation className="w-8 h-8 text-[#52525B] mb-2" />
-                <p className="text-sm text-[#71717A]">No navigation items yet</p>
+                <p className="text-sm text-[#756E64] dark:text-[#7A7368]">No navigation items yet</p>
                 <Button
                   variant="outline"
                   size="sm"
@@ -488,10 +488,10 @@ const NavigationEditor = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.35, delay: 0.15, ease: EASING }}
-          className="p-4 rounded-xl bg-[#0F0F13] border border-white/[0.04] text-xs text-[#52525B] space-y-1.5"
+          className="p-4 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-xs text-[#52525B] space-y-1.5"
         >
           <p className="text-[#A1A1AA] font-semibold">Navigation Tips</p>
-          <p>• Use <code className="text-[#C5A880]">/courses</code> for internal links, full URLs for external links.</p>
+          <p>• Use <code className="text-[#5B3E57] dark:text-[#D1A7CC]">/courses</code> for internal links, full URLs for external links.</p>
           <p>• Items marked invisible are hidden from visitors but remain in your configuration.</p>
           <p>• Changes take effect immediately after you publish from the CMS Overview.</p>
           <p>• Auth-aware buttons (Sign In / Get Started) are controlled by the frontend automatically.</p>

@@ -28,27 +28,27 @@ const ToggleSwitch = ({ checked, onChange, id }) => (
     role="switch"
     aria-checked={checked}
     onClick={() => onChange(!checked)}
-    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-1 focus:ring-[#C5A880] ${
-      checked ? "bg-[#C5A880]" : "bg-[#14141A] border border-white/10"
+    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-1 focus:ring-[#5B3E57] dark:focus:ring-[#D1A7CC] ${
+      checked ? "bg-[#5B3E57] dark:bg-[#D1A7CC]" : "bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10"
     }`}
   >
     <span
       className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform transition duration-200 ease-in-out ${
-        checked ? "translate-x-5 bg-[#070709]" : "translate-x-0 bg-[#8E8E93]"
+        checked ? "translate-x-5 bg-[#F5F2EC] dark:bg-[#151413]" : "translate-x-0 bg-[#8E8E93]"
       }`}
     />
   </button>
 );
 
 const PreferenceRow = ({ icon: Icon, title, description, value, onChange, id }) => (
-  <div className="flex items-center justify-between gap-4 py-4 border-b border-white/[0.04] last:border-b-0">
+  <div className="flex items-center justify-between gap-4 py-4 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] last:border-b-0">
     <div className="flex items-start gap-3.5">
-      <div className="w-9 h-9 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center flex-shrink-0 text-[#C5A880]">
+      <div className="w-9 h-9 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center flex-shrink-0 text-[#5B3E57] dark:text-[#D1A7CC]">
         <Icon size={16} />
       </div>
       <div>
-        <p className="text-xs sm:text-sm font-semibold text-[#F5F5F7]">{title}</p>
-        <p className="text-[11px] sm:text-xs text-[#8E8E93] mt-0.5 leading-relaxed">{description}</p>
+        <p className="text-xs sm:text-sm font-semibold text-[#282521] dark:text-[#EDE8E1]">{title}</p>
+        <p className="text-[11px] sm:text-xs text-[#635E56] dark:text-[#A8A196] mt-0.5 leading-relaxed">{description}</p>
       </div>
     </div>
     <ToggleSwitch checked={Boolean(value)} onChange={onChange} id={id} />
@@ -84,34 +84,34 @@ export const NotificationPreferences = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-[50vh] flex items-center justify-center bg-[#070709]">
+      <div className="min-h-[50vh] flex items-center justify-center bg-[#F5F2EC] dark:bg-[#151413]">
         <div className="text-center space-y-3">
-          <Loader2 className="w-8 h-8 animate-spin text-[#C5A880] mx-auto" />
-          <p className="text-xs text-[#8E8E93] font-mono">Syncing alert preferences...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-[#5B3E57] dark:text-[#D1A7CC] mx-auto" />
+          <p className="text-xs text-[#635E56] dark:text-[#A8A196] font-mono">Syncing alert preferences...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] py-8 px-4 sm:px-6">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] py-8 px-4 sm:px-6">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header Card */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={SPRING_TRANSITION}
-          className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-xl relative overflow-hidden"
+          className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-xl relative overflow-hidden"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#C5A880]">
+            <div className="w-10 h-10 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
               <Sliders size={20} />
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-[#F5F5F7]">
+              <h1 className="text-xl font-bold tracking-tight text-[#282521] dark:text-[#EDE8E1]">
                 Notification Stream Governance
               </h1>
-              <p className="text-xs text-[#8E8E93] font-mono mt-0.5">
+              <p className="text-xs text-[#635E56] dark:text-[#A8A196] font-mono mt-0.5">
                 Configure delivery channels and telemetry alert sensitivity
               </p>
             </div>
@@ -119,11 +119,11 @@ export const NotificationPreferences = () => {
         </motion.div>
 
         {/* Channel Preferences */}
-        <div className="bg-[#0F0F13] rounded-3xl border border-white/[0.04] shadow-xl p-6">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-[#F5F5F7] mb-1 font-mono">
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-3xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] shadow-xl p-6">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-[#282521] dark:text-[#EDE8E1] mb-1 font-mono">
             Delivery Channels
           </h2>
-          <p className="text-xs text-[#8E8E93] mb-4">
+          <p className="text-xs text-[#635E56] dark:text-[#A8A196] mb-4">
             Select the communication transports to receive live events through.
           </p>
           <div>
@@ -155,11 +155,11 @@ export const NotificationPreferences = () => {
         </div>
 
         {/* Content Subscriptions */}
-        <div className="bg-[#0F0F13] rounded-3xl border border-white/[0.04] shadow-xl p-6">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-[#F5F5F7] mb-1 font-mono">
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-3xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] shadow-xl p-6">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-[#282521] dark:text-[#EDE8E1] mb-1 font-mono">
             Event Topics & Alerts
           </h2>
-          <p className="text-xs text-[#8E8E93] mb-4">
+          <p className="text-xs text-[#635E56] dark:text-[#A8A196] mb-4">
             Filter the specific platform events you wish to be alerted about.
           </p>
           <div>

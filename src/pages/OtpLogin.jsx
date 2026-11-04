@@ -59,10 +59,10 @@ function OtpLogin() {
     <AuthShell variant="otp" showTerms={false} showBackHome>
       <div className="space-y-6">
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 mx-auto rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shadow-sm">
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] shadow-sm">
             <KeyRound size={22} />
           </div>
-          <h1 className="text-2xl font-extrabold text-[#F5F5F7] tracking-tight">
+          <h1 className="text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
             Sign In with Email OTP
           </h1>
           <p className="text-xs text-[#A1A1AA]">
@@ -86,7 +86,7 @@ function OtpLogin() {
               htmlFor="otp-login-email"
               className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block"
             >
-              Email Address <span className="text-[#C5A880]">*</span>
+              Email Address <span className="text-[#5B3E57] dark:text-[#D1A7CC]">*</span>
             </label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" size={16} aria-hidden="true" />
@@ -122,7 +122,7 @@ function OtpLogin() {
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#070709] border-t-transparent" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#FFFEFA] dark:border-[#151413] border-t-transparent" />
                 <span>Sending Code...</span>
               </span>
             ) : (
@@ -134,10 +134,10 @@ function OtpLogin() {
           </button>
         </form>
 
-        <div className="pt-4 border-t border-white/[0.04] text-center space-y-2">
+        <div className="pt-4 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-center space-y-2">
           <Link
             to="/login"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-[#A1A1AA] hover:text-[#C5A880] transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-[#A1A1AA] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors"
           >
             <ArrowLeft size={14} />
             <span>Return to standard Password Sign In</span>

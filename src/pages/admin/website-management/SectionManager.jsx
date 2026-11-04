@@ -155,23 +155,23 @@ export default function SectionManager() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] p-6 lg:p-8">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] p-6 lg:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Navigation & Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.04]">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/admin/website-management')}
-              className="p-2 rounded-xl bg-[#0F0F13] border border-white/[0.06] hover:border-[#C5A880]/30 text-[#A1A1AA] hover:text-white transition-colors"
+              className="p-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 text-[#A1A1AA] hover:text-white transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-[#F5F5F7] flex items-center gap-2">
-                <Layers className="w-5 h-5 text-[#C5A880]" />
+              <h1 className="text-xl font-bold tracking-tight text-[#282521] dark:text-[#EDE8E1] flex items-center gap-2">
+                <Layers className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" />
                 Landing Page Sections
               </h1>
-              <p className="text-xs text-[#71717A] mt-0.5">
+              <p className="text-xs text-[#756E64] dark:text-[#7A7368] mt-0.5">
                 Organize structure, reorder layout, and configure section visibility
               </p>
             </div>
@@ -199,14 +199,14 @@ export default function SectionManager() {
 
         {/* Section List */}
         {isLoading ? (
-          <div className="p-12 text-center text-sm text-[#71717A] bg-[#0F0F13] rounded-2xl border border-white/[0.04]">
+          <div className="p-12 text-center text-sm text-[#756E64] dark:text-[#7A7368] bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
             Hydrating section pipeline...
           </div>
         ) : sections.length === 0 ? (
-          <div className="p-12 text-center bg-[#0F0F13] rounded-2xl border border-white/[0.04] space-y-3">
-            <Layers className="w-8 h-8 text-[#71717A] mx-auto" />
-            <p className="text-sm font-semibold text-[#F5F5F7]">No sections configured</p>
-            <p className="text-xs text-[#71717A]">Add your first section to build the landing page</p>
+          <div className="p-12 text-center bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-3">
+            <Layers className="w-8 h-8 text-[#756E64] dark:text-[#7A7368] mx-auto" />
+            <p className="text-sm font-semibold text-[#282521] dark:text-[#EDE8E1]">No sections configured</p>
+            <p className="text-xs text-[#756E64] dark:text-[#7A7368]">Add your first section to build the landing page</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -214,8 +214,8 @@ export default function SectionManager() {
               <motion.div
                 key={section.id || index}
                 layout
-                className={`p-4 rounded-2xl bg-[#0F0F13] border transition-all ${
-                  section.isVisible ? 'border-white/[0.04]' : 'border-white/[0.02] opacity-60'
+                className={`p-4 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border transition-all ${
+                  section.isVisible ? 'border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]' : 'border-white/[0.02] opacity-60'
                 } flex items-center justify-between gap-4`}
               >
                 {/* Reorder Buttons & Details */}
@@ -225,7 +225,7 @@ export default function SectionManager() {
                       type="button"
                       disabled={index === 0}
                       onClick={() => handleMove(index, -1)}
-                      className="p-1 rounded hover:bg-white/[0.06] text-[#71717A] hover:text-[#C5A880] disabled:opacity-20"
+                      className="p-1 rounded hover:bg-white/[0.06] text-[#756E64] dark:text-[#7A7368] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] disabled:opacity-20"
                     >
                       <ChevronUp className="w-3.5 h-3.5" />
                     </button>
@@ -233,22 +233,22 @@ export default function SectionManager() {
                       type="button"
                       disabled={index === sections.length - 1}
                       onClick={() => handleMove(index, 1)}
-                      className="p-1 rounded hover:bg-white/[0.06] text-[#71717A] hover:text-[#C5A880] disabled:opacity-20"
+                      className="p-1 rounded hover:bg-white/[0.06] text-[#756E64] dark:text-[#7A7368] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] disabled:opacity-20"
                     >
                       <ChevronDown className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <div className="w-8 h-8 rounded-lg bg-[#14141A] border border-white/[0.06] flex items-center justify-center font-mono text-xs text-[#C5A880]">
+                  <div className="w-8 h-8 rounded-lg bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center font-mono text-xs text-[#5B3E57] dark:text-[#D1A7CC]">
                     {index + 1}
                   </div>
 
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-[#F5F5F7] truncate">{section.title}</p>
+                      <p className="text-sm font-semibold text-[#282521] dark:text-[#EDE8E1] truncate">{section.title}</p>
                       <Badge variant="default">{section.sectionType}</Badge>
                     </div>
-                    <p className="text-xs text-[#71717A] font-mono mt-0.5">{section.sectionKey}</p>
+                    <p className="text-xs text-[#756E64] dark:text-[#7A7368] font-mono mt-0.5">{section.sectionKey}</p>
                   </div>
                 </div>
 
@@ -265,7 +265,7 @@ export default function SectionManager() {
                   <button
                     type="button"
                     onClick={() => setEditingSection(section)}
-                    className="p-2 rounded-xl text-[#A1A1AA] hover:text-[#C5A880] hover:bg-white/[0.04] transition-colors"
+                    className="p-2 rounded-xl text-[#A1A1AA] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] hover:bg-white/[0.04] transition-colors"
                     title="Edit Section"
                   >
                     <Edit2 className="w-4 h-4" />
@@ -292,11 +292,11 @@ export default function SectionManager() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="w-full max-w-lg bg-[#0F0F13] border border-white/[0.08] rounded-2xl p-6 space-y-5"
+                className="w-full max-w-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-2xl p-6 space-y-5"
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-bold text-[#F5F5F7]">Add New Section</h3>
-                  <button onClick={() => setIsCreating(false)} className="text-[#71717A] hover:text-white">
+                  <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1]">Add New Section</h3>
+                  <button onClick={() => setIsCreating(false)} className="text-[#756E64] dark:text-[#7A7368] hover:text-white">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -309,7 +309,7 @@ export default function SectionManager() {
                       placeholder="e.g. Production Architectural Tracks"
                       value={newSection.title}
                       onChange={e => setNewSection({ ...newSection, title: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] text-sm text-[#F5F5F7] outline-none focus:border-[#C5A880]/60"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-sm text-[#282521] dark:text-[#EDE8E1] outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC]"
                     />
                   </div>
                   <div>
@@ -319,7 +319,7 @@ export default function SectionManager() {
                       placeholder="e.g. ARCH_TRACKS"
                       value={newSection.sectionKey}
                       onChange={e => setNewSection({ ...newSection, sectionKey: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] text-sm text-[#F5F5F7] outline-none focus:border-[#C5A880]/60"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-sm text-[#282521] dark:text-[#EDE8E1] outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC]"
                     />
                   </div>
                   <div>
@@ -327,10 +327,10 @@ export default function SectionManager() {
                     <select
                       value={newSection.sectionType}
                       onChange={e => setNewSection({ ...newSection, sectionType: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] text-sm text-[#F5F5F7] outline-none focus:border-[#C5A880]/60"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-sm text-[#282521] dark:text-[#EDE8E1] outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC]"
                     >
                       {SECTION_TYPES.map(t => (
-                        <option key={t.value} value={t.value} className="bg-[#14141A]">
+                        <option key={t.value} value={t.value} className="bg-[#F5F2EC] dark:bg-[#151413]">
                           {t.label} ({t.value})
                         </option>
                       ))}
@@ -358,11 +358,11 @@ export default function SectionManager() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="w-full max-w-lg bg-[#0F0F13] border border-white/[0.08] rounded-2xl p-6 space-y-5"
+                className="w-full max-w-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-2xl p-6 space-y-5"
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="text-base font-bold text-[#F5F5F7]">Edit Section: {editingSection.title}</h3>
-                  <button onClick={() => setEditingSection(null)} className="text-[#71717A] hover:text-white">
+                  <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1]">Edit Section: {editingSection.title}</h3>
+                  <button onClick={() => setEditingSection(null)} className="text-[#756E64] dark:text-[#7A7368] hover:text-white">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -374,7 +374,7 @@ export default function SectionManager() {
                       required
                       value={editingSection.title || ''}
                       onChange={e => setEditingSection({ ...editingSection, title: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] text-sm text-[#F5F5F7] outline-none focus:border-[#C5A880]/60"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-sm text-[#282521] dark:text-[#EDE8E1] outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC]"
                     />
                   </div>
                   <div>
@@ -382,10 +382,10 @@ export default function SectionManager() {
                     <select
                       value={editingSection.sectionType}
                       onChange={e => setEditingSection({ ...editingSection, sectionType: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] text-sm text-[#F5F5F7] outline-none focus:border-[#C5A880]/60"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-sm text-[#282521] dark:text-[#EDE8E1] outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC]"
                     >
                       {SECTION_TYPES.map(t => (
-                        <option key={t.value} value={t.value} className="bg-[#14141A]">
+                        <option key={t.value} value={t.value} className="bg-[#F5F2EC] dark:bg-[#151413]">
                           {t.label}
                         </option>
                       ))}
@@ -397,7 +397,7 @@ export default function SectionManager() {
                       rows={5}
                       value={editingSection.contentJson || '{}'}
                       onChange={e => setEditingSection({ ...editingSection, contentJson: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] text-xs font-mono text-[#F5F5F7] outline-none focus:border-[#C5A880]/60"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-xs font-mono text-[#282521] dark:text-[#EDE8E1] outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC]"
                     />
                   </div>
                   <div className="flex justify-end gap-2 pt-2">

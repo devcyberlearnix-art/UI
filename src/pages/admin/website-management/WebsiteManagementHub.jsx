@@ -46,22 +46,22 @@ const CMSCard = ({ icon: Icon, title, description, path, status, onClick }) => (
     whileHover={{ y: -2 }}
     whileTap={{ scale: 0.98 }}
     transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-    className="w-full text-left p-5 rounded-2xl bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all duration-200 group"
+    className="w-full text-left p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 transition-all duration-200 group"
   >
     <div className="flex items-start justify-between gap-3">
       <div className="flex items-start gap-3 min-w-0">
-        <div className="w-9 h-9 rounded-xl bg-[#14141A] border border-white/[0.06] flex items-center justify-center shrink-0 text-[#C5A880] group-hover:border-[#C5A880]/30 transition-colors">
+        <div className="w-9 h-9 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center shrink-0 text-[#5B3E57] dark:text-[#D1A7CC] group-hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 transition-colors">
           <Icon className="w-4 h-4" />
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-[#F5F5F7] leading-tight">{title}</p>
-          <p className="text-xs text-[#71717A] mt-0.5 leading-relaxed">{description}</p>
+          <p className="text-sm font-semibold text-[#282521] dark:text-[#EDE8E1] leading-tight">{title}</p>
+          <p className="text-xs text-[#756E64] dark:text-[#7A7368] mt-0.5 leading-relaxed">{description}</p>
         </div>
       </div>
-      <ChevronRight className="w-4 h-4 text-[#52525B] group-hover:text-[#C5A880] transition-colors shrink-0 mt-0.5" />
+      <ChevronRight className="w-4 h-4 text-[#52525B] group-hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors shrink-0 mt-0.5" />
     </div>
     {status && (
-      <div className="mt-3 pt-3 border-t border-white/[0.04]">
+      <div className="mt-3 pt-3 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
         <StatusBadge status={status} />
       </div>
     )}
@@ -154,7 +154,7 @@ const WebsiteManagementHub = () => {
   }, [publishSummary]);
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] p-6 lg:p-8">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] p-6 lg:p-8">
       <div className="max-w-5xl mx-auto space-y-8">
 
         {/* ── PAGE HEADER ────────────────────────────────────── */}
@@ -166,14 +166,14 @@ const WebsiteManagementHub = () => {
         >
           <div>
             <div className="flex items-center gap-2.5 mb-1">
-              <div className="w-8 h-8 rounded-lg bg-[#C5A880]/10 border border-[#C5A880]/20 flex items-center justify-center">
-                <Globe className="w-4 h-4 text-[#C5A880]" />
+              <div className="w-8 h-8 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/30 dark:border-[#D1A7CC]/30 flex items-center justify-center">
+                <Globe className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
               </div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-[#F5F5F7]">
+              <h1 className="text-2xl font-extrabold tracking-tight text-[#282521] dark:text-[#EDE8E1]">
                 Website Management
               </h1>
             </div>
-            <p className="text-sm text-[#71717A] ml-10.5">
+            <p className="text-sm text-[#756E64] dark:text-[#7A7368] ml-10.5">
               Control every element of the public landing page without code changes.
             </p>
           </div>
@@ -203,18 +203,18 @@ const WebsiteManagementHub = () => {
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.05, ease: EASING }}
-          className="p-4 rounded-2xl bg-[#0F0F13] border border-white/[0.04] flex flex-wrap gap-6 items-center"
+          className="p-4 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex flex-wrap gap-6 items-center"
         >
           <div className="flex items-center gap-2 text-xs text-[#A1A1AA]">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
             <span>Public landing page is <span className="text-emerald-400 font-semibold">Live</span></span>
           </div>
           <div className="flex items-center gap-2 text-xs text-[#A1A1AA]">
-            <Clock className="w-4 h-4 text-[#C5A880]" />
+            <Clock className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
             <span>Draft changes will be published atomically</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-[#A1A1AA]">
-            <AlertCircle className="w-4 h-4 text-[#71717A]" />
+            <AlertCircle className="w-4 h-4 text-[#756E64] dark:text-[#7A7368]" />
             <span>Backend CMS APIs required for live data</span>
           </div>
           <div className="ml-auto">
@@ -222,7 +222,7 @@ const WebsiteManagementHub = () => {
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-[#C5A880] hover:text-[#D4BC98] transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs text-[#5B3E57] dark:text-[#D1A7CC] hover:text-[#D4BC98] transition-colors"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               Open landing page
@@ -237,7 +237,7 @@ const WebsiteManagementHub = () => {
           transition={{ duration: 0.4, delay: 0.1, ease: EASING }}
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold text-[#F5F5F7] uppercase tracking-wider">
+            <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] uppercase tracking-wider">
               CMS Modules
             </h2>
             <span className="text-xs text-[#52525B]">{cmsSections.length} modules</span>
@@ -265,7 +265,7 @@ const WebsiteManagementHub = () => {
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2, ease: EASING }}
-          className="p-5 rounded-2xl bg-[#0F0F13] border border-white/[0.04]"
+          className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]"
         >
           <h3 className="text-xs font-bold text-[#A1A1AA] uppercase tracking-wider mb-4">
             Quick Actions
@@ -322,20 +322,20 @@ const WebsiteManagementHub = () => {
             initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 8 }}
-            className="w-full max-w-md bg-[#0F0F13] border border-white/[0.08] rounded-2xl p-6 shadow-[0_24px_64px_rgba(0,0,0,0.9)]"
+            className="w-full max-w-md bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-2xl p-6 shadow-[0_24px_64px_rgba(0,0,0,0.9)]"
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-[#C5A880]/10 border border-[#C5A880]/20 flex items-center justify-center text-[#C5A880]">
+              <div className="w-10 h-10 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/30 dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
                 <Zap className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#F5F5F7]">Publish Landing Page</h3>
-                <p className="text-xs text-[#71717A]">This will update the live public website.</p>
+                <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1]">Publish Landing Page</h3>
+                <p className="text-xs text-[#756E64] dark:text-[#7A7368]">This will update the live public website.</p>
               </div>
             </div>
 
             <div className="space-y-3 mb-5">
-              <div className="p-3 rounded-xl bg-[#14141A] border border-white/[0.04] text-xs text-[#A1A1AA] space-y-1">
+              <div className="p-3 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-xs text-[#A1A1AA] space-y-1">
                 <p>• All draft changes will become publicly visible</p>
                 <p>• A revision snapshot will be created automatically</p>
                 <p>• The CDN cache will be invalidated</p>

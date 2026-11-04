@@ -64,7 +64,7 @@ const ForgotPassword = () => {
 
   const strengthLabel = useMemo(() => {
     if (strength === 5) return { label: "Robust", color: "text-emerald-400" };
-    if (strength >= 4) return { label: "Good", color: "text-[#C5A880]" };
+    if (strength >= 4) return { label: "Good", color: "text-[#5B3E57] dark:text-[#D1A7CC]" };
     if (strength >= 3) return { label: "Fair", color: "text-amber-400" };
     return { label: "Weak", color: "text-rose-400" };
   }, [strength]);
@@ -240,10 +240,10 @@ const ForgotPassword = () => {
       <div className="space-y-6">
         {/* Step Indicator Header */}
         <div className="text-center space-y-2">
-          <div className="mx-auto w-12 h-12 rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shadow-sm">
-            <ShieldCheck className="w-5 h-5 text-[#C5A880]" />
+          <div className="mx-auto w-12 h-12 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] shadow-sm">
+            <ShieldCheck className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" />
           </div>
-          <h1 className="text-2xl font-extrabold text-[#F5F5F7] tracking-tight">
+          <h1 className="text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
             {step === 1 && "Password Recovery"}
             {step === 2 && "Enter Recovery Code"}
             {step === 3 && "Set New Password"}
@@ -261,7 +261,7 @@ const ForgotPassword = () => {
                 key={s}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
                   s === step
-                    ? "w-8 bg-[#C5A880]"
+                    ? "w-8 bg-[#5B3E57] dark:bg-[#D1A7CC]"
                     : s < step
                     ? "w-4 bg-emerald-400"
                     : "w-4 bg-white/[0.08]"
@@ -290,7 +290,7 @@ const ForgotPassword = () => {
                 htmlFor="recovery-email"
                 className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block"
               >
-                Account Email Address <span className="text-[#C5A880]">*</span>
+                Account Email Address <span className="text-[#5B3E57] dark:text-[#D1A7CC]">*</span>
               </label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" size={16} aria-hidden="true" />
@@ -327,7 +327,7 @@ const ForgotPassword = () => {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#070709] border-t-transparent" />
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#FFFEFA] dark:border-[#151413] border-t-transparent" />
                   <span>Sending Recovery Code...</span>
                 </span>
               ) : (
@@ -343,10 +343,10 @@ const ForgotPassword = () => {
         {/* ── STEP 2: Enter 6-Digit OTP ── */}
         {step === 2 && (
           <form onSubmit={handleVerifyOtp} noValidate className="space-y-4">
-            <div className="rounded-2xl bg-[#14141A] p-3 border border-white/[0.04] flex items-center justify-between text-xs">
+            <div className="rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] p-3 border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between text-xs">
               <div>
                 <span className="text-[#71717A] block text-[10px] uppercase font-semibold">Sent to</span>
-                <span className="text-[#F5F5F7] font-medium truncate max-w-[200px] inline-block">{email}</span>
+                <span className="text-[#282521] dark:text-[#EDE8E1] font-medium truncate max-w-[200px] inline-block">{email}</span>
               </div>
               <button
                 type="button"
@@ -355,7 +355,7 @@ const ForgotPassword = () => {
                   setOtp("");
                   setFieldErrors({});
                 }}
-                className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#C5A880] hover:underline cursor-pointer"
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#5B3E57] dark:text-[#D1A7CC] hover:underline cursor-pointer"
               >
                 <ArrowLeft size={12} /> Change
               </button>
@@ -366,7 +366,7 @@ const ForgotPassword = () => {
                 htmlFor="recovery-otp"
                 className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block"
               >
-                6-Digit Recovery Passcode <span className="text-[#C5A880]">*</span>
+                6-Digit Recovery Passcode <span className="text-[#5B3E57] dark:text-[#D1A7CC]">*</span>
               </label>
               <div className="relative">
                 <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" size={16} aria-hidden="true" />
@@ -407,7 +407,7 @@ const ForgotPassword = () => {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#070709] border-t-transparent" />
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#FFFEFA] dark:border-[#151413] border-t-transparent" />
                   <span>Verifying Code...</span>
                 </span>
               ) : (
@@ -422,9 +422,9 @@ const ForgotPassword = () => {
               type="button"
               onClick={handleResendOtp}
               disabled={resending || !canResend}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/[0.04] bg-[#14141A] px-4 py-2.5 text-xs font-semibold text-[#A1A1AA] hover:text-[#F5F5F7] hover:border-white/[0.08] transition-colors disabled:opacity-50 cursor-pointer"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] bg-[#F5F2EC] dark:bg-[#151413] px-4 py-2.5 text-xs font-semibold text-[#A1A1AA] hover:text-[#282521] dark:text-[#EDE8E1] hover:border-[#E3DCD3] dark:border-white/[0.08] transition-colors disabled:opacity-50 cursor-pointer"
             >
-              <RefreshCw size={14} className={resending ? "animate-spin text-[#C5A880]" : ""} />
+              <RefreshCw size={14} className={resending ? "animate-spin text-[#5B3E57] dark:text-[#D1A7CC]" : ""} />
               {resending
                 ? "Resending..."
                 : cooldownSeconds > 0
@@ -445,7 +445,7 @@ const ForgotPassword = () => {
                 htmlFor="new-password"
                 className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block"
               >
-                New Password <span className="text-[#C5A880]">*</span>
+                New Password <span className="text-[#5B3E57] dark:text-[#D1A7CC]">*</span>
               </label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" size={16} aria-hidden="true" />
@@ -471,7 +471,7 @@ const ForgotPassword = () => {
                   type="button"
                   aria-label={showNewPassword ? "Hide password" : "Show password"}
                   onClick={() => setShowNewPassword((v) => !v)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-[#F5F5F7] transition-colors focus:outline-none focus:text-[#C5A880]"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-[#282521] dark:text-[#EDE8E1] transition-colors focus:outline-none focus:text-[#5B3E57] dark:focus:text-[#D1A7CC]"
                 >
                   {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -485,7 +485,7 @@ const ForgotPassword = () => {
 
             {/* Password Security Requirements */}
             {newPassword && (
-              <div className="p-3.5 rounded-2xl bg-[#14141A] border border-white/[0.04] space-y-2.5 text-xs">
+              <div className="p-3.5 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-2.5 text-xs">
                 <span className="font-semibold text-[#A1A1AA] text-[11px] uppercase tracking-wider block">
                   Password Requirements:
                 </span>
@@ -500,16 +500,16 @@ const ForgotPassword = () => {
                     <span
                       key={rule}
                       className={`flex items-center gap-1.5 ${
-                        passwordChecks[rule] ? "text-[#C5A880] font-semibold" : "text-[#71717A]"
+                        passwordChecks[rule] ? "text-[#5B3E57] dark:text-[#D1A7CC] font-semibold" : "text-[#71717A]"
                       }`}
                     >
-                      {passwordChecks[rule] ? <Check size={12} className="text-[#C5A880]" /> : <Circle size={10} />}
+                      {passwordChecks[rule] ? <Check size={12} className="text-[#5B3E57] dark:text-[#D1A7CC]" /> : <Circle size={10} />}
                       <span>{label}</span>
                     </span>
                   ))}
                 </div>
 
-                <div className="pt-2 border-t border-white/[0.04] flex items-center justify-between text-[11px]">
+                <div className="pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between text-[11px]">
                   <span className="text-[#A1A1AA]">
                     Strength: <b className={strengthLabel.color}>{strengthLabel.label}</b>
                   </span>
@@ -522,7 +522,7 @@ const ForgotPassword = () => {
                             ? strength === 5
                               ? "bg-emerald-400"
                               : strength >= 3
-                              ? "bg-[#C5A880]"
+                              ? "bg-[#5B3E57] dark:bg-[#D1A7CC]"
                               : "bg-rose-400"
                             : "bg-white/[0.06]"
                         }`}
@@ -539,7 +539,7 @@ const ForgotPassword = () => {
                 htmlFor="confirm-new-password"
                 className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block"
               >
-                Confirm New Password <span className="text-[#C5A880]">*</span>
+                Confirm New Password <span className="text-[#5B3E57] dark:text-[#D1A7CC]">*</span>
               </label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" size={16} aria-hidden="true" />
@@ -564,7 +564,7 @@ const ForgotPassword = () => {
                   type="button"
                   aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
                   onClick={() => setShowConfirmPassword((v) => !v)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-[#F5F5F7] transition-colors focus:outline-none focus:text-[#C5A880]"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-[#282521] dark:text-[#EDE8E1] transition-colors focus:outline-none focus:text-[#5B3E57] dark:focus:text-[#D1A7CC]"
                 >
                   {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -597,7 +597,7 @@ const ForgotPassword = () => {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#070709] border-t-transparent" />
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#FFFEFA] dark:border-[#151413] border-t-transparent" />
                   <span>Resetting Password...</span>
                 </span>
               ) : (
@@ -611,10 +611,10 @@ const ForgotPassword = () => {
         )}
 
         {/* Return to Sign In */}
-        <div className="pt-4 border-t border-white/[0.04] text-center">
+        <div className="pt-4 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-center">
           <Link
             to="/login"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-[#A1A1AA] hover:text-[#C5A880] transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-[#A1A1AA] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors"
           >
             <ArrowLeft size={14} />
             <span>Return to Sign In</span>

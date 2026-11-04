@@ -9,8 +9,8 @@ const statusConfig = {
   },
   processing: {
     label: 'Processing Ingest',
-    className: 'bg-[#C5A880]/10 text-[#C5A880] border border-[#C5A880]/30 shadow-[0_0_12px_rgba(197,168,128,0.08)]',
-    dot: 'bg-[#C5A880] animate-pulse',
+    className: 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#5B3E57] dark:text-[#D1A7CC] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 shadow-sm',
+    dot: 'bg-[#5B3E57] dark:bg-[#D1A7CC] animate-pulse',
   },
   paid: {
     label: 'Settled & Verified',
@@ -34,7 +34,7 @@ const statusConfig = {
   },
   refunded: {
     label: 'Refund Disbursed',
-    className: 'bg-[#14141A] text-[#8E8E93] border border-white/10',
+    className: 'bg-[#F5F2EC] dark:bg-[#151413] text-[#635E56] dark:text-[#A8A196] border border-[#D5C0D1] dark:border-white/10',
     dot: 'bg-[#8E8E93]',
   },
 };

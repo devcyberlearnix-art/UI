@@ -637,7 +637,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
             <button
               type="button"
               onClick={() => setShowQuizExitModal(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-ink-300 hover:text-white border border-white/5 transition-all"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-ink-300 hover:text-white border border-[#E3DCD3] dark:border-white/5 transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Exit Assessment</span>
@@ -661,7 +661,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                 </span>
                 <span
                   className={`font-mono text-sm sm:text-base font-extrabold tracking-wider transition-colors duration-500 ${
-                    timerRatio <= 0.1 ? 'text-rose-400 animate-pulse' : timerRatio <= 0.3 ? 'text-amber-400' : 'text-[#C5A880]'
+                    timerRatio <= 0.1 ? 'text-rose-400 animate-pulse' : timerRatio <= 0.3 ? 'text-amber-400' : 'text-[#5B3E57] dark:text-[#D1A7CC]'
                   }`}
                 >
                   {formatTelemetryTime(quizTimerMs)}
@@ -712,7 +712,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
 
                 {/* Optional Syntax Highlighting Code Block */}
                 {currentQ.code && (
-                  <div className="p-4 rounded-2xl bg-ink-950 border border-white/10 font-mono text-xs text-cyan-300 overflow-x-auto shadow-inner">
+                  <div className="p-4 rounded-2xl bg-ink-950 border border-[#D5C0D1] dark:border-white/10 font-mono text-xs text-cyan-300 overflow-x-auto shadow-inner">
                     <pre>{currentQ.code}</pre>
                   </div>
                 )}
@@ -729,17 +729,17 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                         whileTap={{ scale: 0.99 }}
                         transition={SPRING}
                         onClick={() => handleSelectOption(currentQ.id, opt.id)}
-                        className={`p-4 sm:p-5 rounded-2xl border text-left transition-all relative overflow-hidden flex items-start gap-4 select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C5A880] ${
+                        className={`p-4 sm:p-5 rounded-2xl border text-left transition-all relative overflow-hidden flex items-start gap-4 select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#5B3E57] dark:focus-visible:ring-[#D1A7CC] ${
                           isSelected
-                            ? 'bg-[#C5A880]/15 border-[#C5A880] text-white'
+                            ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border-[#5B3E57] dark:border-[#D1A7CC] text-white'
                             : 'bg-obsidian-900/60 border-obsidian-800/60 text-ink-300 hover:text-white hover:bg-obsidian-850'
                         }`}
                       >
                         <div
                           className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold font-mono shrink-0 transition-colors ${
                             isSelected
-                              ? 'bg-[#C5A880] text-[#070709] shadow-sm'
-                              : 'bg-white/5 border border-white/10 text-ink-400'
+                              ? 'bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] shadow-sm'
+                              : 'bg-white/5 border border-[#D5C0D1] dark:border-white/10 text-ink-400'
                           }`}
                         >
                           {opt.id}
@@ -843,7 +843,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                 </div>
 
                 {/* Score Breakdown Metrics */}
-                <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-white/[0.02] border border-[#E3DCD3] dark:border-white/5">
                   <div className="flex flex-col items-center">
                     <span className="text-2xl font-extrabold text-white font-mono">
                       {quizResult?.scorePercentage}%
@@ -853,7 +853,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                     </span>
                   </div>
 
-                  <div className="flex flex-col items-center border-x border-white/5">
+                  <div className="flex flex-col items-center border-x border-[#E3DCD3] dark:border-white/5">
                     <span className="text-2xl font-extrabold text-emerald-400 font-mono">
                       {quizResult?.correctCount} / {quizResult?.totalQuestions}
                     </span>
@@ -909,14 +909,14 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={SPRING}
-                className="w-full max-w-md rounded-3xl bg-[#0F0F13] border border-white/[0.08] p-6 shadow-2xl space-y-4"
+                className="w-full max-w-md rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] p-6 shadow-2xl space-y-4"
               >
                 <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
                   <AlertTriangle className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#F5F5F7]">Exit Assessment Session?</h3>
-                  <p className="text-xs text-[#8E8E93] mt-1.5 leading-relaxed">
+                  <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1]">Exit Assessment Session?</h3>
+                  <p className="text-xs text-[#635E56] dark:text-[#A8A196] mt-1.5 leading-relaxed">
                     Your ongoing countdown timer will be forfeited and your current attempt discarded. Are you sure you wish to exit?
                   </p>
                 </div>
@@ -953,20 +953,20 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
   return (
     <div className="w-full space-y-6">
       {/* Top Navigation & Course Breadcrumb Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-white/[0.04]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
         <div className="flex items-center gap-3">
           <Link
             to="/student/my-learning"
-            className="p-2 rounded-xl text-[#8E8E93] hover:text-white hover:bg-white/[0.04] border border-transparent hover:border-white/[0.04] transition-colors"
+            className="p-2 rounded-xl text-[#635E56] dark:text-[#A8A196] hover:text-white hover:bg-white/[0.04] border border-transparent hover:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <h1 className="text-lg sm:text-xl font-bold text-[#F5F5F7] tracking-tight flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-[#C5A880]" />
+            <h1 className="text-lg sm:text-xl font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" />
               <span>{course?.title || 'Interactive Course Player'}</span>
             </h1>
-            <p className="text-xs text-[#8E8E93] mt-0.5">
+            <p className="text-xs text-[#635E56] dark:text-[#A8A196] mt-0.5">
               Current Track: <span className="text-white font-medium">{activeLecture?.title || 'Lecture Stream'}</span>
             </p>
           </div>
@@ -976,12 +976,12 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
         <div className="flex items-center gap-4 self-start sm:self-auto">
           <div className="w-36 sm:w-48 space-y-1">
             <div className="flex items-center justify-between text-[11px] font-bold">
-              <span className="text-[#8E8E93]">Track Progress</span>
+              <span className="text-[#635E56] dark:text-[#A8A196]">Track Progress</span>
               <span className="text-emerald-400 font-mono">{progressPercentage}%</span>
             </div>
-            <div className="w-full h-1.5 rounded-full bg-[#14141A] overflow-hidden">
+            <div className="w-full h-1.5 rounded-full bg-[#F5F2EC] dark:bg-[#151413] overflow-hidden">
               <motion.div
-                className="h-full bg-[#C5A880] rounded-full"
+                className="h-full bg-[#5B3E57] dark:bg-[#D1A7CC] rounded-full"
                 animate={{ width: `${progressPercentage}%` }}
                 transition={SPRING}
               />
@@ -1004,7 +1004,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
             tabIndex={0}
             onKeyDown={handlePlayerKeyDown}
             onMouseMove={handleMouseMovePlayer}
-            className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black border border-white/[0.04] shadow-2xl group focus:outline-none focus-visible:ring-1 focus-visible:ring-[#C5A880]"
+            className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] shadow-2xl group focus:outline-none focus-visible:ring-1 focus-visible:ring-[#5B3E57] dark:focus-visible:ring-[#D1A7CC]"
             aria-label="Video Player Canvas. Press Spacebar or K to play/pause, Left/Right arrow to seek, Up/Down for volume, M to mute, F for fullscreen."
           >
             {/* Live Stream Reconnection Overlay */}
@@ -1014,7 +1014,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
-                  className="absolute top-4 right-4 z-30 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0F0F13]/90 border border-amber-500/40 text-amber-300 text-xs backdrop-blur-md shadow-lg"
+                  className="absolute top-4 right-4 z-30 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A]/90 border border-amber-500/40 text-amber-300 text-xs backdrop-blur-md shadow-lg"
                 >
                   <RefreshCw className="w-3.5 h-3.5 animate-spin text-amber-400" />
                   <span className="font-mono text-[11px]">Stream reconnecting...</span>
@@ -1167,11 +1167,11 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                     {isSelected && (
                       <motion.div
                         layoutId="classroomTabIndicator"
-                        className="absolute inset-0 bg-[#C5A880]/15 border border-[#C5A880]/40 rounded-xl -z-10 shadow-[0_0_15px_rgba(197,168,128,0.06)]"
+                        className="absolute inset-0 bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57] dark:border-[#D1A7CC] rounded-xl -z-10 shadow-[0_0_15px_rgba(197,168,128,0.06)]"
                         transition={SPRING}
                       />
                     )}
-                    <Icon className={`w-4 h-4 ${isSelected ? 'text-[#C5A880]' : 'text-[#71717A]'}`} />
+                    <Icon className={`w-4 h-4 ${isSelected ? 'text-[#5B3E57] dark:text-[#D1A7CC]' : 'text-[#756E64] dark:text-[#7A7368]'}`} />
                     <span>{tab.label}</span>
                   </button>
                 );
@@ -1204,7 +1204,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                   Pay close attention to how partition keys enforce consumer thread affinity while preventing split-brain states.
                 </p>
 
-                <div className="p-4 rounded-2xl bg-ink-950 border border-white/5 font-mono text-[11px] text-brand-accent">
+                <div className="p-4 rounded-2xl bg-ink-950 border border-[#E3DCD3] dark:border-white/5 font-mono text-[11px] text-brand-accent">
                   <code># Terminal Deployment Verification<br />kubectl get statefulsets -n streaming-mesh -o wide</code>
                 </div>
               </motion.div>
@@ -1228,7 +1228,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                   ].map((res, idx) => (
                     <div
                       key={idx}
-                      className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-brand-500/30 flex items-center justify-between transition-colors"
+                      className="p-3.5 rounded-2xl bg-white/[0.02] border border-[#E3DCD3] dark:border-white/5 hover:border-brand-500/30 flex items-center justify-between transition-colors"
                     >
                       <div className="flex items-center gap-2.5">
                         <FileCode className="w-4 h-4 text-brand-accent shrink-0" />
@@ -1339,7 +1339,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                                 onClick={() => selectLecture(lecture)}
                                 className={`w-full p-2.5 rounded-xl flex items-center justify-between text-left transition-all ${
                                   isCurrent
-                                    ? 'bg-[#C5A880]/15 border border-[#C5A880]/40 text-white'
+                                    ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57] dark:border-[#D1A7CC] text-white'
                                     : 'hover:bg-white/[0.04] text-[#A1A1AA] hover:text-white'
                                 }`}
                               >
@@ -1347,7 +1347,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                                   {isDone ? (
                                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                                   ) : isCurrent ? (
-                                    <PlayCircle className="w-4 h-4 text-[#C5A880] shrink-0" />
+                                    <PlayCircle className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC] shrink-0" />
                                   ) : (
                                     <Circle className="w-4 h-4 text-[#52525B] shrink-0" />
                                   )}
@@ -1355,7 +1355,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                                     {lecture.title}
                                   </span>
                                 </div>
-                                <span className="text-[10px] text-[#71717A] font-mono shrink-0 ml-2">
+                                <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] font-mono shrink-0 ml-2">
                                   {lecture.duration}
                                 </span>
                               </button>
@@ -1368,10 +1368,10 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                               <button
                                 type="button"
                                 onClick={() => startQuizSession(section.quiz)}
-                                className="w-full p-3 rounded-xl bg-[#14141A] border border-white/[0.06] hover:border-[#C5A880]/40 flex items-center justify-between text-left transition-all group"
+                                className="w-full p-3 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] flex items-center justify-between text-left transition-all group"
                               >
                                 <div className="flex items-center gap-2.5">
-                                  <Award className="w-4 h-4 text-[#C5A880] group-hover:scale-110 transition-transform" />
+                                  <Award className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC] group-hover:scale-110 transition-transform" />
                                   <div>
                                     <p className="text-xs font-bold text-white">
                                       {section.quiz.title}
@@ -1381,7 +1381,7 @@ props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "500");`,
                                     </span>
                                   </div>
                                 </div>
-                                <ArrowRight className="w-4 h-4 text-[#C5A880] group-hover:translate-x-1 transition-transform" />
+                                <ArrowRight className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC] group-hover:translate-x-1 transition-transform" />
                               </button>
                             </div>
                           )}

@@ -110,23 +110,23 @@ export const Notifications = () => {
   const instructorsCount = notifications.filter((n) => n.audience === 'Instructors').length;
 
   return (
-    <div className="w-full space-y-6 font-sans selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="w-full space-y-6 font-sans selection:bg-[#5B3E57] dark:bg-[#D1A7CC]/30 selection:text-white">
       {/* ===================== HERO HEADER ===================== */}
       <motion.section
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={SPRING_TRANSITION}
-        className="rounded-2xl bg-[#0F0F13] border border-white/[0.04] p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6"
+        className="rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6"
       >
         <div>
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#14141A] border border-white/[0.04] text-[10px] font-bold text-[#A1A1AA] uppercase tracking-wider mb-1.5">
-            <Radio className="w-3 h-3 text-[#C5A880]" />
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[10px] font-bold text-[#A1A1AA] uppercase tracking-wider mb-1.5">
+            <Radio className="w-3 h-3 text-[#5B3E57] dark:text-[#D1A7CC]" />
             <span>Broadcast Telemetry</span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[#F5F5F7] tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
             System Notifications
           </h1>
-          <p className="text-xs text-[#8E8E93] mt-0.5">
+          <p className="text-xs text-[#635E56] dark:text-[#A8A196] mt-0.5">
             Dispatch announcements, maintenance alerts, and targeted operational signals.
           </p>
         </div>
@@ -144,65 +144,65 @@ export const Notifications = () => {
 
       {/* ===================== METRIC CARDS ===================== */}
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] flex items-center justify-between">
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-[#8E8E93] tracking-wide block">
+            <span className="text-xs font-semibold text-[#635E56] dark:text-[#A8A196] tracking-wide block">
               Total Dispatches
             </span>
-            <p className="text-2xl font-extrabold text-[#F5F5F7] font-mono tracking-tight mt-1">
+            <p className="text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] font-mono tracking-tight mt-1">
               {notifications.length}
             </p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#C5A880]">
+          <div className="w-10 h-10 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
             <Bell className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] flex items-center justify-between">
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-[#8E8E93] tracking-wide block">
+            <span className="text-xs font-semibold text-[#635E56] dark:text-[#A8A196] tracking-wide block">
               Student Audience
             </span>
-            <p className="text-2xl font-extrabold text-[#E5E5E7] font-mono tracking-tight mt-1">
+            <p className="text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] font-mono tracking-tight mt-1">
               {studentsCount}
             </p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#E5E5E7]">
+          <div className="w-10 h-10 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center text-[#282521] dark:text-[#EDE8E1]">
             <GraduationCap className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] flex items-center justify-between">
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-[#8E8E93] tracking-wide block">
+            <span className="text-xs font-semibold text-[#635E56] dark:text-[#A8A196] tracking-wide block">
               Instructor Audience
             </span>
-            <p className="text-2xl font-extrabold text-[#C5A880] font-mono tracking-tight mt-1">
+            <p className="text-2xl font-extrabold text-[#5B3E57] dark:text-[#D1A7CC] font-mono tracking-tight mt-1">
               {instructorsCount}
             </p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#C5A880]">
+          <div className="w-10 h-10 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
             <Shield className="w-5 h-5" />
           </div>
         </div>
       </section>
 
       {/* ===================== NOTIFICATION LIST CARD ===================== */}
-      <section className="rounded-2xl bg-[#0F0F13] border border-white/[0.04] p-6 space-y-4">
+      <section className="rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-6 space-y-4">
         {/* Search & Counter Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.04]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
           <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search notifications by title or message..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880]/50 transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50 transition-colors"
             />
           </div>
 
-          <div className="text-xs text-[#71717A]">
+          <div className="text-xs text-[#756E64] dark:text-[#7A7368]">
             Showing <span className="font-semibold text-white">{filteredNotifications.length}</span> of {notifications.length}
           </div>
         </div>
@@ -213,25 +213,25 @@ export const Notifications = () => {
             filteredNotifications.map((item) => (
               <div
                 key={item.id}
-                className="p-4 rounded-xl bg-[#14141A]/70 border border-white/[0.04] hover:border-white/[0.08] transition-all flex items-start justify-between gap-4 group"
+                className="p-4 rounded-xl bg-[#F5F2EC] dark:bg-[#151413]/70 border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#E3DCD3] dark:border-white/[0.08] transition-all flex items-start justify-between gap-4 group"
               >
                 <div className="flex items-start gap-3.5 min-w-0">
-                  <div className="w-9 h-9 rounded-lg bg-[#0F0F13] border border-white/[0.06] flex items-center justify-center text-[#C5A880] shrink-0 mt-0.5">
+                  <div className="w-9 h-9 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] shrink-0 mt-0.5">
                     <Bell className="w-4 h-4" />
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-xs font-bold text-[#F5F5F7] tracking-tight truncate">
+                      <h3 className="text-xs font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight truncate">
                         {item.title}
                       </h3>
-                      <span className="px-2 py-0.5 rounded-md bg-[#0F0F13] border border-white/[0.04] text-[10px] font-mono text-[#A1A1AA]">
+                      <span className="px-2 py-0.5 rounded-md bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[10px] font-mono text-[#A1A1AA]">
                         {item.audience}
                       </span>
                     </div>
-                    <p className="text-xs text-[#8E8E93] mt-1 leading-relaxed line-clamp-2">
+                    <p className="text-xs text-[#635E56] dark:text-[#A8A196] mt-1 leading-relaxed line-clamp-2">
                       {item.message}
                     </p>
-                    <span className="text-[10px] text-[#71717A] font-mono mt-2 block">
+                    <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] font-mono mt-2 block">
                       {item.date}
                     </span>
                   </div>
@@ -241,7 +241,7 @@ export const Notifications = () => {
                   <button
                     type="button"
                     onClick={() => setSelectedNotification(item)}
-                    className="p-2 rounded-lg text-[#71717A] hover:text-[#C5A880] hover:bg-white/[0.04] transition-colors cursor-pointer"
+                    className="p-2 rounded-lg text-[#756E64] dark:text-[#7A7368] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] hover:bg-white/[0.04] transition-colors cursor-pointer"
                     title="View details"
                     aria-label="View details"
                   >
@@ -250,7 +250,7 @@ export const Notifications = () => {
                   <button
                     type="button"
                     onClick={() => handleDeleteNotification(item.id)}
-                    className="p-2 rounded-lg text-[#71717A] hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                    className="p-2 rounded-lg text-[#756E64] dark:text-[#7A7368] hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
                     title="Delete notification"
                     aria-label="Delete notification"
                   >
@@ -260,7 +260,7 @@ export const Notifications = () => {
               </div>
             ))
           ) : (
-            <div className="text-center py-12 text-xs text-[#71717A]">
+            <div className="text-center py-12 text-xs text-[#756E64] dark:text-[#7A7368]">
               No notifications matched your search query.
             </div>
           )}
@@ -276,16 +276,16 @@ export const Notifications = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={SPRING_TRANSITION}
-              className="w-full max-w-lg rounded-2xl bg-[#0F0F13] border border-white/[0.06] p-6 shadow-2xl space-y-4"
+              className="w-full max-w-lg rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-2xl space-y-4"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
-                <h2 className="text-sm font-bold text-[#F5F5F7] tracking-tight">
+              <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+                <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
                   Dispatch Broadcast Notification
                 </h2>
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="p-1 rounded-lg text-[#71717A] hover:text-white transition-colors"
+                  className="p-1 rounded-lg text-[#756E64] dark:text-[#7A7368] hover:text-white transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -293,7 +293,7 @@ export const Notifications = () => {
 
               <form onSubmit={handleAddNotification} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-[#8E8E93]">
+                  <label className="text-xs font-semibold text-[#635E56] dark:text-[#A8A196]">
                     Title
                   </label>
                   <input
@@ -302,18 +302,18 @@ export const Notifications = () => {
                     placeholder="E.g., Scheduled Maintenance Window"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880]/50 transition-colors"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50 transition-colors"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-[#8E8E93]">
+                  <label className="text-xs font-semibold text-[#635E56] dark:text-[#A8A196]">
                     Target Audience
                   </label>
                   <select
                     value={formData.audience}
                     onChange={(e) => setFormData({ ...formData, audience: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-[#F5F5F7] focus:outline-none focus:border-[#C5A880]/50 transition-colors"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50 transition-colors"
                   >
                     <option value="All Users">All Users</option>
                     <option value="Students">Students Only</option>
@@ -322,7 +322,7 @@ export const Notifications = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-[#8E8E93]">
+                  <label className="text-xs font-semibold text-[#635E56] dark:text-[#A8A196]">
                     Message Payload
                   </label>
                   <textarea
@@ -331,7 +331,7 @@ export const Notifications = () => {
                     placeholder="Enter announcement description..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880]/50 transition-colors resize-none"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50 transition-colors resize-none"
                   />
                 </div>
 
@@ -369,16 +369,16 @@ export const Notifications = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={SPRING_TRANSITION}
-              className="w-full max-w-md rounded-2xl bg-[#0F0F13] border border-white/[0.06] p-6 shadow-2xl space-y-4"
+              className="w-full max-w-md rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-2xl space-y-4"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
-                <h2 className="text-sm font-bold text-[#F5F5F7] tracking-tight">
+              <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+                <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
                   Notification Telemetry
                 </h2>
                 <button
                   type="button"
                   onClick={() => setSelectedNotification(null)}
-                  className="p-1 rounded-lg text-[#71717A] hover:text-white transition-colors"
+                  className="p-1 rounded-lg text-[#756E64] dark:text-[#7A7368] hover:text-white transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -386,34 +386,34 @@ export const Notifications = () => {
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <span className="text-[10px] text-[#71717A] uppercase font-mono tracking-wider block">
+                  <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] uppercase font-mono tracking-wider block">
                     Headline
                   </span>
-                  <p className="font-bold text-[#F5F5F7] mt-0.5 text-sm">
+                  <p className="font-bold text-[#282521] dark:text-[#EDE8E1] mt-0.5 text-sm">
                     {selectedNotification.title}
                   </p>
                 </div>
 
                 <div>
-                  <span className="text-[10px] text-[#71717A] uppercase font-mono tracking-wider block">
+                  <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] uppercase font-mono tracking-wider block">
                     Payload
                   </span>
-                  <p className="text-[#8E8E93] mt-0.5 leading-relaxed">
+                  <p className="text-[#635E56] dark:text-[#A8A196] mt-0.5 leading-relaxed">
                     {selectedNotification.message}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-white/[0.04]">
+                <div className="flex items-center justify-between pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
                   <div>
-                    <span className="text-[10px] text-[#71717A] uppercase font-mono tracking-wider block">
+                    <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] uppercase font-mono tracking-wider block">
                       Target Audience
                     </span>
-                    <span className="font-mono text-[#C5A880] mt-0.5 inline-block">
+                    <span className="font-mono text-[#5B3E57] dark:text-[#D1A7CC] mt-0.5 inline-block">
                       {selectedNotification.audience}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] text-[#71717A] uppercase font-mono tracking-wider block">
+                    <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] uppercase font-mono tracking-wider block">
                       Timestamp
                     </span>
                     <span className="font-mono text-[#A1A1AA] mt-0.5 inline-block">

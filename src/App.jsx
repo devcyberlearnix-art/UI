@@ -16,7 +16,7 @@ const withFallback = (importFn) =>
   lazy(() =>
     importFn().catch(() => ({
       default: () => (
-        <div className="p-8 text-center text-[#8E8E93] bg-[#070709] min-h-[400px] flex items-center justify-center font-mono text-xs">
+        <div className="p-8 text-center text-[#635E56] dark:text-[#A8A196] bg-[#F5F2EC] dark:bg-[#151413] min-h-[400px] flex items-center justify-center font-mono text-xs">
           Module failed to hydrate. Refreshing network interface...
         </div>
       ),

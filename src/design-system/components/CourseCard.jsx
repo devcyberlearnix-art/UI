@@ -11,32 +11,52 @@ import toast from 'react-hot-toast';
 
 const SPRING = { type: 'spring', stiffness: 280, damping: 26 };
 
-const CURATED_COVERS = {
-  cloud: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80',
-  microservices: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80',
-  architecture: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=80',
-  web: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
-  react: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&auto=format&fit=crop&q=80',
-  ai: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&auto=format&fit=crop&q=80',
-  security: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=80',
-  data: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
-  devops: 'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=800&auto=format&fit=crop&q=80',
-  default: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=80',
-};
+export const CURATED_COVERS = [
+  'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop&q=80', // Network server racks
+  'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80', // Global data earth
+  'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=80', // Matrix code terminal
+  'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80', // Clean code screen
+  'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=80', // Laptop workspace
+  'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&auto=format&fit=crop&q=80', // React tech nodes
+  'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=80', // Cyber lock security
+  'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80', // Data telemetry analytics
+  'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=800&auto=format&fit=crop&q=80', // Cloud container deployment
+  'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=800&auto=format&fit=crop&q=80', // Python programming
+  'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=800&auto=format&fit=crop&q=80', // Neon code editor
+  'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop&q=80', // Cyber infrastructure
+  'https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&auto=format&fit=crop&q=80', // Engineering hardware
+  'https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&auto=format&fit=crop&q=80', // Architecture wireframe
+  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80', // Digital communication
+  'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80', // Modern 3D architecture
+];
 
-const resolveCoverImage = (category = '', title = '', rawUrl = '') => {
+export const resolveCoverImage = (category = '', title = '', rawUrl = '', id = 0) => {
+  // If rawUrl is provided, valid, and not the repetitive seed image, use it
   if (rawUrl && typeof rawUrl === 'string' && !rawUrl.includes('dashboard-glow') && !rawUrl.includes('placehold.co') && rawUrl.startsWith('http')) {
-    return rawUrl;
+    // If the image is the over-repeated armchair (photo-1517694712202-14dd9538aa97), diversify using ID
+    if (!rawUrl.includes('1517694712202-14dd9538aa97')) {
+      return rawUrl;
+    }
   }
+
   const key = `${category} ${title}`.toLowerCase();
-  if (key.includes('microservice') || key.includes('distribut')) return CURATED_COVERS.microservices;
-  if (key.includes('cloud') || key.includes('aws') || key.includes('azure')) return CURATED_COVERS.cloud;
-  if (key.includes('react') || key.includes('frontend') || key.includes('javascript') || key.includes('web')) return CURATED_COVERS.web;
-  if (key.includes('ai') || key.includes('llm') || key.includes('deep learning') || key.includes('gpt')) return CURATED_COVERS.ai;
-  if (key.includes('security') || key.includes('cyber') || key.includes('rbac') || key.includes('penetration')) return CURATED_COVERS.security;
-  if (key.includes('data') || key.includes('kafka') || key.includes('spark') || key.includes('sql')) return CURATED_COVERS.data;
-  if (key.includes('devops') || key.includes('kubernetes') || key.includes('docker')) return CURATED_COVERS.devops;
-  return CURATED_COVERS.default;
+  if (key.includes('microservice') || key.includes('distribut')) return CURATED_COVERS[0];
+  if (key.includes('cloud') || key.includes('aws') || key.includes('azure')) return CURATED_COVERS[1];
+  if (key.includes('system design') || key.includes('architect')) return CURATED_COVERS[2];
+  if (key.includes('web') || key.includes('fullstack') || key.includes('full-stack')) return CURATED_COVERS[3];
+  if (key.includes('react') || key.includes('frontend') || key.includes('javascript') || key.includes('ui')) return CURATED_COVERS[5];
+  if (key.includes('security') || key.includes('cyber') || key.includes('rbac') || key.includes('penetration')) return CURATED_COVERS[6];
+  if (key.includes('data') || key.includes('kafka') || key.includes('spark') || key.includes('sql') || key.includes('database')) return CURATED_COVERS[7];
+  if (key.includes('devops') || key.includes('kubernetes') || key.includes('docker') || key.includes('ci/cd')) return CURATED_COVERS[8];
+  if (key.includes('python') || key.includes('django')) return CURATED_COVERS[9];
+  if (key.includes('java') || key.includes('spring')) return CURATED_COVERS[10];
+  if (key.includes('testing') || key.includes('playwright') || key.includes('qa')) return CURATED_COVERS[14];
+  if (key.includes('network') || key.includes('socket')) return CURATED_COVERS[11];
+  if (key.includes('blockchain') || key.includes('contract')) return CURATED_COVERS[15];
+
+  // Fallback to deterministic pseudo-random selection based on numeric ID
+  const numericId = typeof id === 'number' ? id : parseInt(String(id).replace(/\D/g, '') || '0', 10);
+  return CURATED_COVERS[numericId % CURATED_COVERS.length];
 };
 
 export const CourseCard = forwardRef(function CourseCard({ course = {} }, ref) {
@@ -59,7 +79,7 @@ export const CourseCard = forwardRef(function CourseCard({ course = {} }, ref) {
   const category = course.category || course.categoryName || 'Engineering';
   const rating = Number(course.rating || course.avgRating || 4.5).toFixed(1);
   const duration = course.duration || course.estimatedDuration || '12 Weeks';
-  const imageUrl = resolveCoverImage(category, title, course.imageUrl || course.thumbnailUrl || course.thumbnail);
+  const imageUrl = resolveCoverImage(category, title, course.imageUrl || course.thumbnailUrl || course.thumbnail, courseId);
 
   // Invokes the optimized backend checking endpoint (GET /api/v1/wishlist/check/{id})
   const { data: isWishlisted = false } = useCourseWishlistCheck(courseId);
@@ -129,13 +149,23 @@ export const CourseCard = forwardRef(function CourseCard({ course = {} }, ref) {
         {/* Subtle Dark Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 dark:from-[#1D1C1A] via-transparent to-transparent pointer-events-none" />
 
-        {/* Visual Level Pill Overlay */}
-        <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5">
-          <Badge variant="pewter" className="bg-[#FFFEFA]/90 dark:bg-[#151413]/85 border border-[#E3DCD3] dark:border-white/10 backdrop-blur-md text-[9px] uppercase tracking-wider font-extrabold px-2 py-0.5 text-[#282521] dark:text-[#EDE8E1] shadow-xs">
-            {level}
-          </Badge>
+        {/* Visual Level & Specialty Badge Overlay */}
+        <div className="absolute top-3 left-3 z-10 flex flex-wrap items-center gap-1.5 max-w-[calc(100%-48px)]">
+          {price === 0 ? (
+            <span className="px-2 py-0.5 rounded-md bg-[#EBF3EE] dark:bg-[#529E73]/20 border border-[#B7D9C5] dark:border-[#529E73]/40 text-[#2B6747] dark:text-[#529E73] text-[9px] uppercase tracking-wider font-extrabold shadow-xs">
+              Free Lab
+            </span>
+          ) : rating >= 4.8 ? (
+            <span className="px-2 py-0.5 rounded-md bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 border border-[#D5C0D1] dark:border-[#D1A7CC]/40 text-[#5B3E57] dark:text-[#D1A7CC] text-[9px] uppercase tracking-wider font-extrabold shadow-xs">
+              ★ Top Rated
+            </span>
+          ) : (
+            <span className="px-2 py-0.5 rounded-md bg-[#FFFEFA]/90 dark:bg-[#151413]/85 border border-[#E3DCD3] dark:border-white/10 backdrop-blur-md text-[9px] uppercase tracking-wider font-extrabold text-[#282521] dark:text-[#EDE8E1] shadow-xs">
+              {level}
+            </span>
+          )}
           {category && (
-            <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-[#FFFEFA]/90 dark:bg-[#151413]/80 border border-[#E3DCD3] dark:border-white/5 backdrop-blur-md text-[9px] text-[#635E56] dark:text-[#A69F94] font-semibold truncate max-w-[100px] shadow-xs">
+            <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-[#FFFEFA]/90 dark:bg-[#151413]/80 border border-[#E3DCD3] dark:border-white/5 backdrop-blur-md text-[9px] text-[#635E56] dark:text-[#A69F94] font-semibold truncate max-w-[110px] shadow-xs">
               {category}
             </span>
           )}

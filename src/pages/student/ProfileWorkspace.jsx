@@ -505,8 +505,8 @@ export default function ProfileWorkspace() {
     return (
       <GlobalLayoutWrapper>
         <div className="flex flex-col items-center justify-center min-h-[500px] space-y-4">
-          <Loader2 className="w-8 h-8 animate-spin text-[#C5A880]" />
-          <p className="text-xs font-mono uppercase tracking-widest text-[#8E8E93]">
+          <Loader2 className="w-8 h-8 animate-spin text-[#5B3E57] dark:text-[#D1A7CC]" />
+          <p className="text-xs font-mono uppercase tracking-widest text-[#635E56] dark:text-[#A8A196]">
             Hydrating Identity Matrix...
           </p>
         </div>
@@ -531,10 +531,10 @@ export default function ProfileWorkspace() {
       <div className="space-y-6">
         
         {/* 1. Frosted Glass Profile Header Block */}
-        <div className="relative rounded-2xl overflow-hidden bg-[#0F0F13] border border-white/[0.04]">
+        <div className="relative rounded-2xl overflow-hidden bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06]">
           
           {/* Subtle Obsidian Textured Cover Banner */}
-          <div className="h-44 bg-gradient-to-r from-[#14141A] to-[#1B1B24] relative flex items-end justify-end p-4 border-b border-white/[0.04] overflow-hidden">
+          <div className="h-44 bg-gradient-to-r from-[#EAE5DC] via-[#F2ECF1] to-[#E3DCD3] dark:from-[#1D1C1A] dark:to-[#151413] relative flex items-end justify-end p-4 border-b border-[#E3DCD3] dark:border-white/[0.06] overflow-hidden">
             {coverPhotoUrl && (
               <>
                 <img
@@ -549,7 +549,7 @@ export default function ProfileWorkspace() {
                   }}
                   className="absolute inset-0 w-full h-full object-cover opacity-90 transition-opacity duration-300"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F13]/80 via-transparent to-black/20 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
               </>
             )}
             
@@ -567,16 +567,16 @@ export default function ProfileWorkspace() {
               size="sm"
               onClick={() => coverPhotoInputRef.current?.click()}
               disabled={uploadingCover}
-              className="relative z-10 gap-1.5 text-xs bg-[#070709]/70 border-white/5 backdrop-blur-md hover:bg-[#14141A]"
+              className="relative z-10 gap-1.5 text-xs bg-[#F5F2EC] dark:bg-[#151413]/70 border-[#E3DCD3] dark:border-white/5 backdrop-blur-md hover:bg-[#F5F2EC] dark:bg-[#151413]"
             >
               {uploadingCover ? (
                 <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-[#C5A880]" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <span>Syncing Banner...</span>
                 </>
               ) : (
                 <>
-                  <Image className="w-3.5 h-3.5 text-[#C5A880]" />
+                  <Image className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <span>Change Cover</span>
                 </>
               )}
@@ -591,7 +591,7 @@ export default function ProfileWorkspace() {
               <div className="relative group">
                 <div
                   onClick={() => setIsPhotoModalOpen(true)}
-                  className="w-24 h-24 rounded-2xl bg-[#14141A] border-2 border-[#0F0F13] shadow-2xl flex items-center justify-center font-bold text-xl text-[#C5A880] select-none tracking-tight overflow-hidden cursor-pointer ring-2 ring-transparent group-hover:ring-[#C5A880]/60 transition-all duration-300 relative"
+                  className="w-24 h-24 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border-2 border-[#FFFEFA] dark:border-[#1D1C1A] shadow-2xl flex items-center justify-center font-bold text-xl text-[#5B3E57] dark:text-[#D1A7CC] select-none tracking-tight overflow-hidden cursor-pointer ring-2 ring-transparent group-hover:ring-[#5B3E57]/60 dark:group-hover:ring-[#D1A7CC]/60 transition-all duration-300 relative"
                   title="Configure identity photo"
                 >
                   {(photoBlobUrl || profile?.profilePhoto) ? (
@@ -607,14 +607,14 @@ export default function ProfileWorkspace() {
                   )}
 
                   {/* Hover Camera Overlay */}
-                  <div className="absolute inset-0 bg-[#070709]/70 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-[#C5A880]">
+                  <div className="absolute inset-0 bg-[#F5F2EC] dark:bg-[#151413]/70 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
                     <Camera className="w-5 h-5 mb-0.5" />
                     <span className="text-[9px] font-mono tracking-wider font-bold">CHANGE</span>
                   </div>
                 </div>
 
                 {/* Upload Status Dot */}
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#14141A] border border-white/10 flex items-center justify-center text-[#C5A880] shadow-md">
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/10 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] shadow-md">
                   <Camera className="w-2.5 h-2.5" />
                 </div>
               </div>
@@ -622,21 +622,21 @@ export default function ProfileWorkspace() {
               {/* Identity Details */}
               <div className="text-center sm:text-left space-y-1 pb-1">
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                  <h2 className="text-xl font-bold text-[#F5F5F7] tracking-tight">
+                  <h2 className="text-xl font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
                     {profile?.name || 'Authorized Learner'}
                   </h2>
                   <Badge
                     variant="pewter"
-                    className="bg-[#14141A] text-[#C5A880] text-[9px] uppercase font-mono tracking-wider font-extrabold px-2 py-0.5 border-white/5"
+                    className="bg-[#F5F2EC] dark:bg-[#151413] text-[#5B3E57] dark:text-[#D1A7CC] text-[9px] uppercase font-mono tracking-wider font-extrabold px-2 py-0.5 border-[#E3DCD3] dark:border-white/5"
                   >
                     {profile?.role || 'STUDENT'}
                   </Badge>
                 </div>
-                <p className="text-xs text-[#8E8E93] font-light font-mono">
+                <p className="text-xs text-[#635E56] dark:text-[#A8A196] font-light font-mono">
                   {profile?.email || 'unregistered@mesh'}
                 </p>
-                <p className="text-[11px] text-[#8E8E93] flex items-center justify-center sm:justify-start gap-1 font-light">
-                  <MapPin className="w-3 h-3 text-[#C5A880]" />
+                <p className="text-[11px] text-[#635E56] dark:text-[#A8A196] flex items-center justify-center sm:justify-start gap-1 font-light">
+                  <MapPin className="w-3 h-3 text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <span>
                     {profile?.city && profile?.country
                       ? `${profile.city}, ${profile.country}`
@@ -679,7 +679,7 @@ export default function ProfileWorkspace() {
                   onClick={() => setEditMode(true)}
                   className="gap-1.5 text-xs"
                 >
-                  <Edit3 className="w-3.5 h-3.5 text-[#C5A880]" /> Edit Profile Specification
+                  <Edit3 className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" /> Edit Profile Specification
                 </Button>
               )}
             </div>
@@ -693,20 +693,20 @@ export default function ProfileWorkspace() {
             return (
               <div
                 key={idx}
-                className="p-5 rounded-2xl bg-[#0F0F13] border border-white/[0.04] flex items-center justify-between group hover:border-white/10 transition-colors duration-300"
+                className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between group hover:border-[#E3DCD3] dark:border-white/10 transition-colors duration-300"
               >
                 <div className="space-y-1">
-                  <span className="block text-[10px] font-mono tracking-widest text-[#8E8E93] uppercase font-bold">
+                  <span className="block text-[10px] font-mono tracking-widest text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                     {metric.label}
                   </span>
-                  <span className="block text-2xl font-black text-[#F5F5F7] font-mono leading-none">
+                  <span className="block text-2xl font-black text-[#282521] dark:text-[#EDE8E1] font-mono leading-none">
                     {metric.value}
                   </span>
-                  <span className="block text-[10px] text-[#C5A880] font-light font-mono">
+                  <span className="block text-[10px] text-[#5B3E57] dark:text-[#D1A7CC] font-light font-mono">
                     {metric.sub}
                   </span>
                 </div>
-                <div className="w-9 h-9 rounded-xl bg-[#14141A] border border-white/5 flex items-center justify-center text-[#8E8E93] group-hover:text-[#C5A880] transition-colors">
+                <div className="w-9 h-9 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/5 flex items-center justify-center text-[#635E56] dark:text-[#A8A196] group-hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors">
                   <Icon className="w-4 h-4" />
                 </div>
               </div>
@@ -721,7 +721,7 @@ export default function ProfileWorkspace() {
           <div className="lg:col-span-2 space-y-6">
             
             {/* Functional Category Filter Nav Tabs */}
-            <div className="flex gap-2 p-1 rounded-xl bg-[#0F0F13] border border-white/[0.04] overflow-x-auto scrollbar-none">
+            <div className="flex gap-2 p-1 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] overflow-x-auto scrollbar-none">
               {[
                 { id: 'personal', label: 'Personal Information', icon: User },
                 { id: 'education', label: 'Education & Professional', icon: BookOpen },
@@ -735,14 +735,14 @@ export default function ProfileWorkspace() {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`relative px-4 py-2 text-xs font-medium tracking-wide rounded-lg flex items-center gap-2 transition-colors duration-300 shrink-0 select-none ${
-                      active ? 'text-[#070709] font-bold' : 'text-[#8E8E93] hover:text-[#F5F5F7]'
+                      active ? 'text-[#282521] dark:text-[#EDE8E1] font-bold' : 'text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:text-[#EDE8E1]'
                     }`}
                   >
                     {active && (
                       <motion.div
                         layoutId="activeProfileTabPill"
                         transition={SPRING}
-                        className="absolute inset-0 bg-[#C5A880] rounded-lg z-0"
+                        className="absolute inset-0 bg-[#5B3E57] dark:bg-[#D1A7CC] rounded-lg z-0"
                       />
                     )}
                     <Icon className="w-3.5 h-3.5 relative z-10" />
@@ -754,11 +754,11 @@ export default function ProfileWorkspace() {
 
             {/* TAB 1: Personal Information */}
             {activeTab === 'personal' && (
-              <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-6">
-                <div className="flex items-center justify-between border-b border-white/5 pb-4">
+              <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] space-y-6">
+                <div className="flex items-center justify-between border-b border-[#E3DCD3] dark:border-white/5 pb-4">
                   <div>
-                    <h3 className="text-sm font-bold text-[#F5F5F7]">Identity Matrix Configuration</h3>
-                    <p className="text-[11px] text-[#8E8E93] font-light">
+                    <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Identity Matrix Configuration</h3>
+                    <p className="text-[11px] text-[#635E56] dark:text-[#A8A196] font-light">
                       Manage platform core access parameters and demographic descriptors securely.
                     </p>
                   </div>
@@ -768,13 +768,13 @@ export default function ProfileWorkspace() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <label className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
+                        <label className="block text-[10px] font-mono tracking-wider text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                           Email Address
                         </label>
                         <button
                           type="button"
                           onClick={() => setIsEmailModalOpen(true)}
-                          className="text-[10px] font-bold text-[#C5A880] hover:text-[#D4BC98] transition-colors"
+                          className="text-[10px] font-bold text-[#5B3E57] dark:text-[#D1A7CC] hover:text-[#D4BC98] transition-colors"
                         >
                           Change Email
                         </button>
@@ -783,43 +783,43 @@ export default function ProfileWorkspace() {
                         type="email"
                         disabled
                         value={temp?.email || ''}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#070709] border border-white/[0.04] text-xs text-[#8E8E93] outline-none font-mono cursor-not-allowed"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-[#635E56] dark:text-[#A8A196] outline-none font-mono cursor-not-allowed"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
+                      <label className="block text-[10px] font-mono tracking-wider text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                         Mobile Number
                       </label>
                       <input
                         type="tel"
                         value={temp?.phone || ''}
                         onChange={e => setTemp({ ...temp, phone: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none transition font-sans"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none transition font-sans"
                         placeholder="Mobile Number"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
+                      <label className="block text-[10px] font-mono tracking-wider text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                         Date of Birth
                       </label>
                       <input
                         type="date"
                         value={temp?.dob || ''}
                         onChange={e => setTemp({ ...temp, dob: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none transition font-sans"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none transition font-sans"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
+                      <label className="block text-[10px] font-mono tracking-wider text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                         Gender
                       </label>
                       <select
                         value={temp?.gender || ''}
                         onChange={e => setTemp({ ...temp, gender: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none transition font-sans"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none transition font-sans"
                       >
                         <option value="">Select Gender</option>
                         <option value="Male">Male</option>
@@ -829,27 +829,27 @@ export default function ProfileWorkspace() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
+                      <label className="block text-[10px] font-mono tracking-wider text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                         Country
                       </label>
                       <input
                         type="text"
                         value={temp?.country || ''}
                         onChange={e => setTemp({ ...temp, country: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none transition font-sans"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none transition font-sans"
                         placeholder="Country"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
+                      <label className="block text-[10px] font-mono tracking-wider text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                         City
                       </label>
                       <input
                         type="text"
                         value={temp?.city || ''}
                         onChange={e => setTemp({ ...temp, city: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none transition font-sans"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none transition font-sans"
                         placeholder="City"
                       />
                     </div>
@@ -868,12 +868,12 @@ export default function ProfileWorkspace() {
                     ].map((field, index) => (
                       <div
                         key={index}
-                        className="p-3.5 rounded-xl bg-[#14141A] border border-white/[0.02] space-y-1"
+                        className="p-3.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.04] space-y-1"
                       >
-                        <span className="block text-[9px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
+                        <span className="block text-[9px] font-mono tracking-wider text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                           {field.label}
                         </span>
-                        <span className="block text-xs text-[#E5E5E7] font-medium font-sans">
+                        <span className="block text-xs text-[#282521] dark:text-[#EDE8E1] font-medium font-sans">
                           {field.value}
                         </span>
                       </div>
@@ -885,10 +885,10 @@ export default function ProfileWorkspace() {
 
             {/* TAB 2: Education & Professional */}
             {activeTab === 'education' && (
-              <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-6">
-                <div className="border-b border-white/5 pb-4">
-                  <h3 className="text-sm font-bold text-[#F5F5F7]">Academic & Industry Telemetry</h3>
-                  <p className="text-[11px] text-[#8E8E93] font-light">
+              <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] space-y-6">
+                <div className="border-b border-[#E3DCD3] dark:border-white/5 pb-4">
+                  <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Academic & Industry Telemetry</h3>
+                  <p className="text-[11px] text-[#635E56] dark:text-[#A8A196] font-light">
                     Document verified credentials, ongoing degrees, and organization associations.
                   </p>
                 </div>
@@ -896,40 +896,40 @@ export default function ProfileWorkspace() {
                 {editMode ? (
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
+                      <label className="block text-[10px] font-mono tracking-wider text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                         Highest Qualification
                       </label>
                       <input
                         type="text"
                         value={temp?.highestQualification || ''}
                         onChange={e => setTemp({ ...temp, highestQualification: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none transition font-sans"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none transition font-sans"
                         placeholder="e.g. Bachelor of Technology (Computer Science)"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
+                      <label className="block text-[10px] font-mono tracking-wider text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                         Field of Study
                       </label>
                       <input
                         type="text"
                         value={temp?.fieldOfStudy || ''}
                         onChange={e => setTemp({ ...temp, fieldOfStudy: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none transition font-sans"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none transition font-sans"
                         placeholder="e.g. Distributed Systems & Cloud Architecture"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
+                      <label className="block text-[10px] font-mono tracking-wider text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                         Organization / University
                       </label>
                       <input
                         type="text"
                         value={temp?.organization || ''}
                         onChange={e => setTemp({ ...temp, organization: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none transition font-sans"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none transition font-sans"
                         placeholder="e.g. Institute of Technology"
                       />
                     </div>
@@ -941,16 +941,16 @@ export default function ProfileWorkspace() {
                       { label: 'Field of Study', value: profile?.fieldOfStudy || 'Not specified' },
                       { label: 'Organization / University', value: profile?.organization || 'Not specified' }
                     ].map((item, idx) => (
-                      <div key={idx} className="p-4 rounded-xl bg-[#14141A] border border-white/[0.02] flex items-center justify-between">
+                      <div key={idx} className="p-4 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.04] flex items-center justify-between">
                         <div>
-                          <span className="block text-[9px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold">
+                          <span className="block text-[9px] font-mono tracking-wider text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                             {item.label}
                           </span>
-                          <span className="block text-xs text-[#E5E5E7] font-medium font-sans mt-0.5">
+                          <span className="block text-xs text-[#282521] dark:text-[#EDE8E1] font-medium font-sans mt-0.5">
                             {item.value}
                           </span>
                         </div>
-                        <GraduationCap className="w-4 h-4 text-[#C5A880] opacity-80" />
+                        <GraduationCap className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC] opacity-80" />
                       </div>
                     ))}
                   </div>
@@ -960,10 +960,10 @@ export default function ProfileWorkspace() {
 
             {/* TAB 3: Skills & Taxonomy */}
             {activeTab === 'skills' && (
-              <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-6">
-                <div className="border-b border-white/5 pb-4">
-                  <h3 className="text-sm font-bold text-[#F5F5F7]">Technology Taxonomy & Verified Skill Stack</h3>
-                  <p className="text-[11px] text-[#8E8E93] font-light">
+              <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] space-y-6">
+                <div className="border-b border-[#E3DCD3] dark:border-white/5 pb-4">
+                  <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Technology Taxonomy & Verified Skill Stack</h3>
+                  <p className="text-[11px] text-[#635E56] dark:text-[#A8A196] font-light">
                     Add verified tools, languages, and runtime competencies to receive calibrated challenges.
                   </p>
                 </div>
@@ -981,7 +981,7 @@ export default function ProfileWorkspace() {
                       }
                     }}
                     placeholder="Register new competency tag (e.g. Rust, PyTorch, GraphQL)..."
-                    className="flex-1 px-4 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none transition font-sans"
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none transition font-sans"
                   />
                   <Button
                     variant="primary"
@@ -995,19 +995,19 @@ export default function ProfileWorkspace() {
 
                 {/* Current Active Skills */}
                 <div className="space-y-2">
-                  <span className="block text-[10px] font-mono tracking-widest text-[#8E8E93] uppercase font-bold">
+                  <span className="block text-[10px] font-mono tracking-widest text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                     Active Verified Skills ({temp?.skills?.length || 0})
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {temp?.skills?.map((skill, index) => (
                       <span
                         key={index}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-xs font-mono text-[#E5E5E7] group hover:border-[#C5A880]/50 transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#F5F2EC] dark:bg-[#151413] border border-white/[0.06] text-xs font-mono text-[#282521] dark:text-[#EDE8E1] group hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] transition-colors"
                       >
-                        <span className="text-[#C5A880]">#</span> {skill}
+                        <span className="text-[#5B3E57] dark:text-[#D1A7CC]">#</span> {skill}
                         <button
                           onClick={() => handleRemoveSkill(skill)}
-                          className="text-[#8E8E93] hover:text-rose-400 p-0.5 rounded transition"
+                          className="text-[#635E56] dark:text-[#A8A196] hover:text-rose-400 p-0.5 rounded transition"
                           title={`Remove ${skill}`}
                         >
                           <X size={12} />
@@ -1015,7 +1015,7 @@ export default function ProfileWorkspace() {
                       </span>
                     ))}
                     {(!temp?.skills || temp.skills.length === 0) && (
-                      <p className="text-xs text-[#8E8E93] font-light">
+                      <p className="text-xs text-[#635E56] dark:text-[#A8A196] font-light">
                         No competencies registered yet. Add tags above or select suggestions below.
                       </p>
                     )}
@@ -1023,8 +1023,8 @@ export default function ProfileWorkspace() {
                 </div>
 
                 {/* Suggested Competencies */}
-                <div className="space-y-2 pt-2 border-t border-white/[0.04]">
-                  <span className="block text-[10px] font-mono tracking-widest text-[#8E8E93] uppercase font-bold">
+                <div className="space-y-2 pt-2 border-t border-[#E3DCD3] dark:border-white/[0.06]">
+                  <span className="block text-[10px] font-mono tracking-widest text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                     Recommended Competencies
                   </span>
                   <div className="flex flex-wrap gap-1.5">
@@ -1037,8 +1037,8 @@ export default function ProfileWorkspace() {
                           onClick={() => handleAddSkill(tag)}
                           className={`px-2.5 py-1 rounded-md text-[11px] font-mono border transition-all ${
                             already
-                              ? 'bg-transparent text-[#8E8E93]/40 border-white/[0.02] cursor-not-allowed'
-                              : 'bg-[#14141A] text-[#8E8E93] border-white/[0.04] hover:text-[#C5A880] hover:border-[#C5A880]/40'
+                              ? 'bg-transparent text-[#635E56] dark:text-[#A8A196]/40 border-[#E3DCD3] dark:border-white/[0.04] cursor-not-allowed'
+                              : 'bg-[#F5F2EC] dark:bg-[#151413] text-[#635E56] dark:text-[#A8A196] border-[#E3DCD3] dark:border-white/[0.06] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC]'
                           }`}
                         >
                           + {tag}
@@ -1052,10 +1052,10 @@ export default function ProfileWorkspace() {
 
             {/* TAB 4: Account & Security */}
             {activeTab === 'account' && (
-              <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-6">
-                <div className="border-b border-white/5 pb-4">
-                  <h3 className="text-sm font-bold text-[#F5F5F7]">Hardware Terminal & Session Security</h3>
-                  <p className="text-[11px] text-[#8E8E93] font-light">
+              <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] space-y-6">
+                <div className="border-b border-[#E3DCD3] dark:border-white/5 pb-4">
+                  <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Hardware Terminal & Session Security</h3>
+                  <p className="text-[11px] text-[#635E56] dark:text-[#A8A196] font-light">
                     Inspect active cryptographic device sessions and terminate unauthorized vector tokens.
                   </p>
                 </div>
@@ -1063,13 +1063,13 @@ export default function ProfileWorkspace() {
                 {/* Active Sessions */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono tracking-widest text-[#8E8E93] uppercase font-bold">
+                    <span className="text-[10px] font-mono tracking-widest text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                       Active Device Handshakes
                     </span>
                     <button
                       onClick={loadSessions}
                       disabled={sessionsLoading}
-                      className="text-xs font-mono text-[#C5A880] hover:underline flex items-center gap-1"
+                      className="text-xs font-mono text-[#5B3E57] dark:text-[#D1A7CC] hover:underline flex items-center gap-1"
                     >
                       <RefreshCw size={12} className={sessionsLoading ? 'animate-spin' : ''} />
                       Sync
@@ -1078,17 +1078,17 @@ export default function ProfileWorkspace() {
 
                   {sessionsLoading ? (
                     <div className="py-6 flex items-center justify-center">
-                      <Loader2 className="w-5 h-5 animate-spin text-[#C5A880]" />
+                      <Loader2 className="w-5 h-5 animate-spin text-[#5B3E57] dark:text-[#D1A7CC]" />
                     </div>
                   ) : (
                     <div className="space-y-2">
                       {sessions.map((sess, idx) => (
                         <div
                           key={sess.id || idx}
-                          className="p-3.5 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-between"
+                          className="p-3.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-[#0F0F13] border border-white/5 flex items-center justify-center text-[#C5A880]">
+                            <div className="w-8 h-8 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/5 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
                               {sess.deviceType === 'mobile' ? (
                                 <Smartphone size={16} />
                               ) : (
@@ -1097,7 +1097,7 @@ export default function ProfileWorkspace() {
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="text-xs font-medium text-[#F5F5F7]">
+                                <span className="text-xs font-medium text-[#282521] dark:text-[#EDE8E1]">
                                   {sess.deviceName || 'Local Workstation'}
                                 </span>
                                 {sess.isCurrent && (
@@ -1106,7 +1106,7 @@ export default function ProfileWorkspace() {
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] font-mono text-[#8E8E93]">
+                              <p className="text-[10px] font-mono text-[#635E56] dark:text-[#A8A196]">
                                 {sess.browser || 'Platform'} • {sess.operatingSystem || 'Secure OS'}
                               </p>
                             </div>
@@ -1115,7 +1115,7 @@ export default function ProfileWorkspace() {
                           {!sess.isCurrent && (
                             <button
                               onClick={() => handleTerminateSession(sess.id)}
-                              className="text-[#8E8E93] hover:text-rose-400 p-1.5 rounded-lg hover:bg-white/5 transition"
+                              className="text-[#635E56] dark:text-[#A8A196] hover:text-rose-400 p-1.5 rounded-lg hover:bg-white/5 transition"
                               title="Revoke session"
                             >
                               <Trash2 size={15} />
@@ -1138,17 +1138,17 @@ export default function ProfileWorkspace() {
                 </div>
 
                 {/* Account Details */}
-                <div className="pt-4 border-t border-white/[0.04] space-y-2">
+                <div className="pt-4 border-t border-[#E3DCD3] dark:border-white/[0.06] space-y-2">
                   <div className="flex items-center justify-between text-xs py-1">
-                    <span className="text-[#8E8E93] font-light">Account Node Status</span>
+                    <span className="text-[#635E56] dark:text-[#A8A196] font-light">Account Node Status</span>
                     <span className="font-mono text-emerald-400 font-semibold flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                       Active / Encrypted
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-xs py-1">
-                    <span className="text-[#8E8E93] font-light">Mesh Authorization Level</span>
-                    <span className="font-mono text-[#C5A880] uppercase font-bold">
+                    <span className="text-[#635E56] dark:text-[#A8A196] font-light">Mesh Authorization Level</span>
+                    <span className="font-mono text-[#5B3E57] dark:text-[#D1A7CC] uppercase font-bold">
                       {profile?.role || 'STUDENT'}
                     </span>
                   </div>
@@ -1162,12 +1162,12 @@ export default function ProfileWorkspace() {
           <div className="space-y-6">
             
             {/* Metric Completion Dial Box */}
-            <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-4">
-              <span className="block text-[10px] font-mono tracking-widest text-[#8E8E93] uppercase font-bold">
+            <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
+              <span className="block text-[10px] font-mono tracking-widest text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                 Profile Integrity
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black font-mono text-[#C5A880]">
+                <span className="text-3xl font-black font-mono text-[#5B3E57] dark:text-[#D1A7CC]">
                   {integrity}%
                 </span>
                 <span className={`text-[10px] font-mono tracking-wide uppercase ${
@@ -1176,26 +1176,26 @@ export default function ProfileWorkspace() {
                   {integrity === 100 ? '● Fully Hydrated' : '● Partial Telemetry'}
                 </span>
               </div>
-              <div className="h-1.5 w-full bg-[#14141A] rounded-full overflow-hidden border border-white/[0.02]">
+              <div className="h-1.5 w-full bg-[#F5F2EC] dark:bg-[#151413] rounded-full overflow-hidden border border-[#E3DCD3] dark:border-white/[0.04]">
                 <div
-                  className="h-full bg-[#C5A880] transition-all duration-500 rounded-full"
+                  className="h-full bg-[#5B3E57] dark:bg-[#D1A7CC] transition-all duration-500 rounded-full"
                   style={{ width: `${integrity}%` }}
                 />
               </div>
-              <p className="text-[11px] text-[#8E8E93] font-light leading-relaxed">
+              <p className="text-[11px] text-[#635E56] dark:text-[#A8A196] font-light leading-relaxed">
                 Complete all identity parameters to unlock unrestricted enterprise verification access.
               </p>
             </div>
 
             {/* Interactive Taxonomy Box */}
-            <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-4">
+            <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
               <div className="flex items-center justify-between">
-                <span className="block text-[10px] font-mono tracking-widest text-[#8E8E93] uppercase font-bold">
+                <span className="block text-[10px] font-mono tracking-widest text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
                   Verified Technology Skills
                 </span>
                 <button
                   onClick={() => setActiveTab('skills')}
-                  className="text-[10px] font-mono text-[#C5A880] hover:underline"
+                  className="text-[10px] font-mono text-[#5B3E57] dark:text-[#D1A7CC] hover:underline"
                 >
                   Manage
                 </button>
@@ -1208,7 +1208,7 @@ export default function ProfileWorkspace() {
                   <Badge
                     key={index}
                     variant="pewter"
-                    className="bg-[#14141A] text-[#E5E5E7] border-white/5 font-mono text-[10px] px-2.5 py-0.5"
+                    className="bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] border-[#E3DCD3] dark:border-white/5 font-mono text-[10px] px-2.5 py-0.5"
                   >
                     {skill}
                   </Badge>
@@ -1217,14 +1217,14 @@ export default function ProfileWorkspace() {
             </div>
 
             {/* Accelerated Mastery Card (Ink & Onyx) */}
-            <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-4">
-              <div className="flex items-center gap-2 text-[#C5A880]">
+            <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
+              <div className="flex items-center gap-2 text-[#5B3E57] dark:text-[#D1A7CC]">
                 <Sparkles size={16} />
                 <span className="text-[10px] font-mono tracking-widest uppercase font-bold">
                   Accelerated Mastery
                 </span>
               </div>
-              <p className="text-xs text-[#E5E5E7] font-medium leading-relaxed">
+              <p className="text-xs text-[#282521] dark:text-[#EDE8E1] font-medium leading-relaxed">
                 Unlock high-density curriculum tracks calibrated to your verified technology taxonomy.
               </p>
               <Button

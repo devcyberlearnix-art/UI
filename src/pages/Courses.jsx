@@ -42,6 +42,7 @@ import { useAuth } from "../context/AuthContext";
 import Portal from "../components/ui/Portal";
 import Navbar from "../layouts/Navbar";
 import AdvancedTypeaheadSearch from "../components/search/AdvancedTypeaheadSearch";
+import { resolveCoverImage } from "../design-system/components/CourseCard";
 
 const CATEGORY_OPTIONS = [
   "All",
@@ -99,15 +100,17 @@ const CATEGORY_COLORS = {
 const DEFAULT_COURSES = [];
 
 const normalizeCourseItem = (c, index) => {
+  const courseId = c.id || c.courseId || c._id;
   const rawTitle = c.title || c.courseName || c.name || "Untitled Course";
   const title = rawTitle.replace(/^\[CYBERLEARNIX-SEED-[0-9]+\]\s*/i, '').replace(/#\d+/g, '').trim();
+  const category = c.category || c.categoryName || "General";
   const rawImg = c.image || c.thumbnail || c.coverImage || c.banner || "";
-  const image = (rawImg && !rawImg.includes('placehold.co')) ? rawImg : "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80";
+  const image = resolveCoverImage(category, title, rawImg, courseId);
 
   return {
-    id: c.id || c.courseId || c._id,
+    id: courseId,
     title,
-    category: c.category || c.categoryName || "General",
+    category,
     level: c.level || c.difficultyLevel || "All Levels",
     price: c.price != null ? Number(c.price) : (c.amount != null ? Number(c.amount) : 0),
     originalPrice: c.originalPrice != null ? Number(c.originalPrice) : null,
@@ -118,14 +121,14 @@ const normalizeCourseItem = (c, index) => {
       c.instructor?.name ||
       c.instructorName ||
       (typeof c.instructor === "string" ? c.instructor : "Instructor"),
-    instructorRole: c.instructorRole || c.instructor?.role || "Instructor",
+    instructorRole: c.instructorRole || c.instructor?.role || "Staff Engineer",
     image,
     description:
       c.description ||
       c.summary ||
-      "",
-    modulesCount: c.modulesCount || (Array.isArray(c.modules) ? c.modules.length : 0),
-    lessonsCount: c.lessonsCount || 0,
+      "Comprehensive architectural curriculum crafted for enterprise software engineers.",
+    modulesCount: c.modulesCount || (Array.isArray(c.modules) ? c.modules.length : 8),
+    lessonsCount: c.lessonsCount || 24,
   };
 };
 
@@ -509,40 +512,40 @@ const Courses = () => {
         }
       `}</style>
 
-      <div className="min-h-screen bg-[#070709] text-[#F5F5F7] selection:bg-[#C5A880]/30 selection:text-white font-sans antialiased">
+      <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] selection:bg-[#5B3E57]/20 dark:selection:bg-[#D1A7CC]/30 font-sans antialiased">
         {isPublicPage && <Navbar />}
 
         <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 pb-16 ${isPublicPage ? 'pt-24 sm:pt-28' : 'pt-4'}`}>
           {/* ── TOP HERO BANNER: INK & ONYX CURRICULUM ──────── */}
-          <div className="relative overflow-hidden rounded-3xl bg-[#0F0F13] p-6 sm:p-8 text-[#F5F5F7] border border-white/[0.04] shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)]">
+          <div className="relative overflow-hidden rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] p-6 sm:p-8 text-[#282521] dark:text-[#EDE8E1] border border-[#E3DCD3] dark:border-white/[0.06] shadow-card">
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-2.5 max-w-2xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14141A] border border-white/[0.06] text-xs font-semibold text-[#C5A880]">
-                  <Compass size={13} className="text-[#C5A880]" />
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-xs font-semibold text-[#5B3E57] dark:text-[#D1A7CC]">
+                  <Compass size={13} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <span>Verified Technical Curriculum • 2026 Edition</span>
                 </div>
 
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#F5F5F7] leading-tight">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#282521] dark:text-[#EDE8E1] leading-tight">
                   Explore Industry-Leading Courses
                 </h1>
 
-                <p className="text-xs sm:text-sm text-[#A1A1AA] leading-relaxed max-w-xl">
+                <p className="text-xs sm:text-sm text-[#635E56] dark:text-[#A69F94] leading-relaxed max-w-xl">
                   Gain verified credentials in cloud architecture, distributed systems, deep learning,
                   and cybersecurity through production-grade engineering mastery.
                 </p>
 
                 {/* Quick Metrics Badges */}
-                <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-[#E5E5E7] font-mono">
-                  <span className="flex items-center gap-1.5 bg-[#14141A] border border-white/[0.04] px-2.5 py-1 rounded-lg">
-                    <BookOpen size={13} className="text-[#C5A880]" />
-                    <strong className="text-white">{filteredAndSortedCourses.length}</strong> Available Courses
+                <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-[#635E56] dark:text-[#A69F94] font-mono">
+                  <span className="flex items-center gap-1.5 bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] px-2.5 py-1 rounded-lg text-[#282521] dark:text-[#EDE8E1]">
+                    <BookOpen size={13} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
+                    <strong className="text-[#282521] dark:text-white">{filteredAndSortedCourses.length}</strong> Available Courses
                   </span>
-                  <span className="flex items-center gap-1.5 bg-[#14141A] border border-white/[0.04] px-2.5 py-1 rounded-lg">
-                    <Award size={13} className="text-emerald-400" />
+                  <span className="flex items-center gap-1.5 bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] px-2.5 py-1 rounded-lg text-[#2B6747] dark:text-[#529E73]">
+                    <Award size={13} className="text-[#2B6747] dark:text-[#529E73]" />
                     Verified Certificates
                   </span>
-                  <span className="flex items-center gap-1.5 bg-[#14141A] border border-white/[0.04] px-2.5 py-1 rounded-lg">
-                    <ShieldCheck size={13} className="text-sky-400" />
+                  <span className="flex items-center gap-1.5 bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] px-2.5 py-1 rounded-lg text-[#365D75] dark:text-[#64A8D1]">
+                    <ShieldCheck size={13} className="text-[#365D75] dark:text-[#64A8D1]" />
                     Production SLA
                   </span>
                 </div>
@@ -554,9 +557,9 @@ const Courses = () => {
                   type="button"
                   onClick={fetchCourses}
                   disabled={loading}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#14141A] hover:bg-[#1B1B24] border border-white/[0.06] text-[#F5F5F7] font-bold text-xs transition active:scale-95 disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#EAE5DC] hover:bg-[#E1DBD0] dark:bg-[#272523] dark:hover:bg-[#322F2C] border border-[#E3DCD3] dark:border-white/[0.06] text-[#282521] dark:text-[#EDE8E1] font-bold text-xs transition active:scale-95 disabled:opacity-50 cursor-pointer"
                 >
-                  <RefreshCw size={13} className={loading ? "animate-spin text-[#C5A880]" : ""} />
+                  <RefreshCw size={13} className={loading ? "animate-spin text-[#5B3E57] dark:text-[#D1A7CC]" : ""} />
                   <span>Refresh Catalog</span>
                 </button>
 
@@ -564,7 +567,7 @@ const Courses = () => {
                   <button
                     type="button"
                     onClick={() => navigate("/student/dashboard")}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#C5A880] hover:bg-[#D4BC98] text-[#070709] font-bold text-xs shadow-sm transition active:scale-95 cursor-pointer"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#5B3E57] hover:bg-[#462D42] text-[#FFFEFA] dark:bg-[#D1A7CC] dark:text-[#151413] dark:hover:bg-[#E0BFDC] font-bold text-xs shadow-xs transition active:scale-95 cursor-pointer"
                   >
                     <span>My Dashboard</span>
                     <ChevronRight size={14} />
@@ -576,15 +579,15 @@ const Courses = () => {
 
           {/* ── FEATURED COURSES CAROUSEL ─────────────────────────────────── */}
           {!searchQuery.trim() && selectedCategory === "All" && featuredCourses.length > 0 && (
-            <div className="rounded-3xl border border-white/[0.04] bg-[#0F0F13] p-5 sm:p-6 space-y-4">
+            <div className="rounded-3xl border border-[#E3DCD3] dark:border-white/[0.06] bg-[#FFFEFA] dark:bg-[#1D1C1A] p-5 sm:p-6 space-y-4 shadow-card">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-[#C5A880]">
+                  <div className="p-2 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC]">
                     <Award size={18} />
                   </div>
                   <div>
-                    <h2 className="text-sm font-bold text-[#F5F5F7]">Featured Curriculum</h2>
-                    <p className="text-xs text-[#8E8E93]">Curated by principal architects</p>
+                    <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Featured Curriculum</h2>
+                    <p className="text-xs text-[#756E64] dark:text-[#7A7368]">Curated by principal architects</p>
                   </div>
                 </div>
                 <button
@@ -594,7 +597,7 @@ const Courses = () => {
                     setSelectedLevel("All Levels");
                     setSearchQuery("");
                   }}
-                  className="text-xs font-semibold text-[#C5A880] hover:text-[#D4BC98] flex items-center gap-1 transition-colors cursor-pointer"
+                  className="text-xs font-semibold text-[#5B3E57] hover:text-[#462D42] dark:text-[#D1A7CC] dark:hover:text-[#E0BFDC] flex items-center gap-1 transition-colors cursor-pointer"
                 >
                   View All Tracks <ArrowRight size={14} />
                 </button>
@@ -612,17 +615,17 @@ const Courses = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.25, delay: idx * 0.08 }}
                       onClick={() => handleCardClick(course.id)}
-                      className="group relative rounded-2xl overflow-hidden bg-[#14141A] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all cursor-pointer flex flex-col justify-between"
+                      className="group relative rounded-2xl overflow-hidden bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 hover:shadow-card hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between"
                     >
                       {/* 16:9 Aspect Frame */}
-                      <div className="relative aspect-video w-full overflow-hidden bg-[#070709]">
+                      <div className="relative aspect-video w-full overflow-hidden bg-[#EAE5DC] dark:bg-[#151413]">
                         <img
                           src={course.image}
                           alt={course.title}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                           loading="lazy"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#070709]/90 via-transparent to-black/20" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                         <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-lg text-[10px] font-bold border backdrop-blur-md ${catClass}`}>
                           {course.category}
                         </span>
@@ -638,14 +641,14 @@ const Courses = () => {
                       </div>
 
                       <div className="p-4 space-y-2">
-                        <h3 className="text-xs font-bold text-[#F5F5F7] group-hover:text-[#C5A880] transition line-clamp-1">
+                        <h3 className="text-xs font-bold text-[#282521] dark:text-[#EDE8E1] group-hover:text-[#5B3E57] dark:group-hover:text-[#D1A7CC] transition-colors line-clamp-1">
                           {course.title}
                         </h3>
-                        <div className="flex items-center justify-between text-xs pt-1 border-t border-white/[0.04]">
-                          <div className="flex items-center gap-1 text-[#C5A880] font-mono font-bold text-[11px]">
+                        <div className="flex items-center justify-between text-xs pt-2 border-t border-[#E3DCD3] dark:border-white/[0.06]">
+                          <div className="flex items-center gap-1 text-[#C29B38] font-mono font-bold text-[11px]">
                             <Star size={11} fill="currentColor" /> {course.rating.toFixed(1)}
                           </div>
-                          <span className="text-xs font-extrabold text-[#F5F5F7] font-mono">₹{course.price}</span>
+                          <span className="text-xs font-extrabold text-[#282521] dark:text-[#EDE8E1] font-mono">₹{course.price}</span>
                         </div>
                       </div>
                     </motion.div>
@@ -657,21 +660,21 @@ const Courses = () => {
 
           {/* ── TRENDING COURSES SECTION ─────────────────────────────────── */}
           {!searchQuery.trim() && selectedCategory === "All" && trendingCourses.length > 0 && (
-            <div className="rounded-3xl border border-white/[0.04] bg-[#0F0F13] p-5 sm:p-6 space-y-4">
+            <div className="rounded-3xl border border-[#E3DCD3] dark:border-white/[0.06] bg-[#FFFEFA] dark:bg-[#1D1C1A] p-5 sm:p-6 space-y-4 shadow-card">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-[#C5A880]">
+                  <div className="p-2 rounded-xl bg-[#F6EFEA] dark:bg-[#D9A48F]/15 border border-[#E0D0C7] dark:border-[#D9A48F]/30 text-[#9A6B56] dark:text-[#D9A48F]">
                     <Zap size={18} />
                   </div>
                   <div>
-                    <h2 className="text-sm font-bold text-[#F5F5F7]">Trending Velocity Tracks</h2>
-                    <p className="text-xs text-[#8E8E93]">High engagement this week</p>
+                    <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Trending Velocity Tracks</h2>
+                    <p className="text-xs text-[#756E64] dark:text-[#7A7368]">High engagement this week</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => navigate("/courses")}
-                  className="text-xs font-semibold text-[#C5A880] hover:text-[#D4BC98] flex items-center gap-1 transition-colors cursor-pointer"
+                  className="text-xs font-semibold text-[#5B3E57] hover:text-[#462D42] dark:text-[#D1A7CC] dark:hover:text-[#E0BFDC] flex items-center gap-1 transition-colors cursor-pointer"
                 >
                   View All <ArrowRight size={14} />
                 </button>
@@ -688,18 +691,18 @@ const Courses = () => {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.25, delay: idx * 0.05 }}
                       onClick={() => handleCardClick(course.id)}
-                      className="group flex-shrink-0 w-64 rounded-2xl overflow-hidden bg-[#14141A] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all cursor-pointer flex flex-col justify-between"
+                      className="group flex-shrink-0 w-64 rounded-2xl overflow-hidden bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 hover:shadow-card hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between"
                     >
-                      <div className="relative aspect-video w-full overflow-hidden bg-[#070709]">
+                      <div className="relative aspect-video w-full overflow-hidden bg-[#EAE5DC] dark:bg-[#151413]">
                         <img
                           src={course.image}
                           alt={course.title}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                           loading="lazy"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#070709]/90 via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                         <div className="absolute top-2 left-2 flex items-center gap-1.5">
-                          <span className="px-1.5 py-0.5 rounded bg-[#C5A880] text-[#070709] text-[9px] font-bold">
+                          <span className="px-1.5 py-0.5 rounded bg-[#5B3E57] text-[#FFFEFA] dark:bg-[#D1A7CC] dark:text-[#151413] text-[9px] font-bold">
                             #{idx + 1}
                           </span>
                           <span className="px-1.5 py-0.5 rounded bg-black/60 text-white text-[9px] font-bold backdrop-blur-md">
@@ -718,14 +721,14 @@ const Courses = () => {
                       </div>
 
                       <div className="p-3 space-y-1.5">
-                        <h3 className="text-xs font-bold text-[#F5F5F7] group-hover:text-[#C5A880] transition line-clamp-1">
+                        <h3 className="text-xs font-bold text-[#282521] dark:text-[#EDE8E1] group-hover:text-[#5B3E57] dark:group-hover:text-[#D1A7CC] transition line-clamp-1">
                           {course.title}
                         </h3>
-                        <div className="flex items-center justify-between text-xs pt-1 border-t border-white/[0.04]">
-                          <div className="flex items-center gap-1 text-[#C5A880] font-mono font-bold text-[10px]">
+                        <div className="flex items-center justify-between text-xs pt-1 border-t border-[#E3DCD3] dark:border-white/[0.06]">
+                          <div className="flex items-center gap-1 text-[#C29B38] font-mono font-bold text-[10px]">
                             <Star size={10} fill="currentColor" /> {course.rating.toFixed(1)}
                           </div>
-                          <span className="text-xs font-extrabold text-[#F5F5F7] font-mono">₹{course.price}</span>
+                          <span className="text-xs font-extrabold text-[#282521] dark:text-[#EDE8E1] font-mono">₹{course.price}</span>
                         </div>
                       </div>
                     </motion.div>
@@ -736,10 +739,10 @@ const Courses = () => {
           )}
 
           {/* ── TOOLBAR: SEARCH, CATEGORY PILLS, FILTERS & VIEW MODE ───────── */}
-          <div className="rounded-3xl border border-white/[0.04] bg-[#0F0F13] p-5 space-y-4 shadow-sm">
+          <div className="rounded-3xl border border-[#E3DCD3] dark:border-white/[0.06] bg-[#FFFEFA] dark:bg-[#1D1C1A] p-5 space-y-4 shadow-card">
             {/* Top Controls: Search, Sort & View Mode */}
             <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-              {/* Physics-Based Muted Gold Search Input & Action Button */}
+              {/* Search Input & Action Button */}
               <div className="relative flex-1 max-w-xl">
                 <AdvancedTypeaheadSearch
                   initialValue={searchQuery}
@@ -758,15 +761,15 @@ const Courses = () => {
                   <select
                     value={selectedLevel}
                     onChange={(e) => updateLevelFilter(e.target.value)}
-                    className="appearance-none pl-3 pr-8 py-2 rounded-xl border border-white/[0.06] bg-[#14141A] text-xs font-semibold text-[#E5E5E7] outline-none hover:border-white/20 focus:border-[#C5A880] transition cursor-pointer"
+                    className="appearance-none pl-3 pr-8 py-2 rounded-xl border border-[#D8D0C5] dark:border-white/[0.08] bg-[#FFFEFA] dark:bg-[#1D1C1A] text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] outline-none hover:border-[#5B3E57]/40 dark:hover:border-white/20 focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] transition cursor-pointer"
                   >
                     {LEVEL_OPTIONS.map((lvl) => (
-                      <option key={lvl} value={lvl} className="bg-[#14141A] text-[#F5F5F7]">
+                      <option key={lvl} value={lvl} className="bg-[#FFFEFA] dark:bg-[#1D1C1A] text-[#282521] dark:text-[#EDE8E1]">
                         {lvl}
                       </option>
                     ))}
                   </select>
-                  <Filter size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#71717A] pointer-events-none" />
+                  <Filter size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368] pointer-events-none" />
                 </div>
 
                 {/* Sort Selector */}
@@ -774,26 +777,26 @@ const Courses = () => {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="appearance-none pl-3 pr-8 py-2 rounded-xl border border-white/[0.06] bg-[#14141A] text-xs font-semibold text-[#E5E5E7] outline-none hover:border-white/20 focus:border-[#C5A880] transition cursor-pointer"
+                    className="appearance-none pl-3 pr-8 py-2 rounded-xl border border-[#D8D0C5] dark:border-white/[0.08] bg-[#FFFEFA] dark:bg-[#1D1C1A] text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] outline-none hover:border-[#5B3E57]/40 dark:hover:border-white/20 focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] transition cursor-pointer"
                   >
                     {SORT_OPTIONS.map((opt) => (
-                      <option key={opt.value} value={opt.value} className="bg-[#14141A] text-[#F5F5F7]">
+                      <option key={opt.value} value={opt.value} className="bg-[#FFFEFA] dark:bg-[#1D1C1A] text-[#282521] dark:text-[#EDE8E1]">
                         {opt.label}
                       </option>
                     ))}
                   </select>
-                  <SlidersHorizontal size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#71717A] pointer-events-none" />
+                  <SlidersHorizontal size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368] pointer-events-none" />
                 </div>
 
                 {/* View Mode Grid/List Toggle */}
-                <div className="flex items-center p-1 rounded-xl border border-white/[0.06] bg-[#14141A]">
+                <div className="flex items-center p-1 rounded-xl border border-[#E3DCD3] dark:border-white/[0.06] bg-[#EAE5DC] dark:bg-[#272523]">
                   <button
                     type="button"
                     onClick={() => setViewMode("grid")}
                     title="Grid View"
                     className={`p-1.5 rounded-lg transition ${viewMode === "grid"
-                      ? "bg-[#C5A880] text-[#070709] font-bold"
-                      : "text-[#71717A] hover:text-[#F5F5F7]"
+                      ? "bg-[#5B3E57] text-[#FFFEFA] dark:bg-[#D1A7CC] dark:text-[#151413] font-bold shadow-xs"
+                      : "text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:hover:text-[#EDE8E1]"
                       }`}
                   >
                     <LayoutGrid size={15} />
@@ -803,8 +806,8 @@ const Courses = () => {
                     onClick={() => setViewMode("list")}
                     title="List View"
                     className={`p-1.5 rounded-lg transition ${viewMode === "list"
-                      ? "bg-[#C5A880] text-[#070709] font-bold"
-                      : "text-[#71717A] hover:text-[#F5F5F7]"
+                      ? "bg-[#5B3E57] text-[#FFFEFA] dark:bg-[#D1A7CC] dark:text-[#151413] font-bold shadow-xs"
+                      : "text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:hover:text-[#EDE8E1]"
                       }`}
                   >
                     <List size={15} />
@@ -824,8 +827,8 @@ const Courses = () => {
                     whileTap={{ scale: 0.96 }}
                     onClick={() => updateCategoryFilter(cat)}
                     className={`relative isolate whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all select-none border cursor-pointer ${isSel
-                      ? "text-[#070709] font-bold border-[#C5A880] bg-[#C5A880] shadow-[0_0_15px_rgba(197,168,128,0.25)]"
-                      : "text-[#8E8E93] hover:text-[#F5F5F7] border-white/[0.04] hover:border-white/20 bg-[#14141A]"
+                      ? "text-[#FFFEFA] font-bold border-[#5B3E57] bg-[#5B3E57] dark:text-[#151413] dark:border-[#D1A7CC] dark:bg-[#D1A7CC] shadow-xs"
+                      : "text-[#635E56] hover:text-[#282521] dark:text-[#A69F94] dark:hover:text-[#EDE8E1] border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#C8BFB2] dark:hover:border-white/20 bg-[#EAE5DC] dark:bg-[#272523]"
                       }`}
                   >
                     <span className="relative z-10">{cat}</span>
@@ -836,29 +839,29 @@ const Courses = () => {
 
             {/* Active Filter Reset CTA Bar */}
             {hasActiveFilters && (
-              <div className="pt-2 border-t border-white/[0.04] flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div className="pt-2 border-t border-[#E3DCD3] dark:border-white/[0.06] flex flex-wrap items-center justify-between gap-2 text-xs">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-[#8E8E93] text-[11px]">Active Filters:</span>
+                  <span className="text-[#756E64] dark:text-[#7A7368] text-[11px]">Active Filters:</span>
                   {searchQuery && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-[#E5E5E7] text-[11px]">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] text-[#282521] dark:text-[#EDE8E1] text-[11px]">
                       <span>Query: "{searchQuery}"</span>
-                      <button type="button" aria-label="Clear search query" onClick={() => setSearchQuery("")} className="hover:text-rose-400">
+                      <button type="button" aria-label="Clear search query" onClick={() => setSearchQuery("")} className="hover:text-rose-500">
                         <X size={12} />
                       </button>
                     </span>
                   )}
                   {selectedCategory !== "All" && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-[#E5E5E7] text-[11px]">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] text-[#282521] dark:text-[#EDE8E1] text-[11px]">
                       <span>Category: {selectedCategory}</span>
-                      <button type="button" aria-label="Clear category filter" onClick={() => setSelectedCategory("All")} className="hover:text-rose-400">
+                      <button type="button" aria-label="Clear category filter" onClick={() => setSelectedCategory("All")} className="hover:text-rose-500">
                         <X size={12} />
                       </button>
                     </span>
                   )}
                   {selectedLevel !== "All Levels" && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.06] text-[#E5E5E7] text-[11px]">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] text-[#282521] dark:text-[#EDE8E1] text-[11px]">
                       <span>Level: {selectedLevel}</span>
-                      <button type="button" aria-label="Clear level filter" onClick={() => setSelectedLevel("All Levels")} className="hover:text-rose-400">
+                      <button type="button" aria-label="Clear level filter" onClick={() => setSelectedLevel("All Levels")} className="hover:text-rose-500">
                         <X size={12} />
                       </button>
                     </span>
@@ -868,7 +871,7 @@ const Courses = () => {
                 <button
                   type="button"
                   onClick={clearAllFilters}
-                  className="px-3 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/25 text-xs font-semibold transition-colors cursor-pointer"
+                  className="px-3 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-[#9B3835] dark:text-rose-400 border border-rose-500/25 text-xs font-semibold transition-colors cursor-pointer"
                 >
                   Clear All Active Selections
                 </button>
@@ -883,26 +886,26 @@ const Courses = () => {
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <div
                   key={i}
-                  className="rounded-2xl border border-white/[0.04] bg-[#0F0F13] p-4 space-y-3 animate-pulse"
+                  className="rounded-2xl border border-[#E3DCD3] dark:border-white/[0.06] bg-[#FFFEFA] dark:bg-[#1D1C1A] p-4 space-y-3 animate-pulse"
                   style={{ animationDuration: "1.5s" }}
                 >
-                  <div className="aspect-video bg-[#14141A] rounded-xl" />
-                  <div className="h-4 bg-[#14141A] rounded w-3/4" />
-                  <div className="h-3 bg-[#14141A]/70 rounded w-1/2" />
-                  <div className="h-8 bg-[#14141A]/50 rounded mt-4" />
+                  <div className="aspect-video bg-[#EAE5DC] dark:bg-[#272523] rounded-xl" />
+                  <div className="h-4 bg-[#EAE5DC] dark:bg-[#272523] rounded w-3/4" />
+                  <div className="h-3 bg-[#EAE5DC]/70 dark:bg-[#272523]/70 rounded w-1/2" />
+                  <div className="h-8 bg-[#EAE5DC]/50 dark:bg-[#272523]/50 rounded mt-4" />
                 </div>
               ))}
             </div>
           ) : paginatedCourses.length === 0 ? (
             /* Empty Query Telemetry State with Alternative Domains */
-            <div className="rounded-3xl border border-white/[0.04] bg-[#0F0F13] p-8 sm:p-12 text-center space-y-6">
-              <div className="h-14 w-14 rounded-2xl bg-[#14141A] border border-white/[0.06] text-[#C5A880] flex items-center justify-center mx-auto">
+            <div className="rounded-3xl border border-[#E3DCD3] dark:border-white/[0.06] bg-[#FFFEFA] dark:bg-[#1D1C1A] p-8 sm:p-12 text-center space-y-6 shadow-card">
+              <div className="h-14 w-14 rounded-2xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC] flex items-center justify-center mx-auto">
                 <BookOpen size={28} />
               </div>
 
               <div className="space-y-1.5 max-w-md mx-auto">
-                <h3 className="text-lg font-bold text-[#F5F5F7]">No Matching Engineering Tracks</h3>
-                <p className="text-xs text-[#8E8E93] leading-relaxed">
+                <h3 className="text-lg font-bold text-[#282521] dark:text-[#EDE8E1]">No Matching Engineering Tracks</h3>
+                <p className="text-xs text-[#635E56] dark:text-[#A69F94] leading-relaxed">
                   No courses matched your current filter criteria. Explore one of our core architecture specializations below or reset selections.
                 </p>
               </div>
@@ -919,12 +922,12 @@ const Courses = () => {
                       setSelectedLevel("All Levels");
                       setCurrentPage(1);
                     }}
-                    className="p-3.5 rounded-2xl bg-[#14141A] border border-white/[0.04] hover:border-[#C5A880]/40 transition-all group text-left cursor-pointer"
+                    className="p-3.5 rounded-2xl bg-[#FFFEFA] dark:bg-[#242220] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 hover:shadow-card transition-all group text-left cursor-pointer"
                   >
-                    <span className="text-xs font-bold text-[#F5F5F7] group-hover:text-[#C5A880] block transition-colors">
+                    <span className="text-xs font-bold text-[#282521] dark:text-[#EDE8E1] group-hover:text-[#5B3E57] dark:group-hover:text-[#D1A7CC] block transition-colors">
                       {domain.title}
                     </span>
-                    <span className="text-[11px] text-[#71717A] mt-1 block leading-normal line-clamp-2">
+                    <span className="text-[11px] text-[#756E64] dark:text-[#7A7368] mt-1 block leading-normal line-clamp-2">
                       {domain.desc}
                     </span>
                   </button>
@@ -935,7 +938,7 @@ const Courses = () => {
                 <button
                   type="button"
                   onClick={clearAllFilters}
-                  className="px-5 py-2.5 rounded-xl bg-[#C5A880] text-[#070709] text-xs font-bold hover:bg-[#D4BC98] transition cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-[#5B3E57] hover:bg-[#462D42] text-[#FFFEFA] dark:bg-[#D1A7CC] dark:text-[#151413] dark:hover:bg-[#E0BFDC] text-xs font-bold transition shadow-xs cursor-pointer"
                 >
                   Clear All Filters & Show Full Catalog
                 </button>
@@ -962,11 +965,11 @@ const Courses = () => {
                     transition={{ duration: 0.2, delay: idx * 0.03 }}
                     whileHover={{ y: -4 }}
                     onClick={() => handleCardClick(course.id)}
-                    className="course-card group flex flex-col justify-between rounded-2xl border border-white/[0.04] bg-[#0F0F13] hover:border-[#C5A880]/40 hover:shadow-[0_12px_36px_-8px_rgba(0,0,0,0.85)] transition-all duration-300 overflow-hidden cursor-pointer"
+                    className="course-card group flex flex-col justify-between rounded-2xl border border-[#E3DCD3] dark:border-white/[0.06] bg-[#FFFEFA] dark:bg-[#1D1C1A] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 hover:shadow-card hover:-translate-y-1 transition-all duration-300 overflow-hidden cursor-pointer"
                   >
                     <div>
                       {/* Card 16:9 Aspect Ratio Frame */}
-                      <div className="relative aspect-video w-full overflow-hidden bg-[#070709]">
+                      <div className="relative aspect-video w-full overflow-hidden bg-[#EAE5DC] dark:bg-[#151413]">
                         <img
                           src={course.image}
                           alt={course.title}
@@ -977,14 +980,14 @@ const Courses = () => {
                               "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80";
                           }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#070709]/95 via-transparent to-black/20" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
                         {/* Category & Level Badges */}
                         <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
                           <span className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border backdrop-blur-md ${catClass}`}>
                             {course.category}
                           </span>
-                          <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-[#0F0F13]/90 text-[#F5F5F7] border border-white/[0.06] backdrop-blur-md">
+                          <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-black/60 text-[#FFFEFA] border border-white/10 backdrop-blur-md">
                             {course.level}
                           </span>
                         </div>
@@ -999,7 +1002,7 @@ const Courses = () => {
                               setDrawerCourse(course);
                             }}
                             title="Quick View"
-                            className="p-1.5 rounded-lg bg-[#0F0F13]/80 hover:bg-[#14141A] text-[#E5E5E7] border border-white/[0.06] backdrop-blur-md transition"
+                            className="p-1.5 rounded-lg bg-black/50 hover:bg-black/75 text-white border border-white/10 backdrop-blur-md transition"
                           >
                             <Eye size={13} />
                           </button>
@@ -1011,7 +1014,7 @@ const Courses = () => {
                             title={isWish ? "Remove from Saved" : "Save Course"}
                             className={`p-1.5 rounded-lg backdrop-blur-md transition ${isWish
                               ? "bg-rose-500 text-white"
-                              : "bg-[#0F0F13]/80 hover:bg-rose-500/80 text-white border border-white/[0.06]"
+                              : "bg-black/50 hover:bg-rose-500/80 text-white border border-white/10"
                               }`}
                           >
                             <Heart size={13} fill={isWish ? "currentColor" : "none"} />
@@ -1019,35 +1022,35 @@ const Courses = () => {
                         </div>
 
                         {/* Duration & Lessons Pill */}
-                        <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[11px] text-[#E5E5E7] font-mono">
-                          <span className="flex items-center gap-1 bg-[#0F0F13]/90 border border-white/[0.06] px-2 py-0.5 rounded-md backdrop-blur-md">
-                            <Clock size={11} className="text-[#C5A880]" /> {course.duration}
+                        <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[11px] text-[#FFFEFA] font-mono">
+                          <span className="flex items-center gap-1 bg-black/60 border border-white/10 px-2 py-0.5 rounded-md backdrop-blur-md">
+                            <Clock size={11} className="text-[#D1A7CC]" /> {course.duration}
                           </span>
-                          <span className="flex items-center gap-1 bg-[#0F0F13]/90 border border-white/[0.06] px-2 py-0.5 rounded-md backdrop-blur-md">
-                            <BookOpen size={11} className="text-[#C5A880]" /> {course.lessonsCount} Lessons
+                          <span className="flex items-center gap-1 bg-black/60 border border-white/10 px-2 py-0.5 rounded-md backdrop-blur-md">
+                            <BookOpen size={11} className="text-[#D1A7CC]" /> {course.lessonsCount} Lessons
                           </span>
                         </div>
                       </div>
 
                       {/* Body Content */}
                       <div className="p-4 space-y-2">
-                        <h3 className="text-sm font-bold text-[#F5F5F7] group-hover:text-[#C5A880] transition-colors line-clamp-2 leading-snug">
+                        <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] group-hover:text-[#5B3E57] dark:group-hover:text-[#D1A7CC] transition-colors line-clamp-2 leading-snug">
                           {course.title}
                         </h3>
 
-                        <p className="text-xs text-[#8E8E93] line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-[#635E56] dark:text-[#A69F94] line-clamp-2 leading-relaxed">
                           {course.description}
                         </p>
 
                         {/* Instructor Info */}
-                        <div className="pt-2 flex items-center justify-between text-xs text-[#8E8E93] border-t border-white/[0.04]">
+                        <div className="pt-2 flex items-center justify-between text-xs text-[#756E64] dark:text-[#7A7368] border-t border-[#E3DCD3] dark:border-white/[0.06]">
                           <div className="flex items-center gap-1.5">
-                            <div className="h-5 w-5 rounded-full bg-[#14141A] border border-white/[0.06] text-[#E5E5E7] flex items-center justify-center font-bold text-[9px]">
+                            <div className="h-5 w-5 rounded-full bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC] flex items-center justify-center font-bold text-[9px]">
                               {course.instructor.charAt(0)}
                             </div>
-                            <span className="font-semibold text-[#E5E5E7] truncate">{course.instructor}</span>
+                            <span className="font-semibold text-[#282521] dark:text-[#EDE8E1] truncate">{course.instructor}</span>
                           </div>
-                          <div className="flex items-center gap-1 text-[#C5A880] font-mono font-bold text-[11px]">
+                          <div className="flex items-center gap-1 text-[#C29B38] font-mono font-bold text-[11px]">
                             <Star size={12} fill="currentColor" /> {course.rating.toFixed(1)}
                           </div>
                         </div>
@@ -1055,19 +1058,19 @@ const Courses = () => {
                     </div>
 
                     {/* Footer: Price & CTA */}
-                    <div className="p-4 pt-2 border-t border-white/[0.04] flex items-center justify-between">
+                    <div className="p-4 pt-2 border-t border-[#E3DCD3] dark:border-white/[0.06] bg-[#FAF7F2] dark:bg-[#242220] flex items-center justify-between">
                       <div>
-                        <span className="text-base font-extrabold text-[#F5F5F7] font-mono">
+                        <span className="text-base font-extrabold text-[#282521] dark:text-[#EDE8E1] font-mono">
                           ₹{course.price}
                         </span>
                         {course.originalPrice > course.price && (
-                          <span className="text-xs text-[#71717A] line-through ml-1.5 font-mono">
+                          <span className="text-xs text-[#756E64] dark:text-[#7A7368] line-through ml-1.5 font-mono">
                             ₹{course.originalPrice}
                           </span>
                         )}
                       </div>
 
-                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#14141A] border border-white/[0.06] text-[#C5A880] group-hover:bg-[#C5A880] group-hover:text-[#070709] text-xs font-bold transition-all">
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#5B3E57] hover:bg-[#462D42] text-[#FFFEFA] dark:bg-[#D1A7CC] dark:text-[#151413] dark:hover:bg-[#E0BFDC] text-xs font-bold transition-all">
                         <span>View Track</span>
                         <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
                       </span>
@@ -1093,10 +1096,10 @@ const Courses = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.15, delay: idx * 0.02 }}
                     onClick={() => handleCardClick(course.id)}
-                    className="course-card group flex flex-col sm:flex-row items-stretch sm:items-center justify-between rounded-2xl border border-white/[0.04] bg-[#0F0F13] p-3.5 sm:p-4 hover:border-[#C5A880]/40 transition-all cursor-pointer gap-4"
+                    className="course-card group flex flex-col sm:flex-row items-stretch sm:items-center justify-between rounded-2xl border border-[#E3DCD3] dark:border-white/[0.06] bg-[#FFFEFA] dark:bg-[#1D1C1A] p-3.5 sm:p-4 hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 hover:shadow-card hover:-translate-y-0.5 transition-all cursor-pointer gap-4"
                   >
                     {/* 16:9 Aspect Ratio Thumbnail */}
-                    <div className="relative aspect-video sm:h-28 sm:w-44 shrink-0 rounded-xl overflow-hidden bg-[#070709]">
+                    <div className="relative aspect-video sm:h-28 sm:w-44 shrink-0 rounded-xl overflow-hidden bg-[#EAE5DC] dark:bg-[#151413]">
                       <img
                         src={course.image}
                         alt={course.title}
@@ -1109,37 +1112,37 @@ const Courses = () => {
 
                     {/* Details */}
                     <div className="flex-1 min-w-0 space-y-1">
-                      <div className="flex items-center gap-2 text-xs text-[#8E8E93] font-mono">
-                        <span className="font-bold text-[#E5E5E7]">{course.level}</span>
+                      <div className="flex items-center gap-2 text-xs text-[#756E64] dark:text-[#7A7368] font-mono">
+                        <span className="font-bold text-[#282521] dark:text-[#EDE8E1]">{course.level}</span>
                         <span>•</span>
                         <span className="flex items-center gap-1">
-                          <Clock size={11} className="text-[#C5A880]" /> {course.duration}
+                          <Clock size={11} className="text-[#5B3E57] dark:text-[#D1A7CC]" /> {course.duration}
                         </span>
                         <span>•</span>
-                        <span className="flex items-center gap-1 text-[#C5A880] font-bold">
+                        <span className="flex items-center gap-1 text-[#C29B38] font-bold">
                           <Star size={11} fill="currentColor" /> {course.rating.toFixed(1)}
                         </span>
                       </div>
 
-                      <h3 className="text-sm font-bold text-[#F5F5F7] group-hover:text-[#C5A880] transition truncate">
+                      <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] group-hover:text-[#5B3E57] dark:group-hover:text-[#D1A7CC] transition truncate">
                         {course.title}
                       </h3>
 
-                      <p className="text-xs text-[#8E8E93] line-clamp-1">
+                      <p className="text-xs text-[#635E56] dark:text-[#A69F94] line-clamp-1">
                         {course.description}
                       </p>
 
-                      <p className="text-[11px] text-[#71717A]">
-                        Instructor: <strong className="text-[#E5E5E7] font-semibold">{course.instructor}</strong>
+                      <p className="text-[11px] text-[#756E64] dark:text-[#7A7368]">
+                        Instructor: <strong className="text-[#282521] dark:text-[#EDE8E1] font-semibold">{course.instructor}</strong>
                       </p>
                     </div>
 
                     {/* Price & CTA */}
-                    <div className="sm:border-l sm:border-white/[0.04] sm:pl-4 flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0">
+                    <div className="sm:border-l sm:border-[#E3DCD3] dark:sm:border-white/[0.06] sm:pl-4 flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0">
                       <div className="text-left sm:text-right">
-                        <div className="text-base font-extrabold text-[#F5F5F7] font-mono">₹{course.price}</div>
+                        <div className="text-base font-extrabold text-[#282521] dark:text-[#EDE8E1] font-mono">₹{course.price}</div>
                         {course.originalPrice > course.price && (
-                          <div className="text-[11px] text-[#71717A] line-through font-mono">₹{course.originalPrice}</div>
+                          <div className="text-[11px] text-[#756E64] dark:text-[#7A7368] line-through font-mono">₹{course.originalPrice}</div>
                         )}
                       </div>
 
@@ -1148,12 +1151,12 @@ const Courses = () => {
                           type="button"
                           aria-label={isWish ? "Remove from wishlist" : "Add to wishlist"}
                           onClick={(e) => toggleWishlist(course, e)}
-                          className={`p-2 rounded-xl border border-white/[0.06] transition ${isWish ? "bg-rose-500 text-white border-rose-500" : "hover:bg-[#14141A] text-[#8E8E93]"
+                          className={`p-2 rounded-xl border border-[#E3DCD3] dark:border-white/[0.06] transition ${isWish ? "bg-rose-500 text-white border-rose-500" : "hover:bg-[#EAE5DC] dark:hover:bg-[#272523] text-[#756E64] dark:text-[#A69F94]"
                             }`}
                         >
                           <Heart size={14} fill={isWish ? "currentColor" : "none"} />
                         </button>
-                        <span className="px-3 py-1.5 rounded-xl bg-[#C5A880] text-[#070709] text-xs font-bold hover:bg-[#D4BC98] transition">
+                        <span className="px-3 py-1.5 rounded-xl bg-[#5B3E57] hover:bg-[#462D42] text-[#FFFEFA] dark:bg-[#D1A7CC] dark:text-[#151413] text-xs font-bold shadow-xs transition">
                           Enroll
                         </span>
                       </div>
@@ -1166,13 +1169,13 @@ const Courses = () => {
 
           {/* ── PAGINATION CONTROLS ───────────────────────────────────────── */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between pt-2 px-2 text-xs text-[#8E8E93]">
+            <div className="flex items-center justify-between pt-2 px-2 text-xs text-[#756E64] dark:text-[#7A7368]">
               <p className="font-mono">
-                Showing <strong className="text-[#F5F5F7]">{(currentPage - 1) * itemsPerPage + 1}</strong> to{" "}
-                <strong className="text-[#F5F5F7]">
+                Showing <strong className="text-[#282521] dark:text-[#EDE8E1]">{(currentPage - 1) * itemsPerPage + 1}</strong> to{" "}
+                <strong className="text-[#282521] dark:text-[#EDE8E1]">
                   {Math.min(currentPage * itemsPerPage, filteredAndSortedCourses.length)}
                 </strong>{" "}
-                of <strong className="text-[#F5F5F7]">{filteredAndSortedCourses.length}</strong> courses
+                of <strong className="text-[#282521] dark:text-[#EDE8E1]">{filteredAndSortedCourses.length}</strong> courses
               </p>
 
               <div className="flex items-center gap-1.5">
@@ -1181,7 +1184,7 @@ const Courses = () => {
                   aria-label="Previous page"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="p-2 rounded-xl border border-white/[0.06] bg-[#0F0F13] text-[#8E8E93] hover:text-white disabled:opacity-30 transition cursor-pointer"
+                  className="p-2 rounded-xl border border-[#E3DCD3] dark:border-white/[0.06] bg-[#FFFEFA] dark:bg-[#1D1C1A] text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-[#EDE8E1] disabled:opacity-30 transition cursor-pointer"
                 >
                   <ChevronLeft size={14} />
                 </button>
@@ -1193,8 +1196,8 @@ const Courses = () => {
                     aria-label={`Go to page ${pg}`}
                     onClick={() => setCurrentPage(pg)}
                     className={`h-8 w-8 rounded-xl text-xs font-mono font-bold transition cursor-pointer ${currentPage === pg
-                      ? "bg-[#C5A880] text-[#070709]"
-                      : "border border-white/[0.06] bg-[#0F0F13] text-[#8E8E93] hover:text-white"
+                      ? "bg-[#5B3E57] text-[#FFFEFA] dark:bg-[#D1A7CC] dark:text-[#151413] shadow-xs"
+                      : "border border-[#E3DCD3] dark:border-white/[0.06] bg-[#FFFEFA] dark:bg-[#1D1C1A] text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-[#EDE8E1]"
                       }`}
                   >
                     {pg}
@@ -1206,7 +1209,7 @@ const Courses = () => {
                   aria-label="Next page"
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="p-2 rounded-xl border border-white/[0.06] bg-[#0F0F13] text-[#8E8E93] hover:text-white disabled:opacity-30 transition cursor-pointer"
+                  className="p-2 rounded-xl border border-[#E3DCD3] dark:border-white/[0.06] bg-[#FFFEFA] dark:bg-[#1D1C1A] text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-[#EDE8E1] disabled:opacity-30 transition cursor-pointer"
                 >
                   <ChevronRight size={14} />
                 </button>
@@ -1224,7 +1227,7 @@ const Courses = () => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     onClick={() => setDrawerCourse(null)}
-                    className="absolute inset-0 bg-black/75 backdrop-blur-xs transition-opacity"
+                    className="absolute inset-0 bg-[#282521]/60 backdrop-blur-xs transition-opacity"
                   />
 
                   <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
@@ -1233,86 +1236,88 @@ const Courses = () => {
                       animate={{ x: 0 }}
                       exit={{ x: "100%" }}
                       transition={{ type: "spring", stiffness: 350, damping: 35 }}
-                      className="w-screen max-w-md bg-[#0F0F13] border-l border-white/[0.08] shadow-2xl flex flex-col justify-between text-[#F5F5F7]"
+                      className="w-screen max-w-md bg-[#FFFEFA] dark:bg-[#1D1C1A] border-l border-[#E3DCD3] dark:border-white/[0.08] shadow-2xl flex flex-col justify-between text-[#282521] dark:text-[#EDE8E1]"
                     >
                       <div className="overflow-y-auto p-6 space-y-4">
                         {/* Drawer Header */}
-                        <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
-                          <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-[#14141A] text-[#C5A880] border border-white/[0.06] font-mono">
+                        <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-white/[0.06]">
+                          <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#5B3E57] dark:text-[#D1A7CC] border border-[#D5C0D1] dark:border-[#D1A7CC]/30 font-mono">
                             {drawerCourse.category}
                           </span>
                           <button
                             type="button"
                             aria-label="Close details drawer"
                             onClick={() => setDrawerCourse(null)}
-                            className="p-1.5 rounded-lg hover:bg-white/[0.04] text-[#8E8E93] hover:text-white transition"
+                            className="p-1.5 rounded-lg hover:bg-[#EAE5DC] dark:hover:bg-white/[0.04] text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:hover:text-white transition cursor-pointer"
                           >
                             <X size={16} />
                           </button>
                         </div>
 
                         {/* Thumbnail */}
-                        <div className="relative aspect-video rounded-2xl overflow-hidden bg-black border border-white/[0.04]">
+                        <div className="relative aspect-video rounded-2xl overflow-hidden bg-[#EAE5DC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.04]">
                           <img
                             src={drawerCourse.image}
                             alt={drawerCourse.title}
                             className="h-full w-full object-cover"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                          <div className="absolute bottom-3 left-3 text-[#E5E5E7] font-mono text-xs">
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                          <div className="absolute bottom-3 left-3 text-[#FFFEFA] font-mono text-xs">
                             {drawerCourse.level} • {drawerCourse.duration}
                           </div>
                         </div>
 
                         <div>
-                          <h2 className="text-lg font-bold text-[#F5F5F7]">{drawerCourse.title}</h2>
-                          <p className="text-xs text-[#8E8E93] mt-1 leading-relaxed">
+                          <h2 className="text-lg font-bold text-[#282521] dark:text-[#EDE8E1]">{drawerCourse.title}</h2>
+                          <p className="text-xs text-[#635E56] dark:text-[#A69F94] mt-1 leading-relaxed">
                             {drawerCourse.description}
                           </p>
                         </div>
 
                         {/* Highlights */}
-                        <div className="space-y-2 pt-2 border-t border-white/[0.04]">
-                          <h4 className="text-xs font-bold text-[#E5E5E7] uppercase font-mono tracking-wider">
+                        <div className="space-y-2 pt-2 border-t border-[#E3DCD3] dark:border-white/[0.06]">
+                          <h4 className="text-xs font-bold text-[#282521] dark:text-[#EDE8E1] uppercase font-mono tracking-wider">
                             Curriculum Inclusions
                           </h4>
-                          <ul className="space-y-1.5 text-xs text-[#A1A1AA]">
+                          <ul className="space-y-1.5 text-xs text-[#635E56] dark:text-[#A69F94]">
                             <li className="flex items-center gap-2">
-                              <CheckCircle2 size={13} className="text-[#C5A880]" />
+                              <CheckCircle2 size={13} className="text-[#2B6747] dark:text-[#529E73]" />
                               <span>{drawerCourse.modulesCount} Comprehensive technical modules</span>
                             </li>
                             <li className="flex items-center gap-2">
-                              <CheckCircle2 size={13} className="text-[#C5A880]" />
+                              <CheckCircle2 size={13} className="text-[#2B6747] dark:text-[#529E73]" />
                               <span>Verified certificate on completion</span>
                             </li>
                             <li className="flex items-center gap-2">
-                              <CheckCircle2 size={13} className="text-[#C5A880]" />
+                              <CheckCircle2 size={13} className="text-[#2B6747] dark:text-[#529E73]" />
                               <span>Direct faculty mentorship & live Q&A</span>
                             </li>
                             <li className="flex items-center gap-2">
-                              <CheckCircle2 size={13} className="text-[#C5A880]" />
+                              <CheckCircle2 size={13} className="text-[#2B6747] dark:text-[#529E73]" />
                               <span>Full lifetime access on desktop & mobile</span>
                             </li>
                           </ul>
                         </div>
 
                         {/* Faculty */}
-                        <div className="p-3 rounded-xl border border-white/[0.04] bg-[#14141A] flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-xl bg-[#070709] border border-white/[0.06] text-[#C5A880] flex items-center justify-center font-bold text-xs">
+                        <div className="p-3 rounded-xl border border-[#E3DCD3] dark:border-white/[0.06] bg-[#EAE5DC] dark:bg-[#272523] flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC] flex items-center justify-center font-bold text-xs">
                             {drawerCourse.instructor.charAt(0)}
                           </div>
                           <div>
-                            <h5 className="text-xs font-bold text-[#F5F5F7]">{drawerCourse.instructor}</h5>
-                            <p className="text-[11px] text-[#8E8E93]">{drawerCourse.instructorRole}</p>
+                            <h5 className="text-xs font-bold text-[#282521] dark:text-[#EDE8E1]">{drawerCourse.instructor}</h5>
+                            <p className="text-[11px] text-[#756E64] dark:text-[#7A7368]">{drawerCourse.instructorRole}</p>
                           </div>
                         </div>
                       </div>
 
                       {/* Drawer Footer CTA */}
-                      <div className="p-4 border-t border-white/[0.04] bg-[#070709] flex items-center justify-between">
+                      <div className="p-4 border-t border-[#E3DCD3] dark:border-white/[0.06] bg-[#FAF7F2] dark:bg-[#242220] flex items-center justify-between">
                         <div>
-                          <span className="text-lg font-extrabold text-[#F5F5F7] font-mono">₹{drawerCourse.price}</span>
-                          <span className="text-xs text-[#71717A] line-through ml-1.5 font-mono">₹{drawerCourse.originalPrice}</span>
+                          <span className="text-lg font-extrabold text-[#282521] dark:text-[#EDE8E1] font-mono">₹{drawerCourse.price}</span>
+                          {drawerCourse.originalPrice > drawerCourse.price && (
+                            <span className="text-xs text-[#756E64] dark:text-[#7A7368] line-through ml-1.5 font-mono">₹{drawerCourse.originalPrice}</span>
+                          )}
                         </div>
                         <button
                           type="button"
@@ -1320,7 +1325,7 @@ const Courses = () => {
                             setDrawerCourse(null);
                             handleCardClick(drawerCourse.id);
                           }}
-                          className="px-5 py-2.5 rounded-xl bg-[#C5A880] hover:bg-[#D4BC98] text-[#070709] font-bold text-xs transition flex items-center gap-2 cursor-pointer"
+                          className="px-5 py-2.5 rounded-xl bg-[#5B3E57] hover:bg-[#462D42] text-[#FFFEFA] dark:bg-[#D1A7CC] dark:text-[#151413] dark:hover:bg-[#E0BFDC] font-bold text-xs shadow-xs transition flex items-center gap-2 cursor-pointer"
                         >
                           <span>View Full Syllabus</span>
                           <ArrowRight size={13} />

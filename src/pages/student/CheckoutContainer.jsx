@@ -208,7 +208,7 @@ export const CheckoutContainer = () => {
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={SPRING}
-          className="max-w-xl w-full p-8 md:p-10 rounded-3xl bg-[#0F0F13]/90 border border-emerald-500/30 shadow-2xl backdrop-blur-2xl text-center"
+          className="max-w-xl w-full p-8 md:p-10 rounded-3xl bg-[#FFFEFA]/95 dark:bg-[#1D1C1A]/95 border border-emerald-500/30 shadow-2xl backdrop-blur-2xl text-center"
         >
           {/* Success Checkmark Sequence */}
           <div className="relative mx-auto w-20 h-20 mb-6">
@@ -231,19 +231,19 @@ export const CheckoutContainer = () => {
             Welcome to the Masterclass
           </h2>
 
-          <p className="mt-2 text-xs sm:text-sm text-[#8E8E93] leading-relaxed max-w-md mx-auto font-mono">
+          <p className="mt-2 text-xs sm:text-sm text-[#635E56] dark:text-[#A8A196] leading-relaxed max-w-md mx-auto font-mono">
             Your enrollment has been committed across all microservices. Reference ID:{' '}
             <span className="font-mono text-emerald-400 font-bold">{createdOrderRef}</span>
           </p>
 
           {/* Enrolled Courses Summary Pill */}
-          <div className="mt-6 p-4 rounded-2xl bg-white/[0.02] border border-white/5 text-left space-y-2">
-            <span className="text-[11px] font-bold text-[#8E8E93] uppercase tracking-wider font-mono">
+          <div className="mt-6 p-4 rounded-2xl bg-white/[0.02] border border-[#E3DCD3] dark:border-white/5 text-left space-y-2">
+            <span className="text-[11px] font-bold text-[#635E56] dark:text-[#A8A196] uppercase tracking-wider font-mono">
               Enrolled Curriculum Track(s)
             </span>
             <div className="space-y-1.5">
               {courses.map((c, i) => (
-                <div key={c.id || i} className="flex items-center justify-between text-xs text-[#E5E5E7]">
+                <div key={c.id || i} className="flex items-center justify-between text-xs text-[#282521] dark:text-[#EDE8E1]">
                   <span className="font-semibold truncate max-w-[280px]">
                     {c.title || `Curriculum Track #${c.courseId || i + 1}`}
                   </span>
@@ -286,17 +286,17 @@ export const CheckoutContainer = () => {
   if (isOrderLoading) {
     return (
       <div className="w-full max-w-7xl mx-auto space-y-8 p-4 sm:p-6">
-        <div className="space-y-2 border-b border-white/[0.04] pb-4">
-          <Skeleton className="h-8 w-1/3 rounded-xl bg-[#14141A]" />
-          <Skeleton className="h-4 w-1/2 rounded bg-[#14141A]" />
+        <div className="space-y-2 border-b border-[#E3DCD3] dark:border-white/[0.06] pb-4">
+          <Skeleton className="h-8 w-1/3 rounded-xl bg-[#F5F2EC] dark:bg-[#151413]" />
+          <Skeleton className="h-4 w-1/2 rounded bg-[#F5F2EC] dark:bg-[#151413]" />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-7 space-y-6">
-            <Skeleton className="h-48 w-full rounded-3xl bg-[#14141A]" />
-            <Skeleton className="h-72 w-full rounded-3xl bg-[#14141A]" />
+            <Skeleton className="h-48 w-full rounded-3xl bg-[#F5F2EC] dark:bg-[#151413]" />
+            <Skeleton className="h-72 w-full rounded-3xl bg-[#F5F2EC] dark:bg-[#151413]" />
           </div>
           <div className="lg:col-span-5 space-y-6">
-            <Skeleton className="h-96 w-full rounded-3xl bg-[#14141A]" />
+            <Skeleton className="h-96 w-full rounded-3xl bg-[#F5F2EC] dark:bg-[#151413]" />
           </div>
         </div>
       </div>
@@ -328,9 +328,9 @@ export const CheckoutContainer = () => {
   // VIEW: Primary Verified Checkout Screen
   // =========================================================================
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-8 p-2 sm:p-4 font-sans selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="w-full max-w-7xl mx-auto space-y-8 p-2 sm:p-4 font-sans selection:bg-[#5B3E57]/20 selection:text-[#5B3E57]">
       {/* Checkout Header & Trust Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.04]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E3DCD3] dark:border-white/[0.06]">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Badge variant="gold" className="font-mono text-[10px]">
@@ -341,10 +341,10 @@ export const CheckoutContainer = () => {
             </Badge>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
-            <Lock className="w-6 h-6 text-[#C5A880]" />
+            <Lock className="w-6 h-6 text-[#5B3E57] dark:text-[#D1A7CC]" />
             <span>Guarded Enterprise Checkout</span>
           </h1>
-          <p className="text-xs text-[#8E8E93] mt-0.5">
+          <p className="text-xs text-[#635E56] dark:text-[#A8A196] mt-0.5">
             Cryptographically sealed • Direct microservice inventory reservation
           </p>
         </div>
@@ -361,15 +361,15 @@ export const CheckoutContainer = () => {
         {/* ===================== COLUMN 1: ITEMS & BILLING (7/12) ===================== */}
         <div className="lg:col-span-7 space-y-8">
           {/* Section 1: Item Review */}
-          <section className="p-6 rounded-3xl bg-[#0F0F13] border border-white/[0.04] shadow-xl space-y-4">
+          <section className="p-6 rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] shadow-xl space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-                <ShoppingBag className="w-4 h-4 text-[#C5A880]" />
+                <ShoppingBag className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                 <span>Verified Curriculum Nodes ({courses.length})</span>
               </h2>
               <Link
                 to="/cart"
-                className="text-xs font-semibold text-[#C5A880] hover:underline"
+                className="text-xs font-semibold text-[#5B3E57] dark:text-[#D1A7CC] hover:underline"
               >
                 Modify Cart
               </Link>
@@ -386,7 +386,7 @@ export const CheckoutContainer = () => {
                   className="py-4 first:pt-2 last:pb-2 flex items-center justify-between gap-4"
                 >
                   <div className="flex items-center gap-3.5 min-w-0">
-                    <div className="w-14 h-14 rounded-xl border border-white/5 shrink-0 bg-[#14141A] flex items-center justify-center overflow-hidden">
+                    <div className="w-14 h-14 rounded-xl border border-[#E3DCD3] dark:border-white/5 shrink-0 bg-[#F5F2EC] dark:bg-[#151413] flex items-center justify-center overflow-hidden">
                       {item.thumbnail && !item.thumbnail.includes('unsplash') ? (
                         <img
                           src={item.thumbnail}
@@ -394,14 +394,14 @@ export const CheckoutContainer = () => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <ShoppingBag className="w-5 h-5 text-[#8E8E93]" />
+                        <ShoppingBag className="w-5 h-5 text-[#635E56] dark:text-[#A8A196]" />
                       )}
                     </div>
                     <div className="min-w-0">
                       <h4 className="text-sm font-bold text-white truncate max-w-xs sm:max-w-sm">
                         {item.title || `Curriculum Track #${item.courseId || index + 1}`}
                       </h4>
-                      <p className="text-xs text-[#8E8E93] mt-0.5 font-mono">
+                      <p className="text-xs text-[#635E56] dark:text-[#A8A196] mt-0.5 font-mono">
                         Lead: {item.instructor || 'Principal Architect'} • Digital Seat
                       </p>
                     </div>
@@ -418,9 +418,9 @@ export const CheckoutContainer = () => {
           </section>
 
           {/* Section 2: Billing Information */}
-          <section className="p-6 rounded-3xl bg-[#0F0F13] border border-white/[0.04] shadow-xl space-y-5">
+          <section className="p-6 rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] shadow-xl space-y-5">
             <h2 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-              <CreditCard className="w-4 h-4 text-[#C5A880]" />
+              <CreditCard className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
               <span>Invoicing Entity & Candidate Details</span>
             </h2>
 
@@ -478,14 +478,14 @@ export const CheckoutContainer = () => {
 
         {/* ===================== COLUMN 2: FINANCIAL SUMMARY & CHECKOUT (5/12) ===================== */}
         <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
-          <div className="p-6 sm:p-7 rounded-3xl bg-[#0F0F13] border border-white/[0.04] shadow-2xl space-y-6">
-            <h3 className="text-xs font-mono tracking-widest text-[#8E8E93] uppercase font-bold">
+          <div className="p-6 sm:p-7 rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] shadow-2xl space-y-6">
+            <h3 className="text-xs font-mono tracking-widest text-[#635E56] dark:text-[#A8A196] uppercase font-bold">
               Ledger Settlement
             </h3>
 
             {/* Calculations Breakdown */}
-            <div className="space-y-3.5 font-mono text-xs border-b border-white/[0.04] pb-5">
-              <div className="flex justify-between text-[#8E8E93]">
+            <div className="space-y-3.5 font-mono text-xs border-b border-[#E3DCD3] dark:border-white/[0.06] pb-5">
+              <div className="flex justify-between text-[#635E56] dark:text-[#A8A196]">
                 <span>Pipeline Subtotal</span>
                 <span className="text-white font-medium">₹{subtotal.toFixed(2)}</span>
               </div>
@@ -497,14 +497,14 @@ export const CheckoutContainer = () => {
                 </div>
               )}
 
-              <div className="flex justify-between text-[#8E8E93]">
+              <div className="flex justify-between text-[#635E56] dark:text-[#A8A196]">
                 <span>Microservice Gateway Fee</span>
                 <span>₹0.00 (Waived)</span>
               </div>
 
-              <div className="flex justify-between items-baseline text-white pt-3 border-t border-white/[0.04]">
+              <div className="flex justify-between items-baseline text-white pt-3 border-t border-[#E3DCD3] dark:border-white/[0.06]">
                 <span className="text-sm font-bold">Net Final Authorization</span>
-                <span className="text-xl font-extrabold text-[#C5A880]">
+                <span className="text-xl font-extrabold text-[#5B3E57] dark:text-[#D1A7CC]">
                   ₹{finalTotal.toFixed(2)}
                 </span>
               </div>
@@ -512,7 +512,7 @@ export const CheckoutContainer = () => {
 
             {/* Payment Method Selector */}
             <div className="space-y-2">
-              <span className="text-[10px] font-mono tracking-wider text-[#8E8E93] uppercase font-bold block">
+              <span className="text-[10px] font-mono tracking-wider text-[#635E56] dark:text-[#A8A196] uppercase font-bold block">
                 Settlement Rail
               </span>
               <div className="grid grid-cols-2 gap-2">
@@ -526,8 +526,8 @@ export const CheckoutContainer = () => {
                     onClick={() => setPaymentMethod(m.id)}
                     className={`py-2 px-3 rounded-xl text-xs font-mono font-bold border transition-colors cursor-pointer ${
                       paymentMethod === m.id
-                        ? 'bg-[#C5A880]/15 border-[#C5A880]/40 text-[#C5A880]'
-                        : 'bg-[#14141A] border-white/5 text-[#8E8E93] hover:text-white'
+                        ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border-[#5B3E57] dark:border-[#D1A7CC] text-[#5B3E57] dark:text-[#D1A7CC] font-bold'
+                        : 'bg-[#F5F2EC] dark:bg-[#151413] border-[#E3DCD3] dark:border-white/5 text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:hover:text-[#EDE8E1]'
                     }`}
                   >
                     {m.label}
@@ -568,7 +568,7 @@ export const CheckoutContainer = () => {
                 )}
               </Button>
 
-              <div className="flex items-center justify-center gap-2 text-[10px] font-mono text-[#8E8E93]">
+              <div className="flex items-center justify-center gap-2 text-[10px] font-mono text-[#635E56] dark:text-[#A8A196]">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Zero client-side guessing • Backend verified</span>
               </div>

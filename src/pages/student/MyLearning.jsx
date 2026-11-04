@@ -22,6 +22,7 @@ import Button from '../../design-system/primitives/Button';
 import Badge from '../../design-system/primitives/Badge';
 import { Skeleton } from '../../design-system/primitives/Skeleton';
 import EmptyState from '../../design-system/feedback/EmptyState';
+import { resolveCoverImage } from '../../design-system/components/CourseCard';
 
 const SPRING = { type: 'spring', stiffness: 280, damping: 26 };
 
@@ -153,21 +154,21 @@ export const MyLearning = () => {
   }, [courses, activeTab, searchQuery]);
 
   return (
-    <div className="space-y-8 font-sans selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="space-y-8 font-sans selection:bg-[#5B3E57]/20 selection:text-[#5B3E57]">
       {/* ======================= HERO BANNER ======================= */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#14141A] via-[#0F0F13] to-[#070709] border border-white/[0.06] p-6 sm:p-8 shadow-2xl">
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-[#C5A880]/10 blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 sm:p-8 shadow-sm dark:shadow-2xl">
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 rounded-full bg-[#5B3E57]/5 dark:bg-[#D1A7CC]/10 blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C5A880]/10 border border-[#C5A880]/20 text-[#C5A880] text-xs font-mono font-bold tracking-wider">
-              <BookOpen size={13} className="text-[#C5A880]" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-mono font-bold tracking-wider">
+              <BookOpen size={13} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
               <span>ACTIVE CURRICULUM REGISTRY</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F5F5F7] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
               My Learning Workspace
             </h1>
-            <p className="text-xs sm:text-sm text-[#8E8E93] max-w-xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#635E56] dark:text-[#A8A196] max-w-xl leading-relaxed">
               Track lecture milestones, monitor code lab completion, and resume your immersive classroom sessions.
             </p>
           </div>
@@ -195,18 +196,18 @@ export const MyLearning = () => {
         </div>
 
         {/* Telemetry Stat Cards */}
-        <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3 border-t border-white/[0.04] pt-5">
-          <div className="p-3.5 rounded-2xl bg-[#070709]/60 border border-white/[0.04]">
-            <p className="text-[11px] font-mono text-[#8E8E93] uppercase tracking-wider">
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3 border-t border-[#E3DCD3] dark:border-white/[0.06] pt-5">
+          <div className="p-3.5 rounded-2xl bg-[#F5F2EC]/80 dark:bg-[#151413]/60 border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+            <p className="text-[11px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase tracking-wider">
               Enrolled Tracks
             </p>
-            <p className="text-xl sm:text-2xl font-black text-white font-mono mt-0.5">
+            <p className="text-xl sm:text-2xl font-black text-[#282521] dark:text-[#EDE8E1] font-mono mt-0.5">
               {courses.length}
             </p>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#070709]/60 border border-white/[0.04]">
-            <p className="text-[11px] font-mono text-[#8E8E93] uppercase tracking-wider">
+          <div className="p-3.5 rounded-2xl bg-[#F5F2EC]/80 dark:bg-[#151413]/60 border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+            <p className="text-[11px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase tracking-wider">
               In Progress
             </p>
             <p className="text-xl sm:text-2xl font-black text-amber-400 font-mono mt-0.5">
@@ -214,8 +215,8 @@ export const MyLearning = () => {
             </p>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#070709]/60 border border-white/[0.04] col-span-2 sm:col-span-1">
-            <p className="text-[11px] font-mono text-[#8E8E93] uppercase tracking-wider">
+          <div className="p-3.5 rounded-2xl bg-[#F5F2EC]/80 dark:bg-[#151413]/60 border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] col-span-2 sm:col-span-1">
+            <p className="text-[11px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase tracking-wider">
               Completed Credentials
             </p>
             <p className="text-xl sm:text-2xl font-black text-emerald-400 font-mono mt-0.5">
@@ -226,9 +227,9 @@ export const MyLearning = () => {
       </div>
 
       {/* ======================= CONTROLS & FILTER BAR ======================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-white/[0.04]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#E3DCD3] dark:border-white/[0.06]">
         {/* Status Tabs */}
-        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#0F0F13] border border-white/[0.04] overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] overflow-x-auto scrollbar-none">
           {[
             { id: 'ALL', label: `All Tracks (${courses.length})` },
             { id: 'IN_PROGRESS', label: `In Progress (${inProgressCount})` },
@@ -242,14 +243,14 @@ export const MyLearning = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`relative px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all whitespace-nowrap cursor-pointer ${
                   isActive
-                    ? 'text-white'
-                    : 'text-[#8E8E93] hover:text-[#E5E5E7] hover:bg-white/[0.02]'
+                    ? 'text-[#5B3E57] dark:text-[#D1A7CC] font-bold'
+                    : 'text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:hover:text-[#EDE8E1] hover:bg-[#F5F2EC] dark:hover:bg-white/[0.02]'
                 }`}
               >
                 {isActive && (
                   <motion.div
                     layoutId="activeMyLearningTab"
-                    className="absolute inset-0 bg-[#C5A880]/15 border border-[#C5A880]/30 rounded-xl -z-10 shadow-[0_0_15px_rgba(197,168,128,0.1)]"
+                    className="absolute inset-0 bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 rounded-xl -z-10 shadow-sm"
                     transition={SPRING}
                   />
                 )}
@@ -261,13 +262,13 @@ export const MyLearning = () => {
 
         {/* Course Filter Search */}
         <div className="relative w-full sm:w-72">
-          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" />
+          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search your courses..."
-            className="w-full pl-9 pr-4 py-2 bg-[#0F0F13] border border-white/[0.04] rounded-xl text-xs font-mono text-white placeholder-[#71717A] focus:outline-none focus:border-[#C5A880]/40 transition-colors"
+            className="w-full pl-9 pr-4 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] rounded-xl text-xs font-mono text-[#282521] dark:text-[#EDE8E1] placeholder-[#756E64] dark:placeholder-[#7A7368] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] transition-colors"
           />
         </div>
       </div>
@@ -279,15 +280,15 @@ export const MyLearning = () => {
           {Array.from({ length: 6 }).map((_, idx) => (
             <div
               key={idx}
-              className="p-5 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-4"
+              className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] space-y-4 shadow-sm"
             >
-              <Skeleton className="aspect-video w-full rounded-xl bg-[#14141A]" />
-              <Skeleton className="h-5 w-3/4 rounded bg-[#14141A]" />
-              <Skeleton className="h-4 w-1/2 rounded bg-[#14141A]" />
-              <Skeleton className="h-2 w-full rounded-full bg-[#14141A]" />
+              <Skeleton className="aspect-video w-full rounded-xl bg-[#EAE5DC] dark:bg-[#151413]" />
+              <Skeleton className="h-5 w-3/4 rounded bg-[#EAE5DC] dark:bg-[#151413]" />
+              <Skeleton className="h-4 w-1/2 rounded bg-[#EAE5DC] dark:bg-[#151413]" />
+              <Skeleton className="h-2 w-full rounded-full bg-[#EAE5DC] dark:bg-[#151413]" />
               <div className="pt-2 flex justify-between items-center">
-                <Skeleton className="h-4 w-20 rounded bg-[#14141A]" />
-                <Skeleton className="h-8 w-28 rounded-xl bg-[#14141A]" />
+                <Skeleton className="h-4 w-20 rounded bg-[#EAE5DC] dark:bg-[#151413]" />
+                <Skeleton className="h-8 w-28 rounded-xl bg-[#EAE5DC] dark:bg-[#151413]" />
               </div>
             </div>
           ))}
@@ -338,17 +339,17 @@ export const MyLearning = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: idx * 0.03, ...SPRING }}
-                  className="rounded-2xl bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all duration-300 overflow-hidden flex flex-col justify-between group shadow-xl"
+                  className="rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/30 dark:hover:border-[#D1A7CC]/30 transition-all duration-300 overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md dark:shadow-xl"
                 >
                   <div>
                     {/* Media Thumbnail with Interactive Overlay */}
-                    <div className="relative aspect-video w-full overflow-hidden bg-[#14141A]">
+                    <div className="relative aspect-video w-full overflow-hidden bg-[#EAE5DC] dark:bg-[#151413]">
                       <img
-                        src={course.thumbnail}
+                        src={resolveCoverImage(course.category, course.title, course.thumbnail, course.id)}
                         alt={course.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F13] via-transparent to-transparent opacity-80" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
 
                       <div className="absolute top-3 right-3">
                         {isFinished ? (
@@ -365,27 +366,27 @@ export const MyLearning = () => {
 
                     {/* Metadata Deck */}
                     <div className="p-5 space-y-3">
-                      <div className="flex items-center gap-2 text-[10px] font-mono text-[#8E8E93] uppercase tracking-wider">
+                      <div className="flex items-center gap-2 text-[10px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase tracking-wider">
                         <span>{course.category}</span>
                         <span>•</span>
                         <span>{course.level}</span>
                       </div>
 
-                      <h3 className="text-base font-bold text-white tracking-tight group-hover:text-[#C5A880] transition-colors line-clamp-2">
+                      <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight group-hover:text-[#5B3E57] dark:group-hover:text-[#D1A7CC] transition-colors line-clamp-2">
                         {course.title}
                       </h3>
 
-                      <p className="text-xs text-[#8E8E93] truncate">
-                        Lead: <span className="text-[#E5E5E7]">{course.instructor}</span>
+                      <p className="text-xs text-[#635E56] dark:text-[#A8A196] truncate">
+                        Lead: <span className="text-[#282521] dark:text-[#EDE8E1]">{course.instructor}</span>
                       </p>
 
                       {/* Progress Bar Track */}
                       <div className="space-y-1.5 pt-2">
-                        <div className="flex justify-between items-center text-[10px] font-mono text-[#8E8E93]">
+                        <div className="flex justify-between items-center text-[10px] font-mono text-[#635E56] dark:text-[#A8A196]">
                           <span>Curriculum Progress</span>
-                          <span className="text-white font-bold">{course.progress}%</span>
+                          <span className="text-[#282521] dark:text-[#EDE8E1] font-bold">{course.progress}%</span>
                         </div>
-                        <div className="h-1.5 w-full rounded-full bg-white/[0.04] overflow-hidden">
+                        <div className="h-1.5 w-full rounded-full bg-[#EAE5DC] dark:bg-[#151413] overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${course.progress}%` }}
@@ -393,7 +394,7 @@ export const MyLearning = () => {
                             className={`h-full rounded-full ${
                               isFinished
                                 ? 'bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]'
-                                : 'bg-gradient-to-r from-[#C5A880] to-amber-300 shadow-[0_0_10px_rgba(197,168,128,0.4)]'
+                                : 'bg-gradient-to-r from-[#5B3E57] to-[#9A6B56] dark:from-[#D1A7CC] dark:to-[#9A6B56]'
                             }`}
                           />
                         </div>
@@ -402,8 +403,8 @@ export const MyLearning = () => {
                   </div>
 
                   {/* Actions Bar */}
-                  <div className="p-5 pt-0 border-t border-white/[0.04] mt-3 flex items-center justify-between gap-3">
-                    <span className="text-[11px] font-mono text-[#71717A] flex items-center gap-1">
+                  <div className="p-5 pt-0 border-t border-[#E3DCD3] dark:border-white/[0.06] mt-3 flex items-center justify-between gap-3">
+                    <span className="text-[11px] font-mono text-[#756E64] dark:text-[#7A7368] flex items-center gap-1">
                       <Clock size={12} />
                       <span>{course.duration}</span>
                     </span>

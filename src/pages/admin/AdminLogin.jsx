@@ -224,14 +224,14 @@ const AdminLogin = () => {
       ]}
     >
       <div className="mb-6 text-center space-y-2">
-        <div className="mx-auto w-12 h-12 rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shadow-sm">
-          <LogIn size={22} className="text-[#C5A880]" />
+        <div className="mx-auto w-12 h-12 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] shadow-sm">
+          <LogIn size={22} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
         </div>
-        <h1 className="text-2xl font-extrabold text-[#F5F5F7] tracking-tight">Admin Command Sign In</h1>
-        <p className="text-xs text-[#8E8E93]">Choose password or one-time passcode authentication</p>
+        <h1 className="text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">Admin Command Sign In</h1>
+        <p className="text-xs text-[#635E56] dark:text-[#A8A196]">Choose password or one-time passcode authentication</p>
       </div>
 
-      <div className="mb-6 grid grid-cols-2 p-1 rounded-2xl bg-[#14141A] border border-white/[0.04]">
+      <div className="mb-6 grid grid-cols-2 p-1 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
         <button
           type="button"
           onClick={() => {
@@ -240,7 +240,7 @@ const AdminLogin = () => {
             setError("");
           }}
           className={`py-2 text-xs font-semibold rounded-xl transition-all ${
-            loginMethod === "password" ? "bg-[#C5A880] text-[#070709] font-bold shadow-sm" : "text-[#D4D4D8] hover:text-[#FFFFFF]"
+            loginMethod === "password" ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold shadow-sm" : "text-[#D4D4D8] hover:text-[#FFFFFF]"
           }`}
         >
           Password
@@ -253,7 +253,7 @@ const AdminLogin = () => {
             setError("");
           }}
           className={`py-2 text-xs font-semibold rounded-xl transition-all ${
-            loginMethod === "otp" ? "bg-[#C5A880] text-[#070709] font-bold shadow-sm" : "text-[#D4D4D8] hover:text-[#FFFFFF]"
+            loginMethod === "otp" ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold shadow-sm" : "text-[#D4D4D8] hover:text-[#FFFFFF]"
           }`}
         >
           OTP Code
@@ -355,7 +355,7 @@ const AdminLogin = () => {
                 type="button"
                 onClick={handleResendOtp}
                 disabled={otpResending || !canResend}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#E3DCD3] dark:border-white/[0.08] bg-[#FFFEFA] dark:bg-[#1D1C1A] px-4 py-3 text-sm font-semibold text-[#3D3832] dark:text-[#D8D0C5] transition hover:border-[#5B3E57] hover:text-[#5B3E57] dark:hover:border-[#D1A7CC] dark:hover:text-[#D1A7CC]"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] bg-[#FFFEFA] dark:bg-[#1D1C1A] px-4 py-3 text-sm font-semibold text-[#3D3832] dark:text-[#D8D0C5] transition hover:border-[#5B3E57] hover:text-[#5B3E57] dark:hover:border-[#D1A7CC] dark:hover:text-[#D1A7CC]"
               >
                 <RefreshCw size={16} className={otpResending ? "animate-spin" : ""} />
                 {otpResending ? "Resending..." : canResend ? "Resend OTP" : `Resend in ${cooldownSeconds}s`}

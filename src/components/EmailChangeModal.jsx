@@ -99,33 +99,33 @@ export const EmailChangeModal = ({ isOpen, onClose, currentEmail, onEmailUpdated
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#282521]/45 dark:bg-black/75 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-md p-6 bg-[#0E0E12] border border-white/[0.08] rounded-2xl shadow-2xl space-y-5">
+      <div className="relative w-full max-w-md p-6 bg-[#0E0E12] border border-[#E3DCD3] dark:border-white/[0.08] rounded-2xl shadow-2xl space-y-5">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E3DCD3] dark:border-white/[0.06]">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-[#C5A880]/10 text-[#C5A880]">
+            <div className="p-2 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#5B3E57] dark:text-[#D1A7CC]">
               <Mail className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[#F5F5F7]">Change Primary Email</h3>
-              <p className="text-[11px] font-mono text-[#8E8E93]">3-Step Zero-Trust Verification</p>
+              <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Change Primary Email</h3>
+              <p className="text-[11px] font-mono text-[#635E56] dark:text-[#A8A196]">3-Step Zero-Trust Verification</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-[#8E8E93] hover:text-[#F5F5F7] rounded-lg transition-colors"
+            className="p-1 text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:text-[#EDE8E1] rounded-lg transition-colors"
           >
             <X size={16} />
           </button>
         </div>
 
         {/* Step Indicators */}
-        <div className="flex items-center justify-between px-2 text-[10px] font-mono text-[#8E8E93]">
-          <span className={step >= 1 ? 'text-[#C5A880] font-bold' : ''}>1. Request</span>
+        <div className="flex items-center justify-between px-2 text-[10px] font-mono text-[#635E56] dark:text-[#A8A196]">
+          <span className={step >= 1 ? 'text-[#5B3E57] dark:text-[#D1A7CC] font-bold' : ''}>1. Request</span>
           <span>→</span>
-          <span className={step >= 2 ? 'text-[#C5A880] font-bold' : ''}>2. Old Email</span>
+          <span className={step >= 2 ? 'text-[#5B3E57] dark:text-[#D1A7CC] font-bold' : ''}>2. Old Email</span>
           <span>→</span>
-          <span className={step >= 3 ? 'text-[#C5A880] font-bold' : ''}>3. New Email</span>
+          <span className={step >= 3 ? 'text-[#5B3E57] dark:text-[#D1A7CC] font-bold' : ''}>3. New Email</span>
         </div>
 
         {error && (
@@ -139,46 +139,46 @@ export const EmailChangeModal = ({ isOpen, onClose, currentEmail, onEmailUpdated
         {step === 1 && (
           <form onSubmit={handleRequest} className="space-y-4">
             <div>
-              <label className="block text-[11px] font-mono text-[#8E8E93] uppercase mb-1">Current Email</label>
+              <label className="block text-[11px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase mb-1">Current Email</label>
               <input
                 type="text"
                 disabled
                 value={currentEmail}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.04] text-xs text-[#8E8E93] font-mono"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-xs text-[#635E56] dark:text-[#A8A196] font-mono"
               />
             </div>
             <div>
-              <label className="block text-[11px] font-mono text-[#8E8E93] uppercase mb-1">New Email Address</label>
+              <label className="block text-[11px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase mb-1">New Email Address</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#71717A]" size={14} />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" size={14} />
                 <input
                   type="email"
                   required
                   placeholder="new.email@domain.com"
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
-                  className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none"
+                  className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-[11px] font-mono text-[#8E8E93] uppercase mb-1">Account Password</label>
+              <label className="block text-[11px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase mb-1">Account Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#71717A]" size={14} />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" size={14} />
                 <input
                   type="password"
                   required
                   placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-[#F5F5F7] outline-none"
+                  className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none"
                 />
               </div>
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 rounded-xl bg-[#C5A880] hover:bg-[#D4BC98] text-[#070709] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
+              className="w-full py-2.5 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#462D42] dark:hover:bg-[#C293BD] text-[#FFFEFA] dark:text-[#151413] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
             >
               {loading ? 'Initializing...' : 'Continue to Step 2'} <ArrowRight size={14} />
             </button>
@@ -189,10 +189,10 @@ export const EmailChangeModal = ({ isOpen, onClose, currentEmail, onEmailUpdated
         {step === 2 && (
           <form onSubmit={handleVerifyOld} className="space-y-4">
             <p className="text-xs text-[#D4D4D8]">
-              Enter the 6-digit code dispatched to <span className="text-[#C5A880] font-mono">{currentEmail}</span>:
+              Enter the 6-digit code dispatched to <span className="text-[#5B3E57] dark:text-[#D1A7CC] font-mono">{currentEmail}</span>:
             </p>
             <div className="relative">
-              <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-[#71717A]" size={14} />
+              <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" size={14} />
               <input
                 type="text"
                 maxLength={6}
@@ -200,7 +200,7 @@ export const EmailChangeModal = ({ isOpen, onClose, currentEmail, onEmailUpdated
                 placeholder="6-digit code"
                 value={oldOtp}
                 onChange={(e) => setOldOtp(e.target.value.replace(/\D/g, ''))}
-                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-center font-mono tracking-widest text-[#F5F5F7] outline-none"
+                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] text-xs text-center font-mono tracking-widest text-[#282521] dark:text-[#EDE8E1] outline-none"
               />
             </div>
             <div className="flex gap-2">
@@ -208,14 +208,14 @@ export const EmailChangeModal = ({ isOpen, onClose, currentEmail, onEmailUpdated
                 type="button"
                 onClick={() => handleResend('OLD')}
                 disabled={resending}
-                className="flex-1 py-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-[11px] text-[#8E8E93] hover:text-[#F5F5F7] flex items-center justify-center gap-1.5"
+                className="flex-1 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-[11px] text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:text-[#EDE8E1] flex items-center justify-center gap-1.5"
               >
                 <RefreshCw size={12} className={resending ? 'animate-spin' : ''} /> Resend Code
               </button>
               <button
                 type="submit"
                 disabled={loading || oldOtp.length < 6}
-                className="flex-1 py-2.5 rounded-xl bg-[#C5A880] hover:bg-[#D4BC98] text-[#070709] font-bold text-xs disabled:opacity-50"
+                className="flex-1 py-2.5 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#462D42] dark:hover:bg-[#C293BD] text-[#FFFEFA] dark:text-[#151413] font-bold text-xs disabled:opacity-50"
               >
                 {loading ? 'Verifying...' : 'Verify Old Email'}
               </button>
@@ -227,10 +227,10 @@ export const EmailChangeModal = ({ isOpen, onClose, currentEmail, onEmailUpdated
         {step === 3 && (
           <form onSubmit={handleVerifyNew} className="space-y-4">
             <p className="text-xs text-[#D4D4D8]">
-              Almost done! Enter the 6-digit code dispatched to <span className="text-[#C5A880] font-mono">{newEmail}</span>:
+              Almost done! Enter the 6-digit code dispatched to <span className="text-[#5B3E57] dark:text-[#D1A7CC] font-mono">{newEmail}</span>:
             </p>
             <div className="relative">
-              <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-[#71717A]" size={14} />
+              <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" size={14} />
               <input
                 type="text"
                 maxLength={6}
@@ -238,7 +238,7 @@ export const EmailChangeModal = ({ isOpen, onClose, currentEmail, onEmailUpdated
                 placeholder="6-digit code"
                 value={newOtp}
                 onChange={(e) => setNewOtp(e.target.value.replace(/\D/g, ''))}
-                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] focus:border-[#C5A880]/60 text-xs text-center font-mono tracking-widest text-[#F5F5F7] outline-none"
+                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] text-xs text-center font-mono tracking-widest text-[#282521] dark:text-[#EDE8E1] outline-none"
               />
             </div>
             <div className="flex gap-2">
@@ -246,14 +246,14 @@ export const EmailChangeModal = ({ isOpen, onClose, currentEmail, onEmailUpdated
                 type="button"
                 onClick={() => handleResend('NEW')}
                 disabled={resending}
-                className="flex-1 py-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-[11px] text-[#8E8E93] hover:text-[#F5F5F7] flex items-center justify-center gap-1.5"
+                className="flex-1 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-[11px] text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:text-[#EDE8E1] flex items-center justify-center gap-1.5"
               >
                 <RefreshCw size={12} className={resending ? 'animate-spin' : ''} /> Resend Code
               </button>
               <button
                 type="submit"
                 disabled={loading || newOtp.length < 6}
-                className="flex-1 py-2.5 rounded-xl bg-[#C5A880] hover:bg-[#D4BC98] text-[#070709] font-bold text-xs disabled:opacity-50"
+                className="flex-1 py-2.5 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#462D42] dark:hover:bg-[#C293BD] text-[#FFFEFA] dark:text-[#151413] font-bold text-xs disabled:opacity-50"
               >
                 {loading ? 'Finalizing...' : 'Complete Change'}
               </button>
@@ -265,12 +265,12 @@ export const EmailChangeModal = ({ isOpen, onClose, currentEmail, onEmailUpdated
         {step === 4 && (
           <div className="text-center py-4 space-y-3">
             <CheckCircle2 className="w-12 h-12 mx-auto text-emerald-400" />
-            <h4 className="text-sm font-bold text-[#F5F5F7]">Email Successfully Changed</h4>
-            <p className="text-xs text-[#8E8E93]">Your login identity and system notifications are now bound to {newEmail}.</p>
+            <h4 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Email Successfully Changed</h4>
+            <p className="text-xs text-[#635E56] dark:text-[#A8A196]">Your login identity and system notifications are now bound to {newEmail}.</p>
             <button
               type="button"
               onClick={onClose}
-              className="w-full py-2.5 rounded-xl bg-[#C5A880] text-[#070709] font-bold text-xs"
+              className="w-full py-2.5 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold text-xs"
             >
               Done
             </button>

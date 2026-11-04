@@ -98,20 +98,20 @@ export default function Analytics() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 font-sans">
       {/* Title Meta Frame */}
-      <div className="border-b border-white/[0.04] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold tracking-tight text-[#F5F5F7]">
+            <h1 className="text-xl font-bold tracking-tight text-[#282521] dark:text-[#EDE8E1]">
               Platform Analytics & Financial Velocity
             </h1>
             <Badge
               variant="pewter"
-              className="bg-[#14141A] text-[#C5A880] border-white/5 font-mono text-[10px] px-2 py-0.5"
+              className="bg-[#F5F2EC] dark:bg-[#151413] text-[#5B3E57] dark:text-[#D1A7CC] border-[#E3DCD3] dark:border-white/5 font-mono text-[10px] px-2 py-0.5"
             >
               Live Telemetry
             </Badge>
           </div>
-          <p className="text-xs text-[#8E8E93] font-light mt-0.5">
+          <p className="text-xs text-[#635E56] dark:text-[#A8A196] font-light mt-0.5">
             Aggregated revenue trajectories, order volumes, and curriculum ingestion metrics.
           </p>
         </div>
@@ -120,9 +120,9 @@ export default function Analytics() {
           variant="secondary"
           size="sm"
           onClick={() => refetchStats()}
-          className="gap-1.5 text-xs bg-[#14141A] border-white/5 hover:border-white/10 cursor-pointer self-start sm:self-auto"
+          className="gap-1.5 text-xs bg-[#F5F2EC] dark:bg-[#151413] border-[#E3DCD3] dark:border-white/5 hover:border-[#D5C0D1] dark:border-white/10 cursor-pointer self-start sm:self-auto"
         >
-          <RefreshCw size={14} className="text-[#C5A880]" />
+          <RefreshCw size={14} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
           <span>Sync Pipeline</span>
         </Button>
       </div>
@@ -162,13 +162,13 @@ export default function Analytics() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.04, ...SPRING }}
-              className="bg-[#0F0F13] p-4 rounded-2xl border border-white/[0.04] space-y-2"
+              className="bg-[#FFFEFA] dark:bg-[#1D1C1A] p-4 rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-2"
             >
-              <div className="flex items-center justify-between text-[#8E8E93]">
+              <div className="flex items-center justify-between text-[#635E56] dark:text-[#A8A196]">
                 <span className="text-[11px] font-medium tracking-wide">{item.label}</span>
-                <Icon size={16} className="text-[#C5A880]" />
+                <Icon size={16} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
               </div>
-              <p className="text-2xl font-bold text-[#F5F5F7] font-mono tracking-tight">
+              <p className="text-2xl font-bold text-[#282521] dark:text-[#EDE8E1] font-mono tracking-tight">
                 {item.value}
               </p>
               <span className="text-[10px] text-emerald-400 font-medium flex items-center gap-1">
@@ -183,13 +183,13 @@ export default function Analytics() {
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Revenue Velocity Chart */}
-        <div className="bg-[#0F0F13] p-5 rounded-2xl border border-white/[0.04] space-y-4">
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] p-5 rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-sm font-semibold text-[#F5F5F7]">Revenue Growth Trajectory</h2>
-              <p className="text-[11px] text-[#8E8E93]">USD Gross volume per settlement window</p>
+              <h2 className="text-sm font-semibold text-[#282521] dark:text-[#EDE8E1]">Revenue Growth Trajectory</h2>
+              <p className="text-[11px] text-[#635E56] dark:text-[#A8A196]">USD Gross volume per settlement window</p>
             </div>
-            <Badge className="bg-[#14141A] text-[#C5A880] border-white/5 font-mono text-[10px]">
+            <Badge className="bg-[#F5F2EC] dark:bg-[#151413] text-[#5B3E57] dark:text-[#D1A7CC] border-[#E3DCD3] dark:border-white/5 font-mono text-[10px]">
               Monthly
             </Badge>
           </div>
@@ -202,7 +202,7 @@ export default function Analytics() {
                 <YAxis stroke="#71717A" fontSize={11} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#14141A',
+                    backgroundColor: '#1D1C1A',
                     borderColor: 'rgba(255,255,255,0.08)',
                     borderRadius: '12px',
                     color: '#F5F5F7',
@@ -212,9 +212,9 @@ export default function Analytics() {
                 <Line
                   type="monotone"
                   dataKey="revenue"
-                  stroke="#C5A880"
+                  stroke="#5B3E57"
                   strokeWidth={2.5}
-                  dot={{ r: 4, fill: '#C5A880' }}
+                  dot={{ r: 4, fill: '#5B3E57' }}
                   activeDot={{ r: 6 }}
                 />
               </LineChart>
@@ -223,13 +223,13 @@ export default function Analytics() {
         </div>
 
         {/* Order Velocity Chart */}
-        <div className="bg-[#0F0F13] p-5 rounded-2xl border border-white/[0.04] space-y-4">
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] p-5 rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-sm font-semibold text-[#F5F5F7]">Transaction & Order Volume</h2>
-              <p className="text-[11px] text-[#8E8E93]">Total checkout completions across microservices</p>
+              <h2 className="text-sm font-semibold text-[#282521] dark:text-[#EDE8E1]">Transaction & Order Volume</h2>
+              <p className="text-[11px] text-[#635E56] dark:text-[#A8A196]">Total checkout completions across microservices</p>
             </div>
-            <Badge className="bg-[#14141A] text-[#D1A7CC] border-white/5 font-mono text-[10px]">
+            <Badge className="bg-[#F5F2EC] dark:bg-[#151413] text-[#D1A7CC] border-[#E3DCD3] dark:border-white/5 font-mono text-[10px]">
               Orders
             </Badge>
           </div>
@@ -242,7 +242,7 @@ export default function Analytics() {
                 <YAxis stroke="#71717A" fontSize={11} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#14141A',
+                    backgroundColor: '#1D1C1A',
                     borderColor: 'rgba(255,255,255,0.08)',
                     borderRadius: '12px',
                     color: '#F5F5F7',
@@ -258,8 +258,8 @@ export default function Analytics() {
 
       {/* Curriculum Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-[#0F0F13] p-5 rounded-2xl border border-white/[0.04] space-y-4">
-          <h2 className="text-sm font-semibold text-[#F5F5F7]">Curriculum Domain Distribution</h2>
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] p-5 rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
+          <h2 className="text-sm font-semibold text-[#282521] dark:text-[#EDE8E1]">Curriculum Domain Distribution</h2>
           <div className="h-56 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -281,7 +281,7 @@ export default function Analytics() {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#14141A',
+                    backgroundColor: '#1D1C1A',
                     borderColor: 'rgba(255,255,255,0.08)',
                     borderRadius: '12px',
                     color: '#F5F5F7',
@@ -293,19 +293,19 @@ export default function Analytics() {
           </div>
         </div>
 
-        <div className="bg-[#0F0F13] p-5 rounded-2xl border border-white/[0.04] space-y-3 flex flex-col justify-center">
-          <h2 className="text-sm font-semibold text-[#F5F5F7]">Platform Operating Health</h2>
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] p-5 rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-3 flex flex-col justify-center">
+          <h2 className="text-sm font-semibold text-[#282521] dark:text-[#EDE8E1]">Platform Operating Health</h2>
           <div className="space-y-2 text-xs">
-            <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#14141A] border border-white/[0.04]">
-              <span className="text-[#8E8E93]">Distributed API Gateway Uptime</span>
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+              <span className="text-[#635E56] dark:text-[#A8A196]">Distributed API Gateway Uptime</span>
               <span className="font-mono text-emerald-400 font-semibold">99.98%</span>
             </div>
-            <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#14141A] border border-white/[0.04]">
-              <span className="text-[#8E8E93]">Average P95 Gateway Latency</span>
-              <span className="font-mono text-[#C5A880] font-semibold">18ms</span>
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+              <span className="text-[#635E56] dark:text-[#A8A196]">Average P95 Gateway Latency</span>
+              <span className="font-mono text-[#5B3E57] dark:text-[#D1A7CC] font-semibold">18ms</span>
             </div>
-            <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#14141A] border border-white/[0.04]">
-              <span className="text-[#8E8E93]">Database Connection Pool Exhaustion</span>
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+              <span className="text-[#635E56] dark:text-[#A8A196]">Database Connection Pool Exhaustion</span>
               <span className="font-mono text-emerald-400 font-semibold">0.0%</span>
             </div>
           </div>

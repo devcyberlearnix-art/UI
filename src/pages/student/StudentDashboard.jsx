@@ -39,6 +39,7 @@ import Portal from '../../components/ui/Portal';
 import Button from '../../design-system/primitives/Button';
 import Badge from '../../design-system/primitives/Badge';
 import { Skeleton } from '../../design-system/primitives/Skeleton';
+import { resolveCoverImage } from '../../design-system/components/CourseCard';
 
 const SPRING_TRANSITION = {
   type: 'spring',
@@ -60,10 +61,16 @@ const CATEGORY_OPTIONS = [
 const LEVEL_OPTIONS = ['All', 'Beginner', 'Intermediate', 'Advanced'];
 
 const normalizeCourse = (c, index) => {
+  const courseId = c.id || c.courseId || c._id || `course-${index}`;
+  const category = c.category || c.categoryName || 'Engineering';
+  const rawTitle = c.title || c.courseName || c.name || null;
+  const rawImg = c.image || c.thumbnail || c.coverImage || c.banner || null;
+  const image = resolveCoverImage(category, rawTitle || '', rawImg, courseId);
+
   return {
-    id: c.id || c.courseId || c._id || `course-${index}`,
-    title: c.title || c.courseName || c.name || null,
-    category: c.category || c.categoryName || 'Engineering',
+    id: courseId,
+    title: rawTitle,
+    category,
     level: c.level || c.difficultyLevel || 'Intermediate',
     price: c.price != null ? Number(c.price) : c.amount != null ? Number(c.amount) : null,
     rating: c.rating != null ? Number(c.rating) : c.avgRating != null ? Number(c.avgRating) : null,
@@ -80,7 +87,7 @@ const normalizeCourse = (c, index) => {
       c.instructor?.name ||
       c.instructorName ||
       (typeof c.instructor === 'string' ? c.instructor : null),
-    image: c.image || c.thumbnail || c.coverImage || c.banner || null,
+    image,
     description: c.description || c.summary || null,
   };
 };
@@ -369,50 +376,50 @@ export const StudentDashboard = () => {
   const endItem = Math.min((trendingPage + 1) * trendingSize, totalCourses);
 
   return (
-    <div className="w-full space-y-8 font-sans selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="w-full space-y-8 font-sans selection:bg-[#5B3E57]/20 dark:selection:bg-[#D1A7CC]/30">
       {/* ===================== HERO WELCOME BANNER ===================== */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={SPRING_TRANSITION}
-        className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden"
+        className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden shadow-card"
       >
         {/* Left Block: Identity Context */}
         <div className="space-y-4 max-w-xl z-10">
           <div className="inline-flex items-center gap-1.5">
             <Badge
               variant="pewter"
-              className="bg-[#14141A] text-[#C5A880] text-[9px] uppercase font-mono tracking-wider font-extrabold px-2 py-0.5 border-white/5"
+              className="bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#5B3E57] dark:text-[#D1A7CC] text-[9px] uppercase font-mono tracking-wider font-extrabold px-2 py-0.5 border border-[#D5C0D1] dark:border-[#D1A7CC]/30"
             >
               ✦ Candidate Learning Studio
             </Badge>
           </div>
 
-          <h2 className="text-xl md:text-2xl font-bold text-[#F5F5F7] tracking-tight">
+          <h2 className="text-xl md:text-2xl font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
             Welcome back,{' '}
             {userProfile?.firstName ||
               (user?.name ? user.name.split(' ')[0] : 'Engineer')}
           </h2>
 
-          <p className="text-xs text-[#8E8E93] font-light leading-relaxed">
+          <p className="text-xs text-[#635E56] dark:text-[#A69F94] font-light leading-relaxed">
             Your distributed learning workspace is synchronized. Pick up where you left off or explore new curriculum tracks.
           </p>
 
           {/* Streak Counter pill */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14141A] border border-white/5 text-[10px] font-mono text-[#8E8E93]">
-            <span className="text-[#C5A880] animate-pulse">⚡</span>
-            <span className="font-bold text-[#F5F5F7]">12-Day Engineering Streak</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] text-[10px] font-mono text-[#635E56] dark:text-[#A69F94]">
+            <span className="text-[#9A6B56] dark:text-[#D9A48F] animate-pulse">⚡</span>
+            <span className="font-bold text-[#282521] dark:text-[#EDE8E1]">12-Day Engineering Streak</span>
             <span className="opacity-40">•</span>
             <span>Consistent daily commits</span>
           </div>
         </div>
 
-        {/* Right Block: Refactored Single High-Fidelity Call-To-Action */}
+        {/* Right Block: Single High-Fidelity Call-To-Action */}
         <div className="flex items-center shrink-0 z-10 self-start md:self-center">
           <Button
             variant="primary"
             onClick={() => navigate(enrolledCourses.length > 0 ? '/student/my-learning' : '/courses')}
-            className="px-5 py-2.5 font-bold text-xs tracking-wide uppercase shadow-lg shadow-[#C5A880]/5 bg-[#C5A880] text-[#070709] rounded-xl hover:bg-[#E5E5E7] transition-all duration-300"
+            className="px-5 py-2.5 font-bold text-xs tracking-wide uppercase shadow-xs bg-[#5B3E57] hover:bg-[#462D42] text-[#FFFEFA] dark:bg-[#D1A7CC] dark:text-[#151413] dark:hover:bg-[#E0BFDC] rounded-xl transition-all duration-300"
           >
             {enrolledCourses.length > 0 ? 'Resume Learning Track' : 'Explore Catalog Matrix'}
           </Button>
@@ -422,12 +429,12 @@ export const StudentDashboard = () => {
       {/* ===================== VIEW: BECOME INSTRUCTOR TAB ===================== */}
       {activeTab === 'become-instructor' ? (
         <div className="space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-white/[0.06]">
             <div>
-              <h2 className="text-base font-bold text-[#F5F5F7]">
+              <h2 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1]">
                 Faculty Accreditation Review
               </h2>
-              <p className="text-xs text-[#8E8E93]">
+              <p className="text-xs text-[#635E56] dark:text-[#A69F94]">
                 Submit your engineering credentials to join our authorized instruction faculty.
               </p>
             </div>
@@ -457,14 +464,14 @@ export const StudentDashboard = () => {
                 [1, 2, 3, 4].map((i) => (
                   <div
                     key={i}
-                    className="p-4 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-2.5"
+                    className="p-4 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] space-y-2.5"
                   >
-                    <Skeleton className="h-3 w-20 bg-[#14141A]" />
-                    <Skeleton className="h-7 w-16 bg-[#14141A]" />
+                    <Skeleton className="h-3 w-20 bg-[#EAE5DC] dark:bg-[#272523]" />
+                    <Skeleton className="h-7 w-16 bg-[#EAE5DC] dark:bg-[#272523]" />
                   </div>
                 ))
               ) : statsError ? (
-                <div className="col-span-full p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-400 flex items-center justify-between">
+                <div className="col-span-full p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-500 flex items-center justify-between">
                   <span>{statsError}</span>
                   <button
                     type="button"
@@ -482,72 +489,72 @@ export const StudentDashboard = () => {
                   <motion.div
                     whileHover={{ y: -2 }}
                     transition={SPRING_TRANSITION}
-                    className="p-5 rounded-2xl bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all group"
+                    className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/30 dark:hover:border-[#D1A7CC]/30 transition-all shadow-card group"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-[#8E8E93]">Enrolled</span>
-                      <div className="w-8 h-8 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#C5A880] group-hover:scale-105 transition-transform">
+                      <span className="text-xs font-semibold text-[#635E56] dark:text-[#A69F94]">Enrolled</span>
+                      <div className="w-8 h-8 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] group-hover:scale-105 transition-transform">
                         <BookOpen className="w-4 h-4" />
                       </div>
                     </div>
-                    <span className="text-2xl sm:text-3xl font-extrabold font-mono text-[#F5F5F7] tracking-tight block">
+                    <span className="text-2xl sm:text-3xl font-extrabold font-mono text-[#282521] dark:text-[#EDE8E1] tracking-tight block">
                       {enrolledCount}
                     </span>
-                    <span className="text-[10px] text-[#71717A] mt-1 block">+2 this quarter</span>
+                    <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] mt-1 block">+2 this quarter</span>
                   </motion.div>
 
                   {/* Metric 2 */}
                   <motion.div
                     whileHover={{ y: -2 }}
                     transition={SPRING_TRANSITION}
-                    className="p-5 rounded-2xl bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all group"
+                    className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/30 dark:hover:border-[#D1A7CC]/30 transition-all shadow-card group"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-[#8E8E93]">In Progress</span>
-                      <div className="w-8 h-8 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#E5E5E7] group-hover:scale-105 transition-transform">
+                      <span className="text-xs font-semibold text-[#635E56] dark:text-[#A69F94]">In Progress</span>
+                      <div className="w-8 h-8 rounded-xl bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center text-[#282521] dark:text-[#EDE8E1] group-hover:scale-105 transition-transform">
                         <PlayCircle className="w-4 h-4" />
                       </div>
                     </div>
-                    <span className="text-2xl sm:text-3xl font-extrabold font-mono text-[#F5F5F7] tracking-tight block">
+                    <span className="text-2xl sm:text-3xl font-extrabold font-mono text-[#282521] dark:text-[#EDE8E1] tracking-tight block">
                       {inProgressCount}
                     </span>
-                    <span className="text-[10px] text-[#71717A] mt-1 block">Active curriculum</span>
+                    <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] mt-1 block">Active curriculum</span>
                   </motion.div>
 
                   {/* Metric 3 */}
                   <motion.div
                     whileHover={{ y: -2 }}
                     transition={SPRING_TRANSITION}
-                    className="p-5 rounded-2xl bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all group"
+                    className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/30 dark:hover:border-[#D1A7CC]/30 transition-all shadow-card group"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-[#8E8E93]">Completed</span>
-                      <div className="w-8 h-8 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
+                      <span className="text-xs font-semibold text-[#635E56] dark:text-[#A69F94]">Completed</span>
+                      <div className="w-8 h-8 rounded-xl bg-[#EBF3EE] dark:bg-[#529E73]/15 border border-[#B7D9C5] dark:border-[#529E73]/30 flex items-center justify-center text-[#2B6747] dark:text-[#529E73] group-hover:scale-105 transition-transform">
                         <CheckCircle2 className="w-4 h-4" />
                       </div>
                     </div>
-                    <span className="text-2xl sm:text-3xl font-extrabold font-mono text-[#F5F5F7] tracking-tight block">
+                    <span className="text-2xl sm:text-3xl font-extrabold font-mono text-[#282521] dark:text-[#EDE8E1] tracking-tight block">
                       {completedCount}
                     </span>
-                    <span className="text-[10px] text-[#71717A] mt-1 block">Validated modules</span>
+                    <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] mt-1 block">Validated modules</span>
                   </motion.div>
 
                   {/* Metric 4 */}
                   <motion.div
                     whileHover={{ y: -2 }}
                     transition={SPRING_TRANSITION}
-                    className="p-5 rounded-2xl bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all group"
+                    className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/30 dark:hover:border-[#D1A7CC]/30 transition-all shadow-card group"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-[#8E8E93]">Credentials</span>
-                      <div className="w-8 h-8 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#C5A880] group-hover:scale-105 transition-transform">
+                      <span className="text-xs font-semibold text-[#635E56] dark:text-[#A69F94]">Credentials</span>
+                      <div className="w-8 h-8 rounded-xl bg-[#F6EFEA] dark:bg-[#D9A48F]/15 border border-[#E0D0C7] dark:border-[#D9A48F]/30 flex items-center justify-center text-[#9A6B56] dark:text-[#D9A48F] group-hover:scale-105 transition-transform">
                         <Award className="w-4 h-4" />
                       </div>
                     </div>
-                    <span className="text-2xl sm:text-3xl font-extrabold font-mono text-[#F5F5F7] tracking-tight block">
+                    <span className="text-2xl sm:text-3xl font-extrabold font-mono text-[#282521] dark:text-[#EDE8E1] tracking-tight block">
                       {certificatesCount}
                     </span>
-                    <span className="text-[10px] text-[#71717A] mt-1 block">Cryptographic hashes</span>
+                    <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] mt-1 block">Cryptographic hashes</span>
                   </motion.div>
                 </>
               )}
@@ -559,21 +566,21 @@ export const StudentDashboard = () => {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={SPRING_TRANSITION}
-                className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-sm space-y-4"
+                className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-card space-y-4"
               >
-                <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
+                <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-white/[0.06]">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880]">
+                    <div className="w-8 h-8 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
                       <PlayCircle className="w-4 h-4" />
                     </div>
                     <div>
-                      <h2 className="text-sm font-bold text-[#F5F5F7]">Active Lesson Session</h2>
-                      <p className="text-[11px] text-[#8E8E93]">Instant session resumption from gateway memory.</p>
+                      <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Active Lesson Session</h2>
+                      <p className="text-[11px] text-[#756E64] dark:text-[#7A7368]">Instant session resumption from gateway memory.</p>
                     </div>
                   </div>
                   <Link
                     to="/student/my-learning"
-                    className="text-xs font-semibold text-[#C5A880] hover:text-[#D4BC98] flex items-center gap-1 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C5A880] rounded"
+                    className="text-xs font-semibold text-[#5B3E57] hover:text-[#462D42] dark:text-[#D1A7CC] dark:hover:text-[#E0BFDC] flex items-center gap-1 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#5B3E57] rounded"
                   >
                     <span>View All ({enrolledCourses.length})</span>
                     <ChevronRight className="w-3.5 h-3.5" />
@@ -582,7 +589,7 @@ export const StudentDashboard = () => {
 
                 {/* Primary Enrolled Focus Item */}
                 <div
-                  className="flex flex-col sm:flex-row gap-5 p-4 rounded-2xl bg-[#14141A] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C5A880]"
+                  className="flex flex-col sm:flex-row gap-5 p-4 rounded-2xl bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/30 dark:hover:border-[#D1A7CC]/30 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#5B3E57]"
                   tabIndex={0}
                   role="button"
                   onKeyDown={(e) => {
@@ -606,7 +613,7 @@ export const StudentDashboard = () => {
                     }
                   }}
                 >
-                  <div className="w-full sm:w-44 h-28 rounded-xl overflow-hidden bg-[#1B1B24] shrink-0 border border-white/[0.04]">
+                  <div className="w-full sm:w-44 h-28 rounded-xl overflow-hidden bg-[#FAF7F2] dark:bg-[#151413] shrink-0 border border-[#E3DCD3] dark:border-white/[0.06]">
                     {enrolledCourses[0].thumbnail ? (
                       <img
                         src={enrolledCourses[0].thumbnail}
@@ -614,7 +621,7 @@ export const StudentDashboard = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#C5A880]">
+                      <div className="w-full h-full flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
                         <BookOpen className="w-8 h-8" />
                       </div>
                     )}
@@ -622,11 +629,11 @@ export const StudentDashboard = () => {
 
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-sm font-bold text-[#F5F5F7] line-clamp-1">
+                      <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] line-clamp-1">
                         {enrolledCourses[0].title || 'Untitled Curriculum'}
                       </h3>
                       {enrolledCourses[0].instructor && (
-                        <p className="text-xs text-[#8E8E93] mt-1">
+                        <p className="text-xs text-[#635E56] dark:text-[#A69F94] mt-1">
                           Faculty: {enrolledCourses[0].instructor}
                         </p>
                       )}
@@ -634,17 +641,17 @@ export const StudentDashboard = () => {
 
                     <div className="mt-3 space-y-1.5">
                       <div className="flex items-center justify-between text-[11px] font-mono">
-                        <span className="text-[#8E8E93]">Module Completion</span>
-                        <span className="text-[#C5A880] font-bold">
+                        <span className="text-[#635E56] dark:text-[#A69F94]">Module Completion</span>
+                        <span className="text-[#5B3E57] dark:text-[#D1A7CC] font-bold">
                           {enrolledCourses[0].progress != null ? `${enrolledCourses[0].progress}%` : '0%'}
                         </span>
                       </div>
-                      <div className="h-1.5 w-full rounded-full bg-[#070709] overflow-hidden">
+                      <div className="h-1.5 w-full rounded-full bg-[#D8D0C5] dark:bg-[#151413] overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${enrolledCourses[0].progress || 0}%` }}
                           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                          className="h-full bg-[#C5A880] rounded-full"
+                          className="h-full bg-[#5B3E57] dark:bg-[#D1A7CC] rounded-full"
                         />
                       </div>
                     </div>
@@ -662,15 +669,15 @@ export const StudentDashboard = () => {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={SPRING_TRANSITION}
-                className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 sm:p-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-sm"
+                className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 sm:p-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-card"
               >
                 <div className="flex items-start sm:items-center gap-4">
-                  <div className="w-11 h-11 rounded-2xl bg-[#14141A] border border-white/10 flex items-center justify-center text-[#C5A880] shrink-0">
+                  <div className="w-11 h-11 rounded-2xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] shrink-0">
                     <Compass className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm sm:text-base font-bold text-[#F5F5F7]">No Active Enrolled Curricula</h3>
-                    <p className="text-xs text-[#8E8E93] mt-1 max-w-lg leading-relaxed">
+                    <h3 className="text-sm sm:text-base font-bold text-[#282521] dark:text-[#EDE8E1]">No Active Enrolled Curricula</h3>
+                    <p className="text-xs text-[#635E56] dark:text-[#A69F94] mt-1 max-w-lg leading-relaxed">
                       Begin your engineering journey to unlock interactive video classrooms, proctored assessments, and cryptographically verified certifications.
                     </p>
                   </div>
@@ -692,15 +699,15 @@ export const StudentDashboard = () => {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={SPRING_TRANSITION}
-              className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-sm space-y-5"
+              className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-card space-y-5"
             >
               {/* Header: Title & Search */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/[0.04]">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#E3DCD3] dark:border-white/[0.06]">
                 <div>
-                  <h2 className="text-base font-bold text-[#F5F5F7]">
+                  <h2 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1]">
                     Curriculum Discovery Matrix
                   </h2>
-                  <p className="text-xs text-[#8E8E93] mt-0.5">
+                  <p className="text-xs text-[#635E56] dark:text-[#A69F94] mt-0.5">
                     Explore verified courses across distributed engineering disciplines.
                   </p>
                 </div>
@@ -708,7 +715,7 @@ export const StudentDashboard = () => {
                 {/* Filter and Search Actions */}
                 <div className="flex items-center gap-2">
                   <div className="relative">
-                    <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#71717A]" />
+                    <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#756E64] dark:text-[#7A7368]" />
                     <input
                       type="text"
                       placeholder="Filter courses..."
@@ -720,7 +727,7 @@ export const StudentDashboard = () => {
                           fetchTrending();
                         }
                       }}
-                      className="w-40 sm:w-52 pl-9 pr-7 py-1.5 bg-[#14141A] border border-white/[0.04] rounded-xl text-xs text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] transition-colors"
+                      className="w-40 sm:w-52 pl-9 pr-7 py-1.5 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#D8D0C5] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] placeholder-[#756E64] dark:placeholder-[#7A7368] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] transition-colors"
                     />
                     {searchKeyword && (
                       <button
@@ -730,7 +737,7 @@ export const StudentDashboard = () => {
                           setTrendingPage(0);
                           fetchTrending();
                         }}
-                        className="absolute right-2.5 top-2 text-[#71717A] hover:text-white"
+                        className="absolute right-2.5 top-2 text-[#756E64] hover:text-[#282521] dark:text-[#7A7368] dark:hover:text-white"
                       >
                         <X className="w-3.5 h-3.5" />
                       </button>
@@ -741,11 +748,11 @@ export const StudentDashboard = () => {
                     type="button"
                     onClick={fetchTrending}
                     disabled={loadingCourses}
-                    className="p-2 rounded-xl bg-[#14141A] border border-white/[0.04] text-[#8E8E93] hover:text-white hover:border-white/[0.08] transition-colors"
+                    className="p-2 rounded-xl bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white hover:border-[#C8BFB2] dark:hover:border-white/[0.08] transition-colors"
                     title="Refresh courses"
                     aria-label="Refresh courses"
                   >
-                    <RefreshCw className={`w-3.5 h-3.5 ${loadingCourses ? 'animate-spin text-[#C5A880]' : ''}`} />
+                    <RefreshCw className={`w-3.5 h-3.5 ${loadingCourses ? 'animate-spin text-[#5B3E57] dark:text-[#D1A7CC]' : ''}`} />
                   </button>
                 </div>
               </div>
@@ -763,13 +770,13 @@ export const StudentDashboard = () => {
                         setTrendingPage(0);
                       }}
                       className={`relative px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
-                        isSelected ? 'text-[#070709] font-bold' : 'text-[#8E8E93] hover:text-[#F5F5F7] bg-[#14141A]'
+                        isSelected ? 'text-[#FFFEFA] dark:text-[#151413] font-bold' : 'text-[#635E56] hover:text-[#282521] dark:text-[#A69F94] dark:hover:text-[#EDE8E1] bg-[#EAE5DC] dark:bg-[#272523]'
                       }`}
                     >
                       {isSelected && (
                         <motion.div
                           layoutId="studentDashboardCategoryPill"
-                          className="absolute inset-0 bg-[#C5A880] rounded-xl -z-10 shadow-sm"
+                          className="absolute inset-0 bg-[#5B3E57] dark:bg-[#D1A7CC] rounded-xl -z-10 shadow-xs"
                           transition={SPRING_TRANSITION}
                         />
                       )}
@@ -781,12 +788,12 @@ export const StudentDashboard = () => {
 
               {/* Course Error Notice */}
               {courseError && (
-                <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-400 flex items-center justify-between">
+                <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-500 flex items-center justify-between">
                   <span>{courseError}</span>
                   <button
                     type="button"
                     onClick={fetchTrending}
-                    className="underline font-bold"
+                    className="underline font-bold cursor-pointer"
                   >
                     Retry
                   </button>
@@ -799,18 +806,18 @@ export const StudentDashboard = () => {
                   {[1, 2, 3, 4, 5, 6].map((i) => (
                     <div
                       key={i}
-                      className="p-4 rounded-2xl bg-[#14141A] border border-white/[0.04] space-y-3"
+                      className="p-4 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] space-y-3"
                     >
-                      <Skeleton className="h-32 w-full rounded-xl bg-[#1B1B24]" />
-                      <Skeleton className="h-4 w-3/4 bg-[#1B1B24]" />
-                      <Skeleton className="h-3 w-1/2 bg-[#1B1B24]" />
+                      <Skeleton className="h-32 w-full rounded-xl bg-[#EAE5DC] dark:bg-[#272523]" />
+                      <Skeleton className="h-4 w-3/4 bg-[#EAE5DC] dark:bg-[#272523]" />
+                      <Skeleton className="h-3 w-1/2 bg-[#EAE5DC] dark:bg-[#272523]" />
                     </div>
                   ))}
                 </div>
               ) : trendingCourses.length === 0 ? (
                 <div className="py-12 text-center space-y-2">
-                  <p className="text-sm font-bold text-[#F5F5F7]">No curriculum found</p>
-                  <p className="text-xs text-[#8E8E93]">Try switching category filters or search query.</p>
+                  <p className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">No curriculum found</p>
+                  <p className="text-xs text-[#756E64] dark:text-[#7A7368]">Try switching category filters or search query.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -823,10 +830,10 @@ export const StudentDashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ ...SPRING_TRANSITION, delay: idx * 0.03 }}
                         onClick={() => navigate(`/student/courses/${course.id}`)}
-                        className="p-4 rounded-2xl bg-[#14141A] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all cursor-pointer flex flex-col justify-between group"
+                        className="p-4 rounded-2xl bg-[#FFFEFA] dark:bg-[#242220] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/30 dark:hover:border-[#D1A7CC]/30 hover:shadow-card hover:-translate-y-1 transition-all cursor-pointer flex flex-col justify-between group"
                       >
                         <div>
-                          <div className="h-32 w-full rounded-xl overflow-hidden bg-[#1B1B24] relative mb-3 border border-white/[0.04]">
+                          <div className="h-32 w-full rounded-xl overflow-hidden bg-[#EAE5DC] dark:bg-[#151413] relative mb-3 border border-[#E3DCD3] dark:border-white/[0.06]">
                             {course.image ? (
                               <img
                                 src={course.image}
@@ -834,44 +841,44 @@ export const StudentDashboard = () => {
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-[#C5A880]">
+                              <div className="w-full h-full flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
                                 <BookOpen className="w-8 h-8" />
                               </div>
                             )}
 
-                            <span className="absolute top-2 left-2 px-2 py-0.5 rounded-lg bg-[#0F0F13]/90 border border-white/[0.06] text-[10px] font-bold text-[#E5E5E7]">
+                            <span className="absolute top-2 left-2 px-2 py-0.5 rounded-lg bg-black/60 border border-white/10 text-[10px] font-bold text-[#FFFEFA]">
                               {course.category}
                             </span>
 
                             <button
                               type="button"
                               onClick={(e) => toggleWishlist(course, e)}
-                              className="absolute top-2 right-2 w-7 h-7 rounded-xl bg-[#0F0F13]/90 border border-white/[0.06] flex items-center justify-center text-[#8E8E93] hover:text-[#C5A880] transition-colors"
+                              className="absolute top-2 right-2 w-7 h-7 rounded-xl bg-black/60 border border-white/10 flex items-center justify-center text-white hover:text-rose-400 transition-colors"
                             >
                               <Heart
                                 className={`w-3.5 h-3.5 ${
-                                  isWishlisted ? 'fill-[#C5A880] text-[#C5A880]' : ''
+                                  isWishlisted ? 'fill-rose-500 text-rose-500' : ''
                                 }`}
                               />
                             </button>
                           </div>
 
-                          <h3 className="text-xs sm:text-sm font-bold text-[#F5F5F7] line-clamp-2 group-hover:text-[#C5A880] transition-colors">
+                          <h3 className="text-xs sm:text-sm font-bold text-[#282521] dark:text-[#EDE8E1] line-clamp-2 group-hover:text-[#5B3E57] dark:group-hover:text-[#D1A7CC] transition-colors">
                             {course.title || 'Untitled Curriculum'}
                           </h3>
                           {course.instructor && (
-                            <p className="text-[11px] text-[#8E8E93] mt-1 truncate">
+                            <p className="text-[11px] text-[#756E64] dark:text-[#7A7368] mt-1 truncate">
                               By {course.instructor}
                             </p>
                           )}
                         </div>
 
-                        <div className="pt-3 mt-3 border-t border-white/[0.04] flex items-center justify-between text-xs">
-                          <span className="font-mono font-bold text-[#F5F5F7]">
+                        <div className="pt-3 mt-3 border-t border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between text-xs">
+                          <span className="font-mono font-bold text-[#282521] dark:text-[#EDE8E1]">
                             {course.price != null ? (course.price > 0 ? `₹${course.price.toLocaleString()}` : 'Free') : 'Complimentary'}
                           </span>
-                          <span className="text-[10px] text-[#C5A880] flex items-center gap-1 font-mono">
-                            <Star className="w-3 h-3 fill-[#C5A880]" />
+                          <span className="text-[10px] text-[#C29B38] flex items-center gap-1 font-mono">
+                            <Star className="w-3 h-3 fill-[#C29B38]" />
                             <span>{course.rating ? Number(course.rating).toFixed(1) : '0.0'}</span>
                           </span>
                         </div>
@@ -882,10 +889,10 @@ export const StudentDashboard = () => {
               )}
 
               {/* Pagination Bar */}
-              <div className="pt-4 border-t border-white/[0.04] flex items-center justify-between text-xs text-[#8E8E93]">
+              <div className="pt-4 border-t border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between text-xs text-[#756E64] dark:text-[#7A7368]">
                 <span className="font-mono text-[11px]">
-                  Showing <strong className="text-[#F5F5F7]">{startItem}–{endItem}</strong> of{' '}
-                  <strong className="text-[#F5F5F7]">{totalCourses}</strong> curriculum modules
+                  Showing <strong className="text-[#282521] dark:text-[#EDE8E1]">{startItem}–{endItem}</strong> of{' '}
+                  <strong className="text-[#282521] dark:text-[#EDE8E1]">{totalCourses}</strong> curriculum modules
                 </span>
 
                 <div className="flex items-center gap-1.5">
@@ -893,7 +900,7 @@ export const StudentDashboard = () => {
                     type="button"
                     onClick={() => setTrendingPage((prev) => Math.max(0, prev - 1))}
                     disabled={trendingPage === 0 || loadingCourses}
-                    className="px-2.5 py-1 rounded-xl bg-[#14141A] border border-white/[0.04] text-xs font-semibold text-[#8E8E93] hover:text-white disabled:opacity-30 cursor-pointer"
+                    className="px-2.5 py-1 rounded-xl bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] hover:bg-[#E1DBD0] dark:hover:bg-[#322F2C] disabled:opacity-30 cursor-pointer"
                   >
                     Prev
                   </button>
@@ -901,7 +908,7 @@ export const StudentDashboard = () => {
                     type="button"
                     onClick={() => setTrendingPage((prev) => Math.min(totalPages - 1, prev + 1))}
                     disabled={trendingPage >= totalPages - 1 || loadingCourses}
-                    className="px-2.5 py-1 rounded-xl bg-[#14141A] border border-white/[0.04] text-xs font-semibold text-[#8E8E93] hover:text-white disabled:opacity-30 cursor-pointer"
+                    className="px-2.5 py-1 rounded-xl bg-[#EAE5DC] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] hover:bg-[#E1DBD0] dark:hover:bg-[#322F2C] disabled:opacity-30 cursor-pointer"
                   >
                     Next
                   </button>
@@ -917,40 +924,40 @@ export const StudentDashboard = () => {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={SPRING_TRANSITION}
-              className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-sm space-y-4"
+              className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-card space-y-4"
             >
-              <div className="flex items-center gap-2 pb-3 border-b border-white/[0.04]">
-                <Target className="w-4 h-4 text-[#C5A880]" />
-                <h3 className="text-sm font-bold text-[#F5F5F7]">Engineering Targets</h3>
+              <div className="flex items-center gap-2 pb-3 border-b border-[#E3DCD3] dark:border-white/[0.06]">
+                <Target className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
+                <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Engineering Targets</h3>
               </div>
 
-              <div className="divide-y divide-white/[0.03]">
+              <div className="divide-y divide-[#E3DCD3] dark:divide-white/[0.04]">
                 <div className="py-2.5 first:pt-0 space-y-2">
                   <div className="flex justify-between text-xs">
-                    <span className="text-[#F5F5F7] font-semibold">Master Distributed Systems</span>
-                    <span className="text-[#C5A880] font-mono">66%</span>
+                    <span className="text-[#282521] dark:text-[#EDE8E1] font-semibold">Master Distributed Systems</span>
+                    <span className="text-[#5B3E57] dark:text-[#D1A7CC] font-mono font-bold">66%</span>
                   </div>
-                  <div className="h-1.5 w-full rounded-full bg-[#070709] overflow-hidden">
+                  <div className="h-1.5 w-full rounded-full bg-[#EAE5DC] dark:bg-[#151413] overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: '66%' }}
                       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                      className="h-full bg-[#C5A880] rounded-full"
+                      className="h-full bg-[#5B3E57] dark:bg-[#D1A7CC] rounded-full"
                     />
                   </div>
                 </div>
 
                 <div className="py-2.5 last:pb-0 space-y-2">
                   <div className="flex justify-between text-xs">
-                    <span className="text-[#F5F5F7] font-semibold">Earn 2 Credentials</span>
-                    <span className="text-[#C5A880] font-mono">50%</span>
+                    <span className="text-[#282521] dark:text-[#EDE8E1] font-semibold">Earn 2 Credentials</span>
+                    <span className="text-[#5B3E57] dark:text-[#D1A7CC] font-mono font-bold">50%</span>
                   </div>
-                  <div className="h-1.5 w-full rounded-full bg-[#070709] overflow-hidden">
+                  <div className="h-1.5 w-full rounded-full bg-[#EAE5DC] dark:bg-[#151413] overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: '50%' }}
                       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                      className="h-full bg-[#C5A880] rounded-full"
+                      className="h-full bg-[#5B3E57] dark:bg-[#D1A7CC] rounded-full"
                     />
                   </div>
                 </div>
@@ -962,25 +969,25 @@ export const StudentDashboard = () => {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={SPRING_TRANSITION}
-              className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-sm space-y-4"
+              className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-card space-y-4"
             >
-              <div className="flex items-center gap-2 pb-3 border-b border-white/[0.04]">
-                <Trophy className="w-4 h-4 text-[#C5A880]" />
-                <h3 className="text-sm font-bold text-[#F5F5F7]">Growth Analytics</h3>
+              <div className="flex items-center gap-2 pb-3 border-b border-[#E3DCD3] dark:border-white/[0.06]">
+                <Trophy className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
+                <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Growth Analytics</h3>
               </div>
 
-              <div className="divide-y divide-white/[0.03] text-xs">
+              <div className="divide-y divide-[#E3DCD3] dark:divide-white/[0.04] text-xs">
                 <div className="flex justify-between py-2.5 first:pt-0">
-                  <span className="text-[#8E8E93]">Cumulative Study Time</span>
-                  <span className="font-mono font-bold text-[#F5F5F7]">24h 30m</span>
+                  <span className="text-[#756E64] dark:text-[#7A7368]">Cumulative Study Time</span>
+                  <span className="font-mono font-bold text-[#282521] dark:text-[#EDE8E1]">24h 30m</span>
                 </div>
                 <div className="flex justify-between py-2.5">
-                  <span className="text-[#8E8E93]">Curriculum Completed</span>
-                  <span className="font-mono font-bold text-[#F5F5F7]">{completedCount}</span>
+                  <span className="text-[#756E64] dark:text-[#7A7368]">Curriculum Completed</span>
+                  <span className="font-mono font-bold text-[#282521] dark:text-[#EDE8E1]">{completedCount}</span>
                 </div>
                 <div className="flex justify-between py-2.5 last:pb-0">
-                  <span className="text-[#8E8E93]">Credentials Issued</span>
-                  <span className="font-mono font-bold text-[#C5A880]">{certificatesCount}</span>
+                  <span className="text-[#756E64] dark:text-[#7A7368]">Credentials Issued</span>
+                  <span className="font-mono font-bold text-[#5B3E57] dark:text-[#D1A7CC]">{certificatesCount}</span>
                 </div>
               </div>
             </motion.div>
@@ -990,13 +997,13 @@ export const StudentDashboard = () => {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={SPRING_TRANSITION}
-              className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-sm space-y-3"
+              className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-card space-y-3"
             >
               <div className="flex items-center gap-2">
-                <GraduationCap className="w-4 h-4 text-[#C5A880]" />
-                <h3 className="text-sm font-bold text-[#F5F5F7]">Teach on FD_LMS</h3>
+                <GraduationCap className="w-4 h-4 text-[#9A6B56] dark:text-[#D9A48F]" />
+                <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Teach on Asivo</h3>
               </div>
-              <p className="text-xs text-[#8E8E93] leading-relaxed">
+              <p className="text-xs text-[#635E56] dark:text-[#A69F94] leading-relaxed">
                 Join our accredited faculty and distribute your engineering knowledge to candidates worldwide.
               </p>
               <Button

@@ -48,7 +48,7 @@ function formatInlineTokens(text) {
       return (
         <code
           key={index}
-          className="px-1.5 py-0.5 mx-0.5 rounded bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] text-[#5B3E57] dark:text-[#D1A7CC] font-mono text-[11px] font-semibold tracking-wide"
+          className="px-1.5 py-0.5 mx-0.5 rounded bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] text-[#5B3E57] dark:text-[#D1A7CC] font-mono text-[11px] font-semibold tracking-wide"
         >
           {code}
         </code>
@@ -136,8 +136,8 @@ function CodeSnippetBlock({ language, code }) {
   }, [code]);
 
   return (
-    <div className="my-2.5 rounded-xl border border-[#E3DCD3] dark:border-white/[0.08] bg-[#FFFEFA] dark:bg-[#1D1C1A] overflow-hidden shadow-inner group">
-      <div className="px-3.5 py-1.5 bg-[#FFFEFA] dark:bg-[#1D1C1A] border-b border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-between text-[11px] font-mono text-[#635E56] dark:text-[#A69F94]">
+    <div className="my-2.5 rounded-xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] bg-[#FFFEFA] dark:bg-[#1D1C1A] overflow-hidden shadow-inner group">
+      <div className="px-3.5 py-1.5 bg-[#FFFEFA] dark:bg-[#1D1C1A] border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-between text-[11px] font-mono text-[#635E56] dark:text-[#A69F94]">
         <span className="flex items-center gap-1.5 text-[#5B3E57] dark:text-[#D1A7CC]">
           <Terminal className="w-3.5 h-3.5" />
           {language || 'config'}
@@ -565,13 +565,13 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
   }, [messages, filterMode]);
 
   return (
-    <div className="flex flex-col h-full bg-[#FFFEFA] dark:bg-[#1D1C1A]/60 rounded-2xl border border-[#E3DCD3] dark:border-white/[0.08] overflow-hidden shadow-2xl relative">
+    <div className="flex flex-col h-full bg-[#FFFEFA] dark:bg-[#1D1C1A]/60 rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] overflow-hidden shadow-2xl relative">
       {/* ===================================================================
           1. TOP FILTER CONTROLS & TELEMETRY STATUS BAR
           =================================================================== */}
-      <div className="p-4 bg-[#FFFEFA] dark:bg-[#1D1C1A] border-b border-[#E3DCD3] dark:border-white/[0.08] flex flex-wrap items-center justify-between gap-3">
+      <div className="p-4 bg-[#FFFEFA] dark:bg-[#1D1C1A] border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] flex flex-wrap items-center justify-between gap-3">
         {/* Dual Filter Pills */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] text-xs select-none">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] text-xs select-none">
           {[
             { id: 'all', label: 'All Transmissions' },
             { id: 'qa', label: 'Architectural Q&A' },
@@ -638,7 +638,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
               className={`p-4 rounded-xl border transition-all ${
                 msg.isSolved
                   ? 'bg-emerald-950/10 border-emerald-500/30'
-                  : 'bg-transparent border-white/[0.04]'
+                  : 'bg-transparent border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]'
               }`}
             >
               {/* Header: Author + Meta */}
@@ -674,7 +674,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => upvoteMutation.mutate(msg.id)}
-                    className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] text-[#635E56] dark:text-[#A69F94] hover:text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-mono transition-colors"
+                    className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] text-[#635E56] dark:text-[#A69F94] hover:text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-mono transition-colors"
                     title="Upvote transmission"
                   >
                     <ThumbsUp className="w-3 h-3" />
@@ -687,7 +687,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                       className={`p-1 rounded-lg border transition-colors ${
                         msg.isSolved
                           ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-                          : 'bg-[#FFFEFA] dark:bg-[#1D1C1A] border-[#E3DCD3] dark:border-white/[0.08] text-[#756E64] dark:text-[#7A7368] hover:text-emerald-400'
+                          : 'bg-[#FFFEFA] dark:bg-[#1D1C1A] border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] text-[#756E64] dark:text-[#7A7368] hover:text-emerald-400'
                       }`}
                       title={msg.isSolved ? 'Mark as Unsolved' : 'Mark as Solved'}
                     >
@@ -703,7 +703,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
 
                 {/* Replies Thread */}
                 {msg.replies && msg.replies.length > 0 && (
-                  <div className="mt-4 pt-3 border-t border-[#E3DCD3] dark:border-white/[0.08] space-y-3">
+                  <div className="mt-4 pt-3 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] space-y-3">
                     {msg.replies.map((reply) => (
                       <div
                         key={reply.id}
@@ -741,7 +741,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                         onChange={(e) => setReplyInput(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && addReply(msg.id)}
                         placeholder="Write verified architectural response..."
-                        className="flex-1 px-3 py-1.5 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-lg text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
+                        className="flex-1 px-3 py-1.5 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] rounded-lg text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
                         autoFocus
                       />
                       <Button variant="secondary" size="sm" onClick={() => addReply(msg.id)}>
@@ -777,7 +777,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             onClick={() => scrollToBottom(true)}
-            className="absolute bottom-28 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-[#C5A880] text-[#070709] font-mono text-xs font-bold shadow-lg shadow-black/50 flex items-center gap-1.5 z-20 cursor-pointer"
+            className="absolute bottom-28 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-mono text-xs font-bold shadow-lg shadow-black/50 flex items-center gap-1.5 z-20 cursor-pointer"
           >
             <ArrowDown className="w-3.5 h-3.5" />
             New transmissions below
@@ -788,12 +788,12 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
       {/* ===================================================================
           3. ADVANCED COMPOSER DOCK (CODE INSERTER + MARKDOWN READY)
           =================================================================== */}
-      <form onSubmit={handleSendMessage} className="p-4 bg-[#FFFEFA] dark:bg-[#1D1C1A] border-t border-[#E3DCD3] dark:border-white/[0.08] space-y-3">
+      <form onSubmit={handleSendMessage} className="p-4 bg-[#FFFEFA] dark:bg-[#1D1C1A] border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] space-y-3">
         <div className="flex items-center justify-between text-xs">
           {/* Post Type Selector */}
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-mono text-[#756E64] dark:text-[#7A7368] uppercase font-semibold">Transmission Mode:</span>
-            <div className="inline-flex rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] p-0.5 border border-[#E3DCD3] dark:border-white/[0.08] font-mono text-[11px]">
+            <div className="inline-flex rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] p-0.5 border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] font-mono text-[11px]">
               <button
                 type="button"
                 onClick={() => setPostType('qa')}
@@ -823,7 +823,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
           <button
             type="button"
             onClick={insertCodeTemplate}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] text-[#635E56] dark:text-[#A69F94] hover:text-[#5B3E57] dark:text-[#D1A7CC] font-mono text-[11px] transition-colors"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] text-[#635E56] dark:text-[#A69F94] hover:text-[#5B3E57] dark:text-[#D1A7CC] font-mono text-[11px] transition-colors"
           >
             <Code className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
             + Code Template
@@ -846,7 +846,7 @@ export const LiveDiscussionHub = ({ courseId = '1', lectureTitle = 'Current Lect
                 ? 'Pose a technical architectural query (Supports Markdown & ```yaml ``` blocks)...'
                 : 'Stream immediate telemetry or observations into current classroom session...'
             }
-            className="w-full p-3.5 pr-24 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-sm text-[#282521] dark:text-[#EDE8E1] placeholder:text-[#756E64] dark:placeholder-[#7A7368] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50 resize-none font-light tracking-wide transition-all"
+            className="w-full p-3.5 pr-24 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-sm text-[#282521] dark:text-[#EDE8E1] placeholder:text-[#756E64] dark:placeholder-[#7A7368] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50 resize-none font-light tracking-wide transition-all"
           />
 
           <div className="absolute right-2.5 bottom-3.5 flex items-center gap-2">

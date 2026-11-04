@@ -287,7 +287,7 @@ export const CertificateVerification = () => {
             variant="secondary"
             size="sm"
             onClick={handleLinkedInShare}
-            className="border-[#C5A880]/30 text-[#C5A880] hover:bg-[#C5A880]/10 text-xs font-semibold"
+            className="border-[#C29B38]/40 text-[#9A6B56] dark:text-[#D9A48F] hover:bg-[#C29B38]/10 text-xs font-semibold"
           >
             <ExternalLink className="w-3.5 h-3.5 mr-1.5" />
             <span>Add to LinkedIn</span>
@@ -459,10 +459,10 @@ export const CertificateVerification = () => {
                 </p>
 
                 <div className="relative inline-block px-8 py-2">
-                  <h3 className="text-3xl md:text-5xl font-black text-[#C5A880] tracking-tight font-serif">
+                  <h3 className="text-3xl md:text-5xl font-black text-[#5B3E57] dark:text-[#D1A7CC] tracking-tight font-serif">
                     {studentName}
                   </h3>
-                  <div className="h-0.5 w-full bg-[#C5A880]/30 mt-2 opacity-60" />
+                  <div className="h-0.5 w-full bg-[#5B3E57]/30 dark:bg-[#D1A7CC]/30 mt-2 opacity-60" />
                 </div>
 
                 <p className="text-sm text-[#635E56] dark:text-[#A69F94] font-light leading-relaxed max-w-2xl mx-auto">
@@ -470,7 +470,7 @@ export const CertificateVerification = () => {
                   and consensus topologies required to achieve certified distinction in
                 </p>
 
-                <h4 className="text-lg md:text-2xl font-extrabold text-white tracking-wide text-cyan-100">
+                <h4 className="text-lg md:text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-wide">
                   {courseData?.title || 'Distributed Systems & High-Throughput Microservice Architecture'}
                 </h4>
               </div>
@@ -485,7 +485,7 @@ export const CertificateVerification = () => {
                     </span>
                   </div>
                   <div className="h-[1px] w-44 bg-obsidian-700 mx-auto md:mx-0" />
-                  <p className="text-xs font-bold text-white">Elena Rostova, Ph.D.</p>
+                  <p className="text-xs font-bold text-[#282521] dark:text-[#EDE8E1]">Elena Rostova, Ph.D.</p>
                   <p className="text-[10px] font-mono text-[#756E64] dark:text-[#7A7368] uppercase">
                     Lead Systems Architect & Faculty Dean
                   </p>
@@ -493,13 +493,13 @@ export const CertificateVerification = () => {
 
                 {/* Center: Monochromatic Blockchain Medallion Seal with Foil Layer Shimmer Motion */}
                 <div className="flex flex-col items-center justify-center space-y-2">
-                  <div className="relative w-20 h-20 rounded-full border border-[#C5A880]/60 bg-[#0F0F13] flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-[0_0_24px_rgba(197,168,128,0.15)] overflow-hidden">
+                  <div className="relative w-20 h-20 rounded-full border border-[#C29B38]/60 bg-[#FFFEFA] dark:bg-[#1D1C1A] flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-[0_0_24px_rgba(197,168,128,0.15)] overflow-hidden">
                     {/* Non-blocking Foil Layer Shimmer Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_3s_infinite] pointer-events-none" />
-                    <ShieldCheck className="w-9 h-9 text-[#C5A880]" />
-                    <div className="absolute inset-1 rounded-full border border-[#C5A880]/30 pointer-events-none" />
+                    <ShieldCheck className="w-9 h-9 text-[#C29B38]" />
+                    <div className="absolute inset-1 rounded-full border border-[#C29B38]/30 pointer-events-none" />
                   </div>
-                  <span className="text-[10px] font-mono tracking-widest text-[#C5A880] uppercase font-bold text-center">
+                  <span className="text-[10px] font-mono tracking-widest text-[#C29B38] uppercase font-bold text-center">
                     Cryptographically Sealed
                   </span>
                 </div>
@@ -507,7 +507,7 @@ export const CertificateVerification = () => {
                 {/* Right: Date & Verification QR Anchor */}
                 <div className="text-center md:text-right space-y-1">
                   <p className="text-xs font-mono text-[#635E56] dark:text-[#A69F94]">
-                    Conferred: <span className="font-bold text-white">{issueDate}</span>
+                    Conferred: <span className="font-bold text-[#282521] dark:text-[#EDE8E1]">{issueDate}</span>
                   </p>
                   <p className="text-[10px] font-mono text-emerald-400 font-bold">
                     Cumulative Metric: 98.4% (Highest Distinction)

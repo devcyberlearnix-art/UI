@@ -3,7 +3,7 @@ import React from 'react';
 export const Skeleton = ({ className = '', rounded = 'rounded-xl' }) => {
   return (
     <div
-      className={`relative overflow-hidden bg-[#0F0F13] border border-white/[0.04] ${rounded} ${className}`}
+      className={`relative overflow-hidden bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] ${rounded} ${className}`}
     >
       <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/[0.04] to-transparent" />
     </div>
@@ -12,7 +12,7 @@ export const Skeleton = ({ className = '', rounded = 'rounded-xl' }) => {
 
 export const CourseCardSkeleton = () => {
   return (
-    <div className="flex flex-col bg-[#14141A] rounded-2xl p-4 border border-white/[0.04] space-y-3.5 shadow-[0_12px_32px_-4px_rgba(0,0,0,0.7)]">
+    <div className="flex flex-col bg-[#F5F2EC] dark:bg-[#151413] rounded-2xl p-4 border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-3.5 shadow-[0_12px_32px_-4px_rgba(0,0,0,0.7)]">
       {/* 16:9 Thumbnail placeholder */}
       <Skeleton className="w-full aspect-[16/9] rounded-xl" />
 
@@ -35,7 +35,7 @@ export const CourseCardSkeleton = () => {
       </div>
 
       {/* Footer with Instructor & Action */}
-      <div className="border-t border-white/[0.04] pt-3 flex items-center justify-between mt-auto">
+      <div className="border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] pt-3 flex items-center justify-between mt-auto">
         <div className="flex items-center gap-2">
           <Skeleton className="w-7 h-7 rounded-full" />
           <Skeleton className="w-24 h-4 rounded-md" />
@@ -52,7 +52,7 @@ export const TelemetrySkeleton = () => {
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}
-          className="p-4 rounded-2xl bg-[#0F0F13] border border-white/[0.04] flex flex-col items-center space-y-2"
+          className="p-4 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex flex-col items-center space-y-2"
         >
           <Skeleton className="w-16 h-8 rounded-lg" />
           <Skeleton className="w-24 h-3 rounded-md" />

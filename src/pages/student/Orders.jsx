@@ -51,10 +51,10 @@ const Orders = () => {
     return (
       <GlobalLayoutWrapper showFooter={false}>
         <div className="space-y-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Skeleton className="h-8 w-1/4 rounded bg-[#0F0F13]" />
+          <Skeleton className="h-8 w-1/4 rounded bg-[#FFFEFA] dark:bg-[#1D1C1A]" />
           <div className="space-y-4">
-            <Skeleton className="h-28 w-full rounded-2xl bg-[#0F0F13]" />
-            <Skeleton className="h-28 w-full rounded-2xl bg-[#0F0F13]" />
+            <Skeleton className="h-28 w-full rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A]" />
+            <Skeleton className="h-28 w-full rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A]" />
           </div>
         </div>
       </GlobalLayoutWrapper>
@@ -66,20 +66,20 @@ const Orders = () => {
       <div className="space-y-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 font-sans">
         
         {/* Title Meta Frame */}
-        <div className="border-b border-white/[0.04] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-xl font-bold tracking-tight text-[#F5F5F7]">
+              <h1 className="text-xl font-bold tracking-tight text-[#282521] dark:text-[#EDE8E1]">
                 Billing Records & Order Pipeline
               </h1>
               <Badge
                 variant="pewter"
-                className="bg-[#14141A] text-[#C5A880] border-white/5 font-mono text-[10px] px-2 py-0.5"
+                className="bg-[#F5F2EC] dark:bg-[#151413] text-[#5B3E57] dark:text-[#D1A7CC] border-[#E3DCD3] dark:border-white/5 font-mono text-[10px] px-2 py-0.5"
               >
                 {orders.length} Total
               </Badge>
             </div>
-            <p className="text-xs text-[#8E8E93] font-light mt-0.5">
+            <p className="text-xs text-[#635E56] dark:text-[#A8A196] font-light mt-0.5">
               Cryptographically verified transaction telemetry and seat license records.
             </p>
           </div>
@@ -90,11 +90,11 @@ const Orders = () => {
               size="sm"
               onClick={handleRefresh}
               disabled={refreshing}
-              className="gap-1.5 text-xs bg-[#14141A] border-white/5 hover:border-white/10 cursor-pointer"
+              className="gap-1.5 text-xs bg-[#F5F2EC] dark:bg-[#151413] border-[#E3DCD3] dark:border-white/5 hover:border-[#D5C0D1] dark:border-white/10 cursor-pointer"
             >
               <RefreshCw
                 size={14}
-                className={`text-[#C5A880] ${refreshing ? 'animate-spin' : ''}`}
+                className={`text-[#5B3E57] dark:text-[#D1A7CC] ${refreshing ? 'animate-spin' : ''}`}
               />
               <span>{refreshing ? 'Syncing...' : 'Refresh Records'}</span>
             </Button>
@@ -128,8 +128,8 @@ const Orders = () => {
                 onClick={() => setSelectedFilter(tab.id)}
                 className={`relative px-3.5 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-colors duration-200 select-none cursor-pointer shrink-0 flex items-center gap-1.5 border ${
                   active
-                    ? 'border-[#C5A880]/40 text-[#C5A880] bg-[#14141A]'
-                    : 'border-white/[0.04] text-[#8E8E93] hover:text-[#F5F5F7] bg-[#0F0F13] hover:border-white/10'
+                    ? 'border-[#5B3E57] dark:border-[#D1A7CC] text-[#5B3E57] dark:text-[#D1A7CC] bg-[#F5F2EC] dark:bg-[#151413]'
+                    : 'border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:text-[#EDE8E1] bg-[#FFFEFA] dark:bg-[#1D1C1A] hover:border-[#D5C0D1] dark:border-white/10'
                 }`}
               >
                 <span>{tab.label}</span>

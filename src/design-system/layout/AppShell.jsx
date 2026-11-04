@@ -254,14 +254,14 @@ export const AppShell = ({ children }) => {
   // -------------------------------------------------------------
   if (isDistractionFree) {
     return (
-      <div className="min-h-screen bg-[#070709] font-sans text-[#F5F5F7] flex flex-col selection:bg-[#C5A880]/30 selection:text-white">
+      <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] font-sans text-[#282521] dark:text-[#EDE8E1] flex flex-col selection:bg-[#5B3E57] dark:bg-[#D1A7CC]/30 selection:text-white">
         {/* Floating Minimal Escape Banner */}
-        <header className="sticky top-0 z-50 w-full px-4 py-3 bg-[#0F0F13]/90 backdrop-blur-xl border-b border-white/[0.04] flex items-center justify-between">
+        <header className="sticky top-0 z-50 w-full px-4 py-3 bg-[#FFFEFA] dark:bg-[#1D1C1A]/90 backdrop-blur-xl border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-semibold text-[#A1A1AA] hover:text-white border border-white/[0.04] transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-semibold text-[#A1A1AA] hover:text-white border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] transition-all cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Exit Immersive View</span>
@@ -306,10 +306,10 @@ export const AppShell = ({ children }) => {
           initial={false}
           animate={{ width: isCollapsed ? 76 : 260 }}
           transition={SPRING_TRANSITION}
-          className="hidden md:flex flex-col shrink-0 bg-[#FAF7F2] dark:bg-[#1A1917] backdrop-blur-2xl border-r border-[#E3DCD3] dark:border-white/[0.06] z-40 relative select-none"
+          className="hidden md:flex flex-col shrink-0 bg-[#FAF7F2] dark:bg-[#1A1917] backdrop-blur-2xl border-r border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] z-40 relative select-none"
         >
           {/* Brand Signature Bar */}
-          <div className="h-16 px-4 flex items-center justify-between border-b border-[#E3DCD3] dark:border-white/[0.06]">
+          <div className="h-16 px-4 flex items-center justify-between border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
             <div
               onClick={() => handleNavigate(
                 userRole === 'admin'
@@ -401,9 +401,9 @@ export const AppShell = ({ children }) => {
           </nav>
 
           {/* User Status Footer Dock */}
-          <div className="p-3 border-t border-[#E3DCD3] dark:border-white/[0.06] bg-[#FAF7F2] dark:bg-[#1A1917]">
+          <div className="p-3 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] bg-[#FAF7F2] dark:bg-[#1A1917]">
             {user ? (
-              <div className="flex items-center gap-3 p-2 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] shadow-xs">
+              <div className="flex items-center gap-3 p-2 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] shadow-xs">
                 <div className="w-8 h-8 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-bold shrink-0">
                   {(user.name || user.email || 'U').charAt(0).toUpperCase()}
                 </div>
@@ -462,14 +462,14 @@ export const AppShell = ({ children }) => {
         {/* ======================= MAIN CANVAS ======================= */}
         <div className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-[#F5F2EC] dark:bg-[#151413]">
           {/* Header Navigation Rail */}
-          <header className="sticky top-0 z-30 w-full px-4 sm:px-6 lg:px-8 py-3.5 backdrop-blur-xl bg-[#FFFEFA]/92 dark:bg-[#1D1C1A]/88 border-b border-[#E3DCD3] dark:border-white/[0.06]">
+          <header className="sticky top-0 z-30 w-full px-4 sm:px-6 lg:px-8 py-3.5 backdrop-blur-xl bg-[#FFFEFA]/92 dark:bg-[#1D1C1A]/88 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
             <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
               {/* Left: Mobile Toggle & Dynamic Breadcrumbs */}
               <div className="flex items-center gap-3 min-w-0">
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(true)}
-                  className="md:hidden p-2 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white border border-[#E3DCD3] dark:border-white/[0.06] cursor-pointer"
+                  className="md:hidden p-2 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] cursor-pointer"
                   aria-label="Open navigation menu"
                 >
                   <Menu className="w-4 h-4" />
@@ -523,7 +523,7 @@ export const AppShell = ({ children }) => {
                 <button
                   type="button"
                   onClick={() => handleNavigate('/courses')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAE5DC] hover:bg-[#E1DBD0] dark:bg-white/[0.04] dark:hover:bg-white/[0.08] border border-[#E3DCD3] dark:border-white/[0.06] text-xs font-semibold text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAE5DC] hover:bg-[#E1DBD0] dark:bg-white/[0.04] dark:hover:bg-white/[0.08] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-xs font-semibold text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white transition-colors cursor-pointer"
                 >
                   <Search className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <span>Catalog</span>
@@ -533,7 +533,7 @@ export const AppShell = ({ children }) => {
                 <button
                   type="button"
                   onClick={() => handleNavigate('/cart')}
-                  className="relative p-2 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC]/30 transition-all cursor-pointer"
+                  className="relative p-2 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC]/30 transition-all cursor-pointer"
                   title="View Shopping Cart"
                   aria-label="Shopping Cart"
                 >
@@ -550,7 +550,7 @@ export const AppShell = ({ children }) => {
                   <button
                     type="button"
                     onClick={() => setNotificationsOpen(!notificationsOpen)}
-                    className="relative p-2 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC]/30 transition-all cursor-pointer"
+                    className="relative p-2 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] text-[#635E56] dark:text-[#A69F94] hover:text-[#282521] dark:hover:text-white border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC]/30 transition-all cursor-pointer"
                     title="Notifications"
                     aria-label="View notifications"
                   >
@@ -569,9 +569,9 @@ export const AppShell = ({ children }) => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={SPRING_TRANSITION}
-                        className="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] shadow-card p-4 z-50 overflow-hidden text-[#282521] dark:text-[#EDE8E1]"
+                        className="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] shadow-card p-4 z-50 overflow-hidden text-[#282521] dark:text-[#EDE8E1]"
                       >
-                        <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-white/[0.06]">
+                        <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
                           <div className="flex items-center gap-2">
                             <h4 className="text-xs font-bold text-[#282521] dark:text-[#EDE8E1] uppercase tracking-wider">
                               Real-Time Telemetry
@@ -608,7 +608,7 @@ export const AppShell = ({ children }) => {
                                 key={n.id || n.notificationId}
                                 className={`p-3 rounded-xl border text-xs transition-colors ${
                                   n.status === 'READ' || n.isRead
-                                    ? 'bg-[#F5F2EC] dark:bg-white/[0.02] border-[#E3DCD3] dark:border-white/[0.04] text-[#756E64] dark:text-[#A69F94]'
+                                    ? 'bg-[#F5F2EC] dark:bg-white/[0.02] border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[#756E64] dark:text-[#A69F94]'
                                     : 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[#282521] dark:text-[#EDE8E1]'
                                 }`}
                               >
@@ -623,7 +623,7 @@ export const AppShell = ({ children }) => {
                           )}
                         </div>
 
-                        <div className="pt-2 border-t border-[#E3DCD3] dark:border-white/[0.06] text-center">
+                        <div className="pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-center">
                           <button
                             type="button"
                             onClick={() => {
@@ -645,7 +645,7 @@ export const AppShell = ({ children }) => {
                   <button
                     type="button"
                     onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                    className="flex items-center gap-2 p-1.5 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC]/30 transition-all cursor-pointer"
+                    className="flex items-center gap-2 p-1.5 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC]/30 transition-all cursor-pointer"
                     aria-label="User profile options"
                   >
                     <div className="w-7 h-7 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 border border-[#D5C0D1] dark:border-[#D1A7CC]/40 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-bold">
@@ -660,9 +660,9 @@ export const AppShell = ({ children }) => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={SPRING_TRANSITION}
-                        className="absolute right-0 mt-3 w-56 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08] shadow-card p-2 z-50 text-xs font-medium text-[#282521] dark:text-white"
+                        className="absolute right-0 mt-3 w-56 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] shadow-card p-2 z-50 text-xs font-medium text-[#282521] dark:text-white"
                       >
-                        <div className="px-3 py-2 border-b border-[#E3DCD3] dark:border-white/[0.06]">
+                        <div className="px-3 py-2 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
                           <p className="font-bold text-[#282521] dark:text-white truncate">
                             {user?.name || 'Member'}
                           </p>
@@ -720,7 +720,7 @@ export const AppShell = ({ children }) => {
                           </button>
                         </div>
 
-                        <div className="border-t border-[#E3DCD3] dark:border-white/[0.06] my-1" />
+                        <div className="border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] my-1" />
 
                         <button
                           type="button"
@@ -776,9 +776,9 @@ export const AppShell = ({ children }) => {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={SPRING_TRANSITION}
-              className="relative w-full rounded-t-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border-t border-[#E3DCD3] dark:border-white/[0.08] p-5 shadow-2xl z-10 max-h-[85vh] overflow-y-auto"
+              className="relative w-full rounded-t-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] p-5 shadow-2xl z-10 max-h-[85vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-[#E3DCD3] dark:border-white/[0.06]">
+              <div className="flex items-center justify-between pb-4 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/20 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
                     <GraduationCap className="w-4 h-4" />
@@ -809,11 +809,11 @@ export const AppShell = ({ children }) => {
                       onClick={() => handleNavigate(item.href)}
                       className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-semibold cursor-pointer text-left transition-colors ${
                         active
-                          ? 'bg-[#C5A880]/15 border border-[#C5A880]/30 text-white'
+                          ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 text-white'
                           : 'text-[#A1A1AA] hover:text-white'
                       }`}
                     >
-                      <Icon className="w-4 h-4 text-[#C5A880]" />
+                      <Icon className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                       <span>{item.label}</span>
                     </button>
                   );

@@ -98,7 +98,7 @@ export default function QuizPage() {
 
   if (isQuizLoading) {
     return (
-      <div className="min-h-screen bg-[#070709] p-8 flex items-center justify-center">
+      <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] p-8 flex items-center justify-center">
         <div className="max-w-2xl w-full space-y-6">
           <Skeleton className="h-4 w-1/4" />
           <Skeleton className="h-12 w-full" />
@@ -114,36 +114,36 @@ export default function QuizPage() {
   const isTimeCritical = timeLeftMs < 60000;
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#E5E5E7] flex flex-col font-sans select-none relative z-50">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] flex flex-col font-sans select-none relative z-50">
       {/* High-Precision Fluid Telemetry Progress Gauge */}
-      <div className="h-1 w-full bg-[#0F0F13] sticky top-0 z-50">
+      <div className="h-1 w-full bg-[#EAE5DC] dark:bg-[#1D1C1A] sticky top-0 z-50">
         <motion.div 
           animate={{ width: `${progressPercent}%` }}
           transition={{ ease: 'linear', duration: 1 }}
-          className={`h-full shadow-glow ${isTimeCritical ? 'bg-rose-500 shadow-rose-500/20' : 'bg-[#C5A880] shadow-[#C5A880]/20'}`}
+          className={`h-full shadow-glow ${isTimeCritical ? 'bg-rose-500 shadow-rose-500/20' : 'bg-[#5B3E57] dark:bg-[#D1A7CC]'}`}
         />
       </div>
 
       {/* Nav Rail Header */}
-      <header className="px-6 py-4 border-b border-white/[0.04] bg-[#0F0F13]/60 backdrop-blur-md flex items-center justify-between">
+      <header className="px-6 py-4 border-b border-[#E3DCD3] dark:border-white/[0.06] bg-[#FFFEFA]/80 dark:bg-[#1D1C1A]/80 backdrop-blur-md flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#C5A880]/10 border border-[#C5A880]/20 flex items-center justify-center text-[#C5A880]">
+          <div className="w-8 h-8 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
             <Cpu size={16} />
           </div>
           <div>
-            <span className="text-[9px] font-mono tracking-widest text-[#C5A880] font-bold uppercase">Assessment Node</span>
-            <h2 className="text-xs font-bold text-[#F5F5F7] truncate max-w-sm">{quiz?.title || 'Knowledge Assessment'}</h2>
+            <span className="text-[9px] font-mono tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] font-bold uppercase">Assessment Node</span>
+            <h2 className="text-xs font-bold text-[#282521] dark:text-[#EDE8E1] truncate max-w-sm">{quiz?.title || 'Knowledge Assessment'}</h2>
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <span className={`font-mono text-sm font-bold ${isTimeCritical ? 'text-rose-400 animate-pulse' : 'text-[#C5A880]'}`}>
+          <span className={`font-mono text-sm font-bold ${isTimeCritical ? 'text-rose-400 animate-pulse' : 'text-[#5B3E57] dark:text-[#D1A7CC]'}`}>
             {formatTimer(timeLeftMs)}
           </span>
           {!result && (
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="p-1.5 rounded-lg bg-[#14141A] border border-white/5 text-[#8E8E93] hover:text-[#F5F5F7] transition-colors"
+              className="p-1.5 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/5 text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:hover:text-[#EDE8E1] transition-colors"
             >
               <X size={16} />
             </button>
@@ -162,12 +162,12 @@ export default function QuizPage() {
               exit={{ opacity: 0, x: -12 }}
               className="space-y-6"
             >
-              <div className="flex items-center gap-2 font-mono text-[10px] text-[#C5A880] font-bold">
+              <div className="flex items-center gap-2 font-mono text-[10px] text-[#5B3E57] dark:text-[#D1A7CC] font-bold">
                 <span>Evaluation Node {currentIdx + 1} of {totalQuestions}</span>
                 <div className="h-px flex-1 bg-white/[0.04]" />
               </div>
 
-              <h3 className="text-lg font-bold text-[#F5F5F7] tracking-tight leading-snug">
+              <h3 className="text-lg font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight leading-snug">
                 {currentQuestion?.text || 'Loading evaluation prompt...'}
               </h3>
 
@@ -181,20 +181,20 @@ export default function QuizPage() {
                       onClick={() => handleSelectOption(oIdx)}
                       className={`w-full text-left p-4 rounded-xl border text-xs font-medium tracking-wide flex items-center justify-between transition-all duration-200 ${
                         isSelected 
-                          ? 'bg-[#C5A880]/5 border-[#C5A880]/40 text-[#C5A880]' 
-                          : 'bg-[#0F0F13] border-white/[0.04] text-[#8E8E93] hover:bg-[#14141A] hover:border-white/10'
+                          ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border-[#5B3E57] dark:border-[#D1A7CC] text-[#5B3E57] dark:text-[#D1A7CC] font-semibold' 
+                          : 'bg-[#FFFEFA] dark:bg-[#1D1C1A] border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A8A196] hover:bg-[#F5F2EC] dark:hover:bg-[#151413] hover:border-[#D5C0D1]'
                       }`}
                     >
                       <span>{option}</span>
-                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${isSelected ? 'border-[#C5A880]' : 'border-white/10'}`}>
-                        {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-[#C5A880]" />}
+                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${isSelected ? 'border-[#5B3E57] dark:border-[#D1A7CC]' : 'border-white/10'}`}>
+                        {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-[#5B3E57] dark:bg-[#D1A7CC]" />}
                       </div>
                     </button>
                   );
                 })}
               </div>
 
-              <div className="flex items-center justify-between pt-6 border-t border-white/[0.04]">
+              <div className="flex items-center justify-between pt-6 border-t border-[#E3DCD3] dark:border-white/[0.06]">
                 <Button variant="secondary" size="sm" onClick={() => setCurrentIdx((p) => Math.max(0, p - 1))} disabled={currentIdx === 0}>
                   <ChevronLeft size={14} className="mr-1" /> Back
                 </Button>
@@ -209,7 +209,7 @@ export default function QuizPage() {
                     size="sm"
                     onClick={() => handleFinalizeCompilation(false)}
                     disabled={selections[currentIdx] === undefined || isSubmittingQuiz}
-                    className="bg-[#C5A880] text-[#070709] hover:bg-[#E5E5E7]"
+                    className="bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] hover:bg-[#462D42]"
                   >
                     {isSubmittingQuiz ? 'Processing...' : 'Finalize Matrix'}
                   </Button>
@@ -218,29 +218,29 @@ export default function QuizPage() {
             </motion.div>
           ) : (
             /* Analysis & Telemetry Matrix Summary Card */
-            <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] text-center space-y-6 shadow-2xl">
+            <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] text-center space-y-6 shadow-sm dark:shadow-2xl">
               <div className={`w-12 h-16 mx-auto flex items-center justify-center text-xl ${result.passed ? 'text-emerald-400' : 'text-rose-400'}`}>
                 {result.passed ? <Award size={36} /> : <AlertTriangle size={36} />}
               </div>
               <div className="space-y-1">
-                <h4 className="text-base font-bold text-[#F5F5F7] tracking-tight">{result.passed ? 'Matrix Evaluation Certified' : 'Threshold Index Deficiency'}</h4>
-                <p className="text-[11px] text-[#8E8E93] font-light max-w-xs mx-auto">Calculated telemetry outputs map directly into backend record registries.</p>
+                <h4 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">{result.passed ? 'Matrix Evaluation Certified' : 'Threshold Index Deficiency'}</h4>
+                <p className="text-[11px] text-[#635E56] dark:text-[#A8A196] font-light max-w-xs mx-auto">Calculated telemetry outputs map directly into backend record registries.</p>
               </div>
 
-              <div className="py-4 border-y border-white/[0.04] grid grid-cols-2 gap-4 max-w-sm mx-auto font-mono text-center">
+              <div className="py-4 border-y border-[#E3DCD3] dark:border-white/[0.06] grid grid-cols-2 gap-4 max-w-sm mx-auto font-mono text-center">
                 <div>
-                  <span className="text-[10px] text-[#8E8E93] uppercase tracking-wider block mb-1">
+                  <span className="text-[10px] text-[#635E56] dark:text-[#A8A196] uppercase tracking-wider block mb-1">
                     Accuracy Factor
                   </span>
-                  <span className={`text-2xl font-black ${result.passed ? 'text-[#C5A880]' : 'text-rose-400'}`}>
+                  <span className={`text-2xl font-black ${result.passed ? 'text-[#2B6747] dark:text-[#34D399]' : 'text-rose-400'}`}>
                     {result.percentage}%
                   </span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-[#8E8E93] uppercase tracking-wider block mb-1">
+                  <span className="text-[10px] text-[#635E56] dark:text-[#A8A196] uppercase tracking-wider block mb-1">
                     Valid Hits
                   </span>
-                  <span className="text-2xl font-black text-[#F5F5F7]">
+                  <span className="text-2xl font-black text-[#282521] dark:text-[#EDE8E1]">
                     {result.score} / {result.totalQuestions}
                   </span>
                 </div>

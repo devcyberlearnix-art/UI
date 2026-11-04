@@ -310,33 +310,33 @@ export default function StatisticsEditor() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#070709] flex items-center justify-center p-6 text-xs text-[#8E8E93] font-mono">
-        <RefreshCw className="w-5 h-5 animate-spin text-[#C5A880] mr-2" />
+      <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] flex items-center justify-center p-6 text-xs text-[#635E56] dark:text-[#A8A196] font-mono">
+        <RefreshCw className="w-5 h-5 animate-spin text-[#5B3E57] dark:text-[#D1A7CC] mr-2" />
         Hydrating platform telemetry statistics...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] p-6 lg:p-8 space-y-8">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] p-6 lg:p-8 space-y-8">
       <div className="max-w-5xl mx-auto space-y-8">
         {/* Header Action Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.06]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E3DCD3] dark:border-white/[0.06]">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => navigate('/admin/website-management')}
-              className="p-2.5 rounded-xl bg-[#0F0F13] border border-white/[0.06] hover:border-[#C5A880]/30 text-[#A1A1AA] hover:text-white transition-colors cursor-pointer"
+              className="p-2.5 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 text-[#A1A1AA] hover:text-white transition-colors cursor-pointer"
               title="Return to Website Management Hub"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-[#F5F5F7] flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-[#C5A880]" />
+              <h1 className="text-xl font-bold tracking-tight text-[#282521] dark:text-[#EDE8E1] flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" />
                 Landing Page Statistics Manager
               </h1>
-              <p className="text-xs text-[#71717A] mt-0.5">
+              <p className="text-xs text-[#756E64] dark:text-[#7A7368] mt-0.5">
                 Administer headline metrics in AUTOMATIC, HYBRID, or MANUAL mode with audit traceability
               </p>
             </div>
@@ -386,19 +386,19 @@ export default function StatisticsEditor() {
         </div>
 
         {/* Live Hero Telemetry Preview Card */}
-        <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.06] space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
             <div className="flex items-center gap-2">
-              <Eye className="w-4 h-4 text-[#C5A880]" />
+              <Eye className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
               <span className="text-xs font-bold uppercase tracking-wider text-white">Live Hero Bar Preview</span>
             </div>
-            <span className="text-[11px] text-[#71717A] font-mono">
+            <span className="text-[11px] text-[#756E64] dark:text-[#7A7368] font-mono">
               Rendering {previewItems.length} active metric{previewItems.length === 1 ? '' : 's'}
             </span>
           </div>
 
           {previewItems.length === 0 ? (
-            <div className="p-8 text-center text-xs text-[#71717A]">
+            <div className="p-8 text-center text-xs text-[#756E64] dark:text-[#7A7368]">
               All counters are currently hidden. Enable at least one statistic to display on the landing page.
             </div>
           ) : (
@@ -408,16 +408,16 @@ export default function StatisticsEditor() {
                 return (
                   <div
                     key={idx}
-                    className="p-4 rounded-xl bg-[#14141A] border border-white/[0.04] flex flex-col items-center text-center space-y-1 relative"
+                    className="p-4 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex flex-col items-center text-center space-y-1 relative"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-[#0F0F13] border border-white/5 flex items-center justify-center text-[#C5A880] mb-1">
+                    <div className="w-7 h-7 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/5 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] mb-1">
                       <IconComponent className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-2xl font-extrabold text-[#F5F5F7] tracking-tight">
+                    <span className="text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
                       {item.fullDisplayString}
                     </span>
                     <span className="text-xs text-[#A1A1AA] font-semibold">{item.label}</span>
-                    <span className="text-[10px] text-[#71717A] truncate max-w-full">{item.description}</span>
+                    <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] truncate max-w-full">{item.description}</span>
                     <div className="mt-2">
                       <Badge variant={item.dataMode === DATA_MODES.MANUAL ? 'mercury' : 'gold'}>
                         {item.dataMode}
@@ -439,12 +439,12 @@ export default function StatisticsEditor() {
             return (
               <div
                 key={stat.id || idx}
-                className={`p-6 rounded-2xl bg-[#0F0F13] border transition-all ${
-                  stat.isVisible ? 'border-white/[0.06]' : 'border-white/[0.02] opacity-60'
+                className={`p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border transition-all ${
+                  stat.isVisible ? 'border-[#E3DCD3] dark:border-white/[0.06]' : 'border-white/[0.02] opacity-60'
                 }`}
               >
                 {/* Card Title & Operational Controls */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/[0.04]">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
                   <div className="flex items-center gap-3">
                     {/* Reorder Buttons */}
                     <div className="flex items-center gap-1">
@@ -452,7 +452,7 @@ export default function StatisticsEditor() {
                         type="button"
                         onClick={() => handleMove(idx, 'up')}
                         disabled={idx === 0}
-                        className="p-1 rounded text-[#71717A] hover:text-white disabled:opacity-20 cursor-pointer"
+                        className="p-1 rounded text-[#756E64] dark:text-[#7A7368] hover:text-white disabled:opacity-20 cursor-pointer"
                         title="Move Up"
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
@@ -461,7 +461,7 @@ export default function StatisticsEditor() {
                         type="button"
                         onClick={() => handleMove(idx, 'down')}
                         disabled={idx === stats.length - 1}
-                        className="p-1 rounded text-[#71717A] hover:text-white disabled:opacity-20 cursor-pointer"
+                        className="p-1 rounded text-[#756E64] dark:text-[#7A7368] hover:text-white disabled:opacity-20 cursor-pointer"
                         title="Move Down"
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
@@ -474,11 +474,11 @@ export default function StatisticsEditor() {
                         <Badge variant={stat.dataMode === DATA_MODES.MANUAL ? 'mercury' : 'gold'}>
                           {stat.dataMode}
                         </Badge>
-                        <span className="text-[10px] font-mono text-[#71717A]">
+                        <span className="text-[10px] font-mono text-[#756E64] dark:text-[#7A7368]">
                           #{idx + 1}
                         </span>
                       </div>
-                      <span className="text-[11px] text-[#8E8E93] font-mono">
+                      <span className="text-[11px] text-[#635E56] dark:text-[#A8A196] font-mono">
                         Key: {stat.statisticKey} • Live Value: {resolved.fullDisplayString}
                       </span>
                     </div>
@@ -492,7 +492,7 @@ export default function StatisticsEditor() {
                       className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                         stat.isVisible
                           ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400'
-                          : 'bg-[#14141A] border-white/5 text-[#71717A]'
+                          : 'bg-[#F5F2EC] dark:bg-[#151413] border-[#E3DCD3] dark:border-white/5 text-[#756E64] dark:text-[#7A7368]'
                       }`}
                     >
                       {stat.isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
@@ -522,7 +522,7 @@ export default function StatisticsEditor() {
                       value={stat.label || ''}
                       onChange={(e) => handleChange(idx, 'label', e.target.value)}
                       placeholder="e.g. Active Courses"
-                      className="w-full px-3 py-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white focus:border-[#C5A880] outline-none"
+                      className="w-full px-3 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white focus:border-[#5B3E57] dark:border-[#D1A7CC] outline-none"
                     />
                     {hasError('label') && (
                       <span className="text-[10px] text-rose-400 mt-1 block">{hasError('label')}</span>
@@ -539,7 +539,7 @@ export default function StatisticsEditor() {
                       value={stat.description || ''}
                       onChange={(e) => handleChange(idx, 'description', e.target.value)}
                       placeholder="e.g. Verified production tracks"
-                      className="w-full px-3 py-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white focus:border-[#C5A880] outline-none"
+                      className="w-full px-3 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white focus:border-[#5B3E57] dark:border-[#D1A7CC] outline-none"
                     />
                   </div>
 
@@ -551,7 +551,7 @@ export default function StatisticsEditor() {
                     <select
                       value={stat.dataMode || DATA_MODES.HYBRID}
                       onChange={(e) => handleChange(idx, 'dataMode', e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white focus:border-[#C5A880] outline-none cursor-pointer"
+                      className="w-full px-3 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white focus:border-[#5B3E57] dark:border-[#D1A7CC] outline-none cursor-pointer"
                     >
                       <option value={DATA_MODES.AUTOMATIC}>AUTOMATIC (Verified live backend metric)</option>
                       <option value={DATA_MODES.HYBRID}>HYBRID (Live metric with custom formatting)</option>
@@ -570,7 +570,7 @@ export default function StatisticsEditor() {
                         value={stat.prefix || ''}
                         onChange={(e) => handleChange(idx, 'prefix', e.target.value)}
                         placeholder="e.g. ★ "
-                        className="w-full px-3 py-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white focus:border-[#C5A880] outline-none"
+                        className="w-full px-3 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white focus:border-[#5B3E57] dark:border-[#D1A7CC] outline-none"
                       />
                     </div>
                     <div>
@@ -582,7 +582,7 @@ export default function StatisticsEditor() {
                         value={stat.suffix || ''}
                         onChange={(e) => handleChange(idx, 'suffix', e.target.value)}
                         placeholder="e.g. +"
-                        className="w-full px-3 py-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white focus:border-[#C5A880] outline-none"
+                        className="w-full px-3 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white focus:border-[#5B3E57] dark:border-[#D1A7CC] outline-none"
                       />
                     </div>
                   </div>
@@ -595,7 +595,7 @@ export default function StatisticsEditor() {
                     <select
                       value={stat.icon || 'TrendingUp'}
                       onChange={(e) => handleChange(idx, 'icon', e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white focus:border-[#C5A880] outline-none cursor-pointer"
+                      className="w-full px-3 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white focus:border-[#5B3E57] dark:border-[#D1A7CC] outline-none cursor-pointer"
                     >
                       {Object.keys(ICON_MAP).map((iconName) => (
                         <option key={iconName} value={iconName}>
@@ -613,7 +613,7 @@ export default function StatisticsEditor() {
                     <select
                       value={stat.decimalPrecision !== undefined ? stat.decimalPrecision : 0}
                       onChange={(e) => handleChange(idx, 'decimalPrecision', Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-xl bg-[#14141A] border border-white/[0.06] text-xs text-white focus:border-[#C5A880] outline-none cursor-pointer"
+                      className="w-full px-3 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-xs text-white focus:border-[#5B3E57] dark:border-[#D1A7CC] outline-none cursor-pointer"
                     >
                       <option value={0}>0 (Whole integers, e.g. 280+)</option>
                       <option value={1}>1 (One decimal, e.g. 4.4)</option>
@@ -641,7 +641,7 @@ export default function StatisticsEditor() {
 
                 {/* Conditional MANUAL Mode Inputs */}
                 {stat.dataMode === DATA_MODES.MANUAL && (
-                  <div className="mt-4 p-4 rounded-xl bg-[#14141A] border border-amber-500/20 space-y-3">
+                  <div className="mt-4 p-4 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-amber-500/20 space-y-3">
                     <div className="flex items-center gap-2 text-amber-400 text-xs font-bold">
                       <AlertCircle className="w-4 h-4" />
                       <span>Manual Mode Audit Compliance Required</span>
@@ -657,7 +657,7 @@ export default function StatisticsEditor() {
                           value={stat.displayValue || ''}
                           onChange={(e) => handleChange(idx, 'displayValue', e.target.value)}
                           placeholder="e.g. 250"
-                          className="w-full px-3 py-2 rounded-lg bg-[#0F0F13] border border-white/10 text-xs text-white focus:border-amber-400 outline-none"
+                          className="w-full px-3 py-2 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#D5C0D1] dark:border-white/10 text-xs text-white focus:border-amber-400 outline-none"
                         />
                         {hasError('displayValue') && (
                           <span className="text-[10px] text-rose-400 mt-1 block">{hasError('displayValue')}</span>
@@ -673,7 +673,7 @@ export default function StatisticsEditor() {
                           value={stat.sourceJustification || ''}
                           onChange={(e) => handleChange(idx, 'sourceJustification', e.target.value)}
                           placeholder="e.g. Verified by Q4 platform audit report"
-                          className="w-full px-3 py-2 rounded-lg bg-[#0F0F13] border border-white/10 text-xs text-white focus:border-amber-400 outline-none"
+                          className="w-full px-3 py-2 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#D5C0D1] dark:border-white/10 text-xs text-white focus:border-amber-400 outline-none"
                         />
                         {hasError('sourceJustification') && (
                           <span className="text-[10px] text-rose-400 mt-1 block">{hasError('sourceJustification')}</span>

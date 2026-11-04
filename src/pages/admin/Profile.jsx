@@ -257,7 +257,7 @@ const AdminProfile = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[450px] space-y-4">
-        <Loader2 className="w-10 h-10 text-[#C5A880] animate-spin" />
+        <Loader2 className="w-10 h-10 text-[#5B3E57] dark:text-[#D1A7CC] animate-spin" />
         <p className="text-zinc-400 text-sm font-medium tracking-wide">Loading Admin Workspace...</p>
       </div>
     );
@@ -265,13 +265,13 @@ const AdminProfile = () => {
 
   if (error && !profile) {
     return (
-      <div className="max-w-2xl mx-auto my-12 p-8 bg-[#0F0F13] border border-red-500/30 rounded-2xl text-center space-y-4 shadow-xl">
+      <div className="max-w-2xl mx-auto my-12 p-8 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-red-500/30 rounded-2xl text-center space-y-4 shadow-xl">
         <AlertCircle className="w-12 h-12 text-red-400 mx-auto" />
         <h3 className="text-lg font-semibold text-zinc-100">Profile Synchronization Error</h3>
         <p className="text-sm text-zinc-400">{error}</p>
         <button
           onClick={fetchProfile}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C5A880] text-black font-semibold rounded-xl hover:bg-[#d8bd95] transition"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#5B3E57] dark:bg-[#D1A7CC] text-black font-semibold rounded-xl hover:bg-[#d8bd95] transition"
         >
           <RefreshCw className="w-4 h-4" /> Try Again
         </button>
@@ -309,9 +309,9 @@ const AdminProfile = () => {
       </div>
 
       {/* Main Profile Card */}
-      <div className="bg-[#0F0F13] border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl relative">
+      <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl relative">
         {/* Cover Photo Banner Section */}
-        <div className="relative h-56 sm:h-64 w-full bg-gradient-to-r from-[#181820] via-[#242433] to-[#121217] overflow-hidden group">
+        <div className="relative h-56 sm:h-64 w-full bg-gradient-to-r from-[#EAE5DC] via-[#F2ECF1] to-[#E3DCD3] dark:from-[#1D1C1A] dark:to-[#151413] overflow-hidden group">
           {profile?.coverPhoto ? (
             <img
               src={profile.coverPhoto}
@@ -325,7 +325,7 @@ const AdminProfile = () => {
             </div>
           )}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F13] via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
           {/* Cover Photo Actions */}
           <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
@@ -344,9 +344,9 @@ const AdminProfile = () => {
               title="Upload or change cover banner"
             >
               {uploadingCover ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#C5A880]" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#5B3E57] dark:text-[#D1A7CC]" />
               ) : (
-                <Camera className="w-3.5 h-3.5 text-[#C5A880]" />
+                <Camera className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
               )}
               <span>{profile?.coverPhoto ? "Change Cover" : "Add Cover"}</span>
             </button>
@@ -379,7 +379,7 @@ const AdminProfile = () => {
                   className="hidden"
                 />
 
-                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl bg-[#181822] border-4 border-[#0F0F13] shadow-2xl overflow-hidden flex items-center justify-center relative">
+                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border-4 border-[#FFFEFA] dark:border-[#1D1C1A] shadow-2xl overflow-hidden flex items-center justify-center relative">
                   {profile?.profilePhoto ? (
                     <img
                       src={profile.profilePhoto}
@@ -387,14 +387,14 @@ const AdminProfile = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-tr from-[#1E1E2A] to-[#2B2B3D] flex items-center justify-center text-4xl font-bold text-[#C5A880]">
+                    <div className="w-full h-full bg-gradient-to-tr from-[#1E1E2A] to-[#2B2B3D] flex items-center justify-center text-4xl font-bold text-[#5B3E57] dark:text-[#D1A7CC]">
                       {profile?.firstName?.charAt(0)?.toUpperCase() || profile?.email?.charAt(0)?.toUpperCase() || "A"}
                     </div>
                   )}
 
                   {uploadingPhoto && (
                     <div className="absolute inset-0 bg-black/70 flex items-center justify-center backdrop-blur-xs">
-                      <Loader2 className="w-8 h-8 text-[#C5A880] animate-spin" />
+                      <Loader2 className="w-8 h-8 text-[#5B3E57] dark:text-[#D1A7CC] animate-spin" />
                     </div>
                   )}
                 </div>
@@ -404,7 +404,7 @@ const AdminProfile = () => {
                   type="button"
                   onClick={() => photoInputRef.current?.click()}
                   disabled={uploadingPhoto}
-                  className="absolute bottom-1 right-1 p-2 bg-[#C5A880] hover:bg-[#d8bd95] text-black rounded-xl shadow-lg border border-black/40 transition duration-200 hover:scale-105"
+                  className="absolute bottom-1 right-1 p-2 bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#d8bd95] text-black rounded-xl shadow-lg border border-black/40 transition duration-200 hover:scale-105"
                   title="Upload / Change profile photo"
                 >
                   <Camera className="w-4 h-4" />
@@ -452,7 +452,7 @@ const AdminProfile = () => {
                   onClick={() => setEditMode(true)}
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-800/80 hover:bg-zinc-700 text-white font-medium text-sm rounded-xl border border-zinc-700/60 transition shadow-sm"
                 >
-                  <Edit2 className="w-4 h-4 text-[#C5A880]" />
+                  <Edit2 className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                   Edit Profile
                 </button>
               ) : (
@@ -533,7 +533,7 @@ const AdminProfile = () => {
                       type="text"
                       value={temp.firstName || ""}
                       onChange={(e) => setTemp({ ...temp, firstName: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white placeholder-zinc-500 focus:outline-none focus:border-[#C5A880] transition text-sm"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white placeholder-zinc-500 focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition text-sm"
                       placeholder="e.g. Shiva"
                     />
                   </div>
@@ -546,7 +546,7 @@ const AdminProfile = () => {
                       type="text"
                       value={temp.lastName || ""}
                       onChange={(e) => setTemp({ ...temp, lastName: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white placeholder-zinc-500 focus:outline-none focus:border-[#C5A880] transition text-sm"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white placeholder-zinc-500 focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition text-sm"
                       placeholder="e.g. Sai"
                     />
                   </div>
@@ -571,7 +571,7 @@ const AdminProfile = () => {
                       type="tel"
                       value={temp.phone || ""}
                       onChange={(e) => setTemp({ ...temp, phone: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white placeholder-zinc-500 focus:outline-none focus:border-[#C5A880] transition text-sm"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white placeholder-zinc-500 focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition text-sm"
                       placeholder="e.g. +91 9876543210"
                     />
                   </div>
@@ -583,7 +583,7 @@ const AdminProfile = () => {
                     <select
                       value={temp.preferredLanguage || "EN"}
                       onChange={(e) => setTemp({ ...temp, preferredLanguage: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white focus:outline-none focus:border-[#C5A880] transition text-sm"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition text-sm"
                     >
                       <option value="EN">English (EN)</option>
                       <option value="ES">Spanish (ES)</option>
@@ -602,7 +602,7 @@ const AdminProfile = () => {
                       type="text"
                       value={temp.city || ""}
                       onChange={(e) => setTemp({ ...temp, city: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white placeholder-zinc-500 focus:outline-none focus:border-[#C5A880] transition text-sm"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white placeholder-zinc-500 focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition text-sm"
                       placeholder="e.g. Hyderabad"
                     />
                   </div>
@@ -615,7 +615,7 @@ const AdminProfile = () => {
                       type="text"
                       value={temp.state || ""}
                       onChange={(e) => setTemp({ ...temp, state: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white placeholder-zinc-500 focus:outline-none focus:border-[#C5A880] transition text-sm"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white placeholder-zinc-500 focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition text-sm"
                       placeholder="e.g. Telangana"
                     />
                   </div>
@@ -628,7 +628,7 @@ const AdminProfile = () => {
                       type="text"
                       value={temp.country || ""}
                       onChange={(e) => setTemp({ ...temp, country: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white placeholder-zinc-500 focus:outline-none focus:border-[#C5A880] transition text-sm"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#14141B] border border-zinc-700/80 text-white placeholder-zinc-500 focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] transition text-sm"
                       placeholder="e.g. India"
                     />
                   </div>
@@ -649,7 +649,7 @@ const AdminProfile = () => {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#C5A880] hover:bg-[#d8bd95] text-black font-semibold rounded-xl text-sm transition shadow-lg disabled:opacity-50"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#d8bd95] text-black font-semibold rounded-xl text-sm transition shadow-lg disabled:opacity-50"
                   >
                     {saving ? (
                       <>

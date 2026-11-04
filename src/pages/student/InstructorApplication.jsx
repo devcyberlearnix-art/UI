@@ -348,8 +348,8 @@ export default function InstructorApplication() {
   // ── Render Loading Screen ───────────────────────────────────────────────────
   if (loadingInitial) {
     return (
-      <div className="min-h-screen bg-[#070709] flex flex-col items-center justify-center text-white px-4">
-        <Loader2 className="w-10 h-10 text-[#C5A880] animate-spin mb-4" />
+      <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] flex flex-col items-center justify-center text-white px-4">
+        <Loader2 className="w-10 h-10 text-[#5B3E57] dark:text-[#D1A7CC] animate-spin mb-4" />
         <p className="text-sm font-medium text-[#A1A1AA]">Loading your instructor application workspace...</p>
       </div>
     );
@@ -361,12 +361,12 @@ export default function InstructorApplication() {
 
   if (isAlreadySubmitted && step !== 0 && step !== 1 && step !== 2) {
     return (
-      <div className="min-h-screen bg-[#070709] text-[#F5F5F7] py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto bg-[#0F0F13] border border-white/10 rounded-2xl p-6 sm:p-10 shadow-2xl">
+      <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#D5C0D1] dark:border-white/10 rounded-2xl p-6 sm:p-10 shadow-2xl">
           {/* Header Bar */}
-          <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8">
+          <div className="flex items-center justify-between border-b border-[#D5C0D1] dark:border-white/10 pb-6 mb-8">
             <Link to="/" className="flex items-center gap-3 group" title="Asivo Home">
-              <div className="w-10 h-10 rounded-xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center shadow-sm transition-transform group-hover:scale-105 overflow-hidden shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 flex items-center justify-center shadow-sm transition-transform group-hover:scale-105 overflow-hidden shrink-0">
                 <img
                   src="/assets/asivo-symbol-128.png"
                   alt="Asivo emblem"
@@ -378,10 +378,10 @@ export default function InstructorApplication() {
                 />
               </div>
               <div className="flex flex-col">
-                <span className="text-base font-extrabold tracking-tight text-white group-hover:text-[#C5A880] transition-colors leading-none">
+                <span className="text-base font-extrabold tracking-tight text-white group-hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors leading-none">
                   Asivo
                 </span>
-                <span className="text-[9px] font-bold tracking-[0.2em] text-[#C5A880] uppercase mt-1">
+                <span className="text-[9px] font-bold tracking-[0.2em] text-[#5B3E57] dark:text-[#D1A7CC] uppercase mt-1">
                   FACULTY GOVERNANCE
                 </span>
               </div>
@@ -389,7 +389,7 @@ export default function InstructorApplication() {
 
             <button
               onClick={() => navigate("/student/dashboard")}
-              className="text-xs text-[#A1A1AA] hover:text-white flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 bg-[#15151B]"
+              className="text-xs text-[#A1A1AA] hover:text-white flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-lg border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 bg-[#15151B]"
             >
               <ArrowLeft className="w-3.5 h-3.5" /> Dashboard
             </button>
@@ -451,33 +451,33 @@ export default function InstructorApplication() {
 
           {/* Application Metadata Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 text-sm">
-            <div className="bg-[#15151B] p-4 rounded-xl border border-white/5">
-              <span className="text-xs text-[#71717A] uppercase tracking-wider block mb-1">Application Reference</span>
-              <p className="font-mono text-xs text-[#C5A880] break-all">{existingApp?.application?.applicationId || "N/A"}</p>
+            <div className="bg-[#15151B] p-4 rounded-xl border border-[#E3DCD3] dark:border-white/5">
+              <span className="text-xs text-[#756E64] dark:text-[#7A7368] uppercase tracking-wider block mb-1">Application Reference</span>
+              <p className="font-mono text-xs text-[#5B3E57] dark:text-[#D1A7CC] break-all">{existingApp?.application?.applicationId || "N/A"}</p>
             </div>
-            <div className="bg-[#15151B] p-4 rounded-xl border border-white/5">
-              <span className="text-xs text-[#71717A] uppercase tracking-wider block mb-1">Submission Timestamp</span>
-              <p className="text-sm text-[#F5F5F7]">
+            <div className="bg-[#15151B] p-4 rounded-xl border border-[#E3DCD3] dark:border-white/5">
+              <span className="text-xs text-[#756E64] dark:text-[#7A7368] uppercase tracking-wider block mb-1">Submission Timestamp</span>
+              <p className="text-sm text-[#282521] dark:text-[#EDE8E1]">
                 {existingApp?.application?.submittedAt
                   ? new Date(existingApp.application.submittedAt).toLocaleString()
                   : "N/A"}
               </p>
             </div>
-            <div className="bg-[#15151B] p-4 rounded-xl border border-white/5">
-              <span className="text-xs text-[#71717A] uppercase tracking-wider block mb-1">Applicant Name</span>
-              <p className="text-sm text-[#F5F5F7]">{existingApp?.user?.fullName || user?.name || "Applicant"}</p>
+            <div className="bg-[#15151B] p-4 rounded-xl border border-[#E3DCD3] dark:border-white/5">
+              <span className="text-xs text-[#756E64] dark:text-[#7A7368] uppercase tracking-wider block mb-1">Applicant Name</span>
+              <p className="text-sm text-[#282521] dark:text-[#EDE8E1]">{existingApp?.user?.fullName || user?.name || "Applicant"}</p>
             </div>
-            <div className="bg-[#15151B] p-4 rounded-xl border border-white/5">
-              <span className="text-xs text-[#71717A] uppercase tracking-wider block mb-1">Teaching Domain</span>
-              <p className="text-sm text-[#F5F5F7]">{existingApp?.application?.subject || "N/A"}</p>
+            <div className="bg-[#15151B] p-4 rounded-xl border border-[#E3DCD3] dark:border-white/5">
+              <span className="text-xs text-[#756E64] dark:text-[#7A7368] uppercase tracking-wider block mb-1">Teaching Domain</span>
+              <p className="text-sm text-[#282521] dark:text-[#EDE8E1]">{existingApp?.application?.subject || "N/A"}</p>
             </div>
           </div>
 
           {/* Action Row */}
-          <div className="flex items-center justify-between gap-4 pt-4 border-t border-white/10">
+          <div className="flex items-center justify-between gap-4 pt-4 border-t border-[#D5C0D1] dark:border-white/10">
             <button
               onClick={() => navigate("/student/dashboard")}
-              className="px-5 py-2.5 rounded-xl border border-white/10 hover:border-white/20 text-sm font-medium text-[#A1A1AA] hover:text-white transition-all bg-[#15151B]"
+              className="px-5 py-2.5 rounded-xl border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 text-sm font-medium text-[#A1A1AA] hover:text-white transition-all bg-[#15151B]"
             >
               Return to Student Dashboard
             </button>
@@ -491,7 +491,7 @@ export default function InstructorApplication() {
                     navigate("/instructor/dashboard");
                   }
                 }}
-                className="px-6 py-2.5 rounded-xl bg-[#C5A880] hover:bg-[#D4BC9A] text-[#070709] font-bold text-sm transition-all shadow-lg shadow-[#C5A880]/20 flex items-center gap-2"
+                className="px-6 py-2.5 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#462D42] dark:hover:bg-[#C293BD] text-[#FFFEFA] dark:text-[#151413] font-bold text-sm transition-all shadow-lg shadow-sm flex items-center gap-2"
               >
                 Launch Instructor Dashboard <ArrowRight className="w-4 h-4" />
               </button>
@@ -501,7 +501,7 @@ export default function InstructorApplication() {
                 onClick={() => {
                   setStep(0); // Permit editing and re-applying
                 }}
-                className="px-6 py-2.5 rounded-xl bg-[#C5A880] hover:bg-[#D4BC9A] text-[#070709] font-bold text-sm transition-all flex items-center gap-2"
+                className="px-6 py-2.5 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#462D42] dark:hover:bg-[#C293BD] text-[#FFFEFA] dark:text-[#151413] font-bold text-sm transition-all flex items-center gap-2"
               >
                 Update & Re-apply <RefreshCw className="w-4 h-4" />
               </button>
@@ -514,12 +514,12 @@ export default function InstructorApplication() {
 
   // ── Main Multi-step Form Workspace ──────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] py-10 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Top Header with Asivo Brand & Back Navigation */}
-        <header className="flex items-center justify-between pb-6 mb-8 border-b border-white/10">
+        <header className="flex items-center justify-between pb-6 mb-8 border-b border-[#D5C0D1] dark:border-white/10">
           <Link to="/" className="flex items-center gap-3 group" title="Asivo Home">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center shadow-sm transition-transform group-hover:scale-105 overflow-hidden shrink-0">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 flex items-center justify-center shadow-sm transition-transform group-hover:scale-105 overflow-hidden shrink-0">
               <img
                 src="/assets/asivo-symbol-128.png"
                 alt="Asivo emblem"
@@ -531,10 +531,10 @@ export default function InstructorApplication() {
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-lg sm:text-xl font-extrabold tracking-tight text-white group-hover:text-[#C5A880] transition-colors leading-none">
+              <span className="text-lg sm:text-xl font-extrabold tracking-tight text-white group-hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors leading-none">
                 Asivo
               </span>
-              <span className="text-[9px] font-bold tracking-[0.22em] text-[#C5A880] uppercase mt-1">
+              <span className="text-[9px] font-bold tracking-[0.22em] text-[#5B3E57] dark:text-[#D1A7CC] uppercase mt-1">
                 LEARNING PLATFORM
               </span>
             </div>
@@ -542,13 +542,13 @@ export default function InstructorApplication() {
 
           <div className="flex items-center gap-3">
             {existingApp?.application?.status && (
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#15151B] border border-white/10 text-[#C5A880]">
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 text-[#5B3E57] dark:text-[#D1A7CC]">
                 Status: {existingApp.application.status}
               </span>
             )}
             <button
               onClick={() => navigate("/student/dashboard")}
-              className="flex items-center gap-2 text-xs font-medium text-[#A1A1AA] hover:text-[#C5A880] transition-colors py-2 px-3.5 rounded-xl bg-[#0F0F13] border border-white/10 hover:border-[#C5A880]/30"
+              className="flex items-center gap-2 text-xs font-medium text-[#A1A1AA] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors py-2 px-3.5 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#D5C0D1] dark:border-white/10 hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40"
             >
               <ArrowLeft className="w-3.5 h-3.5" /> Back to Dashboard
             </button>
@@ -557,8 +557,8 @@ export default function InstructorApplication() {
 
         {/* Application Hero */}
         <section className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#C5A880]/10 border border-[#C5A880]/20 text-[#C5A880] text-xs font-semibold uppercase tracking-wider mb-3">
-            <GraduationCap className="w-4 h-4 text-[#C5A880]" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/30 dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-semibold uppercase tracking-wider mb-3">
+            <GraduationCap className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
             <span>Faculty Application Portal</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-2">
@@ -595,10 +595,10 @@ export default function InstructorApplication() {
                     }}
                     className={`w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
                       i < step
-                        ? "bg-[#10B981] text-[#070709] shadow-md shadow-[#10B981]/20 ring-2 ring-[#10B981]/40"
+                        ? "bg-[#10B981] text-[#FFFEFA] dark:text-[#151413] shadow-md shadow-[#10B981]/20 ring-2 ring-[#10B981]/40"
                         : i === step
-                        ? "bg-[#C5A880] text-[#070709] ring-4 ring-[#C5A880]/25 scale-110 shadow-lg shadow-[#C5A880]/30 font-extrabold"
-                        : "bg-[#15151B] text-[#71717A] border border-white/10"
+                        ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] ring-4 ring-[#5B3E57]/25 dark:ring-[#D1A7CC]/25 scale-110 shadow-lg shadow-sm/30 font-extrabold"
+                        : "bg-[#15151B] text-[#756E64] dark:text-[#7A7368] border border-[#D5C0D1] dark:border-white/10"
                     }`}
                   >
                     {i < step ? <Check className="w-5 h-5 stroke-[2.5]" /> : i + 1}
@@ -606,10 +606,10 @@ export default function InstructorApplication() {
                   <span
                     className={`text-xs mt-2 font-medium transition-colors text-center ${
                       i === step
-                        ? "text-[#C5A880] font-bold"
+                        ? "text-[#5B3E57] dark:text-[#D1A7CC] font-bold"
                         : i < step
                         ? "text-[#10B981]"
-                        : "text-[#71717A]"
+                        : "text-[#756E64] dark:text-[#7A7368]"
                     }`}
                   >
                     {s}
@@ -628,16 +628,16 @@ export default function InstructorApplication() {
         </nav>
 
         {/* Main Form Surface */}
-        <div className="bg-[#0F0F13] border border-white/10 rounded-2xl p-6 sm:p-10 shadow-2xl backdrop-blur-sm relative">
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#D5C0D1] dark:border-white/10 rounded-2xl p-6 sm:p-10 shadow-2xl backdrop-blur-sm relative">
 
           {/* ──────────────────────────────────────────────────────────────────
               STEP 1: PERSONAL & PROFESSIONAL PROFILE
           ────────────────────────────────────────────────────────────────── */}
           {step === 0 && (
             <div className="space-y-6">
-              <div className="border-b border-white/10 pb-4 mb-6">
+              <div className="border-b border-[#D5C0D1] dark:border-white/10 pb-4 mb-6">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                  <User className="w-5 h-5 text-[#C5A880]" /> Personal & Professional Information
+                  <User className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" /> Personal & Professional Information
                 </h2>
                 <p className="text-xs text-[#A1A1AA] mt-1">
                   Specify your teaching subjects, specialization focus, experience level, and professional background.
@@ -647,14 +647,14 @@ export default function InstructorApplication() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {/* Teaching Subject / Content Type */}
                 <div>
-                  <label className="block text-xs font-semibold text-[#F5F5F7] mb-2 uppercase tracking-wider">
+                  <label className="block text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] mb-2 uppercase tracking-wider">
                     Teaching Subject / Content Type <span className="text-[#EF4444]">*</span>
                   </label>
                   <div className="relative">
                     <select
                       value={info.subject}
                       onChange={(e) => handleInputChange("subject", e.target.value)}
-                      className="w-full bg-[#15151B] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#F5F5F7] focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880] appearance-none cursor-pointer"
+                      className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-4 py-3 text-sm text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] focus:ring-1 focus:ring-[#5B3E57] dark:focus:ring-[#D1A7CC] appearance-none cursor-pointer"
                     >
                       <option value="" disabled>Select your primary teaching subject...</option>
                       {subjectOptions.map((subj) => (
@@ -663,9 +663,9 @@ export default function InstructorApplication() {
                         </option>
                       ))}
                     </select>
-                    <ChevronDown className="w-4 h-4 text-[#71717A] absolute right-3.5 top-3.5 pointer-events-none" />
+                    <ChevronDown className="w-4 h-4 text-[#756E64] dark:text-[#7A7368] absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
-                  <p className="text-[11px] text-[#71717A] mt-1.5">
+                  <p className="text-[11px] text-[#756E64] dark:text-[#7A7368] mt-1.5">
                     {loadingSubjects
                       ? "Fetching authoritative backend taxonomy..."
                       : subjectError
@@ -676,7 +676,7 @@ export default function InstructorApplication() {
 
                 {/* Specialization */}
                 <div>
-                  <label className="block text-xs font-semibold text-[#F5F5F7] mb-2 uppercase tracking-wider">
+                  <label className="block text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] mb-2 uppercase tracking-wider">
                     Specialization <span className="text-[#EF4444]">*</span>
                   </label>
                   <input
@@ -684,21 +684,21 @@ export default function InstructorApplication() {
                     value={info.specialization}
                     onChange={(e) => handleInputChange("specialization", e.target.value)}
                     placeholder="e.g. Cloud Security Architecture & DevSecOps"
-                    className="w-full bg-[#15151B] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880]"
+                    className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-4 py-3 text-sm text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] focus:ring-1 focus:ring-[#5B3E57] dark:focus:ring-[#D1A7CC]"
                   />
-                  <p className="text-[11px] text-[#71717A] mt-1.5">Your specific engineering focus or technical niche.</p>
+                  <p className="text-[11px] text-[#756E64] dark:text-[#7A7368] mt-1.5">Your specific engineering focus or technical niche.</p>
                 </div>
 
                 {/* Years of Experience */}
                 <div>
-                  <label className="block text-xs font-semibold text-[#F5F5F7] mb-2 uppercase tracking-wider">
+                  <label className="block text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] mb-2 uppercase tracking-wider">
                     Years of Experience <span className="text-[#EF4444]">*</span>
                   </label>
                   <div className="relative">
                     <select
                       value={info.experience}
                       onChange={(e) => handleInputChange("experience", e.target.value)}
-                      className="w-full bg-[#15151B] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#F5F5F7] focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880] appearance-none cursor-pointer"
+                      className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-4 py-3 text-sm text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] focus:ring-1 focus:ring-[#5B3E57] dark:focus:ring-[#D1A7CC] appearance-none cursor-pointer"
                     >
                       <option value="" disabled>Select your total industry/teaching experience...</option>
                       {EXPERIENCE_OPTIONS.map((opt) => (
@@ -707,27 +707,27 @@ export default function InstructorApplication() {
                         </option>
                       ))}
                     </select>
-                    <ChevronDown className="w-4 h-4 text-[#71717A] absolute right-3.5 top-3.5 pointer-events-none" />
+                    <ChevronDown className="w-4 h-4 text-[#756E64] dark:text-[#7A7368] absolute right-3.5 top-3.5 pointer-events-none" />
                   </div>
-                  <p className="text-[11px] text-[#71717A] mt-1.5">Total years active in professional practice or education.</p>
+                  <p className="text-[11px] text-[#756E64] dark:text-[#7A7368] mt-1.5">Total years active in professional practice or education.</p>
                 </div>
 
                 {/* Phone Number (Optional) */}
                 <div>
-                  <label className="block text-xs font-semibold text-[#F5F5F7] mb-2 uppercase tracking-wider">
-                    Contact Phone Number <span className="text-[#71717A] lowercase">(optional)</span>
+                  <label className="block text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] mb-2 uppercase tracking-wider">
+                    Contact Phone Number <span className="text-[#756E64] dark:text-[#7A7368] lowercase">(optional)</span>
                   </label>
                   <div className="relative">
-                    <Phone className="w-4 h-4 text-[#71717A] absolute left-3.5 top-3.5" />
+                    <Phone className="w-4 h-4 text-[#756E64] dark:text-[#7A7368] absolute left-3.5 top-3.5" />
                     <input
                       type="text"
                       value={info.phone}
                       onChange={(e) => handleInputChange("phone", e.target.value)}
                       placeholder="1234567890"
-                      className="w-full bg-[#15151B] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880]"
+                      className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] focus:ring-1 focus:ring-[#5B3E57] dark:focus:ring-[#D1A7CC]"
                     />
                   </div>
-                  <p className="text-[11px] text-[#71717A] mt-1.5">
+                  <p className="text-[11px] text-[#756E64] dark:text-[#7A7368] mt-1.5">
                     {info.phone && !isPhoneValid(info.phone) ? (
                       <span className="text-rose-400">Invalid phone format. Use standard 10-digit or international format.</span>
                     ) : (
@@ -738,20 +738,20 @@ export default function InstructorApplication() {
 
                 {/* LinkedIn Profile URL (Optional) */}
                 <div>
-                  <label className="block text-xs font-semibold text-[#F5F5F7] mb-2 uppercase tracking-wider">
-                    LinkedIn Profile <span className="text-[#71717A] lowercase">(optional)</span>
+                  <label className="block text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] mb-2 uppercase tracking-wider">
+                    LinkedIn Profile <span className="text-[#756E64] dark:text-[#7A7368] lowercase">(optional)</span>
                   </label>
                   <div className="relative">
-                    <Linkedin className="w-4 h-4 text-[#71717A] absolute left-3.5 top-3.5" />
+                    <Linkedin className="w-4 h-4 text-[#756E64] dark:text-[#7A7368] absolute left-3.5 top-3.5" />
                     <input
                       type="url"
                       value={info.linkedinUrl}
                       onChange={(e) => handleInputChange("linkedinUrl", e.target.value)}
                       placeholder="https://linkedin.com/in/username"
-                      className="w-full bg-[#15151B] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880]"
+                      className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] focus:ring-1 focus:ring-[#5B3E57] dark:focus:ring-[#D1A7CC]"
                     />
                   </div>
-                  <p className="text-[11px] text-[#71717A] mt-1.5">
+                  <p className="text-[11px] text-[#756E64] dark:text-[#7A7368] mt-1.5">
                     {info.linkedinUrl && !isUrlValid(info.linkedinUrl) ? (
                       <span className="text-rose-400">Must be a valid web URL starting with https://</span>
                     ) : (
@@ -762,20 +762,20 @@ export default function InstructorApplication() {
 
                 {/* Website / Portfolio URL (Optional) */}
                 <div>
-                  <label className="block text-xs font-semibold text-[#F5F5F7] mb-2 uppercase tracking-wider">
-                    Portfolio / Website URL <span className="text-[#71717A] lowercase">(optional)</span>
+                  <label className="block text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] mb-2 uppercase tracking-wider">
+                    Portfolio / Website URL <span className="text-[#756E64] dark:text-[#7A7368] lowercase">(optional)</span>
                   </label>
                   <div className="relative">
-                    <Globe className="w-4 h-4 text-[#71717A] absolute left-3.5 top-3.5" />
+                    <Globe className="w-4 h-4 text-[#756E64] dark:text-[#7A7368] absolute left-3.5 top-3.5" />
                     <input
                       type="url"
                       value={info.websiteUrl}
                       onChange={(e) => handleInputChange("websiteUrl", e.target.value)}
                       placeholder="https://yourportfolio.dev"
-                      className="w-full bg-[#15151B] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880]"
+                      className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] focus:ring-1 focus:ring-[#5B3E57] dark:focus:ring-[#D1A7CC]"
                     />
                   </div>
-                  <p className="text-[11px] text-[#71717A] mt-1.5">
+                  <p className="text-[11px] text-[#756E64] dark:text-[#7A7368] mt-1.5">
                     {info.websiteUrl && !isUrlValid(info.websiteUrl) ? (
                       <span className="text-rose-400">Must be a valid URL starting with https://</span>
                     ) : (
@@ -788,7 +788,7 @@ export default function InstructorApplication() {
               {/* Professional Bio with Live Character Counter */}
               <div className="pt-2">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-semibold text-[#F5F5F7] uppercase tracking-wider">
+                  <label className="block text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] uppercase tracking-wider">
                     Professional Bio <span className="text-[#EF4444]">*</span>
                   </label>
                   <span
@@ -806,7 +806,7 @@ export default function InstructorApplication() {
                   value={info.bio}
                   onChange={(e) => handleInputChange("bio", e.target.value)}
                   placeholder="Introduce your engineering background, teaching philosophy, and notable achievements in at least 30 characters..."
-                  className="w-full bg-[#15151B] border border-white/10 rounded-xl p-4 text-sm text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880] resize-none"
+                  className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl p-4 text-sm text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC] focus:ring-1 focus:ring-[#5B3E57] dark:focus:ring-[#D1A7CC] resize-none"
                 />
                 {info.bio.trim().length > 0 && info.bio.trim().length < 30 && (
                   <p className="text-xs text-[#F59E0B] mt-1.5 flex items-center gap-1">
@@ -816,17 +816,17 @@ export default function InstructorApplication() {
               </div>
 
               {/* Banking Coordinates & Tax Section */}
-              <div className="pt-4 border-t border-white/10">
+              <div className="pt-4 border-t border-[#D5C0D1] dark:border-white/10">
                 <div className="mb-4">
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <Building2 className="w-4 h-4 text-[#C5A880]" /> Financial & Tax Information
+                    <Building2 className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" /> Financial & Tax Information
                   </h3>
-                  <p className="text-xs text-[#71717A] mt-0.5">Required for instructor honorarium payouts and tax reporting.</p>
+                  <p className="text-xs text-[#756E64] dark:text-[#7A7368] mt-0.5">Required for instructor honorarium payouts and tax reporting.</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-[#F5F5F7] mb-2 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] mb-2 uppercase tracking-wider">
                       Bank Account Number
                     </label>
                     <input
@@ -834,11 +834,11 @@ export default function InstructorApplication() {
                       value={info.bankAccountNumber}
                       onChange={(e) => handleInputChange("bankAccountNumber", e.target.value)}
                       placeholder="e.g. 123456789012"
-                      className="w-full bg-[#15151B] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880]"
+                      className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#F5F5F7] mb-2 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] mb-2 uppercase tracking-wider">
                       Bank Name
                     </label>
                     <input
@@ -846,11 +846,11 @@ export default function InstructorApplication() {
                       value={info.bankName}
                       onChange={(e) => handleInputChange("bankName", e.target.value)}
                       placeholder="e.g. HDFC Bank / Chase"
-                      className="w-full bg-[#15151B] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880]"
+                      className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#F5F5F7] mb-2 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] mb-2 uppercase tracking-wider">
                       Bank IFSC / Routing Code
                     </label>
                     <input
@@ -858,11 +858,11 @@ export default function InstructorApplication() {
                       value={info.bankIfsc}
                       onChange={(e) => handleInputChange("bankIfsc", e.target.value)}
                       placeholder="e.g. HDFC0001234"
-                      className="w-full bg-[#15151B] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880]"
+                      className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#F5F5F7] mb-2 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] mb-2 uppercase tracking-wider">
                       PAN / Tax Identifier Number
                     </label>
                     <input
@@ -870,7 +870,7 @@ export default function InstructorApplication() {
                       value={info.panNumber}
                       onChange={(e) => handleInputChange("panNumber", e.target.value.toUpperCase())}
                       placeholder="e.g. ABCDE1234F"
-                      className="w-full bg-[#15151B] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-[#F5F5F7] placeholder-[#71717A] uppercase focus:outline-none focus:border-[#C5A880]"
+                      className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] uppercase focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]"
                     />
                     {info.panNumber && !isPanValid(info.panNumber) && (
                       <p className="text-[11px] text-amber-400 mt-1">Standard PAN format: 5 letters, 4 digits, 1 letter (e.g. ABCDE1234F)</p>
@@ -880,12 +880,12 @@ export default function InstructorApplication() {
               </div>
 
               {/* Action Buttons for Step 1 */}
-              <div className="flex items-center justify-between pt-6 border-t border-white/10">
+              <div className="flex items-center justify-between pt-6 border-t border-[#D5C0D1] dark:border-white/10">
                 <button
                   type="button"
                   onClick={handleSaveDraft}
                   disabled={savingDraft}
-                  className="px-4 py-2.5 rounded-xl border border-white/10 hover:border-white/20 text-xs font-medium text-[#A1A1AA] hover:text-white transition-all bg-[#15151B] flex items-center gap-2"
+                  className="px-4 py-2.5 rounded-xl border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 text-xs font-medium text-[#A1A1AA] hover:text-white transition-all bg-[#15151B] flex items-center gap-2"
                 >
                   {savingDraft ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                   Save Draft
@@ -897,8 +897,8 @@ export default function InstructorApplication() {
                   onClick={() => setStep(1)}
                   className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
                     isStep1Valid
-                      ? "bg-[#C5A880] hover:bg-[#D4BC9A] text-[#070709] shadow-lg shadow-[#C5A880]/20"
-                      : "bg-[#15151B] text-[#71717A] border border-white/5 cursor-not-allowed opacity-60"
+                      ? "bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#462D42] dark:hover:bg-[#C293BD] text-[#FFFEFA] dark:text-[#151413] shadow-lg shadow-sm"
+                      : "bg-[#15151B] text-[#756E64] dark:text-[#7A7368] border border-[#E3DCD3] dark:border-white/5 cursor-not-allowed opacity-60"
                   }`}
                 >
                   Next: Document Verification <ArrowRight className="w-4 h-4" />
@@ -912,20 +912,20 @@ export default function InstructorApplication() {
           ────────────────────────────────────────────────────────────────── */}
           {step === 1 && (
             <div className="space-y-6">
-              <div className="border-b border-white/10 pb-4 mb-6 flex items-center justify-between flex-wrap gap-2">
+              <div className="border-b border-[#D5C0D1] dark:border-white/10 pb-4 mb-6 flex items-center justify-between flex-wrap gap-2">
                 <div>
                   <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-[#C5A880]" /> Verification Documents
+                    <Shield className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" /> Verification Documents
                   </h2>
                   <p className="text-xs text-[#A1A1AA] mt-1">
                     Upload official credentials and identity proofs. All files are encrypted, private, and verified on upload.
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs font-mono text-[#C5A880] font-bold">
+                  <span className="text-xs font-mono text-[#5B3E57] dark:text-[#D1A7CC] font-bold">
                     {uploadedRequiredCount} of {requiredDocFields.length} Required Uploaded
                   </span>
-                  <div className="w-36 h-1.5 bg-[#15151B] rounded-full mt-1.5 overflow-hidden border border-white/5">
+                  <div className="w-36 h-1.5 bg-[#15151B] rounded-full mt-1.5 overflow-hidden border border-[#E3DCD3] dark:border-white/5">
                     <div
                       className="h-full bg-[#10B981] transition-all duration-300"
                       style={{ width: `${Math.round((uploadedRequiredCount / requiredDocFields.length) * 100)}%` }}
@@ -947,7 +947,7 @@ export default function InstructorApplication() {
                       className={`p-4 rounded-xl border transition-all duration-200 ${
                         isUploaded
                           ? "bg-[#15151B] border-[#10B981]/40 shadow-sm shadow-[#10B981]/5"
-                          : "bg-[#15151B]/60 border-white/10 hover:border-[#C5A880]/30"
+                          : "bg-[#15151B]/60 border-[#D5C0D1] dark:border-white/10 hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40"
                       }`}
                     >
                       <div className="flex items-start gap-3 mb-3">
@@ -966,25 +966,25 @@ export default function InstructorApplication() {
                                 Required
                               </span>
                             ) : (
-                              <span className="text-[10px] bg-white/5 text-[#71717A] px-1.5 py-0.2 rounded font-medium">
+                              <span className="text-[10px] bg-white/5 text-[#756E64] dark:text-[#7A7368] px-1.5 py-0.2 rounded font-medium">
                                 Optional
                               </span>
                             )}
                           </div>
-                          <p className="text-[11px] text-[#71717A] line-clamp-1 mt-0.5">{field.description}</p>
+                          <p className="text-[11px] text-[#756E64] dark:text-[#7A7368] line-clamp-1 mt-0.5">{field.description}</p>
                         </div>
                       </div>
 
                       {/* File Card or Drop Zone */}
                       {isUploaded ? (
-                        <div className="bg-[#070709] rounded-lg p-2.5 border border-white/10 flex items-center justify-between gap-2">
+                        <div className="bg-[#F5F2EC] dark:bg-[#151413] rounded-lg p-2.5 border border-[#D5C0D1] dark:border-white/10 flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2 min-w-0">
                             <File className="w-4 h-4 text-[#10B981] flex-shrink-0" />
                             <span className="text-xs text-white truncate font-medium">
                               {currentFile.name}
                             </span>
                             {currentFile.size && (
-                              <span className="text-[10px] text-[#71717A] flex-shrink-0">
+                              <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] flex-shrink-0">
                                 ({(currentFile.size / (1024 * 1024)).toFixed(2)} MB)
                               </span>
                             )}
@@ -1005,7 +1005,7 @@ export default function InstructorApplication() {
                             >
                               <Eye className="w-3.5 h-3.5" />
                             </button>
-                            <label className="p-1 rounded hover:bg-white/10 text-[#A1A1AA] hover:text-[#C5A880] transition-colors cursor-pointer" title="Replace File">
+                            <label className="p-1 rounded hover:bg-white/10 text-[#A1A1AA] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors cursor-pointer" title="Replace File">
                               <RefreshCw className="w-3.5 h-3.5" />
                               <input
                                 type="file"
@@ -1033,13 +1033,13 @@ export default function InstructorApplication() {
                             e.preventDefault();
                             if (e.dataTransfer.files?.[0]) handleFileChange(field.key, e.dataTransfer.files[0]);
                           }}
-                          className="border border-dashed border-white/15 rounded-lg p-3 text-center cursor-pointer hover:border-[#C5A880]/50 hover:bg-[#070709]/40 transition-all flex flex-col items-center justify-center block"
+                          className="border border-dashed border-white/15 rounded-lg p-3 text-center cursor-pointer hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] hover:bg-[#F5F2EC] dark:bg-[#151413]/40 transition-all flex flex-col items-center justify-center block"
                         >
-                          <Upload className="w-4 h-4 text-[#71717A] mb-1" />
+                          <Upload className="w-4 h-4 text-[#756E64] dark:text-[#7A7368] mb-1" />
                           <p className="text-xs text-[#A1A1AA]">
-                            Drop file here or <span className="text-[#C5A880] font-semibold">browse</span>
+                            Drop file here or <span className="text-[#5B3E57] dark:text-[#D1A7CC] font-semibold">browse</span>
                           </p>
-                          <p className="text-[10px] text-[#71717A] mt-0.5">{field.acceptLabel} • Max 25MB</p>
+                          <p className="text-[10px] text-[#756E64] dark:text-[#7A7368] mt-0.5">{field.acceptLabel} • Max 25MB</p>
                           <input
                             type="file"
                             accept={field.accept}
@@ -1056,11 +1056,11 @@ export default function InstructorApplication() {
               </div>
 
               {/* Action Row for Step 2 */}
-              <div className="flex items-center justify-between pt-6 border-t border-white/10">
+              <div className="flex items-center justify-between pt-6 border-t border-[#D5C0D1] dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setStep(0)}
-                  className="px-4 py-2.5 rounded-xl border border-white/10 hover:border-white/20 text-xs font-medium text-[#A1A1AA] hover:text-white transition-all bg-[#15151B] flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-xl border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 text-xs font-medium text-[#A1A1AA] hover:text-white transition-all bg-[#15151B] flex items-center gap-1.5"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" /> Previous: Profile
                 </button>
@@ -1070,7 +1070,7 @@ export default function InstructorApplication() {
                     type="button"
                     onClick={handleSaveDraft}
                     disabled={savingDraft}
-                    className="px-4 py-2.5 rounded-xl border border-white/10 hover:border-white/20 text-xs font-medium text-[#A1A1AA] hover:text-white transition-all bg-[#15151B] flex items-center gap-2"
+                    className="px-4 py-2.5 rounded-xl border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 text-xs font-medium text-[#A1A1AA] hover:text-white transition-all bg-[#15151B] flex items-center gap-2"
                   >
                     {savingDraft ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                     Save Draft
@@ -1082,8 +1082,8 @@ export default function InstructorApplication() {
                     onClick={() => setStep(2)}
                     className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
                       isStep2Valid
-                        ? "bg-[#C5A880] hover:bg-[#D4BC9A] text-[#070709] shadow-lg shadow-[#C5A880]/20"
-                        : "bg-[#15151B] text-[#71717A] border border-white/5 cursor-not-allowed opacity-60"
+                        ? "bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#462D42] dark:hover:bg-[#C293BD] text-[#FFFEFA] dark:text-[#151413] shadow-lg shadow-sm"
+                        : "bg-[#15151B] text-[#756E64] dark:text-[#7A7368] border border-[#E3DCD3] dark:border-white/5 cursor-not-allowed opacity-60"
                     }`}
                   >
                     Next: Review & Submit <ArrowRight className="w-4 h-4" />
@@ -1098,9 +1098,9 @@ export default function InstructorApplication() {
           ────────────────────────────────────────────────────────────────── */}
           {step === 2 && (
             <div className="space-y-6">
-              <div className="border-b border-white/10 pb-4 mb-6">
+              <div className="border-b border-[#D5C0D1] dark:border-white/10 pb-4 mb-6">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                  <CheckSquare className="w-5 h-5 text-[#C5A880]" /> Final Application Review
+                  <CheckSquare className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" /> Final Application Review
                 </h2>
                 <p className="text-xs text-[#A1A1AA] mt-1">
                   Inspect your submitted details before administrative dispatch. You may jump back to edit any section.
@@ -1108,55 +1108,55 @@ export default function InstructorApplication() {
               </div>
 
               {/* Card 1: Professional Information Overview */}
-              <div className="bg-[#15151B] border border-white/10 rounded-xl p-5">
-                <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
+              <div className="bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl p-5">
+                <div className="flex items-center justify-between border-b border-[#E3DCD3] dark:border-white/5 pb-3 mb-4">
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <User className="w-4 h-4 text-[#C5A880]" /> Personal & Professional Credentials
+                    <User className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" /> Personal & Professional Credentials
                   </h3>
                   <button
                     type="button"
                     onClick={() => setStep(0)}
-                    className="text-xs text-[#C5A880] hover:underline font-semibold"
+                    className="text-xs text-[#5B3E57] dark:text-[#D1A7CC] hover:underline font-semibold"
                   >
                     Edit Section
                   </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div>
-                    <span className="text-[#71717A] block mb-1">Teaching Domain</span>
-                    <span className="text-[#F5F5F7] font-medium">{info.subject || "Not specified"}</span>
+                    <span className="text-[#756E64] dark:text-[#7A7368] block mb-1">Teaching Domain</span>
+                    <span className="text-[#282521] dark:text-[#EDE8E1] font-medium">{info.subject || "Not specified"}</span>
                   </div>
                   <div>
-                    <span className="text-[#71717A] block mb-1">Specialization</span>
-                    <span className="text-[#F5F5F7] font-medium">{info.specialization || "Not specified"}</span>
+                    <span className="text-[#756E64] dark:text-[#7A7368] block mb-1">Specialization</span>
+                    <span className="text-[#282521] dark:text-[#EDE8E1] font-medium">{info.specialization || "Not specified"}</span>
                   </div>
                   <div>
-                    <span className="text-[#71717A] block mb-1">Years of Experience</span>
-                    <span className="text-[#F5F5F7] font-medium">{info.experience || "Not specified"}</span>
+                    <span className="text-[#756E64] dark:text-[#7A7368] block mb-1">Years of Experience</span>
+                    <span className="text-[#282521] dark:text-[#EDE8E1] font-medium">{info.experience || "Not specified"}</span>
                   </div>
                   <div>
-                    <span className="text-[#71717A] block mb-1">Phone Number</span>
-                    <span className="text-[#F5F5F7] font-medium">{info.phone || "None provided"}</span>
+                    <span className="text-[#756E64] dark:text-[#7A7368] block mb-1">Phone Number</span>
+                    <span className="text-[#282521] dark:text-[#EDE8E1] font-medium">{info.phone || "None provided"}</span>
                   </div>
                   {info.linkedinUrl && (
                     <div className="sm:col-span-2">
-                      <span className="text-[#71717A] block mb-1">LinkedIn Profile</span>
-                      <a href={info.linkedinUrl} target="_blank" rel="noreferrer" className="text-[#C5A880] hover:underline break-all">
+                      <span className="text-[#756E64] dark:text-[#7A7368] block mb-1">LinkedIn Profile</span>
+                      <a href={info.linkedinUrl} target="_blank" rel="noreferrer" className="text-[#5B3E57] dark:text-[#D1A7CC] hover:underline break-all">
                         {info.linkedinUrl}
                       </a>
                     </div>
                   )}
                   {info.websiteUrl && (
                     <div className="sm:col-span-2">
-                      <span className="text-[#71717A] block mb-1">Portfolio URL</span>
-                      <a href={info.websiteUrl} target="_blank" rel="noreferrer" className="text-[#C5A880] hover:underline break-all">
+                      <span className="text-[#756E64] dark:text-[#7A7368] block mb-1">Portfolio URL</span>
+                      <a href={info.websiteUrl} target="_blank" rel="noreferrer" className="text-[#5B3E57] dark:text-[#D1A7CC] hover:underline break-all">
                         {info.websiteUrl}
                       </a>
                     </div>
                   )}
                   <div className="sm:col-span-2">
-                    <span className="text-[#71717A] block mb-1">Professional Bio</span>
-                    <p className="text-[#A1A1AA] leading-relaxed bg-[#070709] p-3 rounded-lg border border-white/5">
+                    <span className="text-[#756E64] dark:text-[#7A7368] block mb-1">Professional Bio</span>
+                    <p className="text-[#A1A1AA] leading-relaxed bg-[#F5F2EC] dark:bg-[#151413] p-3 rounded-lg border border-[#E3DCD3] dark:border-white/5">
                       {info.bio}
                     </p>
                   </div>
@@ -1164,51 +1164,51 @@ export default function InstructorApplication() {
               </div>
 
               {/* Card 2: Financial Coordinates */}
-              <div className="bg-[#15151B] border border-white/10 rounded-xl p-5">
-                <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
+              <div className="bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl p-5">
+                <div className="flex items-center justify-between border-b border-[#E3DCD3] dark:border-white/5 pb-3 mb-4">
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <Building2 className="w-4 h-4 text-[#C5A880]" /> Financial Coordinates & Tax Identification
+                    <Building2 className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" /> Financial Coordinates & Tax Identification
                   </h3>
                   <button
                     type="button"
                     onClick={() => setStep(0)}
-                    className="text-xs text-[#C5A880] hover:underline font-semibold"
+                    className="text-xs text-[#5B3E57] dark:text-[#D1A7CC] hover:underline font-semibold"
                   >
                     Edit Financials
                   </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div>
-                    <span className="text-[#71717A] block mb-1">Bank Account Number</span>
-                    <span className="text-[#F5F5F7] font-medium font-mono">
+                    <span className="text-[#756E64] dark:text-[#7A7368] block mb-1">Bank Account Number</span>
+                    <span className="text-[#282521] dark:text-[#EDE8E1] font-medium font-mono">
                       {info.bankAccountNumber ? `••••••••${info.bankAccountNumber.slice(-4)}` : "None provided"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[#71717A] block mb-1">Bank Name</span>
-                    <span className="text-[#F5F5F7] font-medium">{info.bankName || "None provided"}</span>
+                    <span className="text-[#756E64] dark:text-[#7A7368] block mb-1">Bank Name</span>
+                    <span className="text-[#282521] dark:text-[#EDE8E1] font-medium">{info.bankName || "None provided"}</span>
                   </div>
                   <div>
-                    <span className="text-[#71717A] block mb-1">IFSC / Routing Code</span>
-                    <span className="text-[#F5F5F7] font-medium font-mono">{info.bankIfsc || "None provided"}</span>
+                    <span className="text-[#756E64] dark:text-[#7A7368] block mb-1">IFSC / Routing Code</span>
+                    <span className="text-[#282521] dark:text-[#EDE8E1] font-medium font-mono">{info.bankIfsc || "None provided"}</span>
                   </div>
                   <div>
-                    <span className="text-[#71717A] block mb-1">PAN / Tax ID</span>
-                    <span className="text-[#F5F5F7] font-medium font-mono uppercase">{info.panNumber || "None provided"}</span>
+                    <span className="text-[#756E64] dark:text-[#7A7368] block mb-1">PAN / Tax ID</span>
+                    <span className="text-[#282521] dark:text-[#EDE8E1] font-medium font-mono uppercase">{info.panNumber || "None provided"}</span>
                   </div>
                 </div>
               </div>
 
               {/* Card 3: Document Verification Checklist */}
-              <div className="bg-[#15151B] border border-white/10 rounded-xl p-5">
-                <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
+              <div className="bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl p-5">
+                <div className="flex items-center justify-between border-b border-[#E3DCD3] dark:border-white/5 pb-3 mb-4">
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-[#C5A880]" /> Uploaded Verification Documents
+                    <Shield className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" /> Uploaded Verification Documents
                   </h3>
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="text-xs text-[#C5A880] hover:underline font-semibold"
+                    className="text-xs text-[#5B3E57] dark:text-[#D1A7CC] hover:underline font-semibold"
                   >
                     Edit Documents
                   </button>
@@ -1218,7 +1218,7 @@ export default function InstructorApplication() {
                     const f = files[df.key];
                     if (!f && !df.required) return null;
                     return (
-                      <div key={df.key} className="bg-[#070709] p-2.5 rounded-lg border border-white/5 flex items-center justify-between">
+                      <div key={df.key} className="bg-[#F5F2EC] dark:bg-[#151413] p-2.5 rounded-lg border border-[#E3DCD3] dark:border-white/5 flex items-center justify-between">
                         <div className="flex items-center gap-2 min-w-0">
                           {f ? (
                             <CheckCircle className="w-4 h-4 text-[#10B981] flex-shrink-0" />
@@ -1227,7 +1227,7 @@ export default function InstructorApplication() {
                           )}
                           <div className="min-w-0">
                             <p className="text-xs text-white font-medium truncate">{df.label}</p>
-                            <p className="text-[10px] text-[#71717A] truncate">
+                            <p className="text-[10px] text-[#756E64] dark:text-[#7A7368] truncate">
                               {f ? f.name : "Missing required document"}
                             </p>
                           </div>
@@ -1244,16 +1244,16 @@ export default function InstructorApplication() {
               </div>
 
               {/* Declaration Checkbox */}
-              <div className="bg-[#15151B]/60 border border-white/10 rounded-xl p-4 flex items-start gap-3">
+              <div className="bg-[#15151B]/60 border border-[#D5C0D1] dark:border-white/10 rounded-xl p-4 flex items-start gap-3">
                 <button
                   type="button"
                   onClick={() => setTermsAccepted(!termsAccepted)}
-                  className="mt-0.5 text-[#C5A880] flex-shrink-0 focus:outline-none"
+                  className="mt-0.5 text-[#5B3E57] dark:text-[#D1A7CC] flex-shrink-0 focus:outline-none"
                 >
                   {termsAccepted ? (
-                    <CheckSquare className="w-5 h-5 fill-[#C5A880] text-[#070709]" />
+                    <CheckSquare className="w-5 h-5 fill-[#5B3E57] dark:fill-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413]" />
                   ) : (
-                    <Square className="w-5 h-5 text-[#71717A]" />
+                    <Square className="w-5 h-5 text-[#756E64] dark:text-[#7A7368]" />
                   )}
                 </button>
                 <label
@@ -1265,11 +1265,11 @@ export default function InstructorApplication() {
               </div>
 
               {/* Action Row for Step 3 */}
-              <div className="flex items-center justify-between pt-6 border-t border-white/10">
+              <div className="flex items-center justify-between pt-6 border-t border-[#D5C0D1] dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="px-4 py-2.5 rounded-xl border border-white/10 hover:border-white/20 text-xs font-medium text-[#A1A1AA] hover:text-white transition-all bg-[#15151B] flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-xl border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 text-xs font-medium text-[#A1A1AA] hover:text-white transition-all bg-[#15151B] flex items-center gap-1.5"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" /> Back to Documents
                 </button>
@@ -1279,7 +1279,7 @@ export default function InstructorApplication() {
                     type="button"
                     onClick={handleSaveDraft}
                     disabled={savingDraft}
-                    className="px-4 py-2.5 rounded-xl border border-white/10 hover:border-white/20 text-xs font-medium text-[#A1A1AA] hover:text-white transition-all bg-[#15151B] flex items-center gap-2"
+                    className="px-4 py-2.5 rounded-xl border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 text-xs font-medium text-[#A1A1AA] hover:text-white transition-all bg-[#15151B] flex items-center gap-2"
                   >
                     {savingDraft ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                     Save Draft
@@ -1291,8 +1291,8 @@ export default function InstructorApplication() {
                     onClick={() => setShowConfirmModal(true)}
                     className={`px-8 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
                       termsAccepted && !submitting
-                        ? "bg-[#C5A880] hover:bg-[#D4BC9A] text-[#070709] shadow-xl shadow-[#C5A880]/30"
-                        : "bg-[#15151B] text-[#71717A] border border-white/5 cursor-not-allowed opacity-50"
+                        ? "bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#462D42] dark:hover:bg-[#C293BD] text-[#FFFEFA] dark:text-[#151413] shadow-xl shadow-sm/30"
+                        : "bg-[#15151B] text-[#756E64] dark:text-[#7A7368] border border-[#E3DCD3] dark:border-white/5 cursor-not-allowed opacity-50"
                     }`}
                   >
                     {submitting ? (
@@ -1316,8 +1316,8 @@ export default function InstructorApplication() {
       {showConfirmModal && (
         <Portal>
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#282521]/45 dark:bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-[#0F0F13] border border-white/15 rounded-2xl max-w-md w-full p-6 shadow-2xl relative text-left">
-              <div className="w-12 h-12 rounded-xl bg-[#C5A880]/15 border border-[#C5A880]/30 text-[#C5A880] flex items-center justify-center mb-4">
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-white/15 rounded-2xl max-w-md w-full p-6 shadow-2xl relative text-left">
+              <div className="w-12 h-12 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 text-[#5B3E57] dark:text-[#D1A7CC] flex items-center justify-center mb-4">
                 <Shield className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-white mb-2">Confirm Application Submission</h3>
@@ -1330,14 +1330,14 @@ export default function InstructorApplication() {
                 <button
                   type="button"
                   onClick={() => setShowConfirmModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-[#A1A1AA] hover:text-white border border-white/10 hover:border-white/20 transition-colors bg-[#15151B]"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-[#A1A1AA] hover:text-white border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 transition-colors bg-[#15151B]"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleFinalSubmit}
-                  className="px-5 py-2 rounded-xl text-xs font-bold bg-[#C5A880] hover:bg-[#D4BC9A] text-[#070709] transition-all shadow-md shadow-[#C5A880]/20 flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-xl text-xs font-bold bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#462D42] dark:hover:bg-[#C293BD] text-[#FFFEFA] dark:text-[#151413] transition-all shadow-md shadow-sm flex items-center gap-1.5"
                 >
                   Yes, Submit Application
                 </button>
@@ -1351,10 +1351,10 @@ export default function InstructorApplication() {
       {previewDoc && (
         <Portal>
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="bg-[#0F0F13] border border-white/15 rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative text-left">
-              <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-white/15 rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative text-left">
+              <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#D5C0D1] dark:border-white/10">
                 <div className="flex items-center gap-2.5">
-                  <FileText className="w-5 h-5 text-[#C5A880]" />
+                  <FileText className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <span className="text-sm font-bold text-white truncate max-w-md">{previewDoc.name}</span>
                 </div>
                 <button
@@ -1366,18 +1366,18 @@ export default function InstructorApplication() {
                 </button>
               </div>
 
-              <div className="max-h-[60vh] overflow-auto flex items-center justify-center bg-[#070709] rounded-xl p-4 border border-white/5">
+              <div className="max-h-[60vh] overflow-auto flex items-center justify-center bg-[#F5F2EC] dark:bg-[#151413] rounded-xl p-4 border border-[#E3DCD3] dark:border-white/5">
                 {previewDoc.type?.startsWith("image/") ? (
                   <img src={previewDoc.url} alt={previewDoc.name} className="max-h-[50vh] max-w-full object-contain rounded-lg" />
                 ) : (
                   <div className="py-8 text-center space-y-4">
-                    <FileText className="w-16 h-16 text-[#C5A880] mx-auto opacity-70" />
+                    <FileText className="w-16 h-16 text-[#5B3E57] dark:text-[#D1A7CC] mx-auto opacity-70" />
                     <p className="text-sm text-[#A1A1AA]">PDF / Document preview is ready</p>
                     <a
                       href={previewDoc.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#C5A880] text-[#070709] font-bold text-xs"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold text-xs"
                     >
                       Open Document in New Tab <ExternalLink className="w-3.5 h-3.5" />
                     </a>
@@ -1389,7 +1389,7 @@ export default function InstructorApplication() {
                 <button
                   type="button"
                   onClick={() => setPreviewDoc(null)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-[#A1A1AA] hover:text-white border border-white/10 hover:border-white/20 transition-colors bg-[#15151B]"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-[#A1A1AA] hover:text-white border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 transition-colors bg-[#15151B]"
                 >
                   Close Preview
                 </button>

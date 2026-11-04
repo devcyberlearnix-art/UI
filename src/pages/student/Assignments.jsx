@@ -84,21 +84,21 @@ const AssignmentCard = ({ assignment, courseId }) => {
     <motion.div
       layout
       transition={SPRING_TRANSITION}
-      className="bg-[#0F0F13] rounded-2xl border border-white/[0.04] shadow-xl overflow-hidden hover:border-white/10 transition-colors"
+      className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-white/[0.06] shadow-xl overflow-hidden hover:border-[#D5C0D1] dark:border-white/10 transition-colors"
     >
       <div
         className="p-5 cursor-pointer flex items-start justify-between gap-4 select-none"
         onClick={() => setExpanded((p) => !p)}
       >
         <div className="flex items-start gap-3.5 min-w-0">
-          <div className="w-10 h-10 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center flex-shrink-0 text-[#C5A880]">
+          <div className="w-10 h-10 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center flex-shrink-0 text-[#5B3E57] dark:text-[#D1A7CC]">
             <ClipboardList size={18} />
           </div>
           <div className="min-w-0">
-            <h3 className="font-bold text-[#F5F5F7] tracking-tight truncate text-sm sm:text-base">
+            <h3 className="font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight truncate text-sm sm:text-base">
               {assignment.title}
             </h3>
-            <p className="text-xs text-[#8E8E93] font-mono mt-0.5">
+            <p className="text-xs text-[#635E56] dark:text-[#A8A196] font-mono mt-0.5">
               {dueDate
                 ? `Due: ${dueDate.toLocaleDateString("en-US", {
                     month: "short",
@@ -111,7 +111,7 @@ const AssignmentCard = ({ assignment, courseId }) => {
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
           <StatusBadge status={currentStatus} />
-          <div className="p-1 rounded-lg text-[#8E8E93] hover:text-white transition-colors">
+          <div className="p-1 rounded-lg text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:hover:text-[#EDE8E1] transition-colors">
             {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </div>
         </div>
@@ -124,18 +124,18 @@ const AssignmentCard = ({ assignment, courseId }) => {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={SPRING_TRANSITION}
-            className="overflow-hidden border-t border-white/[0.04]"
+            className="overflow-hidden border-t border-[#E3DCD3] dark:border-white/[0.06]"
           >
             <div className="p-5 space-y-4 bg-[#0A0A0E]/50">
               {assignment.description && (
-                <p className="text-xs sm:text-sm text-[#8E8E93] leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#635E56] dark:text-[#A8A196] leading-relaxed">
                   {assignment.description}
                 </p>
               )}
               {assignment.maxScore && (
-                <div className="flex items-center gap-2 text-xs font-mono text-[#8E8E93]">
+                <div className="flex items-center gap-2 text-xs font-mono text-[#635E56] dark:text-[#A8A196]">
                   <span>Score Weight:</span>
-                  <span className="text-[#F5F5F7] font-semibold">{assignment.maxScore} PTS</span>
+                  <span className="text-[#282521] dark:text-[#EDE8E1] font-semibold">{assignment.maxScore} PTS</span>
                 </div>
               )}
 
@@ -150,7 +150,7 @@ const AssignmentCard = ({ assignment, courseId }) => {
                       Evaluated Score: {assignment.grade} / {assignment.maxScore || 100}
                     </p>
                     {assignment.feedback && (
-                      <p className="text-xs text-[#8E8E93] mt-1 leading-relaxed">
+                      <p className="text-xs text-[#635E56] dark:text-[#A8A196] mt-1 leading-relaxed">
                         Instructor Feedback: {assignment.feedback}
                       </p>
                     )}
@@ -161,10 +161,10 @@ const AssignmentCard = ({ assignment, courseId }) => {
               {/* Upload Workspace */}
               {!submitted && !isOverdue && (
                 <div className="space-y-3 pt-2">
-                  <label className="block text-xs font-mono uppercase tracking-wider text-[#8E8E93]">
+                  <label className="block text-xs font-mono uppercase tracking-wider text-[#635E56] dark:text-[#A8A196]">
                     Upload Execution Artifact / Code Archive
                   </label>
-                  <div className="border-2 border-dashed border-white/[0.08] hover:border-[#C5A880]/50 rounded-2xl p-6 text-center transition-all bg-[#0F0F13]">
+                  <div className="border-2 border-dashed border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] rounded-2xl p-6 text-center transition-all bg-[#FFFEFA] dark:bg-[#1D1C1A]">
                     <input
                       id={`file-${assignment.id}`}
                       type="file"
@@ -173,14 +173,14 @@ const AssignmentCard = ({ assignment, courseId }) => {
                       accept=".pdf,.doc,.docx,.zip,.tar.gz,.py,.js,.java,.ts,.cpp,.txt"
                     />
                     <label htmlFor={`file-${assignment.id}`} className="cursor-pointer block space-y-2">
-                      <div className="w-10 h-10 rounded-xl bg-[#14141A] border border-white/[0.04] mx-auto flex items-center justify-center text-[#8E8E93] hover:text-[#C5A880] transition-colors">
+                      <div className="w-10 h-10 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] mx-auto flex items-center justify-center text-[#635E56] dark:text-[#A8A196] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors">
                         <Upload size={18} />
                       </div>
                       {file ? (
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#C5A880]/10 border border-[#C5A880]/20 text-[#C5A880] text-xs font-mono font-medium">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-mono font-medium">
                           <FileCode size={14} />
                           <span>{file.name}</span>
-                          <span className="text-[#8E8E93]">({(file.size / 1024).toFixed(1)} KB)</span>
+                          <span className="text-[#635E56] dark:text-[#A8A196]">({(file.size / 1024).toFixed(1)} KB)</span>
                         </div>
                       ) : (
                         <div>
@@ -251,26 +251,26 @@ export const Assignments = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center bg-[#070709]">
+      <div className="min-h-[60vh] flex items-center justify-center bg-[#F5F2EC] dark:bg-[#151413]">
         <div className="text-center space-y-3">
-          <Loader2 className="w-8 h-8 animate-spin text-[#C5A880] mx-auto" />
-          <p className="text-xs text-[#8E8E93] font-mono">Syncing course assessment nodes...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-[#5B3E57] dark:text-[#D1A7CC] mx-auto" />
+          <p className="text-xs text-[#635E56] dark:text-[#A8A196] font-mono">Syncing course assessment nodes...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] py-8 px-4 sm:px-6">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] py-8 px-4 sm:px-6">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Header Ribbon */}
-        <div className="flex items-center justify-between pb-4 border-b border-white/[0.04]">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E3DCD3] dark:border-white/[0.06]">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#F5F5F7] flex items-center gap-2.5">
-              <ClipboardList className="text-[#C5A880]" size={22} />
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#282521] dark:text-[#EDE8E1] flex items-center gap-2.5">
+              <ClipboardList className="text-[#5B3E57] dark:text-[#D1A7CC]" size={22} />
               <span>Assessment & Lab Workspaces</span>
             </h1>
-            <p className="text-xs text-[#8E8E93] font-mono mt-1">
+            <p className="text-xs text-[#635E56] dark:text-[#A8A196] font-mono mt-1">
               {assignments.length} curriculum checkpoint{assignments.length !== 1 ? "s" : ""} registered
             </p>
           </div>
@@ -278,10 +278,10 @@ export const Assignments = () => {
             type="button"
             onClick={() => refetch()}
             disabled={isFetching}
-            className="p-2 rounded-xl bg-[#0F0F13] border border-white/[0.04] text-[#8E8E93] hover:text-white transition-colors"
+            className="p-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:hover:text-[#EDE8E1] transition-colors"
             title="Refresh Assignments"
           >
-            <RefreshCw size={15} className={isFetching ? "animate-spin text-[#C5A880]" : ""} />
+            <RefreshCw size={15} className={isFetching ? "animate-spin text-[#5B3E57] dark:text-[#D1A7CC]" : ""} />
           </button>
         </div>
 
@@ -293,12 +293,12 @@ export const Assignments = () => {
         )}
 
         {!error && assignments.length === 0 && (
-          <div className="text-center py-20 bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-8">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#8E8E93]">
+          <div className="text-center py-20 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] rounded-3xl p-8">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center text-[#635E56] dark:text-[#A8A196]">
               <BookOpen size={28} />
             </div>
-            <h3 className="text-base font-bold text-[#F5F5F7] mb-1">No Active Lab Assignments</h3>
-            <p className="text-xs text-[#8E8E93] max-w-sm mx-auto leading-relaxed">
+            <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1] mb-1">No Active Lab Assignments</h3>
+            <p className="text-xs text-[#635E56] dark:text-[#A8A196] max-w-sm mx-auto leading-relaxed">
               Course instructors have not posted required code exercises or submission artifacts for this curriculum module yet.
             </p>
           </div>

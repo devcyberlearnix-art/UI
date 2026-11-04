@@ -165,17 +165,17 @@ const Instructors = () => {
 
   if (loading) {
     return (
-      <div className="bg-[#070709] min-h-screen p-6 flex flex-col items-center justify-center space-y-4">
-    <Loader2 className="w-10 h-10 text-[#C5A880] animate-spin" />
-    <p className="text-sm font-medium text-[#8E8E93]">Loading faculty governance roster...</p>
+      <div className="bg-[#F5F2EC] dark:bg-[#151413] min-h-screen p-6 flex flex-col items-center justify-center space-y-4">
+    <Loader2 className="w-10 h-10 text-[#5B3E57] dark:text-[#D1A7CC] animate-spin" />
+    <p className="text-sm font-medium text-[#635E56] dark:text-[#A8A196]">Loading faculty governance roster...</p>
   </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-[#070709] min-h-screen p-6 flex items-center justify-center">
-        <div className="bg-[#0F0F13] border border-red-500/20 rounded-3xl p-8 text-center max-w-md space-y-4 shadow-2xl">
+      <div className="bg-[#F5F2EC] dark:bg-[#151413] min-h-screen p-6 flex items-center justify-center">
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-red-500/20 rounded-3xl p-8 text-center max-w-md space-y-4 shadow-2xl">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Instructors</h3>
           <p className="text-gray-500 mb-4">{error}</p>
@@ -191,37 +191,37 @@ const Instructors = () => {
   }
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#070709] text-[#F5F5F7] p-6 lg:p-10 space-y-8 font-sans selection:bg-[#C5A880]/30 selection:text-white">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] p-6 lg:p-10 space-y-8 font-sans selection:bg-[#5B3E57] dark:bg-[#D1A7CC]/30 selection:text-white">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14141A] border border-[#C5A880]/30 text-xs font-semibold text-[#C5A880] mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 text-xs font-semibold text-[#5B3E57] dark:text-[#D1A7CC] mb-2">
             <span className="tracking-wider uppercase text-[10px] font-bold">Faculty Governance</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F5F5F7] tracking-tight">Instructor Management</h1>
-          <p className="text-xs sm:text-sm text-[#8E8E93]">Approve, review, and govern certified course authors</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">Instructor Management</h1>
+          <p className="text-xs sm:text-sm text-[#635E56] dark:text-[#A8A196]">Approve, review, and govern certified course authors</p>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-sm">
-        <p className="text-xs font-bold uppercase tracking-wider text-[#C5A880] mb-4">Faculty Overview</p>
+      <div className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-wider text-[#5B3E57] dark:text-[#D1A7CC] mb-4">Faculty Overview</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-[#14141A] border border-white/[0.04] rounded-2xl p-4 text-center">
+          <div className="bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] rounded-2xl p-4 text-center">
             <p className="text-2xl font-bold text-gray-900">👥</p>
-            <p className="text-xl font-extrabold font-mono text-[#F5F5F7] mt-1">{instructors.length}</p>
+            <p className="text-xl font-extrabold font-mono text-[#282521] dark:text-[#EDE8E1] mt-1">{instructors.length}</p>
             <p className="text-xs text-gray-500 mt-1">All</p>
           </div>
-          <div className="bg-[#14141A] border border-emerald-500/20 rounded-2xl p-4 text-center">
+          <div className="bg-[#F5F2EC] dark:bg-[#151413] border border-emerald-500/20 rounded-2xl p-4 text-center">
             <p className="text-2xl font-bold text-green-600">✅</p>
             <p className="text-xl font-bold text-green-600 mt-1">{instructors.filter(i => i.status?.toUpperCase() === 'ACTIVE').length}</p>
             <p className="text-xs text-gray-500 mt-1">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'ACTIVE').length / instructors.length) * 100).toFixed(1) : 0}%</p>
           </div>
-          <div className="bg-[#14141A] border border-amber-500/20 rounded-2xl p-4 text-center">
+          <div className="bg-[#F5F2EC] dark:bg-[#151413] border border-amber-500/20 rounded-2xl p-4 text-center">
             <p className="text-2xl font-bold text-yellow-600">⚠️</p>
             <p className="text-xl font-bold text-yellow-600 mt-1">{instructors.filter(i => i.status?.toUpperCase() === 'SUSPENDED').length}</p>
             <p className="text-xs text-gray-500 mt-1">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'SUSPENDED').length / instructors.length) * 100).toFixed(1) : 0}%</p>
           </div>
-          <div className="bg-[#14141A] border border-red-500/20 rounded-2xl p-4 text-center">
+          <div className="bg-[#F5F2EC] dark:bg-[#151413] border border-red-500/20 rounded-2xl p-4 text-center">
             <p className="text-2xl font-bold text-red-600">⏳</p>
             <p className="text-xl font-bold text-red-600 mt-1">{instructors.filter(i => i.status?.toUpperCase() === 'PENDING_VERIFICATION').length}</p>
             <p className="text-xs text-gray-500 mt-1">{instructors.length > 0 ? ((instructors.filter(i => i.status?.toUpperCase() === 'PENDING_VERIFICATION').length / instructors.length) * 100).toFixed(1) : 0}%</p>
@@ -229,8 +229,8 @@ const Instructors = () => {
         </div>
       </div>
 
-      <div className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-white/[0.04] bg-[#14141A]/50">
+      <div className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] bg-[#F5F2EC] dark:bg-[#151413]/50">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex-1 w-full md:w-auto">
               <div className="relative">
@@ -239,7 +239,7 @@ const Instructors = () => {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search..."
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#14141A] border border-white/[0.08] rounded-xl text-sm text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880]"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-sm text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]"
                 />
               </div>
             </div>
@@ -247,7 +247,7 @@ const Instructors = () => {
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-4 py-2.5 bg-[#14141A] border border-white/[0.08] rounded-xl text-xs text-[#F5F5F7] focus:outline-none focus:border-[#C5A880]"
+                className="px-4 py-2.5 bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl text-xs text-[#282521] dark:text-[#EDE8E1] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]"
               >
                 <option value="All">All Status ▼</option>
                 <option value="ACTIVE">Active</option>
@@ -266,13 +266,13 @@ const Instructors = () => {
             {filteredInstructors
               .slice((currentPage - 1) * instructorsPerPage, currentPage * instructorsPerPage)
               .map((instructor) => (
-              <div key={instructor.id} className="bg-[#14141A] rounded-2xl p-5 hover:border-[#C5A880]/30 transition-all border border-white/[0.04] group">
+              <div key={instructor.id} className="bg-[#F5F2EC] dark:bg-[#151413] rounded-2xl p-5 hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 transition-all border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] group">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold">
                     👤
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-[#F5F5F7] text-sm group-hover:text-[#C5A880] transition-colors">{instructor.name}</p>
+                    <p className="font-semibold text-[#282521] dark:text-[#EDE8E1] text-sm group-hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] transition-colors">{instructor.name}</p>
                     <p className="text-xs text-gray-400">────────</p>
                   </div>
                 </div>
@@ -288,7 +288,7 @@ const Instructors = () => {
                      instructor.status?.toUpperCase() === 'PENDING_VERIFICATION' ? '🔴 PENDING' : instructor.status}
                   </span>
                 </div>
-                <p className="text-xs text-[#8E8E93] mb-2 font-mono break-all">{instructor.email}</p>
+                <p className="text-xs text-[#635E56] dark:text-[#A8A196] mb-2 font-mono break-all">{instructor.email}</p>
                 <p className="text-xs text-gray-500 mb-3">📅 {instructor.createdAt}</p>
                 <p className="text-xs text-gray-400 mb-3">────────</p>
                 <div className="flex gap-2">
@@ -311,25 +311,25 @@ const Instructors = () => {
         </div>
         
         {/* Pagination */}
-        <div className="flex items-center justify-between px-6 py-4 bg-[#14141A]/50 border-t border-white/[0.04] text-xs">
-          <p className="text-[#8E8E93]">
+        <div className="flex items-center justify-between px-6 py-4 bg-[#F5F2EC] dark:bg-[#151413]/50 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-xs">
+          <p className="text-[#635E56] dark:text-[#A8A196]">
             Showing <strong className="text-white">{(currentPage - 1) * instructorsPerPage + 1}</strong> to <strong className="text-white">{Math.min(currentPage * instructorsPerPage, filteredInstructors.length)}</strong> of <strong className="text-white">{filteredInstructors.length}</strong> faculty members
           </p>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1.5 bg-[#14141A] border border-white/10 hover:border-white/20 text-[#8E8E93] hover:text-white rounded-lg disabled:opacity-30 disabled:pointer-events-none transition"
+              className="px-3 py-1.5 bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 text-[#635E56] dark:text-[#A8A196] hover:text-white rounded-lg disabled:opacity-30 disabled:pointer-events-none transition"
             >
               Previous
             </button>
-            <span className="font-mono text-[#F5F5F7] px-2">
+            <span className="font-mono text-[#282521] dark:text-[#EDE8E1] px-2">
               Page {currentPage} of {Math.ceil(filteredInstructors.length / instructorsPerPage) || 1}
             </span>
             <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredInstructors.length / instructorsPerPage)))}
               disabled={currentPage === Math.ceil(filteredInstructors.length / instructorsPerPage)}
-              className="px-3 py-1.5 bg-[#14141A] border border-white/10 hover:border-white/20 text-[#8E8E93] hover:text-white rounded-lg disabled:opacity-30 disabled:pointer-events-none transition"
+              className="px-3 py-1.5 bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 text-[#635E56] dark:text-[#A8A196] hover:text-white rounded-lg disabled:opacity-30 disabled:pointer-events-none transition"
             >
               Next
             </button>
@@ -341,30 +341,30 @@ const Instructors = () => {
       {showModal && selectedInstructor && (
         <Portal>
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#282521]/45 dark:bg-black/75 backdrop-blur-sm" onClick={() => setShowModal(false)}>
-            <div className="bg-[#0F0F13] border border-white/10 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden text-left" onClick={(e) => e.stopPropagation()}>
-              <div className="p-6 border-b border-white/5 flex items-center justify-between">
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#D5C0D1] dark:border-white/10 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden text-left" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6 border-b border-[#E3DCD3] dark:border-white/5 flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-lg text-[#F5F5F7]">Faculty Profile Inspection</h3>
-                  <p className="text-xs text-[#8E8E93]">Federated microservice instructor record</p>
+                  <h3 className="font-bold text-lg text-[#282521] dark:text-[#EDE8E1]">Faculty Profile Inspection</h3>
+                  <p className="text-xs text-[#635E56] dark:text-[#A8A196]">Federated microservice instructor record</p>
                 </div>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="p-2 rounded-xl bg-[#14141A] border border-white/10 text-[#8E8E93] hover:text-white"
+                  className="p-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 text-[#635E56] dark:text-[#A8A196] hover:text-white"
                 >
                   ✕
                 </button>
               </div>
               <div className="p-6 space-y-4 text-xs">
                 {/* Profile Section */}
-                <div className="p-4 rounded-2xl bg-[#14141A] border border-white/5 flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-2xl bg-[#0F0F13] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] font-bold text-2xl shadow-sm shrink-0">
+                <div className="p-4 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/5 flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] font-bold text-2xl shadow-sm shrink-0">
                     {selectedInstructor.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="font-bold text-base text-white truncate">{selectedInstructor.name}</p>
-                    <p className="text-xs font-mono text-[#C5A880] truncate mt-0.5">{selectedInstructor.email}</p>
+                    <p className="text-xs font-mono text-[#5B3E57] dark:text-[#D1A7CC] truncate mt-0.5">{selectedInstructor.email}</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#C5A880]/10 text-[#C5A880] border border-[#C5A880]/30">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#5B3E57] dark:text-[#D1A7CC] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40">
                         INSTRUCTOR
                       </span>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -376,31 +376,31 @@ const Instructors = () => {
 
                 {/* Details Grid */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3.5 rounded-2xl bg-[#14141A] border border-white/5 space-y-1">
-                    <span className="text-[#8E8E93] block text-[11px]">Assigned Role</span>
+                  <div className="p-3.5 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/5 space-y-1">
+                    <span className="text-[#635E56] dark:text-[#A8A196] block text-[11px]">Assigned Role</span>
                     <span className="font-bold text-white text-sm">Faculty Member</span>
                   </div>
-                  <div className="p-3.5 rounded-2xl bg-[#14141A] border border-white/5 space-y-1">
-                    <span className="text-[#8E8E93] block text-[11px]">Verification</span>
+                  <div className="p-3.5 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/5 space-y-1">
+                    <span className="text-[#635E56] dark:text-[#A8A196] block text-[11px]">Verification</span>
                     <span className="font-bold text-emerald-400 text-sm">Certified Author</span>
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-[#14141A] border border-white/5 space-y-2">
+                <div className="p-3.5 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/5 space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-[#8E8E93]">Faculty Identifier</span>
+                    <span className="text-[#635E56] dark:text-[#A8A196]">Faculty Identifier</span>
                     <span className="font-mono text-[#A1A1AA]">{selectedInstructor.id}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#8E8E93]">Induction Timestamp</span>
-                    <span className="font-mono text-[#71717A]">{selectedInstructor.createdAt}</span>
+                    <span className="text-[#635E56] dark:text-[#A8A196]">Induction Timestamp</span>
+                    <span className="font-mono text-[#756E64] dark:text-[#7A7368]">{selectedInstructor.createdAt}</span>
                   </div>
                 </div>
 
                 <div className="flex justify-end pt-2">
                   <button
                     onClick={() => setShowModal(false)}
-                    className="px-5 py-2.5 bg-[#C5A880] hover:bg-[#B3936A] text-[#070709] rounded-xl text-xs font-bold transition-all shadow-lg shadow-[#C5A880]/10"
+                    className="px-5 py-2.5 bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#B3936A] text-[#FFFEFA] dark:text-[#151413] rounded-xl text-xs font-bold transition-all shadow-lg shadow-sm"
                   >
                     Close Inspection
                   </button>

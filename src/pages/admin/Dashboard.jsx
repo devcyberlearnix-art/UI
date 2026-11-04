@@ -38,7 +38,7 @@ const SPRING_TRANSITION = {
   damping: 26,
 };
 
-const CHART_PALETTE = ['#C5A880', '#9E8260', '#E5E5E7', '#A1A1AA', '#71717A', '#3F3F46'];
+const CHART_PALETTE = ['#5B3E57', '#9A6B56', '#2B6747', '#C29B38', '#635E56', '#A8A196'];
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -254,10 +254,10 @@ const Dashboard = () => {
   if (authLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-28 w-full rounded-3xl bg-[#0F0F13]" />
+        <Skeleton className="h-28 w-full rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A]" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32 rounded-2xl bg-[#0F0F13]" />
+            <Skeleton key={i} className="h-32 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A]" />
           ))}
         </div>
       </div>
@@ -267,25 +267,25 @@ const Dashboard = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <div className="w-full space-y-8 font-sans selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="w-full space-y-8 font-sans selection:bg-[#5B3E57] dark:bg-[#D1A7CC]/30 selection:text-white">
       {/* ===================== ADMIN COMMAND HEADER ===================== */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={SPRING_TRANSITION}
-        className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 sm:p-8 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.85)] flex flex-col md:flex-row md:items-center justify-between gap-6"
+        className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-6 sm:p-8 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.85)] flex flex-col md:flex-row md:items-center justify-between gap-6"
       >
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14141A] border border-[#C5A880]/30 text-xs font-semibold text-[#C5A880]">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#C5A880]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 text-xs font-semibold text-[#5B3E57] dark:text-[#D1A7CC]">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
             <span className="tracking-wider uppercase text-[10px] font-bold">
               {isSuperAdmin ? 'Root Security Authority' : 'Sub-Admin Matrix'}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F5F5F7] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
             Command Center Overview
           </h1>
-          <p className="text-xs sm:text-sm text-[#8E8E93] max-w-xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#635E56] dark:text-[#A8A196] max-w-xl leading-relaxed">
             Telemetry operations, identity federation, order flow reconciliation, and curriculum oversight across all tenant microservices.
           </p>
         </div>
@@ -296,7 +296,7 @@ const Dashboard = () => {
             size="sm"
             onClick={() => navigate('/admin/command-center')}
           >
-            <Terminal className="w-3.5 h-3.5 mr-1.5 text-[#C5A880]" />
+            <Terminal className="w-3.5 h-3.5 mr-1.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
             <span>Telemetry Console</span>
           </Button>
           <Button
@@ -315,14 +315,14 @@ const Dashboard = () => {
           [1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-3"
+              className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-3"
             >
               <div className="flex justify-between items-center">
-                <Skeleton className="h-4 w-24 bg-[#14141A]" />
-                <Skeleton className="h-8 w-8 rounded-xl bg-[#14141A]" />
+                <Skeleton className="h-4 w-24 bg-[#F5F2EC] dark:bg-[#151413]" />
+                <Skeleton className="h-8 w-8 rounded-xl bg-[#F5F2EC] dark:bg-[#151413]" />
               </div>
-              <Skeleton className="h-7 w-24 bg-[#14141A]" />
-              <Skeleton className="h-3 w-16 bg-[#14141A]" />
+              <Skeleton className="h-7 w-24 bg-[#F5F2EC] dark:bg-[#151413]" />
+              <Skeleton className="h-3 w-16 bg-[#F5F2EC] dark:bg-[#151413]" />
             </div>
           ))
         ) : (
@@ -334,21 +334,21 @@ const Dashboard = () => {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...SPRING_TRANSITION, delay: idx * 0.05 }}
-                className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all duration-300 group"
+                className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 transition-all duration-300 group"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-[#8E8E93] tracking-wide">
+                  <span className="text-xs font-semibold text-[#635E56] dark:text-[#A8A196] tracking-wide">
                     {stat.title}
                   </span>
-                  <div className="w-9 h-9 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#C5A880] group-hover:scale-105 transition-transform">
+                  <div className="w-9 h-9 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] group-hover:scale-105 transition-transform">
                     <Icon className="w-4 h-4" />
                   </div>
                 </div>
-                <p className="text-2xl font-extrabold text-[#F5F5F7] tracking-tight font-mono">
+                <p className="text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight font-mono">
                   {stat.value}
                 </p>
                 <div className="flex items-center gap-1.5 mt-2 text-[11px] text-[#A1A1AA]">
-                  <TrendingUp className="w-3 h-3 text-[#C5A880]" />
+                  <TrendingUp className="w-3 h-3 text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <span>{stat.sublabel}</span>
                 </div>
               </motion.div>
@@ -364,14 +364,14 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={SPRING_TRANSITION}
-          className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-sm space-y-4"
+          className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-sm space-y-4"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-white/[0.04] gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] gap-2">
             <div>
-              <h2 className="text-sm font-bold text-[#F5F5F7]">
+              <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">
                 Candidate Enrollment Velocity
               </h2>
-              <p className="text-[11px] text-[#8E8E93] mt-0.5">
+              <p className="text-[11px] text-[#635E56] dark:text-[#A8A196] mt-0.5">
                 Academic Year 2026 (IST) • 526 Authoritative Learners
               </p>
             </div>
@@ -383,8 +383,8 @@ const Dashboard = () => {
               <AreaChart data={enrollmentData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#C5A880" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#C5A880" stopOpacity={0.0} />
+                    <stop offset="5%" stopColor="#5B3E57" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#5B3E57" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.04)" />
@@ -393,7 +393,7 @@ const Dashboard = () => {
                 <Tooltip
                   formatter={(value, name, item) => [`${value} Students`, item?.payload?.note || 'Enrollments']}
                   contentStyle={{
-                    backgroundColor: '#0F0F13',
+                    backgroundColor: '#1D1C1A',
                     borderColor: 'rgba(255, 255, 255, 0.08)',
                     borderRadius: '12px',
                     fontSize: '11px',
@@ -403,7 +403,7 @@ const Dashboard = () => {
                 <Area
                   type="monotone"
                   dataKey="enrollments"
-                  stroke="#C5A880"
+                  stroke="#5B3E57"
                   strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#goldGradient)"
@@ -412,9 +412,9 @@ const Dashboard = () => {
             </ResponsiveContainer>
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-white/[0.04] text-[11px] text-[#8E8E93]">
+          <div className="flex items-center justify-between pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[11px] text-[#635E56] dark:text-[#A8A196]">
             <span>Monthly new curriculum enrollments</span>
-            <span className="font-mono text-[#C5A880]">Cumulative: 526 Learners</span>
+            <span className="font-mono text-[#5B3E57] dark:text-[#D1A7CC]">Cumulative: 526 Learners</span>
           </div>
         </motion.div>
 
@@ -423,18 +423,18 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={SPRING_TRANSITION}
-          className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] p-6 shadow-sm space-y-4"
+          className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-6 shadow-sm space-y-4"
         >
-          <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
             <div>
-              <h2 className="text-sm font-bold text-[#F5F5F7]">
+              <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">
                 Curriculum Domain Breakdown
               </h2>
-              <p className="text-[11px] text-[#8E8E93] mt-0.5">
+              <p className="text-[11px] text-[#635E56] dark:text-[#A8A196] mt-0.5">
                 Top domains across 231 published courses
               </p>
             </div>
-            <span className="text-[11px] text-[#C5A880] font-mono font-semibold">231 Published</span>
+            <span className="text-[11px] text-[#5B3E57] dark:text-[#D1A7CC] font-mono font-semibold">231 Published</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 items-center gap-4">
@@ -458,7 +458,7 @@ const Dashboard = () => {
                   <Tooltip
                     formatter={(val, name, item) => [`${item?.payload?.count || val} courses (${item?.payload?.percentage || val}%)`, name]}
                     contentStyle={{
-                      backgroundColor: '#0F0F13',
+                      backgroundColor: '#1D1C1A',
                       borderColor: 'rgba(255, 255, 255, 0.08)',
                       borderRadius: '12px',
                       fontSize: '11px',
@@ -478,11 +478,11 @@ const Dashboard = () => {
                       className="w-2.5 h-2.5 rounded-full shrink-0"
                       style={{ backgroundColor: CHART_PALETTE[idx % CHART_PALETTE.length] }}
                     />
-                    <span className="text-[#E5E5E7] truncate text-[11px] font-medium">{cat.name}</span>
+                    <span className="text-[#282521] dark:text-[#EDE8E1] truncate text-[11px] font-medium">{cat.name}</span>
                   </div>
                   <div className="flex items-center gap-2 shrink-0 font-mono text-[11px]">
-                    <span className="text-[#8E8E93]">{cat.count}</span>
-                    <span className="text-[#C5A880] font-bold">{cat.percentage}</span>
+                    <span className="text-[#635E56] dark:text-[#A8A196]">{cat.count}</span>
+                    <span className="text-[#5B3E57] dark:text-[#D1A7CC] font-bold">{cat.percentage}</span>
                   </div>
                 </div>
               ))}
@@ -496,20 +496,20 @@ const Dashboard = () => {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={SPRING_TRANSITION}
-        className="rounded-3xl bg-[#0F0F13] border border-white/[0.04] shadow-sm overflow-hidden"
+        className="rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] shadow-sm overflow-hidden"
       >
-        <div className="px-6 py-5 border-b border-white/[0.04] flex items-center justify-between">
+        <div className="px-6 py-5 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-bold text-[#F5F5F7]">
+            <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">
               Recent Ledger Settlements (INR - ₹)
             </h2>
-            <p className="text-[11px] text-[#8E8E93] mt-0.5">
+            <p className="text-[11px] text-[#635E56] dark:text-[#A8A196] mt-0.5">
               Authoritative transaction feed from live payment gateway records
             </p>
           </div>
           <Link
             to="/admin/orders"
-            className="text-xs font-semibold text-[#C5A880] hover:text-[#D4BC98] flex items-center gap-1 transition-colors"
+            className="text-xs font-semibold text-[#5B3E57] dark:text-[#D1A7CC] hover:text-[#D4BC98] flex items-center gap-1 transition-colors"
           >
             <span>Full Ledger Matrix</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -518,7 +518,7 @@ const Dashboard = () => {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#14141A]/50 text-[#8E8E93] border-b border-white/[0.04]">
+            <thead className="bg-[#F5F2EC] dark:bg-[#151413]/50 text-[#635E56] dark:text-[#A8A196] border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
               <tr>
                 <th className="px-6 py-3.5 font-bold uppercase tracking-wider text-[10px]">Reference</th>
                 <th className="px-6 py-3.5 font-bold uppercase tracking-wider text-[10px]">Candidate</th>
@@ -530,20 +530,20 @@ const Dashboard = () => {
             <tbody className="divide-y divide-white/[0.02]">
               {recentOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-10 text-center text-[#71717A]">
+                  <td colSpan={5} className="px-6 py-10 text-center text-[#756E64] dark:text-[#7A7368]">
                     No settlement records found in live ledger.
                   </td>
                 </tr>
               ) : (
                 recentOrders.map((order) => (
                   <tr key={order.fullId || order.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="px-6 py-4 font-mono font-semibold text-[#C5A880]">
+                    <td className="px-6 py-4 font-mono font-semibold text-[#5B3E57] dark:text-[#D1A7CC]">
                       {order.id}
                     </td>
-                    <td className="px-6 py-4 font-medium text-[#F5F5F7]">
+                    <td className="px-6 py-4 font-medium text-[#282521] dark:text-[#EDE8E1]">
                       {order.user}
                     </td>
-                    <td className="px-6 py-4 font-mono text-[#F5F5F7] font-semibold">
+                    <td className="px-6 py-4 font-mono text-[#282521] dark:text-[#EDE8E1] font-semibold">
                       ₹{order.amount.toLocaleString()}
                     </td>
                     <td className="px-6 py-4">
@@ -554,7 +554,7 @@ const Dashboard = () => {
                         {order.status}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 font-mono text-[#71717A] text-[11px]">
+                    <td className="px-6 py-4 font-mono text-[#756E64] dark:text-[#7A7368] text-[11px]">
                       {order.date}
                     </td>
                   </tr>

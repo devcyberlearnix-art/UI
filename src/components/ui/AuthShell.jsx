@@ -48,7 +48,7 @@ export const AuthShell = ({
       {/* ── DESKTOP BRAND SHOWCASE COLUMN (LEFT) ── */}
       {!centered && (
         <section
-          className="hidden lg:flex lg:w-1/2 relative bg-[#EAE5DC] dark:bg-[#1D1C1A] border-r border-[#E3DCD3] dark:border-white/[0.06] p-8 lg:p-12 xl:p-14 flex-col justify-start overflow-hidden"
+          className="hidden lg:flex lg:w-1/2 relative bg-[#EAE5DC] dark:bg-[#1D1C1A] border-r border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-8 lg:p-12 xl:p-14 flex-col justify-start overflow-hidden"
           aria-label="Asivo Learning Platform"
         >
           {/* Subtle Ambient Radial Highlight */}
@@ -100,9 +100,9 @@ export const AuthShell = ({
                 return (
                   <div
                     key={b.title}
-                    className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-[#FFFEFA] dark:bg-[#272523] border border-[#E3DCD3] dark:border-white/[0.06] shadow-xs hover:border-[#D8D0C5] dark:hover:border-white/[0.1] transition-all"
+                    className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-[#FFFEFA] dark:bg-[#272523] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] shadow-xs hover:border-[#D8D0C5] dark:hover:border-white/[0.1] transition-all"
                   >
-                    <div className="w-9 h-9 rounded-xl bg-[#F2ECF1] dark:bg-[#1D1C1A] border border-[#D5C0D1] dark:border-white/[0.08] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] shrink-0 mt-0.5">
+                    <div className="w-9 h-9 rounded-xl bg-[#F2ECF1] dark:bg-[#1D1C1A] border border-[#D5C0D1] dark:border-[#E3DCD3] dark:border-white/[0.08] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] shrink-0 mt-0.5">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div>
@@ -120,7 +120,7 @@ export const AuthShell = ({
           </div>
 
           {/* Bottom Trust & Security Strip */}
-          <div className="relative z-10 mt-auto pt-8 border-t border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between text-[11px] text-[#827B71] dark:text-[#7A7368]">
+          <div className="relative z-10 mt-auto pt-8 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between text-[11px] text-[#827B71] dark:text-[#7A7368]">
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
               <span className="text-[#635E56] dark:text-[#A69F94]">Enterprise Security &amp; Encrypted Sessions</span>
@@ -145,7 +145,7 @@ export const AuthShell = ({
         }`}
       >
         {/* Mobile Header Brand (small screens < 1024px) */}
-        <div className="w-full max-w-[460px] lg:hidden flex items-center justify-between mb-6 pb-4 border-b border-[#E3DCD3] dark:border-white/[0.06]">
+        <div className="w-full max-w-[460px] lg:hidden flex items-center justify-between mb-6 pb-4 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
           <Link to="/" className="inline-flex items-center gap-3 group" aria-label="Asivo Home">
             <div className="w-10 h-10 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#5B3E57]/20 dark:border-[#D1A7CC]/30 flex items-center justify-center shadow-xs overflow-hidden shrink-0 transition-transform group-hover:scale-105">
               <img
@@ -184,14 +184,14 @@ export const AuthShell = ({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={SPRING_TRANSITION}
-            className="w-full rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 sm:p-8 shadow-card"
+            className="w-full rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-6 sm:p-8 shadow-card"
           >
             {showCardBrand && (
               <div className="flex items-center justify-center gap-2 mb-6">
-                <div className="w-7 h-7 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] border border-[#5B3E57] dark:border-[#D1A7CC]/20 dark:border-[#C5A880]/30 flex items-center justify-center overflow-hidden">
+                <div className="w-7 h-7 rounded-xl bg-[#EAE5DC] dark:bg-[#1D1C1A] border border-[#5B3E57] dark:border-[#D1A7CC]/20 dark:border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 flex items-center justify-center overflow-hidden">
                   <img src="/assets/asivo-symbol-64.png" alt="Asivo" className="w-4 h-4 object-contain" />
                 </div>
-                <span className="text-xs font-bold tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#C5A880] uppercase">
+                <span className="text-xs font-bold tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#5B3E57] dark:text-[#D1A7CC] uppercase">
                   ASIVO AUTH
                 </span>
               </div>
@@ -200,13 +200,13 @@ export const AuthShell = ({
             {children}
 
             {showTerms && (
-              <div className="mt-6 pt-4 border-t border-[#E3DCD3] dark:border-white/[0.06] text-center text-[11px] text-[#756E64] dark:text-[#7A7368] leading-relaxed">
+              <div className="mt-6 pt-4 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-center text-[11px] text-[#756E64] dark:text-[#7A7368] leading-relaxed">
                 By continuing, you agree to our{' '}
-                <Link to="/terms" className="text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#C5A880] hover:underline font-medium">
+                <Link to="/terms" className="text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#5B3E57] dark:text-[#D1A7CC] hover:underline font-medium">
                   Terms of Service
                 </Link>{' '}
                 and{' '}
-                <Link to="/privacy" className="text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#C5A880] hover:underline font-medium">
+                <Link to="/privacy" className="text-[#5B3E57] dark:text-[#D1A7CC] dark:text-[#5B3E57] dark:text-[#D1A7CC] hover:underline font-medium">
                   Privacy Policy
                 </Link>.
               </div>

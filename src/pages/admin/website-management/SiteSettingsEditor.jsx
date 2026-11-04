@@ -12,7 +12,7 @@ export default function SiteSettingsEditor() {
     'brand.name': 'FD_LMS',
     'brand.tagline': 'Architecture',
     'brand.logoUrl': '',
-    'brand.accentColor': '#C5A880',
+    'brand.accentColor': '#5B3E57',
     'contact.email': 'lead@cyberlearnix.io',
     'contact.supportPhone': '+1 (800) 412-ARCH',
     'social.github': 'https://github.com/cyberlearnix',
@@ -75,23 +75,23 @@ export default function SiteSettingsEditor() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] p-6 lg:p-8">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] p-6 lg:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between pb-6 border-b border-white/[0.04]">
+        <div className="flex items-center justify-between pb-6 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/admin/website-management')}
-              className="p-2 rounded-xl bg-[#0F0F13] border border-white/[0.06] hover:border-[#C5A880]/30 text-[#A1A1AA] hover:text-white"
+              className="p-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 text-[#A1A1AA] hover:text-white"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-[#F5F5F7] flex items-center gap-2">
-                <Sliders className="w-5 h-5 text-[#C5A880]" />
+              <h1 className="text-xl font-bold tracking-tight text-[#282521] dark:text-[#EDE8E1] flex items-center gap-2">
+                <Sliders className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" />
                 Site Branding & Settings
               </h1>
-              <p className="text-xs text-[#71717A] mt-0.5">
+              <p className="text-xs text-[#756E64] dark:text-[#7A7368] mt-0.5">
                 Brand signature, logo asset, contact details, and social channels
               </p>
             </div>
@@ -102,8 +102,8 @@ export default function SiteSettingsEditor() {
         </div>
 
         {/* Branding Group */}
-        <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-4">
-          <h2 className="text-sm font-bold text-[#F5F5F7]">Brand Identity</h2>
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
+          <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Brand Identity</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-[#A1A1AA] block mb-1.5">Brand Name</label>
@@ -111,7 +111,7 @@ export default function SiteSettingsEditor() {
                 type="text"
                 value={settings['brand.name'] || ''}
                 onChange={e => handleChange('brand.name', e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] text-sm text-[#F5F5F7] outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-sm text-[#282521] dark:text-[#EDE8E1] outline-none"
               />
             </div>
             <div>
@@ -120,7 +120,7 @@ export default function SiteSettingsEditor() {
                 type="text"
                 value={settings['brand.tagline'] || ''}
                 onChange={e => handleChange('brand.tagline', e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] text-sm text-[#F5F5F7] outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-sm text-[#282521] dark:text-[#EDE8E1] outline-none"
               />
             </div>
           </div>
@@ -133,10 +133,10 @@ export default function SiteSettingsEditor() {
                 placeholder="https://... or upload local image"
                 value={settings['brand.logoUrl'] || ''}
                 onChange={e => handleChange('brand.logoUrl', e.target.value)}
-                className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] text-sm text-[#F5F5F7] outline-none"
+                className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-sm text-[#282521] dark:text-[#EDE8E1] outline-none"
               />
-              <label className="px-4 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] hover:border-[#C5A880]/30 text-xs font-semibold text-[#F5F5F7] flex items-center gap-1.5 cursor-pointer">
-                <Upload className="w-3.5 h-3.5 text-[#C5A880]" />
+              <label className="px-4 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] flex items-center gap-1.5 cursor-pointer">
+                <Upload className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
                 {isUploading ? 'Uploading...' : 'Upload'}
                 <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
               </label>
@@ -145,8 +145,8 @@ export default function SiteSettingsEditor() {
         </div>
 
         {/* Contact Group */}
-        <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-4">
-          <h2 className="text-sm font-bold text-[#F5F5F7]">Contact & Channel Information</h2>
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
+          <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Contact & Channel Information</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-[#A1A1AA] block mb-1.5">Support Email</label>
@@ -154,7 +154,7 @@ export default function SiteSettingsEditor() {
                 type="email"
                 value={settings['contact.email'] || ''}
                 onChange={e => handleChange('contact.email', e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] text-sm text-[#F5F5F7] outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-sm text-[#282521] dark:text-[#EDE8E1] outline-none"
               />
             </div>
             <div>
@@ -163,15 +163,15 @@ export default function SiteSettingsEditor() {
                 type="text"
                 value={settings['contact.supportPhone'] || ''}
                 onChange={e => handleChange('contact.supportPhone', e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#14141A] border border-white/[0.08] text-sm text-[#F5F5F7] outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-sm text-[#282521] dark:text-[#EDE8E1] outline-none"
               />
             </div>
           </div>
         </div>
 
         {/* Social Links Group */}
-        <div className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-4">
-          <h2 className="text-sm font-bold text-[#F5F5F7]">Community & Social Channels</h2>
+        <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
+          <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1]">Community & Social Channels</h2>
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
               <label className="text-xs font-semibold text-[#A1A1AA] block mb-1.5">GitHub URL</label>
@@ -179,7 +179,7 @@ export default function SiteSettingsEditor() {
                 type="url"
                 value={settings['social.github'] || ''}
                 onChange={e => handleChange('social.github', e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-[#14141A] border border-white/[0.08] text-xs text-[#F5F5F7] outline-none"
+                className="w-full px-3 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none"
               />
             </div>
             <div>
@@ -188,7 +188,7 @@ export default function SiteSettingsEditor() {
                 type="url"
                 value={settings['social.linkedin'] || ''}
                 onChange={e => handleChange('social.linkedin', e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-[#14141A] border border-white/[0.08] text-xs text-[#F5F5F7] outline-none"
+                className="w-full px-3 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none"
               />
             </div>
             <div>
@@ -197,7 +197,7 @@ export default function SiteSettingsEditor() {
                 type="url"
                 value={settings['social.discord'] || ''}
                 onChange={e => handleChange('social.discord', e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-[#14141A] border border-white/[0.08] text-xs text-[#F5F5F7] outline-none"
+                className="w-full px-3 py-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] text-xs text-[#282521] dark:text-[#EDE8E1] outline-none"
               />
             </div>
           </div>

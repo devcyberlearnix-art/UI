@@ -160,17 +160,17 @@ const LiveClassPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
-              className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl shadow-sm border border-[#E3DCD3] dark:border-white/[0.08] overflow-hidden hover:shadow-md transition"
+              className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl shadow-sm border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] overflow-hidden hover:shadow-md transition"
             >
               {/* Header */}
-              <div className="bg-[#0F0F13] border-b border-white/[0.06] p-4 text-white">
+              <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] border-b border-[#E3DCD3] dark:border-white/[0.06] p-4 text-white">
                 <div className="flex items-center justify-between mb-2">
                   <span className={`px-2 py-1 rounded-full text-xs font-bold ${
                     getStatusColor(liveClass.status)
                   }`}>
                     {liveClass.status}
                   </span>
-                  <Video size={18} className="text-[#C5A880]" />
+                  <Video size={18} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
                 </div>
                 <h3 className="font-bold text-lg line-clamp-1">{liveClass.title}</h3>
               </div>
@@ -198,12 +198,12 @@ const LiveClassPage = () => {
               </div>
 
               {/* Actions */}
-              <div className="p-4 border-t border-[#E3DCD3] dark:border-white/[0.08]">
+              <div className="p-4 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08]">
                 {liveClass.status === 'SCHEDULED' || liveClass.status === 'IN_PROGRESS' ? (
                   <button
                     onClick={() => handleJoin(liveClass.id)}
                     disabled={joining === liveClass.id}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#C5A880] text-[#070709] font-bold hover:bg-[#D4BC98] transition shadow-sm disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold hover:bg-[#462D42] dark:hover:bg-[#C293BD] transition shadow-sm disabled:opacity-50"
                   >
                     {joining === liveClass.id ? (
                       <>
@@ -231,7 +231,7 @@ const LiveClassPage = () => {
           ))}
 
           {liveClasses.length === 0 && (
-            <div className="col-span-full text-center py-16 bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border-2 border-dashed border-[#E3DCD3] dark:border-white/[0.08]">
+            <div className="col-span-full text-center py-16 bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border-2 border-dashed border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08]">
               <Video size={48} className="mx-auto text-[#D8D0C5] dark:text-[#7A7368] mb-4" />
               <h3 className="text-xl font-bold text-[#282521] dark:text-[#EDE8E1] mb-2">No Live Classes Scheduled</h3>
               <p className="text-[#756E64] dark:text-[#7A7368] mb-6">
@@ -269,7 +269,7 @@ const LiveClassPage = () => {
                 </div>
                 <div className="text-xs text-[#635E56] dark:text-[#A69F94]">Upcoming</div>
               </div>
-              <div className="p-4 rounded-xl bg-[#FAF8F5] dark:bg-white/[0.04] border border-[#E3DCD3] dark:border-white/[0.08] text-center">
+              <div className="p-4 rounded-xl bg-[#FAF8F5] dark:bg-white/[0.04] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] text-center">
                 <div className="text-2xl font-black text-[#635E56] dark:text-[#A69F94]">
                   {liveClasses.length}
                 </div>

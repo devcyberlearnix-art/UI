@@ -228,7 +228,17 @@ export const AuthProvider = ({ children }) => {
       if (isAdmin) {
         response = await adminApi.loginDirect(emailStr.trim(), passwordStr);
       } else {
-        response = await authApi.login(emailStr.trim(), passwordStr);
+        try {
+          response = await authApi.login(emailStr.trim(), passwordStr);
+        } catch (err) {
+          // If standard user login fails, check if this user is an admin signing in via the main login page
+          try {
+            response = await adminApi.loginDirect(emailStr.trim(), passwordStr);
+            isAdmin = true;
+          } catch {
+            throw err;
+          }
+        }
       }
       
       let tokenData = null;

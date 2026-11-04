@@ -48,7 +48,7 @@ const STATUS_CONFIG = {
     label: 'Archived Recording',
     variant: 'secondary',
     dot: false,
-    badgeClass: 'bg-white/5 text-ink-300 border-white/10',
+    badgeClass: 'bg-white/5 text-ink-300 border-[#D5C0D1] dark:border-white/10',
   },
   CANCELLED: {
     label: 'Session Cancelled',
@@ -173,7 +173,7 @@ export const LiveClassrooms = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full p-8 rounded-3xl bg-[#0F0F13] border border-amber-500/30 text-center space-y-4"
+          className="max-w-md w-full p-8 rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-amber-500/30 text-center space-y-4"
         >
           <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 mx-auto flex items-center justify-center text-amber-400">
             <ShieldAlert size={32} />
@@ -181,7 +181,7 @@ export const LiveClassrooms = () => {
           <h2 className="text-xl font-bold text-white tracking-tight">
             Active Course Enrollment Required
           </h2>
-          <p className="text-xs text-[#8E8E93] leading-relaxed">
+          <p className="text-xs text-[#635E56] dark:text-[#A8A196] leading-relaxed">
             Live classroom video broadcasting and interactive participation requires an active, verified enrollment in this engineering track.
           </p>
           <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
@@ -265,20 +265,20 @@ export const LiveClassrooms = () => {
   }, [sessions, activeTab, searchQuery]);
 
   return (
-    <div className="space-y-8 font-sans selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="space-y-8 font-sans selection:bg-[#5B3E57] dark:bg-[#D1A7CC]/30 selection:text-white">
       {/* ======================= HERO SECTION RAIL ======================= */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#121217] via-[#0F0F13] to-[#070709] border border-white/[0.06] p-6 sm:p-8 shadow-2xl">
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-[#C5A880]/5 blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#FFFEFA] to-[#FFFEFA] dark:from-[#1D1C1A] dark:to-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] p-6 sm:p-8 shadow-2xl">
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-[#5B3E57]/5 dark:bg-[#D1A7CC]/5 blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C5A880]/10 border border-[#C5A880]/20 text-[#C5A880] text-xs font-mono font-bold tracking-wider">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/30 dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-mono font-bold tracking-wider">
               <Radio size={14} className="animate-pulse text-rose-500" />
               <span>LIVE TRANSMISSION MESH</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F5F5F7] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
               Interactive Live Classrooms
             </h1>
-            <p className="text-xs sm:text-sm text-[#8E8E93] max-w-xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#635E56] dark:text-[#A8A196] max-w-xl leading-relaxed">
               Real-time engineering broadcasts, architectural code teardowns, and instructor Q&A sessions synchronized directly from active curriculum tracks.
             </p>
           </div>
@@ -307,9 +307,9 @@ export const LiveClassrooms = () => {
       </div>
 
       {/* ======================= CONTROLS & FILTER RAIL ======================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-white/[0.04]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
         {/* Status Tab Pills */}
-        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#0F0F13] border border-white/[0.04] overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] overflow-x-auto scrollbar-none">
           {[
             { id: 'ALL', label: 'All Sessions' },
             { id: 'IN_PROGRESS', label: 'Live Now' },
@@ -325,13 +325,13 @@ export const LiveClassrooms = () => {
                 className={`relative px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
                   isActive
                     ? 'text-white'
-                    : 'text-[#8E8E93] hover:text-[#E5E5E7] hover:bg-white/[0.02]'
+                    : 'text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:text-[#EDE8E1] hover:bg-white/[0.02]'
                 }`}
               >
                 {isActive && (
                   <motion.div
                     layoutId="activeLiveClassTab"
-                    className="absolute inset-0 bg-[#C5A880]/15 border border-[#C5A880]/30 rounded-xl -z-10 shadow-[0_0_15px_rgba(197,168,128,0.1)]"
+                    className="absolute inset-0 bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 rounded-xl -z-10 shadow-sm"
                     transition={SPRING}
                   />
                 )}
@@ -343,13 +343,13 @@ export const LiveClassrooms = () => {
 
         {/* Search Filter */}
         <div className="relative w-full sm:w-72">
-          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" />
+          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Filter sessions, instructors..."
-            className="w-full pl-9 pr-4 py-2 bg-[#0F0F13] border border-white/[0.04] rounded-xl text-xs font-mono text-white placeholder-[#71717A] focus:outline-none focus:border-[#C5A880]/40 transition-colors"
+            className="w-full pl-9 pr-4 py-2 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] rounded-xl text-xs font-mono text-white placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] transition-colors"
           />
         </div>
       </div>
@@ -361,17 +361,17 @@ export const LiveClassrooms = () => {
           {Array.from({ length: 6 }).map((_, idx) => (
             <div
               key={idx}
-              className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-4 shadow-xl"
+              className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-4 shadow-xl"
             >
               <div className="flex items-center justify-between">
-                <Skeleton className="h-5 w-24 rounded-full bg-[#14141A]" />
-                <Skeleton className="h-4 w-16 rounded bg-[#14141A]" />
+                <Skeleton className="h-5 w-24 rounded-full bg-[#F5F2EC] dark:bg-[#151413]" />
+                <Skeleton className="h-4 w-16 rounded bg-[#F5F2EC] dark:bg-[#151413]" />
               </div>
-              <Skeleton className="h-6 w-3/4 rounded-lg bg-[#14141A]" />
-              <Skeleton className="h-4 w-full rounded bg-[#14141A]" />
-              <div className="pt-2 border-t border-white/[0.04] flex items-center justify-between">
-                <Skeleton className="h-4 w-28 rounded bg-[#14141A]" />
-                <Skeleton className="h-8 w-24 rounded-xl bg-[#14141A]" />
+              <Skeleton className="h-6 w-3/4 rounded-lg bg-[#F5F2EC] dark:bg-[#151413]" />
+              <Skeleton className="h-4 w-full rounded bg-[#F5F2EC] dark:bg-[#151413]" />
+              <div className="pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between">
+                <Skeleton className="h-4 w-28 rounded bg-[#F5F2EC] dark:bg-[#151413]" />
+                <Skeleton className="h-8 w-24 rounded-xl bg-[#F5F2EC] dark:bg-[#151413]" />
               </div>
             </div>
           ))}
@@ -432,10 +432,10 @@ export const LiveClassrooms = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={SPRING}
-                  className={`p-6 rounded-2xl bg-[#0F0F13] border transition-all duration-300 flex flex-col justify-between gap-5 relative overflow-hidden group hover:border-[#C5A880]/30 shadow-xl ${
+                  className={`p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border transition-all duration-300 flex flex-col justify-between gap-5 relative overflow-hidden group hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 shadow-xl ${
                     isLive
-                      ? 'border-rose-500/30 bg-gradient-to-b from-[#141215] to-[#0F0F13]'
-                      : 'border-white/[0.04]'
+                      ? 'border-rose-500/30 bg-gradient-to-b from-[#FFFEFA] to-[#FFFEFA] dark:from-[#1D1C1A] dark:to-[#151413]'
+                      : 'border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]'
                   }`}
                 >
                   {/* Subtle top indicator bar */}
@@ -456,7 +456,7 @@ export const LiveClassrooms = () => {
                       </span>
 
                       {session.durationMinutes && (
-                        <span className="text-[11px] font-mono text-[#8E8E93] flex items-center gap-1">
+                        <span className="text-[11px] font-mono text-[#635E56] dark:text-[#A8A196] flex items-center gap-1">
                           <Clock size={12} />
                           <span>{session.durationMinutes} min</span>
                         </span>
@@ -465,24 +465,24 @@ export const LiveClassrooms = () => {
 
                     {/* Session Title */}
                     <div>
-                      <h3 className="text-base font-bold text-white tracking-tight group-hover:text-[#C5A880] transition-colors line-clamp-2">
+                      <h3 className="text-base font-bold text-white tracking-tight group-hover:text-[#5B3E57] dark:group-hover:text-[#D1A7CC] transition-colors line-clamp-2">
                         {session.title || session.topic || 'Engineering Architecture Q&A'}
                       </h3>
                       {session.description && (
-                        <p className="text-xs text-[#8E8E93] line-clamp-2 mt-1 leading-relaxed">
+                        <p className="text-xs text-[#635E56] dark:text-[#A8A196] line-clamp-2 mt-1 leading-relaxed">
                           {session.description}
                         </p>
                       )}
                     </div>
 
                     {/* Schedule Time Pill */}
-                    <div className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA] bg-white/[0.02] p-2.5 rounded-xl border border-white/[0.04]">
-                      <Calendar size={13} className="text-[#C5A880]" />
+                    <div className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA] bg-white/[0.02] p-2.5 rounded-xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+                      <Calendar size={13} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
                       <span className="truncate">{formattedDate}</span>
                     </div>
 
                     {/* Instructor & Meta */}
-                    <div className="flex items-center justify-between text-xs text-[#71717A] pt-1">
+                    <div className="flex items-center justify-between text-xs text-[#756E64] dark:text-[#7A7368] pt-1">
                       <span className="flex items-center gap-1.5 truncate">
                         <Users size={12} />
                         <span>Lead: {session.instructorName || session.instructor || 'Lead Architect'}</span>
@@ -496,8 +496,8 @@ export const LiveClassrooms = () => {
                   </div>
 
                   {/* Actions Deck */}
-                  <div className="pt-4 border-t border-white/[0.04] flex items-center justify-between gap-3">
-                    <span className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">
+                  <div className="pt-4 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between gap-3">
+                    <span className="text-[10px] font-mono text-[#756E64] dark:text-[#7A7368] uppercase tracking-wider">
                       {session.courseName || `Course #${session.courseId || 2}`}
                     </span>
 

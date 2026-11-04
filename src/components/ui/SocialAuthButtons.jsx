@@ -62,8 +62,8 @@ export const SocialAuthButtons = ({ mode = "signin" }) => {
   return (
     <div className="w-full space-y-3 pt-2">
       <div className="relative flex items-center justify-center">
-        <div className="w-full border-t border-white/[0.06]" />
-        <span className="absolute bg-[#0F0F13] px-3 text-[10px] uppercase font-mono tracking-wider text-[#71717A]">
+        <div className="w-full border-t border-[#E3DCD3] dark:border-white/[0.06]" />
+        <span className="absolute bg-[#FFFEFA] dark:bg-[#1D1C1A] px-3 text-[10px] uppercase font-mono tracking-wider text-[#756E64] dark:text-[#7A7368]">
           Or continue with
         </span>
       </div>
@@ -76,10 +76,10 @@ export const SocialAuthButtons = ({ mode = "signin" }) => {
           disabled={redirecting}
           title={`${actionText} with Google`}
           aria-label={`${actionText} with Google`}
-          className="group relative flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border border-white/[0.08] bg-[#14141A]/80 py-2.5 px-2 sm:px-3 text-xs font-medium text-[#D4D4D8] transition-all duration-200 hover:bg-[#1A1A22] hover:border-[#4285F4]/50 hover:text-[#F5F5F7] hover:shadow-md cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A880] focus-visible:ring-offset-1 focus-visible:ring-offset-[#14141A]"
+          className="group relative flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border border-[#E3DCD3] dark:border-white/[0.08] bg-[#F5F2EC] dark:bg-[#151413]/80 py-2.5 px-2 sm:px-3 text-xs font-medium text-[#D4D4D8] transition-all duration-200 hover:bg-[#EAE5DC] dark:bg-[#1D1C1A] hover:border-[#4285F4]/50 hover:text-[#282521] dark:text-[#EDE8E1] hover:shadow-md cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B3E57] dark:focus-visible:ring-[#D1A7CC] focus-visible:ring-offset-1 focus-visible:ring-offset-[#FFFEFA] dark:focus-visible:ring-offset-[#1D1C1A]"
         >
           {redirecting ? (
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#C5A880] border-t-transparent" />
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#5B3E57] dark:border-[#D1A7CC] border-t-transparent" />
           ) : (
             <>
               <GoogleIcon />
@@ -95,10 +95,10 @@ export const SocialAuthButtons = ({ mode = "signin" }) => {
           aria-disabled="true"
           title="GitHub authentication is unavailable in this environment"
           aria-label={`${actionText} with GitHub (Unavailable)`}
-          className="group relative flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border border-dashed border-white/[0.06] bg-[#14141A]/30 py-2.5 px-2 sm:px-3 text-xs font-medium text-[#71717A] opacity-50 cursor-not-allowed"
+          className="group relative flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border border-dashed border-[#E3DCD3] dark:border-white/[0.06] bg-[#F5F2EC] dark:bg-[#151413]/30 py-2.5 px-2 sm:px-3 text-xs font-medium text-[#756E64] dark:text-[#7A7368] opacity-50 cursor-not-allowed"
         >
           <GitHubIcon />
-          <span className="font-sans text-[11px] sm:text-xs text-[#71717A]">GitHub</span>
+          <span className="font-sans text-[11px] sm:text-xs text-[#756E64] dark:text-[#7A7368]">GitHub</span>
           <span className="sr-only">(Unavailable)</span>
         </button>
 
@@ -109,10 +109,10 @@ export const SocialAuthButtons = ({ mode = "signin" }) => {
           aria-disabled="true"
           title="LinkedIn authentication is unavailable in this environment"
           aria-label={`${actionText} with LinkedIn (Unavailable)`}
-          className="group relative flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border border-dashed border-white/[0.06] bg-[#14141A]/30 py-2.5 px-2 sm:px-3 text-xs font-medium text-[#71717A] opacity-50 cursor-not-allowed"
+          className="group relative flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border border-dashed border-[#E3DCD3] dark:border-white/[0.06] bg-[#F5F2EC] dark:bg-[#151413]/30 py-2.5 px-2 sm:px-3 text-xs font-medium text-[#756E64] dark:text-[#7A7368] opacity-50 cursor-not-allowed"
         >
           <LinkedInIcon />
-          <span className="font-sans text-[11px] sm:text-xs text-[#71717A]">LinkedIn</span>
+          <span className="font-sans text-[11px] sm:text-xs text-[#756E64] dark:text-[#7A7368]">LinkedIn</span>
           <span className="sr-only">(Unavailable)</span>
         </button>
       </div>

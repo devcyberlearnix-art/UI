@@ -35,6 +35,7 @@ import { useAuth } from '../context/AuthContext';
 import Button from '../design-system/primitives/Button';
 import Badge from '../design-system/primitives/Badge';
 import { Skeleton } from '../design-system/primitives/Skeleton';
+import { resolveCoverImage } from '../design-system/components/CourseCard';
 
 const SPRING_TRANSITION = {
   type: 'spring',
@@ -233,10 +234,10 @@ export const CourseDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#070709] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] flex items-center justify-center p-6">
         <div className="text-center space-y-3">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-[#C5A880] border-t-transparent" />
-          <p className="text-xs font-mono text-[#8E8E93]">Accessing curriculum node telemetry...</p>
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-2 border-[#5B3E57] dark:border-[#D1A7CC] border-t-transparent" />
+          <p className="text-xs font-mono text-[#635E56] dark:text-[#A8A196]">Accessing curriculum node telemetry...</p>
         </div>
       </div>
     );
@@ -244,11 +245,11 @@ export const CourseDetail = () => {
 
   if (error || !course) {
     return (
-      <div className="min-h-screen bg-[#070709] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] flex items-center justify-center p-6">
         <div className="text-center space-y-4 max-w-md">
           <AlertCircle className="text-rose-400 w-12 h-12 mx-auto" />
-          <h2 className="text-xl font-bold text-[#F5F5F7] tracking-tight">Curriculum Node Unavailable</h2>
-          <p className="text-xs text-[#8E8E93] leading-relaxed">{error || 'Course not found in active catalog.'}</p>
+          <h2 className="text-xl font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">Curriculum Node Unavailable</h2>
+          <p className="text-xs text-[#635E56] dark:text-[#A8A196] leading-relaxed">{error || 'Course not found in active catalog.'}</p>
           <Button variant="primary" size="sm" onClick={() => navigate('/courses')}>
             Return to Catalog
           </Button>
@@ -261,15 +262,15 @@ export const CourseDetail = () => {
   const isFree = Number(course.price || 0) === 0 || course.isFree === true;
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] font-sans selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] font-sans selection:bg-[#5B3E57]/20 dark:selection:bg-[#D1A7CC]/30">
       {/* ===================== HERO SECTION ===================== */}
-      <section className="border-b border-white/[0.04] bg-[#0F0F13]">
+      <section className="border-b border-[#E3DCD3] dark:border-white/[0.04] bg-[#FFFEFA] dark:bg-[#1D1C1A]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
           {/* Back Navigation Breadcrumb */}
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 text-xs font-semibold text-[#8E8E93] hover:text-[#F5F5F7] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:text-[#EDE8E1] transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Return to Catalog</span>
@@ -280,10 +281,10 @@ export const CourseDetail = () => {
             {/* Left 2 Cols: Course Description & Lead Attributes */}
             <div className="lg:col-span-2 space-y-4">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2.5 py-1 rounded-full bg-[#14141A] border border-[#C5A880]/30 text-[10px] font-bold text-[#C5A880] uppercase tracking-wider">
+                <span className="px-2.5 py-1 rounded-full bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#D5C0D1] dark:border-[#D1A7CC]/30 text-[10px] font-bold text-[#5B3E57] dark:text-[#D1A7CC] uppercase tracking-wider">
                   {course.category}
                 </span>
-                <span className="px-2.5 py-1 rounded-full bg-[#14141A] border border-white/[0.04] text-[10px] font-bold text-[#A1A1AA] uppercase tracking-wider">
+                <span className="px-2.5 py-1 rounded-full bg-[#EAE5DC] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] text-[10px] font-bold text-[#635E56] dark:text-[#A8A196] uppercase tracking-wider">
                   {course.level}
                 </span>
                 {isEnrolled && (
@@ -293,70 +294,70 @@ export const CourseDetail = () => {
                 )}
               </div>
 
-              <h1 className="text-2xl sm:text-4xl font-extrabold text-[#F5F5F7] tracking-tight leading-tight">
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight leading-tight">
                 {course.title}
               </h1>
 
               {course.subtitle && (
-                <p className="text-sm sm:text-base text-[#C5A880] font-medium leading-relaxed">
+                <p className="text-sm sm:text-base text-[#9A6B56] dark:text-[#D9A48F] font-medium leading-relaxed">
                   {course.subtitle}
                 </p>
               )}
 
-              <p className="text-xs sm:text-sm text-[#8E8E93] leading-relaxed max-w-3xl">
+              <p className="text-xs sm:text-sm text-[#635E56] dark:text-[#A8A196] leading-relaxed max-w-3xl">
                 {course.description}
               </p>
 
               {/* Meta Attributes Strip */}
-              <div className="flex flex-wrap items-center gap-5 pt-2 text-xs text-[#A1A1AA]">
+              <div className="flex flex-wrap items-center gap-5 pt-2 text-xs text-[#635E56] dark:text-[#A8A196]">
                 <div className="flex items-center gap-1.5">
-                  <Star className="w-4 h-4 text-[#C5A880] fill-[#C5A880]" />
-                  <span className="font-bold text-[#F5F5F7] font-mono">
+                  <Star className="w-4 h-4 text-[#C29B38] fill-[#C29B38]" />
+                  <span className="font-bold text-[#282521] dark:text-[#EDE8E1] font-mono">
                     {ratingSummary?.averageRating != null ? ratingSummary.averageRating.toFixed(1) : (course.rating != null ? Number(course.rating).toFixed(1) : '5.0')}
                   </span>
-                  <span className="text-[#71717A]">
+                  <span className="text-[#756E64] dark:text-[#7A7368]">
                     ({ratingSummary?.totalReviews ?? course.reviewsCount ?? 0} reviews)
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-[#71717A]" />
+                  <Clock className="w-4 h-4 text-[#756E64] dark:text-[#7A7368]" />
                   <span className="font-mono">
                     {curriculum?.totalDuration ? `${Math.floor(curriculum.totalDuration / 60)}h ${curriculum.totalDuration % 60}m` : (course.duration || 'Self-paced')}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <BookOpen className="w-4 h-4 text-[#71717A]" />
+                  <BookOpen className="w-4 h-4 text-[#756E64] dark:text-[#7A7368]" />
                   <span>{curriculum?.totalLectures ?? 0} Lectures</span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-[#71717A]" />
+                  <Users className="w-4 h-4 text-[#756E64] dark:text-[#7A7368]" />
                   <span>{course.enrollmentsCount ?? 0} Engineers Enrolled</span>
                 </div>
               </div>
             </div>
 
             {/* Right 1 Col: Floating Enrollment Card */}
-            <div className="p-6 rounded-2xl bg-[#14141A] border border-white/[0.04] space-y-5 shadow-2xl">
+            <div className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] space-y-5 shadow-sm dark:shadow-2xl">
               {/* Media Preview Box */}
-              <div className="relative aspect-video rounded-xl bg-[#0F0F13] border border-white/[0.04] overflow-hidden flex items-center justify-center group">
+              <div className="relative aspect-video rounded-xl bg-[#EAE5DC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.04] overflow-hidden flex items-center justify-center group">
                 {course.thumbnailUrl ? (
                   <img
-                    src={course.thumbnailUrl}
+                    src={resolveCoverImage(course.category, course.title, course.thumbnailUrl, course.id)}
                     alt={course.title}
                     className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
                   />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center bg-[#070709] text-[#71717A]">
-                    <Video className="w-8 h-8 mb-2 text-[#C5A880]" />
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-[#EAE5DC] dark:bg-[#151413] text-[#756E64] dark:text-[#7A7368]">
+                    <Video className="w-8 h-8 mb-2 text-[#5B3E57] dark:text-[#D1A7CC]" />
                     <span className="text-[10px] font-mono uppercase">Mastery Course Preview</span>
                   </div>
                 )}
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <div className="w-12 h-12 rounded-full bg-[#C5A880] text-[#070709] flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
-                    <Play className="w-5 h-5 ml-0.5 fill-[#070709]" />
+                  <div className="w-12 h-12 rounded-full bg-[#5B3E57] text-[#FFFEFA] dark:bg-[#D1A7CC] dark:text-[#151413] flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                    <Play className="w-5 h-5 ml-0.5 fill-current" />
                   </div>
                 </div>
               </div>
@@ -364,11 +365,11 @@ export const CourseDetail = () => {
               {/* Price & Action Strip */}
               <div className="flex items-baseline justify-between pt-1">
                 <div>
-                  <span className="text-2xl font-black text-[#F5F5F7] font-mono tracking-tight">
+                  <span className="text-2xl font-black text-[#282521] dark:text-[#EDE8E1] font-mono tracking-tight">
                     {isFree ? 'Free' : `₹${Number(course.price || 0).toLocaleString('en-IN')}`}
                   </span>
                   {course.originalPrice && course.originalPrice > course.price && (
-                    <span className="text-xs line-through text-[#71717A] ml-2 font-mono">
+                    <span className="text-xs line-through text-[#756E64] dark:text-[#7A7368] ml-2 font-mono">
                       ₹{course.originalPrice}
                     </span>
                   )}
@@ -423,7 +424,7 @@ export const CourseDetail = () => {
                     } ${
                       isWishlisted
                         ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
-                        : 'bg-[#0F0F13] border-white/[0.04] text-[#8E8E93] hover:text-white'
+                        : 'bg-[#F5F2EC] dark:bg-[#151413] border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:hover:text-[#EDE8E1]'
                     }`}
                   >
                     <Heart className={`w-3.5 h-3.5 ${isWishlisted ? 'fill-current' : ''}`} />
@@ -436,7 +437,7 @@ export const CourseDetail = () => {
                       navigator.clipboard.writeText(window.location.href);
                       toast.success('Curriculum link copied to clipboard');
                     }}
-                    className="p-2 rounded-xl bg-[#0F0F13] border border-white/[0.04] text-[#8E8E93] hover:text-white transition-colors cursor-pointer"
+                    className="p-2 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:hover:text-[#EDE8E1] transition-colors cursor-pointer"
                     title="Share curriculum link"
                   >
                     <Share2 className="w-3.5 h-3.5" />
@@ -445,13 +446,13 @@ export const CourseDetail = () => {
               </div>
 
               {/* Features Guarantee List */}
-              <div className="pt-3 border-t border-white/[0.04] space-y-2 text-[11px] text-[#A1A1AA]">
+              <div className="pt-3 border-t border-[#E3DCD3] dark:border-white/[0.04] space-y-2 text-[11px] text-[#635E56] dark:text-[#A8A196]">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#C5A880] shrink-0" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC] shrink-0" />
                   <span>Verifiable cryptographic certificate upon completion</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <BookOpen className="w-3.5 h-3.5 text-[#C5A880] shrink-0" />
+                  <BookOpen className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC] shrink-0" />
                   <span>Full lifetime access to interactive labs & source code</span>
                 </div>
               </div>
@@ -462,9 +463,9 @@ export const CourseDetail = () => {
 
       {/* ===================== TABBED CONTENT CANVAS ===================== */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="rounded-2xl bg-[#0F0F13] border border-white/[0.04] p-6 sm:p-8 space-y-6">
+        <div className="rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] p-6 sm:p-8 space-y-6 shadow-sm dark:shadow-xl">
           {/* Tab Switcher Header */}
-          <div className="flex items-center gap-2 border-b border-white/[0.04] pb-4 overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-2 border-b border-[#E3DCD3] dark:border-white/[0.06] pb-4 overflow-x-auto scrollbar-none">
             {[
               { id: 'curriculum', label: 'Curriculum Schema', icon: BookOpen },
               { id: 'outcomes', label: 'Engineered Outcomes', icon: Target },
@@ -481,8 +482,8 @@ export const CourseDetail = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-[#14141A] text-[#C5A880] border border-[#C5A880]/30 shadow-sm'
-                      : 'text-[#71717A] hover:text-[#F5F5F7] hover:bg-white/[0.02]'
+                      ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#5B3E57] dark:text-[#D1A7CC] border border-[#D5C0D1] dark:border-[#D1A7CC]/30 shadow-sm'
+                      : 'text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:hover:text-[#EDE8E1] hover:bg-[#F5F2EC] dark:hover:bg-white/[0.02]'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -504,10 +505,10 @@ export const CourseDetail = () => {
                 className="space-y-4"
               >
                 <div className="flex items-center justify-between pb-2">
-                  <h3 className="text-sm font-bold text-[#F5F5F7] tracking-tight">
+                  <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
                     Course Structure & Micro-Lectures
                   </h3>
-                  <span className="text-xs text-[#71717A] font-mono">
+                  <span className="text-xs text-[#756E64] dark:text-[#7A7368] font-mono">
                     {curriculum?.totalSections || 0} Sections &bull; {curriculum?.totalLectures || 0} Lectures
                   </span>
                 </div>
@@ -519,29 +520,29 @@ export const CourseDetail = () => {
                       return (
                         <div
                           key={sectionKey}
-                          className="rounded-xl bg-[#14141A]/70 border border-white/[0.04] overflow-hidden"
+                          className="rounded-xl bg-[#F5F2EC]/60 dark:bg-[#151413]/70 border border-[#E3DCD3] dark:border-white/[0.04] overflow-hidden"
                         >
                           <button
                             type="button"
                             onClick={() => toggleSection(sectionKey)}
-                            className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/[0.02] transition-colors cursor-pointer text-left"
+                            className="w-full px-4 py-3 flex items-center justify-between hover:bg-[#EAE5DC]/50 dark:hover:bg-white/[0.02] transition-colors cursor-pointer text-left"
                           >
                             <div className="flex items-center gap-3 min-w-0">
-                              <span className="w-6 h-6 rounded-lg bg-[#0F0F13] border border-white/[0.04] text-[#C5A880] flex items-center justify-center text-xs font-bold shrink-0">
+                              <span className="w-6 h-6 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] text-[#5B3E57] dark:text-[#D1A7CC] flex items-center justify-center text-xs font-bold shrink-0">
                                 {idx + 1}
                               </span>
-                              <span className="text-xs font-bold text-[#F5F5F7] truncate">
+                              <span className="text-xs font-bold text-[#282521] dark:text-[#EDE8E1] truncate">
                                 {section.title}
                               </span>
                             </div>
                             <div className="flex items-center gap-3 shrink-0">
-                              <span className="text-[11px] text-[#71717A] font-mono">
+                              <span className="text-[11px] text-[#756E64] dark:text-[#7A7368] font-mono">
                                 {section.lectures?.length || 0} lessons
                               </span>
                               {expandedSections[sectionKey] ? (
-                                <ChevronUp className="w-4 h-4 text-[#71717A]" />
+                                <ChevronUp className="w-4 h-4 text-[#756E64] dark:text-[#7A7368]" />
                               ) : (
-                                <ChevronDown className="w-4 h-4 text-[#71717A]" />
+                                <ChevronDown className="w-4 h-4 text-[#756E64] dark:text-[#7A7368]" />
                               )}
                             </div>
                           </button>
@@ -552,7 +553,7 @@ export const CourseDetail = () => {
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={{ height: 'auto', opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
-                                className="border-t border-white/[0.04] divide-y divide-white/[0.04]"
+                                className="border-t border-[#E3DCD3] dark:border-white/[0.04] divide-y divide-[#E3DCD3] dark:divide-white/[0.04]"
                               >
                                 {section.lectures?.map((lecture, lIdx) => {
                                   const lectureKey = lecture.id ?? lecture.lectureId ?? `lecture-${lIdx}`;
@@ -562,10 +563,10 @@ export const CourseDetail = () => {
                                       className="px-4 py-2.5 flex items-center justify-between text-xs hover:bg-white/[0.01]"
                                     >
                                       <div className="flex items-center gap-2.5">
-                                        <Play className="w-3.5 h-3.5 text-[#C5A880]" />
-                                        <span className="text-[#E5E5E7]">{lecture.title}</span>
+                                        <Play className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
+                                        <span className="text-[#282521] dark:text-[#EDE8E1]">{lecture.title}</span>
                                       </div>
-                                      <span className="text-[11px] font-mono text-[#71717A]">
+                                      <span className="text-[11px] font-mono text-[#756E64] dark:text-[#7A7368]">
                                         {lecture.durationMinutes || lecture.duration || 0}m
                                       </span>
                                     </div>
@@ -578,7 +579,7 @@ export const CourseDetail = () => {
                       );
                     })
                   ) : (
-                    <div className="p-8 text-center text-xs text-[#71717A]">
+                    <div className="p-8 text-center text-xs text-[#756E64] dark:text-[#7A7368]">
                       Detailed lecture syllabus is currently synchronizing with the gateway.
                     </div>
                   )}
@@ -595,7 +596,7 @@ export const CourseDetail = () => {
                 transition={SPRING_TRANSITION}
                 className="space-y-4"
               >
-                <h3 className="text-sm font-bold text-[#F5F5F7] tracking-tight">
+                <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
                   Targeted Engineering Competencies
                 </h3>
                 <div className="grid sm:grid-cols-2 gap-3">
@@ -603,16 +604,16 @@ export const CourseDetail = () => {
                     outcomes.map((outcome, oIdx) => (
                       <div
                         key={outcome.id ?? outcome.outcomeId ?? (typeof outcome === 'string' ? `outcome-${outcome}-${oIdx}` : `outcome-${oIdx}`)}
-                        className="flex items-start gap-3 p-3.5 rounded-xl bg-[#14141A]/70 border border-white/[0.04]"
+                        className="flex items-start gap-3 p-3.5 rounded-xl bg-[#F5F2EC]/60 dark:bg-[#151413]/70 border border-[#E3DCD3] dark:border-white/[0.04]"
                       >
-                        <Target className="w-4 h-4 text-[#C5A880] mt-0.5 shrink-0" />
-                        <span className="text-xs text-[#E5E5E7] leading-relaxed">
+                        <Target className="w-4 h-4 text-[#9A6B56] dark:text-[#D9A48F] mt-0.5 shrink-0" />
+                        <span className="text-xs text-[#282521] dark:text-[#EDE8E1] leading-relaxed">
                           {outcome.outcomeText || outcome}
                         </span>
                       </div>
                     ))
                   ) : (
-                    <div className="col-span-2 p-8 text-center text-xs text-[#71717A]">
+                    <div className="col-span-2 p-8 text-center text-xs text-[#756E64] dark:text-[#7A7368]">
                       Engineering outcomes specified within individual lecture assignments.
                     </div>
                   )}
@@ -629,7 +630,7 @@ export const CourseDetail = () => {
                 transition={SPRING_TRANSITION}
                 className="space-y-4"
               >
-                <h3 className="text-sm font-bold text-[#F5F5F7] tracking-tight">
+                <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
                   Environment & Architectural Prerequisites
                 </h3>
                 <div className="space-y-2.5">
@@ -637,14 +638,14 @@ export const CourseDetail = () => {
                     requirements.map((req, i) => (
                       <div
                         key={i}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-[#14141A]/70 border border-white/[0.04] text-xs text-[#E5E5E7]"
+                        className="flex items-center gap-3 p-3 rounded-xl bg-[#F5F2EC]/60 dark:bg-[#151413]/70 border border-[#E3DCD3] dark:border-white/[0.04] text-xs text-[#282521] dark:text-[#EDE8E1]"
                       >
                         <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                         <span>{req.requirementText || req}</span>
                       </div>
                     ))
                   ) : (
-                    <div className="p-8 text-center text-xs text-[#71717A]">
+                    <div className="p-8 text-center text-xs text-[#756E64] dark:text-[#7A7368]">
                       Fundamental computer science understanding and terminal familiarity required.
                     </div>
                   )}
@@ -662,15 +663,15 @@ export const CourseDetail = () => {
                 className="space-y-5"
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-[#F5F5F7] tracking-tight">
+                  <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
                     Peer Reviews & Verification Feedback
                   </h3>
-                  <div className="flex items-center gap-1.5 text-xs text-[#C5A880]">
+                  <div className="flex items-center gap-1.5 text-xs text-[#C29B38]">
                     <Star className="w-4 h-4 fill-current" />
                     <span className="font-mono font-bold">
                       {(ratingSummary?.averageRating || 0).toFixed(1)}
                     </span>
-                    <span className="text-[#71717A]">
+                    <span className="text-[#756E64] dark:text-[#7A7368]">
                       ({reviews.length} total reviews)
                     </span>
                   </div>
@@ -681,21 +682,21 @@ export const CourseDetail = () => {
                     reviews.map((rev, revIdx) => (
                       <div
                         key={rev.id ?? rev.reviewId ?? `rev-${revIdx}-${rev.createdAt || ''}`}
-                        className="p-4 rounded-xl bg-[#14141A]/70 border border-white/[0.04] space-y-2"
+                        className="p-4 rounded-xl bg-[#F5F2EC]/60 dark:bg-[#151413]/70 border border-[#E3DCD3] dark:border-white/[0.04] space-y-2"
                       >
                         <div className="flex items-center justify-between text-xs">
-                          <span className="font-bold text-[#F5F5F7]">{rev.studentName || 'Engineer'}</span>
-                          <span className="text-[10px] text-[#71717A] font-mono">
+                          <span className="font-bold text-[#282521] dark:text-[#EDE8E1]">{rev.studentName || 'Engineer'}</span>
+                          <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] font-mono">
                             {new Date(rev.createdAt || Date.now()).toLocaleDateString()}
                           </span>
                         </div>
-                        <p className="text-xs text-[#8E8E93] leading-relaxed">
+                        <p className="text-xs text-[#635E56] dark:text-[#A8A196] leading-relaxed">
                           {rev.comment}
                         </p>
                       </div>
                     ))
                   ) : (
-                    <div className="p-8 text-center text-xs text-[#71717A]">
+                    <div className="p-8 text-center text-xs text-[#756E64] dark:text-[#7A7368]">
                       No peer reviews submitted yet for this curriculum track.
                     </div>
                   )}
@@ -712,21 +713,21 @@ export const CourseDetail = () => {
                 transition={SPRING_TRANSITION}
                 className="space-y-3"
               >
-                <h3 className="text-sm font-bold text-[#F5F5F7] tracking-tight mb-4">
+                <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight mb-4">
                   Frequently Asked Questions
                 </h3>
                 {faqs.length > 0 ? (
                   faqs.map((faq, faqIdx) => (
                     <div
                       key={faq.id ?? faq.faqId ?? `faq-${faqIdx}`}
-                      className="rounded-xl bg-[#14141A]/70 border border-white/[0.04] p-4 space-y-1.5 text-xs"
+                      className="rounded-xl bg-[#F5F2EC]/60 dark:bg-[#151413]/70 border border-[#E3DCD3] dark:border-white/[0.04] p-4 space-y-1.5 text-xs"
                     >
-                      <h4 className="font-bold text-[#F5F5F7]">{faq.question}</h4>
-                      <p className="text-[#8E8E93] leading-relaxed">{faq.answer}</p>
+                      <h4 className="font-bold text-[#282521] dark:text-[#EDE8E1]">{faq.question}</h4>
+                      <p className="text-[#635E56] dark:text-[#A8A196] leading-relaxed">{faq.answer}</p>
                     </div>
                   ))
                 ) : (
-                  <div className="p-8 text-center text-xs text-[#71717A]">
+                  <div className="p-8 text-center text-xs text-[#756E64] dark:text-[#7A7368]">
                     No open FAQs recorded for this curriculum.
                   </div>
                 )}

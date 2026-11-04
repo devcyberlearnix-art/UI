@@ -114,14 +114,14 @@ const Subscription = () => {
               }`}
             >
               {plan.popular && (
-                <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#C5A880] text-[#070709] text-xs font-bold px-4 py-1 rounded-full shadow-sm">
+                <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] text-xs font-bold px-4 py-1 rounded-full shadow-sm">
                   Most Popular
                 </span>
               )}
               <div className="text-4xl mb-3">{plan.icon}</div>
               <h3 className="text-xl font-bold text-gray-800 mb-1">{plan.name}</h3>
               <div className="mb-4">
-                <span className="text-3xl font-bold font-mono text-[#C5A880]">{plan.price}</span>
+                <span className="text-3xl font-bold font-mono text-[#5B3E57] dark:text-[#D1A7CC]">{plan.price}</span>
                 <span className="text-gray-500 text-sm">{plan.period}</span>
               </div>
               <ul className="text-sm text-gray-600 space-y-2 mb-6">
@@ -137,7 +137,7 @@ const Subscription = () => {
                 disabled={loading === plan.id}
                 className={`w-full py-2.5 rounded-lg font-semibold transition ${
                   plan.popular
-                    ? "bg-[#C5A880] text-[#070709] hover:bg-[#D4BC98] font-bold shadow-sm"
+                    ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] hover:bg-[#462D42] dark:hover:bg-[#C293BD] font-bold shadow-sm"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >

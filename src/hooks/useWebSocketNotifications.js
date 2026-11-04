@@ -53,9 +53,9 @@ export function useWebSocketNotifications() {
       toast(normalized.title, {
         icon: '🔔',
         style: {
-          background: '#0F0F13',
-          color: '#F5F5F7',
-          border: '1px solid rgba(197, 168, 128, 0.2)',
+          background: 'var(--color-surface, #FFFEFA)',
+          color: 'var(--color-text-primary, #282521)',
+          border: '1px solid var(--color-border, #E3DCD3)',
           fontFamily: 'monospace',
           fontSize: '12px',
         },

@@ -228,28 +228,28 @@ const OtpVerify = () => {
           <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-sm">
             <Check size={32} strokeWidth={2.5} />
           </div>
-          <h1 className="text-2xl font-bold text-[#F5F5F7]">Email Verified</h1>
+          <h1 className="text-2xl font-bold text-[#282521] dark:text-[#EDE8E1]">Email Verified</h1>
           <p className="text-xs text-[#A1A1AA] max-w-sm mx-auto leading-relaxed">
             {flow === "login"
               ? "Your credentials have been authenticated. Redirecting you to your workspace..."
               : "Your account is activated and ready. Redirecting you to sign in..."}
           </p>
           <div className="pt-2">
-            <div className="h-5 w-5 mx-auto animate-spin rounded-full border-2 border-[#C5A880] border-t-transparent" />
+            <div className="h-5 w-5 mx-auto animate-spin rounded-full border-2 border-[#5B3E57] dark:border-[#D1A7CC] border-t-transparent" />
           </div>
         </div>
       ) : (
         <div className="space-y-6">
           <div className="text-center space-y-2">
-            <div className="w-12 h-12 mx-auto rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shadow-sm">
+            <div className="w-12 h-12 mx-auto rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] shadow-sm">
               <Mail size={22} />
             </div>
-            <h1 className="text-2xl font-extrabold text-[#F5F5F7] tracking-tight">
+            <h1 className="text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
               {flow === "login" ? "Verify Sign In" : "Verify Your Email"}
             </h1>
             <p className="text-xs text-[#A1A1AA]">
               We sent a 6-digit verification passcode to{" "}
-              <strong className="text-[#F5F5F7] font-mono">{email}</strong>
+              <strong className="text-[#282521] dark:text-[#EDE8E1] font-mono">{email}</strong>
             </p>
           </div>
 
@@ -288,10 +288,10 @@ const OtpVerify = () => {
                   disabled={loading}
                   onChange={(event) => setDigit(index, event.target.value)}
                   onKeyDown={(event) => onKeyDown(event, index)}
-                  className={`w-11 sm:w-12 h-14 text-center text-lg font-bold font-mono rounded-xl border bg-[#14141A] text-[#F5F5F7] outline-none transition-all ${
+                  className={`w-11 sm:w-12 h-14 text-center text-lg font-bold font-mono rounded-xl border bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] outline-none transition-all ${
                     digit
-                      ? "border-[#C5A880] ring-1 ring-[#C5A880]/30"
-                      : "border-white/[0.06] focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880]/30"
+                      ? "border-[#5B3E57] dark:border-[#D1A7CC] ring-1 ring-[#5B3E57]/30 dark:ring-[#D1A7CC]/30"
+                      : "border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] focus:border-[#5B3E57] dark:focus:border-[#D1A7CC] focus:ring-1 focus:ring-[#5B3E57]/30 dark:focus:ring-[#D1A7CC]/30"
                   }`}
                 />
               ))}
@@ -307,7 +307,7 @@ const OtpVerify = () => {
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#070709] border-t-transparent" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#FFFEFA] dark:border-[#151413] border-t-transparent" />
                 <span>Verifying Passcode...</span>
               </span>
             ) : (
@@ -326,7 +326,7 @@ const OtpVerify = () => {
                 type="button"
                 onClick={resend}
                 disabled={resending || cooldown > 0 || resendCount >= MAX_RESEND_ATTEMPTS}
-                className="font-bold text-[#C5A880] hover:text-[#D4BC98] disabled:opacity-50 transition-colors cursor-pointer"
+                className="font-bold text-[#5B3E57] dark:text-[#D1A7CC] hover:text-[#D4BC98] disabled:opacity-50 transition-colors cursor-pointer"
               >
                 {resending
                   ? "Sending..."
@@ -342,14 +342,14 @@ const OtpVerify = () => {
               type="button"
               onClick={changeEmail}
               disabled={loading}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#71717A] hover:text-[#F5F5F7] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:text-[#EDE8E1] transition-colors cursor-pointer"
             >
               <ArrowLeft size={13} /> Change email address
             </button>
           </div>
 
-          <div className="pt-3 border-t border-white/[0.04] text-center text-[11px] text-[#71717A] flex items-center justify-center gap-1.5">
-            <ShieldCheck size={13} className="text-[#C5A880]" />
+          <div className="pt-3 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-center text-[11px] text-[#756E64] dark:text-[#7A7368] flex items-center justify-center gap-1.5">
+            <ShieldCheck size={13} className="text-[#5B3E57] dark:text-[#D1A7CC]" />
             <span>Single-use encrypted session verification</span>
           </div>
         </div>

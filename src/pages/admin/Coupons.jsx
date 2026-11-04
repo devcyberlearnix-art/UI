@@ -224,18 +224,18 @@ export const Coupons = () => {
   const totalRedeemed = coupons.reduce((sum, c) => sum + (c.usedCount || 0), 0);
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] p-6 lg:p-10 space-y-8 font-sans">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] p-6 lg:p-10 space-y-8 font-sans">
       {/* Header telemetry node */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E3DCD3] dark:border-white/5 pb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-[#C5A880] tracking-wider uppercase mb-1">
+          <div className="flex items-center gap-2 text-xs font-mono text-[#5B3E57] dark:text-[#D1A7CC] tracking-wider uppercase mb-1">
             <Tag className="w-3.5 h-3.5" />
             <span>Platform Promotional Engine</span>
           </div>
           <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-white">
             Promotions & Coupon Matrix
           </h1>
-          <p className="text-sm text-[#8E8E93] mt-1">
+          <p className="text-sm text-[#635E56] dark:text-[#A8A196] mt-1">
             Centrally govern discount schemas, campaign batches, and test real-time validation telemetry.
           </p>
         </div>
@@ -244,21 +244,21 @@ export const Coupons = () => {
           <button
             onClick={() => refetch()}
             disabled={isFetching}
-            className="p-2.5 bg-[#14141A] border border-white/10 hover:border-white/20 rounded-xl text-white/70 hover:text-white transition-all cursor-pointer"
+            className="p-2.5 bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 rounded-xl text-white/70 hover:text-white transition-all cursor-pointer"
             title="Refresh Ledger"
           >
-            <RefreshCw className={`w-4 h-4 ${isFetching ? 'animate-spin text-[#C5A880]' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isFetching ? 'animate-spin text-[#5B3E57] dark:text-[#D1A7CC]' : ''}`} />
           </button>
           <button
             onClick={() => setShowBulkModal(true)}
-            className="px-4 py-2.5 bg-[#14141A] border border-white/10 hover:border-[#C5A880]/40 rounded-xl text-xs font-mono font-bold tracking-wider text-[#F5F5F7] hover:text-white transition-all flex items-center gap-2 cursor-pointer"
+            className="px-4 py-2.5 bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] rounded-xl text-xs font-mono font-bold tracking-wider text-[#282521] dark:text-[#EDE8E1] hover:text-white transition-all flex items-center gap-2 cursor-pointer"
           >
-            <Layers className="w-3.5 h-3.5 text-[#C5A880]" />
+            <Layers className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
             <span>Bulk Campaign</span>
           </button>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2.5 bg-[#C5A880] hover:bg-[#D4BC98] text-[#070709] rounded-xl text-xs font-bold tracking-wider uppercase transition-all shadow-lg shadow-[#C5A880]/15 flex items-center gap-2 cursor-pointer"
+            className="px-4 py-2.5 bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#462D42] dark:hover:bg-[#C293BD] text-[#FFFEFA] dark:text-[#151413] rounded-xl text-xs font-bold tracking-wider uppercase transition-all shadow-lg shadow-sm flex items-center gap-2 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Create Coupon</span>
@@ -268,63 +268,63 @@ export const Coupons = () => {
 
       {/* Metrics Rail */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-[#14141A]/60 border border-white/5 rounded-2xl p-5 space-y-2">
-          <span className="text-xs font-mono text-[#8E8E93] uppercase tracking-wider">Total Coupons</span>
+        <div className="bg-[#F5F2EC] dark:bg-[#151413]/60 border border-[#E3DCD3] dark:border-white/5 rounded-2xl p-5 space-y-2">
+          <span className="text-xs font-mono text-[#635E56] dark:text-[#A8A196] uppercase tracking-wider">Total Coupons</span>
           <div className="text-2xl font-bold text-white font-mono">{coupons.length}</div>
-          <p className="text-[11px] text-[#8E8E93]">Configured discount tokens</p>
+          <p className="text-[11px] text-[#635E56] dark:text-[#A8A196]">Configured discount tokens</p>
         </div>
-        <div className="bg-[#14141A]/60 border border-white/5 rounded-2xl p-5 space-y-2">
-          <span className="text-xs font-mono text-[#8E8E93] uppercase tracking-wider">Active Status</span>
+        <div className="bg-[#F5F2EC] dark:bg-[#151413]/60 border border-[#E3DCD3] dark:border-white/5 rounded-2xl p-5 space-y-2">
+          <span className="text-xs font-mono text-[#635E56] dark:text-[#A8A196] uppercase tracking-wider">Active Status</span>
           <div className="text-2xl font-bold text-emerald-400 font-mono">{activeCount}</div>
-          <p className="text-[11px] text-[#8E8E93]">Live and eligible for redemption</p>
+          <p className="text-[11px] text-[#635E56] dark:text-[#A8A196]">Live and eligible for redemption</p>
         </div>
-        <div className="bg-[#14141A]/60 border border-white/5 rounded-2xl p-5 space-y-2">
-          <span className="text-xs font-mono text-[#8E8E93] uppercase tracking-wider">Total Redemptions</span>
-          <div className="text-2xl font-bold text-[#C5A880] font-mono">{totalRedeemed}</div>
-          <p className="text-[11px] text-[#8E8E93]">Applied across verified orders</p>
+        <div className="bg-[#F5F2EC] dark:bg-[#151413]/60 border border-[#E3DCD3] dark:border-white/5 rounded-2xl p-5 space-y-2">
+          <span className="text-xs font-mono text-[#635E56] dark:text-[#A8A196] uppercase tracking-wider">Total Redemptions</span>
+          <div className="text-2xl font-bold text-[#5B3E57] dark:text-[#D1A7CC] font-mono">{totalRedeemed}</div>
+          <p className="text-[11px] text-[#635E56] dark:text-[#A8A196]">Applied across verified orders</p>
         </div>
-        <div className="bg-[#14141A]/60 border border-white/5 rounded-2xl p-5 space-y-2">
-          <span className="text-xs font-mono text-[#8E8E93] uppercase tracking-wider">Campaign Batches</span>
+        <div className="bg-[#F5F2EC] dark:bg-[#151413]/60 border border-[#E3DCD3] dark:border-white/5 rounded-2xl p-5 space-y-2">
+          <span className="text-xs font-mono text-[#635E56] dark:text-[#A8A196] uppercase tracking-wider">Campaign Batches</span>
           <div className="text-2xl font-bold text-[#5B3E57] dark:text-[#D1A7CC] font-mono">{campaigns.length}</div>
-          <p className="text-[11px] text-[#8E8E93]">Unique promotional tracks</p>
+          <p className="text-[11px] text-[#635E56] dark:text-[#A8A196]">Unique promotional tracks</p>
         </div>
       </div>
 
       {/* Live Validation Sandbox Node */}
-      <div className="bg-[#14141A]/80 border border-white/10 rounded-2xl p-6 space-y-4">
+      <div className="bg-[#F5F2EC] dark:bg-[#151413]/80 border border-[#D5C0D1] dark:border-white/10 rounded-2xl p-6 space-y-4">
         <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4 text-[#C5A880]" />
+          <Zap className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
           <h2 className="text-sm font-bold uppercase tracking-wider text-white">Live Validation Telemetry Sandbox</h2>
         </div>
-        <p className="text-xs text-[#8E8E93]">
+        <p className="text-xs text-[#635E56] dark:text-[#A8A196]">
           Directly execute queries against the Coupon Service microservice to test code redemption logic and auto-apply algorithms.
         </p>
 
         <form onSubmit={handleRunValidationTest} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
           <div className="md:col-span-4 space-y-1">
-            <label className="text-[10px] font-mono text-[#8E8E93] uppercase font-bold">Coupon Code</label>
+            <label className="text-[10px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase font-bold">Coupon Code</label>
             <input
               type="text"
               value={testCode}
               onChange={(e) => setTestCode(e.target.value.toUpperCase())}
               placeholder="WELCOME50"
-              className="w-full bg-[#070709] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white placeholder-white/20 focus:outline-none focus:border-[#C5A880]/50 uppercase"
+              className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white placeholder-white/20 focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50 uppercase"
             />
           </div>
           <div className="md:col-span-3 space-y-1">
-            <label className="text-[10px] font-mono text-[#8E8E93] uppercase font-bold">Base Price (₹)</label>
+            <label className="text-[10px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase font-bold">Base Price (₹)</label>
             <input
               type="number"
               value={testPrice}
               onChange={(e) => setTestPrice(e.target.value)}
-              className="w-full bg-[#070709] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white placeholder-white/20 focus:outline-none focus:border-[#C5A880]/50"
+              className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white placeholder-white/20 focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
             />
           </div>
           <div className="md:col-span-5 flex gap-2">
             <button
               type="submit"
               disabled={isTesting || !testCode.trim()}
-              className="flex-1 py-2 px-3 bg-[#14141A] border border-[#C5A880]/40 hover:bg-[#C5A880]/10 text-[#C5A880] rounded-xl text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-40"
+              className="flex-1 py-2 px-3 bg-[#F5F2EC] dark:bg-[#151413] border border-[#5B3E57] dark:border-[#D1A7CC] hover:bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#5B3E57] dark:text-[#D1A7CC] rounded-xl text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-40"
             >
               {isTesting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
               <span>Validate Code</span>
@@ -333,9 +333,9 @@ export const Coupons = () => {
               type="button"
               onClick={handleRunAutoApplyTest}
               disabled={isTesting}
-              className="flex-1 py-2 px-3 bg-[#14141A] border border-white/10 hover:border-white/20 text-[#F5F5F7] rounded-xl text-xs font-mono transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-40"
+              className="flex-1 py-2 px-3 bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 text-[#282521] dark:text-[#EDE8E1] rounded-xl text-xs font-mono transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-40"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#C5A880]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
               <span>Auto-Apply Best</span>
             </button>
           </div>
@@ -374,7 +374,7 @@ export const Coupons = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search coupon code or title..."
-            className="w-full bg-[#14141A] border border-white/5 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-white/30 focus:outline-none focus:border-[#C5A880]/50"
+            className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/5 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-white/30 focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
           />
         </div>
 
@@ -382,7 +382,7 @@ export const Coupons = () => {
           <div className="flex items-center gap-2 self-start sm:self-auto overflow-x-auto pb-1 max-w-full">
             <button
               onClick={() => setSelectedCampaign('ALL')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${selectedCampaign === 'ALL' ? 'bg-[#C5A880] text-[#070709] font-bold' : 'bg-[#14141A] text-white/60 hover:text-white'}`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${selectedCampaign === 'ALL' ? 'bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold' : 'bg-[#F5F2EC] dark:bg-[#151413] text-white/60 hover:text-white'}`}
             >
               ALL
             </button>
@@ -390,7 +390,7 @@ export const Coupons = () => {
               <button
                 key={camp}
                 onClick={() => setSelectedCampaign(camp)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${selectedCampaign === camp ? 'bg-[#C5A880] text-[#070709] font-bold' : 'bg-[#14141A] text-white/60 hover:text-white'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer ${selectedCampaign === camp ? 'bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold' : 'bg-[#F5F2EC] dark:bg-[#151413] text-white/60 hover:text-white'}`}
               >
                 {camp}
               </button>
@@ -400,10 +400,10 @@ export const Coupons = () => {
       </div>
 
       {/* Coupons Matrix Table */}
-      <div className="bg-[#14141A]/50 border border-white/5 rounded-2xl overflow-hidden">
+      <div className="bg-[#F5F2EC] dark:bg-[#151413]/50 border border-[#E3DCD3] dark:border-white/5 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#070709]/80 border-b border-white/5 text-[10px] font-mono uppercase tracking-wider text-[#8E8E93]">
+            <thead className="bg-[#F5F2EC] dark:bg-[#151413]/80 border-b border-[#E3DCD3] dark:border-white/5 text-[10px] font-mono uppercase tracking-wider text-[#635E56] dark:text-[#A8A196]">
               <tr>
                 <th className="py-3 px-4">Coupon Code</th>
                 <th className="py-3 px-4">Discount</th>
@@ -416,14 +416,14 @@ export const Coupons = () => {
             <tbody className="divide-y divide-white/5">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-[#8E8E93]">
-                    <Loader2 className="w-6 h-6 animate-spin text-[#C5A880] mx-auto mb-2" />
+                  <td colSpan={6} className="py-12 text-center text-[#635E56] dark:text-[#A8A196]">
+                    <Loader2 className="w-6 h-6 animate-spin text-[#5B3E57] dark:text-[#D1A7CC] mx-auto mb-2" />
                     <span>Synchronizing Promotional Matrix...</span>
                   </td>
                 </tr>
               ) : filteredCoupons.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-[#8E8E93]">
+                  <td colSpan={6} className="py-12 text-center text-[#635E56] dark:text-[#A8A196]">
                     No promotional coupons matched current filter criteria.
                   </td>
                 </tr>
@@ -438,18 +438,18 @@ export const Coupons = () => {
                           <span>{coupon.code}</span>
                         </div>
                         {coupon.title && (
-                          <div className="text-[11px] text-[#8E8E93] truncate max-w-xs">{coupon.title}</div>
+                          <div className="text-[11px] text-[#635E56] dark:text-[#A8A196] truncate max-w-xs">{coupon.title}</div>
                         )}
                       </td>
-                      <td className="py-3 px-4 font-mono font-bold text-[#C5A880]">
+                      <td className="py-3 px-4 font-mono font-bold text-[#5B3E57] dark:text-[#D1A7CC]">
                         {coupon.discountType === 'PERCENTAGE' || coupon.discountType === 'PERCENT'
                           ? `${coupon.discountValue}% OFF`
                           : `₹${coupon.discountValue} FLAT`}
                       </td>
-                      <td className="py-3 px-4 font-mono text-[#8E8E93] uppercase text-[11px]">
+                      <td className="py-3 px-4 font-mono text-[#635E56] dark:text-[#A8A196] uppercase text-[11px]">
                         {coupon.discountType}
                       </td>
-                      <td className="py-3 px-4 font-mono text-[#F5F5F7]">
+                      <td className="py-3 px-4 font-mono text-[#282521] dark:text-[#EDE8E1]">
                         {coupon.usedCount || 0} / {coupon.usageLimit || '∞'}
                       </td>
                       <td className="py-3 px-4">
@@ -509,11 +509,11 @@ export const Coupons = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={SPRING}
-              className="bg-[#14141A] border border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl"
+              className="bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl"
             >
-              <div className="flex items-center justify-between border-b border-white/5 pb-3">
+              <div className="flex items-center justify-between border-b border-[#E3DCD3] dark:border-white/5 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Plus className="w-4 h-4 text-[#C5A880]" />
+                  <Plus className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <span>Create Discount Coupon</span>
                 </h3>
                 <button
@@ -532,85 +532,85 @@ export const Coupons = () => {
                 className="space-y-3 text-xs"
               >
                 <div>
-                  <label className="block text-[10px] font-mono text-[#8E8E93] uppercase mb-1">Coupon Code *</label>
+                  <label className="block text-[10px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase mb-1">Coupon Code *</label>
                   <input
                     type="text"
                     required
                     value={createForm.code}
                     onChange={(e) => setCreateForm({ ...createForm, code: e.target.value.toUpperCase() })}
                     placeholder="WINTER2026"
-                    className="w-full bg-[#070709] border border-white/10 rounded-xl px-3 py-2 text-white font-mono uppercase focus:outline-none focus:border-[#C5A880]/50"
+                    className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-3 py-2 text-white font-mono uppercase focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-mono text-[#8E8E93] uppercase mb-1">Title</label>
+                  <label className="block text-[10px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase mb-1">Title</label>
                   <input
                     type="text"
                     value={createForm.title}
                     onChange={(e) => setCreateForm({ ...createForm, title: e.target.value })}
                     placeholder="Winter Engineering Sale"
-                    className="w-full bg-[#070709] border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#C5A880]/50"
+                    className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-mono text-[#8E8E93] uppercase mb-1">Discount Type</label>
+                    <label className="block text-[10px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase mb-1">Discount Type</label>
                     <select
                       value={createForm.discountType}
                       onChange={(e) => setCreateForm({ ...createForm, discountType: e.target.value })}
-                      className="w-full bg-[#070709] border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#C5A880]/50"
+                      className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
                     >
                       <option value="PERCENTAGE">PERCENTAGE (%)</option>
                       <option value="FLAT">FLAT (₹)</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-mono text-[#8E8E93] uppercase mb-1">Discount Value</label>
+                    <label className="block text-[10px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase mb-1">Discount Value</label>
                     <input
                       type="number"
                       required
                       value={createForm.discountValue}
                       onChange={(e) => setCreateForm({ ...createForm, discountValue: Number(e.target.value) })}
-                      className="w-full bg-[#070709] border border-white/10 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-[#C5A880]/50"
+                      className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-mono text-[#8E8E93] uppercase mb-1">Min Order (₹)</label>
+                    <label className="block text-[10px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase mb-1">Min Order (₹)</label>
                     <input
                       type="number"
                       value={createForm.minimumOrderAmount}
                       onChange={(e) => setCreateForm({ ...createForm, minimumOrderAmount: Number(e.target.value) })}
-                      className="w-full bg-[#070709] border border-white/10 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-[#C5A880]/50"
+                      className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-mono text-[#8E8E93] uppercase mb-1">Usage Limit</label>
+                    <label className="block text-[10px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase mb-1">Usage Limit</label>
                     <input
                       type="number"
                       value={createForm.usageLimit}
                       onChange={(e) => setCreateForm({ ...createForm, usageLimit: Number(e.target.value) })}
-                      className="w-full bg-[#070709] border border-white/10 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-[#C5A880]/50"
+                      className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
                     />
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-2 pt-3 border-t border-white/5">
+                <div className="flex justify-end gap-2 pt-3 border-t border-[#E3DCD3] dark:border-white/5">
                   <button
                     type="button"
                     onClick={() => setShowCreateModal(false)}
-                    className="px-4 py-2 bg-[#070709] text-white/60 hover:text-white rounded-xl cursor-pointer"
+                    className="px-4 py-2 bg-[#F5F2EC] dark:bg-[#151413] text-white/60 hover:text-white rounded-xl cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={createMutation.isPending}
-                    className="px-4 py-2 bg-[#C5A880] text-[#070709] font-bold rounded-xl flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="px-4 py-2 bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold rounded-xl flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
                     {createMutation.isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                     <span>Deploy Coupon</span>
@@ -631,11 +631,11 @@ export const Coupons = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={SPRING}
-              className="bg-[#14141A] border border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl"
+              className="bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl"
             >
-              <div className="flex items-center justify-between border-b border-white/5 pb-3">
+              <div className="flex items-center justify-between border-b border-[#E3DCD3] dark:border-white/5 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-[#C5A880]" />
+                  <Layers className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                   <span>Generate Campaign Batch</span>
                 </h3>
                 <button
@@ -654,43 +654,43 @@ export const Coupons = () => {
                 className="space-y-3 text-xs"
               >
                 <div>
-                  <label className="block text-[10px] font-mono text-[#8E8E93] uppercase mb-1">Campaign Prefix *</label>
+                  <label className="block text-[10px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase mb-1">Campaign Prefix *</label>
                   <input
                     type="text"
                     required
                     value={bulkForm.campaignName}
                     onChange={(e) => setBulkForm({ ...bulkForm, campaignName: e.target.value.toUpperCase() })}
                     placeholder="TECHFEST"
-                    className="w-full bg-[#070709] border border-white/10 rounded-xl px-3 py-2 text-white font-mono uppercase focus:outline-none focus:border-[#C5A880]/50"
+                    className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-3 py-2 text-white font-mono uppercase focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-mono text-[#8E8E93] uppercase mb-1">Discount Type</label>
+                    <label className="block text-[10px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase mb-1">Discount Type</label>
                     <select
                       value={bulkForm.discountType}
                       onChange={(e) => setBulkForm({ ...bulkForm, discountType: e.target.value })}
-                      className="w-full bg-[#070709] border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#C5A880]/50"
+                      className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
                     >
                       <option value="PERCENTAGE">PERCENTAGE (%)</option>
                       <option value="FLAT">FLAT (₹)</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-mono text-[#8E8E93] uppercase mb-1">Discount Value</label>
+                    <label className="block text-[10px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase mb-1">Discount Value</label>
                     <input
                       type="number"
                       required
                       value={bulkForm.discountValue}
                       onChange={(e) => setBulkForm({ ...bulkForm, discountValue: Number(e.target.value) })}
-                      className="w-full bg-[#070709] border border-white/10 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-[#C5A880]/50"
+                      className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-mono text-[#8E8E93] uppercase mb-1">Number of Coupons</label>
+                  <label className="block text-[10px] font-mono text-[#635E56] dark:text-[#A8A196] uppercase mb-1">Number of Coupons</label>
                   <input
                     type="number"
                     min={1}
@@ -698,22 +698,22 @@ export const Coupons = () => {
                     required
                     value={bulkForm.totalCoupons}
                     onChange={(e) => setBulkForm({ ...bulkForm, totalCoupons: Number(e.target.value) })}
-                    className="w-full bg-[#070709] border border-white/10 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-[#C5A880]/50"
+                    className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#D5C0D1] dark:border-white/10 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]/50"
                   />
                 </div>
 
-                <div className="flex justify-end gap-2 pt-3 border-t border-white/5">
+                <div className="flex justify-end gap-2 pt-3 border-t border-[#E3DCD3] dark:border-white/5">
                   <button
                     type="button"
                     onClick={() => setShowBulkModal(false)}
-                    className="px-4 py-2 bg-[#070709] text-white/60 hover:text-white rounded-xl cursor-pointer"
+                    className="px-4 py-2 bg-[#F5F2EC] dark:bg-[#151413] text-white/60 hover:text-white rounded-xl cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={bulkMutation.isPending}
-                    className="px-4 py-2 bg-[#C5A880] text-[#070709] font-bold rounded-xl flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="px-4 py-2 bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold rounded-xl flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
                     {bulkMutation.isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                     <span>Generate Batch</span>

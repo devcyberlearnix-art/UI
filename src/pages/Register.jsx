@@ -205,7 +205,7 @@ const Register = () => {
 
   const strengthLabel = useMemo(() => {
     if (strength === 5) return { label: "Robust", color: "text-emerald-400" };
-    if (strength >= 4) return { label: "Good", color: "text-[#C5A880]" };
+    if (strength >= 4) return { label: "Good", color: "text-[#5B3E57] dark:text-[#D1A7CC]" };
     if (strength >= 3) return { label: "Fair", color: "text-amber-400" };
     return { label: "Weak", color: "text-rose-400" };
   }, [strength]);
@@ -220,10 +220,10 @@ const Register = () => {
       >
         {/* Card Header */}
         <div className="text-center space-y-2">
-          <div className="mx-auto w-12 h-12 rounded-2xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shadow-sm">
-            <UserPlus className="w-5 h-5 text-[#C5A880]" />
+          <div className="mx-auto w-12 h-12 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] shadow-sm">
+            <UserPlus className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" />
           </div>
-          <h1 className="text-2xl font-extrabold text-[#F5F5F7] tracking-tight">
+          <h1 className="text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
             Create Asivo Account
           </h1>
           <p className="text-xs text-[#A1A1AA]">
@@ -251,10 +251,10 @@ const Register = () => {
                 htmlFor="register-firstname"
                 className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block"
               >
-                First Name <span className="text-[#C5A880]">*</span>
+                First Name <span className="text-[#5B3E57] dark:text-[#D1A7CC]">*</span>
               </label>
               <div className="relative">
-                <UserRound size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" aria-hidden="true" />
+                <UserRound size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" aria-hidden="true" />
                 <input
                   ref={firstNameRef}
                   id="register-firstname"
@@ -283,10 +283,10 @@ const Register = () => {
                 htmlFor="register-lastname"
                 className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block"
               >
-                Last Name <span className="text-[#C5A880]">*</span>
+                Last Name <span className="text-[#5B3E57] dark:text-[#D1A7CC]">*</span>
               </label>
               <div className="relative">
-                <UserRound size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" aria-hidden="true" />
+                <UserRound size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" aria-hidden="true" />
                 <input
                   ref={lastNameRef}
                   id="register-lastname"
@@ -317,10 +317,10 @@ const Register = () => {
               htmlFor="register-email"
               className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block"
             >
-              Email Address <span className="text-[#C5A880]">*</span>
+              Email Address <span className="text-[#5B3E57] dark:text-[#D1A7CC]">*</span>
             </label>
             <div className="relative">
-              <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" aria-hidden="true" />
+              <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" aria-hidden="true" />
               <input
                 ref={emailRef}
                 id="register-email"
@@ -350,10 +350,10 @@ const Register = () => {
               htmlFor="register-password"
               className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block"
             >
-              Password <span className="text-[#C5A880]">*</span>
+              Password <span className="text-[#5B3E57] dark:text-[#D1A7CC]">*</span>
             </label>
             <div className="relative">
-              <LockKeyhole size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" aria-hidden="true" />
+              <LockKeyhole size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" aria-hidden="true" />
               <input
                 ref={passwordRef}
                 id="register-password"
@@ -373,7 +373,7 @@ const Register = () => {
                 type="button"
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 onClick={() => setShowPassword((v) => !v)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-[#F5F5F7] transition-colors focus:outline-none focus:text-[#C5A880]"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:text-[#EDE8E1] transition-colors focus:outline-none focus:text-[#5B3E57] dark:focus:text-[#D1A7CC]"
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -387,7 +387,7 @@ const Register = () => {
 
           {/* Password Strength & Requirements Checklist */}
           {form.password && (
-            <div className="p-3.5 rounded-2xl bg-[#14141A] border border-white/[0.04] space-y-2.5 text-xs">
+            <div className="p-3.5 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-2.5 text-xs">
               <span className="font-semibold text-[#A1A1AA] text-[11px] uppercase tracking-wider block">
                 Password Security Requirements:
               </span>
@@ -402,17 +402,17 @@ const Register = () => {
                   <span
                     key={rule}
                     className={`flex items-center gap-1.5 transition-colors ${
-                      passwordChecks[rule] ? "text-[#C5A880] font-semibold" : "text-[#71717A]"
+                      passwordChecks[rule] ? "text-[#5B3E57] dark:text-[#D1A7CC] font-semibold" : "text-[#756E64] dark:text-[#7A7368]"
                     }`}
                   >
-                    {passwordChecks[rule] ? <Check size={12} className="text-[#C5A880]" /> : <Circle size={10} />}
+                    {passwordChecks[rule] ? <Check size={12} className="text-[#5B3E57] dark:text-[#D1A7CC]" /> : <Circle size={10} />}
                     <span>{label}</span>
                   </span>
                 ))}
               </div>
 
               {/* Strength Meter Bar */}
-              <div className="pt-2 border-t border-white/[0.04] flex items-center justify-between text-[11px]">
+              <div className="pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-between text-[11px]">
                 <span className="text-[#A1A1AA]">
                   Strength:{" "}
                   <b className={strengthLabel.color}>{strengthLabel.label}</b>
@@ -426,7 +426,7 @@ const Register = () => {
                           ? strength === 5
                             ? "bg-emerald-400"
                             : strength >= 3
-                            ? "bg-[#C5A880]"
+                            ? "bg-[#5B3E57] dark:bg-[#D1A7CC]"
                             : "bg-rose-400"
                           : "bg-white/[0.06]"
                       }`}
@@ -443,10 +443,10 @@ const Register = () => {
               htmlFor="register-confirmpassword"
               className="text-xs font-semibold text-[#A1A1AA] uppercase tracking-wider block"
             >
-              Confirm Password <span className="text-[#C5A880]">*</span>
+              Confirm Password <span className="text-[#5B3E57] dark:text-[#D1A7CC]">*</span>
             </label>
             <div className="relative">
-              <LockKeyhole size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A]" aria-hidden="true" />
+              <LockKeyhole size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368]" aria-hidden="true" />
               <input
                 ref={confirmPasswordRef}
                 id="register-confirmpassword"
@@ -466,7 +466,7 @@ const Register = () => {
                 type="button"
                 aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
                 onClick={() => setShowConfirmPassword((v) => !v)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-[#F5F5F7] transition-colors focus:outline-none focus:text-[#C5A880]"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:text-[#EDE8E1] transition-colors focus:outline-none focus:text-[#5B3E57] dark:focus:text-[#D1A7CC]"
               >
                 {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -500,7 +500,7 @@ const Register = () => {
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#070709] border-t-transparent" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#FFFEFA] dark:border-[#151413] border-t-transparent" />
                 <span>Creating Account...</span>
               </span>
             ) : (
@@ -516,10 +516,10 @@ const Register = () => {
         <SocialAuthButtons mode="signup" />
 
         {/* Footer Navigation */}
-        <div className="pt-4 border-t border-white/[0.04] text-center">
+        <div className="pt-4 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-center">
           <p className="text-xs text-[#A1A1AA]">
             Already have an Asivo account?{" "}
-            <Link to="/login" className="text-[#C5A880] hover:text-[#D4BC98] font-bold transition-colors">
+            <Link to="/login" className="text-[#5B3E57] dark:text-[#D1A7CC] hover:text-[#D4BC98] font-bold transition-colors">
               Sign in
             </Link>
           </p>

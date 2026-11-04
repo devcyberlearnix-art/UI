@@ -38,15 +38,15 @@ const getNotificationIcon = (type) => {
     case 'REVIEW':
       return <Star size={18} className="text-amber-400" />;
     case 'CERTIFICATE':
-      return <Award size={18} className="text-[#C5A880]" />;
+      return <Award size={18} className="text-[#5B3E57] dark:text-[#D1A7CC]" />;
     case 'COURSE_UPDATE':
-      return <BellRing size={18} className="text-[#E5E5E7]" />;
+      return <BellRing size={18} className="text-[#282521] dark:text-[#EDE8E1]" />;
     case 'PAYMENT':
       return <ShoppingCart size={18} className="text-emerald-400" />;
     case 'SYSTEM':
       return <AlertCircle size={18} className="text-rose-400" />;
     default:
-      return <Bell size={18} className="text-[#8E8E93]" />;
+      return <Bell size={18} className="text-[#635E56] dark:text-[#A8A196]" />;
   }
 };
 
@@ -78,36 +78,36 @@ const NotificationPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#070709]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F2EC] dark:bg-[#151413]">
         <div className="text-center space-y-3">
-          <Loader2 className="animate-spin text-[#C5A880] w-8 h-8 mx-auto" />
-          <p className="text-xs font-mono text-[#8E8E93]">Streaming telemetry alerts...</p>
+          <Loader2 className="animate-spin text-[#5B3E57] dark:text-[#D1A7CC] w-8 h-8 mx-auto" />
+          <p className="text-xs font-mono text-[#635E56] dark:text-[#A8A196]">Streaming telemetry alerts...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] p-4 sm:p-8 selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] p-4 sm:p-8 selection:bg-[#5B3E57] dark:bg-[#D1A7CC]/30 selection:text-white">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header Ribbon */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={SPRING_TRANSITION}
-          className="pb-4 border-b border-white/[0.04]"
+          className="pb-4 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]"
         >
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#C5A880]">
+                <div className="w-8 h-8 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC]">
                   <Bell size={16} />
                 </div>
-                <h1 className="text-2xl font-bold tracking-tight text-[#F5F5F7]">
+                <h1 className="text-2xl font-bold tracking-tight text-[#282521] dark:text-[#EDE8E1]">
                   Telemetry & System Alerts
                 </h1>
               </div>
-              <p className="text-xs text-[#8E8E93] font-mono mt-1">
+              <p className="text-xs text-[#635E56] dark:text-[#A8A196] font-mono mt-1">
                 Real-time microservice notifications routed via event pipeline
               </p>
             </div>
@@ -117,10 +117,10 @@ const NotificationPage = () => {
                 type="button"
                 onClick={() => refetch()}
                 disabled={isFetching}
-                className="p-2 rounded-xl bg-[#0F0F13] border border-white/[0.04] text-[#8E8E93] hover:text-white transition-colors"
+                className="p-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A8A196] hover:text-white transition-colors"
                 title="Sync Telemetry Stream"
               >
-                <RefreshCw size={15} className={isFetching ? "animate-spin text-[#C5A880]" : ""} />
+                <RefreshCw size={15} className={isFetching ? "animate-spin text-[#5B3E57] dark:text-[#D1A7CC]" : ""} />
               </button>
 
               {unreadCount > 0 && (
@@ -139,7 +139,7 @@ const NotificationPage = () => {
 
           {/* Unread Telemetry Pill */}
           {unreadCount > 0 && (
-            <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C5A880]/10 border border-[#C5A880]/20 text-[#C5A880] text-xs font-mono font-medium">
+            <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/30 dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-mono font-medium">
               <Sparkles size={13} />
               <span>{unreadCount} unread system signal{unreadCount > 1 ? 's' : ''}</span>
             </div>
@@ -160,8 +160,8 @@ const NotificationPage = () => {
               onClick={() => setFilter(f)}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all select-none whitespace-nowrap ${
                 filter === f
-                  ? 'bg-[#C5A880] text-[#070709] font-bold shadow-lg shadow-[#C5A880]/15'
-                  : 'bg-[#0F0F13] text-[#8E8E93] hover:text-white border border-white/[0.04] hover:border-white/10'
+                  ? 'bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] font-bold shadow-lg shadow-sm'
+                  : 'bg-[#FFFEFA] dark:bg-[#1D1C1A] text-[#635E56] dark:text-[#A8A196] hover:text-white border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#D5C0D1] dark:border-white/10'
               }`}
             >
               {f === 'all' ? 'All Alerts' : f === 'unread' ? `Unread (${unreadCount})` : f.replace('_', ' ')}
@@ -192,23 +192,23 @@ const NotificationPage = () => {
                   }}
                   className={`p-4 sm:p-5 rounded-2xl border cursor-pointer transition-all relative overflow-hidden ${
                     isUnread
-                      ? 'bg-[#0F0F13] border-[#C5A880]/30 shadow-lg shadow-[#C5A880]/5'
-                      : 'bg-[#0F0F13]/60 border-white/[0.04] hover:border-white/10'
+                      ? 'bg-[#FFFEFA] dark:bg-[#1D1C1A] border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 shadow-lg shadow-sm'
+                      : 'bg-[#FFFEFA] dark:bg-[#1D1C1A]/60 border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#D5C0D1] dark:border-white/10'
                   }`}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="p-2.5 rounded-xl bg-[#14141A] border border-white/[0.04] shrink-0 mt-0.5">
+                    <div className="p-2.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] shrink-0 mt-0.5">
                       {getNotificationIcon(notification.type)}
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3 mb-1">
                         <div className="flex items-center gap-2">
-                          <h3 className="font-bold text-sm sm:text-base text-[#F5F5F7] tracking-tight">
+                          <h3 className="font-bold text-sm sm:text-base text-[#282521] dark:text-[#EDE8E1] tracking-tight">
                             {notification.title}
                           </h3>
                           {isUnread && (
-                            <span className="w-2 h-2 rounded-full bg-[#C5A880] shrink-0" />
+                            <span className="w-2 h-2 rounded-full bg-[#5B3E57] dark:bg-[#D1A7CC] shrink-0" />
                           )}
                         </div>
 
@@ -219,7 +219,7 @@ const NotificationPage = () => {
                               e.stopPropagation();
                               markAsRead(notification.notificationId || notification.id);
                             }}
-                            className="p-1 text-[#8E8E93] hover:text-white transition-colors"
+                            className="p-1 text-[#635E56] dark:text-[#A8A196] hover:text-white transition-colors"
                             title="Dismiss Alert"
                           >
                             <X size={14} />
@@ -227,7 +227,7 @@ const NotificationPage = () => {
                         )}
                       </div>
 
-                      <p className="text-xs sm:text-sm text-[#8E8E93] leading-relaxed line-clamp-2">
+                      <p className="text-xs sm:text-sm text-[#635E56] dark:text-[#A8A196] leading-relaxed line-clamp-2">
                         {notification.message}
                       </p>
 
@@ -242,7 +242,7 @@ const NotificationPage = () => {
                           })}
                         </span>
                         <span>•</span>
-                        <span className="uppercase text-[#8E8E93]">{notification.priority}</span>
+                        <span className="uppercase text-[#635E56] dark:text-[#A8A196]">{notification.priority}</span>
                       </div>
                     </div>
                   </div>
@@ -256,15 +256,15 @@ const NotificationPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={SPRING_TRANSITION}
-              className="text-center py-20 bg-[#0F0F13] border border-white/[0.04] rounded-3xl p-8"
+              className="text-center py-20 bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] rounded-3xl p-8"
             >
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#8E8E93]">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center text-[#635E56] dark:text-[#A8A196]">
                 <Bell size={28} />
               </div>
-              <h3 className="text-base font-bold text-[#F5F5F7] mb-1">
+              <h3 className="text-base font-bold text-[#282521] dark:text-[#EDE8E1] mb-1">
                 Telemetry Pipeline Clear
               </h3>
-              <p className="text-xs text-[#8E8E93] max-w-sm mx-auto leading-relaxed">
+              <p className="text-xs text-[#635E56] dark:text-[#A8A196] max-w-sm mx-auto leading-relaxed">
                 {filter === 'unread'
                   ? 'All pending system signals and notifications have been cleared.'
                   : 'No active events or system broadcasts found in the telemetry stream.'}

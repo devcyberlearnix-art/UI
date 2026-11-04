@@ -102,7 +102,7 @@ export default function AdvancedTypeaheadSearch({ onExecuteSearch, placeholder, 
   return (
     <div ref={containerWrapper} className={`relative w-full ${className}`}>
       {/* Structural Input Shell Container with Integrated Action Controls */}
-      <div className="flex items-center bg-[#14141A] border border-white/[0.08] rounded-xl pl-3.5 pr-1.5 py-1.5 focus-within:border-[#C5A880]/70 focus-within:ring-1 focus-within:ring-[#C5A880]/30 transition-all shadow-md">
+      <div className="flex items-center bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl pl-3.5 pr-1.5 py-1.5 focus-within:border-[#5B3E57] dark:border-[#D1A7CC]/70 focus-within:ring-1 focus-within:ring-[#5B3E57]/30 dark:ring-[#D1A7CC]/30 transition-all shadow-md">
         <span className="text-gray-400 mr-2.5 text-base select-none" aria-hidden="true">🔍</span>
         <input
           type="text"
@@ -111,7 +111,7 @@ export default function AdvancedTypeaheadSearch({ onExecuteSearch, placeholder, 
           onKeyDown={handleKeyDownMatrix}
           onFocus={() => inputVal.trim().length >= 2 && predictions.length > 0 && setDropdownActive(true)}
           placeholder={placeholder || "Search items by title, subtitle, tag category or author..."}
-          className="w-full bg-transparent text-[#F5F5F7] outline-none placeholder-[#71717A] text-xs sm:text-sm font-light tracking-wide"
+          className="w-full bg-transparent text-[#282521] dark:text-[#EDE8E1] outline-none placeholder-[#71717A] text-xs sm:text-sm font-light tracking-wide"
         />
         {inputVal && (
           <button 
@@ -126,7 +126,7 @@ export default function AdvancedTypeaheadSearch({ onExecuteSearch, placeholder, 
         <button
           type="button"
           onClick={() => handleSelectionAction(inputVal)}
-          className="px-3 py-1.5 rounded-lg bg-[#C5A880] hover:bg-[#D4B991] text-[#070709] font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm shrink-0 cursor-pointer"
+          className="px-3 py-1.5 rounded-lg bg-[#5B3E57] dark:bg-[#D1A7CC] hover:bg-[#462D42] dark:hover:bg-[#C293BD] text-[#FFFEFA] dark:text-[#151413] font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm shrink-0 cursor-pointer"
           aria-label="Search"
         >
           <span>Search</span>
@@ -135,13 +135,13 @@ export default function AdvancedTypeaheadSearch({ onExecuteSearch, placeholder, 
 
       {/* Floating Google-Like Projection UI Dropdown Overlay */}
       {dropdownActive && predictions.length > 0 && (
-        <ul className="absolute left-0 w-full mt-2 bg-[#14141A] border border-white/[0.08] rounded-xl shadow-2xl overflow-hidden py-2 animate-fadeIn z-50 backdrop-blur-xl">
+        <ul className="absolute left-0 w-full mt-2 bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-white/[0.08] rounded-xl shadow-2xl overflow-hidden py-2 animate-fadeIn z-50 backdrop-blur-xl">
           {predictions.map((item, idx) => (
             <li
               key={`${item.type}-${item.value}-${idx}`}
               onClick={() => handleSelectionAction(item.value)}
               className={`flex items-center justify-between px-4 py-2.5 cursor-pointer text-xs sm:text-sm transition-colors ${
-                idx === focusIndex ? 'bg-[#C5A880]/15 text-[#F5F5F7]' : 'text-gray-300 hover:bg-white/[0.04]'
+                idx === focusIndex ? 'bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 text-[#282521] dark:text-[#EDE8E1]' : 'text-gray-300 hover:bg-white/[0.04]'
               }`}
             >
               <div className="flex items-center space-x-2.5 truncate mr-2">
@@ -153,7 +153,7 @@ export default function AdvancedTypeaheadSearch({ onExecuteSearch, placeholder, 
                 </span>
                 <span className="font-light tracking-wide truncate">{item.value}</span>
               </div>
-              <span className="text-[10px] uppercase font-mono tracking-widest text-[#C5A880] bg-[#C5A880]/10 px-2 py-0.5 rounded border border-[#C5A880]/20 shrink-0">
+              <span className="text-[10px] uppercase font-mono tracking-widest text-[#5B3E57] dark:text-[#D1A7CC] bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 px-2 py-0.5 rounded border border-[#5B3E57]/30 dark:border-[#D1A7CC]/30 shrink-0">
                 {item.type}
               </span>
             </li>

@@ -175,10 +175,10 @@ export const SubDashboard = () => {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-28 w-full rounded-2xl bg-[#0F0F13]" />
+        <Skeleton className="h-28 w-full rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A]" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32 rounded-2xl bg-[#0F0F13]" />
+            <Skeleton key={i} className="h-32 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A]" />
           ))}
         </div>
       </div>
@@ -186,27 +186,27 @@ export const SubDashboard = () => {
   }
 
   return (
-    <div className="w-full space-y-6 font-sans selection:bg-[#C5A880]/30 selection:text-white">
+    <div className="w-full space-y-6 font-sans selection:bg-[#5B3E57] dark:bg-[#D1A7CC]/30 selection:text-white">
       {/* ===================== HERO BANNER ===================== */}
       <motion.section
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={SPRING_TRANSITION}
-        className="rounded-2xl bg-[#0F0F13] border border-white/[0.04] p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6"
+        className="rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6"
       >
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-[#14141A] border border-[#C5A880]/30 flex items-center justify-center text-lg font-bold text-[#C5A880] shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-[#F5F2EC] dark:bg-[#151413] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 flex items-center justify-center text-lg font-bold text-[#5B3E57] dark:text-[#D1A7CC] shrink-0">
             {userInitial}
           </div>
           <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#14141A] border border-white/[0.04] text-[10px] font-bold text-[#A1A1AA] uppercase tracking-wider mb-1.5">
-              <ShieldCheck className="w-3 h-3 text-[#C5A880]" />
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[10px] font-bold text-[#A1A1AA] uppercase tracking-wider mb-1.5">
+              <ShieldCheck className="w-3 h-3 text-[#5B3E57] dark:text-[#D1A7CC]" />
               <span>Scoped Administrative Authority</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-[#F5F5F7] tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
               {greeting}, {userName}
             </h1>
-            <p className="text-xs text-[#8E8E93] mt-0.5">
+            <p className="text-xs text-[#635E56] dark:text-[#A8A196] mt-0.5">
               Authorized operations zone under RBAC security policy.
             </p>
           </div>
@@ -230,17 +230,17 @@ export const SubDashboard = () => {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...SPRING_TRANSITION, delay: index * 0.05 }}
-                className="p-6 rounded-2xl bg-[#0F0F13] border border-white/[0.04] hover:border-[#C5A880]/30 transition-all group"
+                className="p-6 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 transition-all group"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-semibold text-[#8E8E93] tracking-wide">
+                  <span className="text-xs font-semibold text-[#635E56] dark:text-[#A8A196] tracking-wide">
                     {stat.title}
                   </span>
-                  <div className="w-8 h-8 rounded-lg bg-[#14141A] border border-white/[0.04] flex items-center justify-center text-[#C5A880] group-hover:scale-105 transition-transform">
+                  <div className="w-8 h-8 rounded-lg bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] group-hover:scale-105 transition-transform">
                     <Icon className="w-4 h-4" />
                   </div>
                 </div>
-                <p className="text-2xl font-extrabold text-[#F5F5F7] tracking-tight font-mono">
+                <p className="text-2xl font-extrabold text-[#282521] dark:text-[#EDE8E1] tracking-tight font-mono">
                   {stat.value}
                 </p>
               </motion.div>
@@ -258,9 +258,9 @@ export const SubDashboard = () => {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={SPRING_TRANSITION}
-              className="rounded-2xl bg-[#0F0F13] border border-white/[0.04] p-6 space-y-4"
+              className="rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-6 space-y-4"
             >
-              <h2 className="text-sm font-bold text-[#F5F5F7] tracking-tight">
+              <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">
                 Assigned Command Actions
               </h2>
 
@@ -275,15 +275,15 @@ export const SubDashboard = () => {
                       whileTap={{ scale: 0.98 }}
                       transition={SPRING_TRANSITION}
                       onClick={() => navigate(action.path)}
-                      className="flex items-center justify-between p-3.5 rounded-xl bg-[#14141A]/80 border border-white/[0.04] hover:border-[#C5A880]/30 transition-all text-xs font-semibold text-[#F5F5F7] group text-left cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C5A880]"
+                      className="flex items-center justify-between p-3.5 rounded-xl bg-[#F5F2EC] dark:bg-[#151413]/80 border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 transition-all text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] group text-left cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#5B3E57] dark:focus-visible:ring-[#D1A7CC]"
                     >
                       <span className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-[#0F0F13] border border-white/[0.04] flex items-center justify-center text-[#C5A880] group-hover:scale-105 transition-transform">
+                        <div className="w-8 h-8 rounded-lg bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center text-[#5B3E57] dark:text-[#D1A7CC] group-hover:scale-105 transition-transform">
                           <Icon className="w-4 h-4" />
                         </div>
                         <span className="tracking-tight">{action.label}</span>
                       </span>
-                      <ArrowRight className="w-4 h-4 text-[#71717A] group-hover:text-white transition-colors" />
+                      <ArrowRight className="w-4 h-4 text-[#756E64] dark:text-[#7A7368] group-hover:text-white transition-colors" />
                     </motion.button>
                   );
                 })}
@@ -295,10 +295,10 @@ export const SubDashboard = () => {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={SPRING_TRANSITION}
-              className="rounded-2xl bg-[#0F0F13] border border-white/[0.04] p-6 space-y-3"
+              className="rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-6 space-y-3"
             >
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#8E8E93] flex items-center gap-2">
-                <Shield className="w-3.5 h-3.5 text-[#C5A880]" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#635E56] dark:text-[#A8A196] flex items-center gap-2">
+                <Shield className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC]" />
                 <span>Granted Role Privileges</span>
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -306,13 +306,13 @@ export const SubDashboard = () => {
                   permissions.map((perm, index) => (
                     <span
                       key={index}
-                      className="px-2.5 py-1 rounded-lg bg-[#14141A] border border-white/[0.04] text-[11px] font-mono text-[#E5E5E7]"
+                      className="px-2.5 py-1 rounded-lg bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[11px] font-mono text-[#282521] dark:text-[#EDE8E1]"
                     >
                       {perm}
                     </span>
                   ))
                 ) : (
-                  <span className="text-xs text-[#71717A]">No explicit privileges assigned.</span>
+                  <span className="text-xs text-[#756E64] dark:text-[#7A7368]">No explicit privileges assigned.</span>
                 )}
               </div>
             </motion.div>
@@ -325,14 +325,14 @@ export const SubDashboard = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={SPRING_TRANSITION}
-            className="rounded-2xl bg-[#0F0F13] border border-white/[0.04] p-6 space-y-4"
+            className="rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] p-6 space-y-4"
           >
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
-              <h2 className="text-sm font-bold text-[#F5F5F7] tracking-tight flex items-center gap-2">
-                <Clock className="w-4 h-4 text-[#C5A880]" />
+            <div className="flex items-center justify-between pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+              <h2 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight flex items-center gap-2">
+                <Clock className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
                 <span>Session Events</span>
               </h2>
-              <span className="text-[10px] text-[#71717A] font-mono">Real-time</span>
+              <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] font-mono">Real-time</span>
             </div>
 
             <div className="divide-y divide-white/[0.03]">
@@ -342,12 +342,12 @@ export const SubDashboard = () => {
                   className="py-3 first:pt-0 last:pb-0 flex items-center justify-between text-xs"
                 >
                   <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                    <activity.icon className="w-3.5 h-3.5 text-[#C5A880] shrink-0" />
-                    <span className="text-[#F5F5F7] font-medium tracking-tight truncate">
+                    <activity.icon className="w-3.5 h-3.5 text-[#5B3E57] dark:text-[#D1A7CC] shrink-0" />
+                    <span className="text-[#282521] dark:text-[#EDE8E1] font-medium tracking-tight truncate">
                       {activity.action}
                     </span>
                   </div>
-                  <span className="text-[10px] text-[#71717A] font-mono shrink-0 ml-2">
+                  <span className="text-[10px] text-[#756E64] dark:text-[#7A7368] font-mono shrink-0 ml-2">
                     {activity.time}
                   </span>
                 </div>

@@ -4,6 +4,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Sparkles, ArrowRight, Layers, Tag, ExternalLink, Upload } from "lucide-react";
 import { courseApi } from "../api/courseApi";
 import { useAuth } from "../context/AuthContext";
+import {
+  getOverlayStyle,
+  getContentAlignmentClasses,
+  getVerticalAlignmentClasses,
+  getTextShadowStyle,
+  DEFAULT_BANNER_APPEARANCE,
+} from "../utils/bannerAppearance";
 
 const LUXURY_EASING = [0.16, 1, 0.3, 1];
 
@@ -103,9 +110,9 @@ export const BannerSlider = ({ onBannerLoaded }) => {
 
   if (loading) {
     return (
-      <div className="w-full h-[320px] sm:h-[400px] lg:h-[440px] rounded-3xl bg-[#0F0F13] border border-white/[0.04] flex items-center justify-center animate-pulse">
+      <div className="w-full h-[320px] sm:h-[400px] lg:h-[440px] rounded-3xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] flex items-center justify-center animate-pulse">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 rounded-full border-2 border-[#C5A880] border-t-transparent animate-spin" />
+          <div className="w-8 h-8 rounded-full border-2 border-[#5B3E57] dark:border-[#D1A7CC] border-t-transparent animate-spin" />
           <span className="text-xs font-mono text-[#71717A]">Syncing promotional showcase...</span>
         </div>
       </div>
@@ -137,7 +144,7 @@ export const BannerSlider = ({ onBannerLoaded }) => {
   return (
     <section
       aria-label="Promotional Showcase"
-      className="relative w-full overflow-hidden rounded-3xl bg-[#0F0F13] border border-white/[0.06] shadow-[0_16px_48px_-12px_rgba(0,0,0,0.85)] group"
+      className="relative w-full overflow-hidden rounded-3xl bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.08] shadow-lg shadow-black/10 dark:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.85)] group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -149,9 +156,9 @@ export const BannerSlider = ({ onBannerLoaded }) => {
             e.stopPropagation();
             navigate("/admin/banners");
           }}
-          className="absolute top-4 right-4 z-30 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0F0F13]/80 hover:bg-[#14141A] border border-[#C5A880]/50 text-[#C5A880] text-[11px] font-semibold backdrop-blur-md shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
+          className="absolute top-4 right-4 z-30 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1D1C1A]/80 hover:bg-[#272523] border border-[#E3DCD3]/40 text-[#FFFEFA] text-[11px] font-semibold backdrop-blur-md shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
         >
-          <Upload size={12} className="text-[#C5A880]" />
+          <Upload size={12} className="text-[#D1A7CC]" />
           <span>Upload / Manage Banners</span>
         </button>
       )}
@@ -182,38 +189,67 @@ export const BannerSlider = ({ onBannerLoaded }) => {
               />
             </picture>
 
-            {/* Cinematic Gradient Masks: Assures 100% WCAG AAA Text Contrast */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#070709] via-[#070709]/85 sm:via-[#070709]/75 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#070709] via-transparent to-black/30" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#C5A880]/10 via-transparent to-transparent pointer-events-none" />
+            {/* Dynamic Admin-Configured Overlay Mask */}
+            <div
+              className="absolute inset-0 pointer-events-none transition-all duration-300"
+              style={getOverlayStyle(currentBanner)}
+            />
 
             {/* Slide Content Layer */}
-            <div className="relative z-10 w-full h-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 flex flex-col justify-center">
-              <div className="max-w-xl sm:max-w-2xl space-y-4">
+            <div
+              className={`relative z-10 w-full h-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 flex flex-col ${getVerticalAlignmentClasses(
+                currentBanner.verticalAlignment
+              )}`}
+            >
+              <div
+                className={`max-w-xl sm:max-w-2xl space-y-4 flex flex-col ${getContentAlignmentClasses(
+                  currentBanner.contentAlignment
+                )}`}
+              >
                 {/* Placement / Target Type Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#14141A]/90 border border-[#C5A880]/30 text-xs font-semibold text-[#C5A880] backdrop-blur-xl">
-                  <Sparkles size={13} className="text-[#C5A880]" />
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1D1C1A]/85 border border-[#E3DCD3]/30 text-xs font-semibold text-[#D1A7CC] backdrop-blur-xl">
+                  <Sparkles size={13} className="text-[#D1A7CC]" />
                   <span className="tracking-wider uppercase text-[10px] font-bold">
                     {currentBanner.targetType === "COURSE" ? "Featured Curriculum" : currentBanner.targetType || "Special Campaign"}
                   </span>
                 </div>
 
                 {/* Banner Headline */}
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#F5F5F7] tracking-tight leading-tight line-clamp-2">
+                <h2
+                  className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight line-clamp-2 transition-colors duration-200"
+                  style={{
+                    color: currentBanner.headingColor || DEFAULT_BANNER_APPEARANCE.headingColor,
+                    ...getTextShadowStyle(currentBanner.textShadowEnabled !== false),
+                  }}
+                >
                   {currentBanner.title}
                 </h2>
 
                 {/* Banner Description */}
-                <p className="text-xs sm:text-sm text-[#A1A1AA] line-clamp-2 sm:line-clamp-3 leading-relaxed max-w-xl">
+                <p
+                  className="text-xs sm:text-sm line-clamp-2 sm:line-clamp-3 leading-relaxed max-w-xl transition-colors duration-200"
+                  style={{
+                    color: currentBanner.descriptionColor || DEFAULT_BANNER_APPEARANCE.descriptionColor,
+                    ...getTextShadowStyle(currentBanner.textShadowEnabled !== false),
+                  }}
+                >
                   {currentBanner.description}
                 </p>
 
                 {/* CTA Action Bar */}
-                <div className="pt-2 flex items-center gap-4">
+                <div
+                  className={`pt-2 flex items-center gap-4 ${
+                    (currentBanner.contentAlignment || "").toUpperCase() === "CENTER"
+                      ? "justify-center"
+                      : (currentBanner.contentAlignment || "").toUpperCase() === "RIGHT"
+                      ? "justify-end"
+                      : "justify-start"
+                  }`}
+                >
                   <button
                     type="button"
                     onClick={(e) => handleCtaClick(e, currentBanner)}
-                    className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-gradient-to-r from-[#C5A880] to-[#E5CCA8] text-[#070709] font-bold text-xs sm:text-sm shadow-[0_0_24px_rgba(197,168,128,0.35)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+                    className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-[#5B3E57] hover:bg-[#462D42] dark:bg-[#D1A7CC] dark:hover:bg-[#C092BB] text-[#FFFEFA] dark:text-[#151413] font-bold text-xs sm:text-sm shadow-md hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
                   >
                     <span>{currentBanner.ctaText || "Explore Curriculum"}</span>
                     <ArrowRight size={16} />
@@ -223,7 +259,7 @@ export const BannerSlider = ({ onBannerLoaded }) => {
                     <button
                       type="button"
                       onClick={() => navigate(`/courses/${currentBanner.courseId}`)}
-                      className="hidden sm:inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-[#14141A]/80 hover:bg-[#1B1B24] border border-white/[0.08] text-[#F5F5F7] text-xs font-semibold transition active:scale-95 cursor-pointer"
+                      className="hidden sm:inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-black/40 hover:bg-black/60 border border-white/20 text-[#FFFEFA] text-xs font-semibold backdrop-blur-md transition active:scale-95 cursor-pointer"
                     >
                       <span>Syllabus & Specs</span>
                     </button>
@@ -241,7 +277,7 @@ export const BannerSlider = ({ onBannerLoaded }) => {
               type="button"
               onClick={handlePrev}
               aria-label="Previous promotional slide"
-              className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-[#0F0F13]/70 hover:bg-[#14141A] border border-white/10 text-white flex items-center justify-center backdrop-blur-md transition-all active:scale-90 cursor-pointer opacity-70 hover:opacity-100 group-hover:translate-x-0"
+              className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-[#1D1C1A]/70 hover:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 text-white flex items-center justify-center backdrop-blur-md transition-all active:scale-90 cursor-pointer opacity-70 hover:opacity-100 group-hover:translate-x-0 shadow-md"
             >
               <ChevronLeft size={20} />
             </button>
@@ -250,13 +286,13 @@ export const BannerSlider = ({ onBannerLoaded }) => {
               type="button"
               onClick={handleNext}
               aria-label="Next promotional slide"
-              className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-[#0F0F13]/70 hover:bg-[#14141A] border border-white/10 text-white flex items-center justify-center backdrop-blur-md transition-all active:scale-90 cursor-pointer opacity-70 hover:opacity-100 group-hover:translate-x-0"
+              className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-[#1D1C1A]/70 hover:bg-[#272523] border border-[#D5C0D1] dark:border-white/10 text-white flex items-center justify-center backdrop-blur-md transition-all active:scale-90 cursor-pointer opacity-70 hover:opacity-100 group-hover:translate-x-0 shadow-md"
             >
               <ChevronRight size={20} />
             </button>
 
             {/* Slide Pagination Indicator Dots */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0F0F13]/80 border border-white/[0.06] backdrop-blur-md">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1D1C1A]/80 border border-[#D5C0D1] dark:border-white/10 backdrop-blur-md shadow-md">
               {banners.map((b, idx) => (
                 <button
                   key={b.id || idx}
@@ -265,8 +301,8 @@ export const BannerSlider = ({ onBannerLoaded }) => {
                   aria-label={`Go to slide ${idx + 1}`}
                   className={`h-1.5 rounded-full transition-all cursor-pointer ${
                     idx === currentIndex
-                      ? "w-6 bg-[#C5A880]"
-                      : "w-2 bg-white/20 hover:bg-white/50"
+                      ? "w-6 bg-[#D1A7CC]"
+                      : "w-2 bg-white/30 hover:bg-white/60"
                   }`}
                 />
               ))}

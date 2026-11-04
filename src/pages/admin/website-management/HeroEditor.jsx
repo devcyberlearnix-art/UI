@@ -74,10 +74,10 @@ const DEFAULT_HERO = {
 // ── Form field components ──────────────────────────────────────────────────
 
 const FieldGroup = ({ title, icon: Icon, children }) => (
-  <div className="p-5 rounded-2xl bg-[#0F0F13] border border-white/[0.04] space-y-4">
-    <div className="flex items-center gap-2 pb-3 border-b border-white/[0.04]">
-      {Icon && <Icon className="w-4 h-4 text-[#C5A880]" />}
-      <h3 className="text-sm font-bold text-[#F5F5F7] tracking-tight">{title}</h3>
+  <div className="p-5 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-4">
+    <div className="flex items-center gap-2 pb-3 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+      {Icon && <Icon className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />}
+      <h3 className="text-sm font-bold text-[#282521] dark:text-[#EDE8E1] tracking-tight">{title}</h3>
     </div>
     {children}
   </div>
@@ -134,7 +134,7 @@ const VisibilityToggle = ({ label, checked, onChange }) => (
   <label className="flex items-center gap-3 cursor-pointer group select-none">
     <div
       onClick={() => onChange(!checked)}
-      className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${checked ? 'bg-[#C5A880]' : 'bg-[#1B1B24] border border-white/[0.08]'
+      className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${checked ? 'bg-[#5B3E57] dark:bg-[#D1A7CC]' : 'bg-[#EAE5DC] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.08]'
         }`}
     >
       <div
@@ -142,7 +142,7 @@ const VisibilityToggle = ({ label, checked, onChange }) => (
           }`}
       />
     </div>
-    <span className="text-xs font-semibold text-[#A1A1AA] group-hover:text-[#F5F5F7] transition-colors">
+    <span className="text-xs font-semibold text-[#A1A1AA] group-hover:text-[#282521] dark:text-[#EDE8E1] transition-colors">
       {label}
     </span>
     {checked ? (
@@ -241,7 +241,7 @@ const HeroEditor = () => {
   }, [hero]);
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] p-6 lg:p-8">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] p-6 lg:p-8">
       <div className="max-w-3xl mx-auto space-y-6">
 
         {/* ── HEADER ──────────────────────────────────────────── */}
@@ -254,17 +254,17 @@ const HeroEditor = () => {
           <button
             type="button"
             onClick={() => navigate('/admin/website-management')}
-            className="p-2 rounded-xl text-[#71717A] hover:text-[#F5F5F7] hover:bg-white/[0.04] transition-colors"
+            className="p-2 rounded-xl text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:text-[#EDE8E1] hover:bg-white/[0.04] transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2.5 flex-1 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-[#C5A880]/10 border border-[#C5A880]/20 flex items-center justify-center">
-              <Layout className="w-4 h-4 text-[#C5A880]" />
+            <div className="w-8 h-8 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/30 dark:border-[#D1A7CC]/30 flex items-center justify-center">
+              <Layout className="w-4 h-4 text-[#5B3E57] dark:text-[#D1A7CC]" />
             </div>
             <div>
-              <h1 className="text-xl font-extrabold tracking-tight text-[#F5F5F7]">Hero Section</h1>
-              <p className="text-xs text-[#71717A]">Edit the landing page hero content and appearance</p>
+              <h1 className="text-xl font-extrabold tracking-tight text-[#282521] dark:text-[#EDE8E1]">Hero Section</h1>
+              <p className="text-xs text-[#756E64] dark:text-[#7A7368]">Edit the landing page hero content and appearance</p>
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
@@ -322,7 +322,7 @@ const HeroEditor = () => {
               onChange={(v) => update('badge.isVisible', v)}
             />
 
-            <div className="pt-2 border-t border-white/[0.04]" />
+            <div className="pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]" />
 
             <TextField
               label="Verification Label"
@@ -337,7 +337,7 @@ const HeroEditor = () => {
               onChange={(v) => update('verificationLabel.isVisible', v)}
             />
 
-            <div className="pt-2 border-t border-white/[0.04]" />
+            <div className="pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]" />
 
             <TextField
               label="Main Heading *"
@@ -356,7 +356,7 @@ const HeroEditor = () => {
               hint="This portion of the heading receives the gold underline treatment"
             />
 
-            <div className="pt-2 border-t border-white/[0.04]" />
+            <div className="pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]" />
 
             <TextField
               label="Description"
@@ -463,15 +463,15 @@ const HeroEditor = () => {
               <label className="block text-xs font-semibold text-[#A1A1AA] mb-1.5">
                 Text Alignment
               </label>
-              <div className="flex items-center gap-1.5 bg-[#14141A] p-1 rounded-xl border border-white/[0.04] w-fit">
+              <div className="flex items-center gap-1.5 bg-[#F5F2EC] dark:bg-[#151413] p-1 rounded-xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] w-fit">
                 {['left', 'center', 'right'].map((align) => (
                   <button
                     key={align}
                     type="button"
                     onClick={() => update('appearance.textAlignment', align)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors ${hero.appearance.textAlignment === align
-                      ? 'bg-[#C5A880] text-[#070709]'
-                      : 'text-[#71717A] hover:text-[#F5F5F7]'
+                      ? 'bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413]'
+                      : 'text-[#756E64] dark:text-[#7A7368] hover:text-[#282521] dark:text-[#EDE8E1]'
                       }`}
                   >
                     {align}
@@ -485,7 +485,7 @@ const HeroEditor = () => {
                 Background Image
               </label>
               {hero.appearance.backgroundImageUrl ? (
-                <div className="relative rounded-xl overflow-hidden border border-white/[0.06] h-32">
+                <div className="relative rounded-xl overflow-hidden border border-[#E3DCD3] dark:border-white/[0.06] h-32">
                   <img
                     src={hero.appearance.backgroundImageUrl}
                     alt="Hero background"
@@ -504,7 +504,7 @@ const HeroEditor = () => {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploadingImage}
-                  className="w-full flex flex-col items-center justify-center gap-2 h-24 rounded-xl border-2 border-dashed border-white/[0.08] hover:border-[#C5A880]/40 transition-colors text-[#71717A] hover:text-[#C5A880] disabled:opacity-50"
+                  className="w-full flex flex-col items-center justify-center gap-2 h-24 rounded-xl border-2 border-dashed border-[#E3DCD3] dark:border-white/[0.08] hover:border-[#5B3E57] dark:hover:border-[#D1A7CC] transition-colors text-[#756E64] dark:text-[#7A7368] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] disabled:opacity-50"
                 >
                   {isUploadingImage ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -539,9 +539,9 @@ const HeroEditor = () => {
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, delay: 0.2, ease: EASING }}
-          className="flex items-center justify-between p-4 rounded-2xl bg-[#0F0F13] border border-white/[0.04] sticky bottom-4"
+          className="flex items-center justify-between p-4 rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] sticky bottom-4"
         >
-          <div className="text-xs text-[#71717A]">
+          <div className="text-xs text-[#756E64] dark:text-[#7A7368]">
             {isDirty ? (
               <span className="flex items-center gap-1.5 text-amber-400">
                 <AlertCircle className="w-3.5 h-3.5" />

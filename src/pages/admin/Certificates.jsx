@@ -113,20 +113,20 @@ export default function Certificates() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 font-sans">
       {/* Title Meta Frame */}
-      <div className="border-b border-white/[0.04] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold tracking-tight text-[#F5F5F7]">
+            <h1 className="text-xl font-bold tracking-tight text-[#282521] dark:text-[#EDE8E1]">
               Accreditation & Certificate Registry
             </h1>
             <Badge
               variant="pewter"
-              className="bg-[#14141A] text-[#C5A880] border-white/5 font-mono text-[10px] px-2 py-0.5"
+              className="bg-[#F5F2EC] dark:bg-[#151413] text-[#5B3E57] dark:text-[#D1A7CC] border-[#E3DCD3] dark:border-white/5 font-mono text-[10px] px-2 py-0.5"
             >
               {certificates.length} Issued
             </Badge>
           </div>
-          <p className="text-xs text-[#8E8E93] font-light mt-0.5">
+          <p className="text-xs text-[#635E56] dark:text-[#A8A196] font-light mt-0.5">
             Cryptographically verifiable completion hashes and academic merit proofs.
           </p>
         </div>
@@ -136,9 +136,9 @@ export default function Certificates() {
             variant="secondary"
             size="sm"
             onClick={exportCSV}
-            className="gap-1.5 text-xs bg-[#14141A] border-white/5 hover:border-white/10 cursor-pointer"
+            className="gap-1.5 text-xs bg-[#F5F2EC] dark:bg-[#151413] border-[#E3DCD3] dark:border-white/5 hover:border-[#D5C0D1] dark:border-white/10 cursor-pointer"
           >
-            <Download size={14} className="text-[#8E8E93]" />
+            <Download size={14} className="text-[#635E56] dark:text-[#A8A196]" />
             <span>Export CSV</span>
           </Button>
 
@@ -147,11 +147,11 @@ export default function Certificates() {
             size="sm"
             onClick={() => refetch()}
             disabled={isFetching}
-            className="gap-1.5 text-xs bg-[#14141A] border-white/5 hover:border-white/10 cursor-pointer"
+            className="gap-1.5 text-xs bg-[#F5F2EC] dark:bg-[#151413] border-[#E3DCD3] dark:border-white/5 hover:border-[#D5C0D1] dark:border-white/10 cursor-pointer"
           >
             <RefreshCw
               size={14}
-              className={`text-[#C5A880] ${isFetching ? 'animate-spin' : ''}`}
+              className={`text-[#5B3E57] dark:text-[#D1A7CC] ${isFetching ? 'animate-spin' : ''}`}
             />
             <span>{isFetching ? 'Syncing...' : 'Revalidate'}</span>
           </Button>
@@ -160,18 +160,18 @@ export default function Certificates() {
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="bg-[#0F0F13] p-4 rounded-2xl border border-white/[0.04]">
-          <span className="text-[11px] text-[#8E8E93] font-light">Total Credentials Issued</span>
-          <p className="text-2xl font-bold text-[#F5F5F7] mt-1 font-mono">{certificates.length}</p>
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] p-4 rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+          <span className="text-[11px] text-[#635E56] dark:text-[#A8A196] font-light">Total Credentials Issued</span>
+          <p className="text-2xl font-bold text-[#282521] dark:text-[#EDE8E1] mt-1 font-mono">{certificates.length}</p>
         </div>
-        <div className="bg-[#0F0F13] p-4 rounded-2xl border border-white/[0.04]">
-          <span className="text-[11px] text-[#8E8E93] font-light">Cryptographically Verified</span>
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] p-4 rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+          <span className="text-[11px] text-[#635E56] dark:text-[#A8A196] font-light">Cryptographically Verified</span>
           <p className="text-2xl font-bold text-emerald-400 mt-1 font-mono">
             {certificates.filter((c) => c.status === 'VERIFIED').length}
           </p>
         </div>
-        <div className="bg-[#0F0F13] p-4 rounded-2xl border border-white/[0.04]">
-          <span className="text-[11px] text-[#8E8E93] font-light">Pending Evaluation Check</span>
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] p-4 rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+          <span className="text-[11px] text-[#635E56] dark:text-[#A8A196] font-light">Pending Evaluation Check</span>
           <p className="text-2xl font-bold text-amber-400 mt-1 font-mono">
             {certificates.filter((c) => c.status !== 'VERIFIED').length}
           </p>
@@ -179,15 +179,15 @@ export default function Certificates() {
       </div>
 
       {/* Search and Filter */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#0F0F13] p-3 rounded-2xl border border-white/[0.04]">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#FFFEFA] dark:bg-[#1D1C1A] p-3 rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
         <div className="relative w-full sm:w-80">
-          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8E8E93]" />
+          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#635E56] dark:text-[#A8A196]" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by learner, course, or hash..."
-            className="w-full bg-[#14141A] border border-white/[0.04] focus:border-[#C5A880]/50 rounded-xl pl-9 pr-3 py-1.5 text-xs text-[#F5F5F7] placeholder-[#71717A] focus:outline-none transition-colors"
+            className="w-full bg-[#F5F2EC] dark:bg-[#151413] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] focus:border-[#5B3E57] dark:border-[#D1A7CC]/50 rounded-xl pl-9 pr-3 py-1.5 text-xs text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none transition-colors"
           />
         </div>
 
@@ -202,8 +202,8 @@ export default function Certificates() {
               onClick={() => setStatusFilter(tab.id)}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-colors whitespace-nowrap border ${
                 statusFilter === tab.id
-                  ? 'border-[#C5A880]/40 text-[#C5A880] bg-[#14141A]'
-                  : 'border-white/[0.04] text-[#8E8E93] hover:text-[#F5F5F7] bg-[#070709]'
+                  ? 'border-[#5B3E57] dark:border-[#D1A7CC] text-[#5B3E57] dark:text-[#D1A7CC] bg-[#F5F2EC] dark:bg-[#151413]'
+                  : 'border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[#635E56] dark:text-[#A8A196] hover:text-[#282521] dark:text-[#EDE8E1] bg-[#F5F2EC] dark:bg-[#151413]'
               }`}
             >
               {tab.label}
@@ -216,8 +216,8 @@ export default function Certificates() {
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-[#0F0F13] p-4 rounded-2xl border border-white/[0.04]">
-              <Skeleton className="h-6 w-full rounded bg-[#14141A]" />
+            <div key={i} className="bg-[#FFFEFA] dark:bg-[#1D1C1A] p-4 rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
+              <Skeleton className="h-6 w-full rounded bg-[#F5F2EC] dark:bg-[#151413]" />
             </div>
           ))}
         </div>
@@ -232,10 +232,10 @@ export default function Certificates() {
           }}
         />
       ) : (
-        <div className="bg-[#0F0F13] rounded-2xl border border-white/[0.04] overflow-hidden">
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] overflow-hidden">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/[0.04] text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wider bg-[#14141A]">
+              <tr className="border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] text-[11px] font-semibold text-[#635E56] dark:text-[#A8A196] uppercase tracking-wider bg-[#F5F2EC] dark:bg-[#151413]">
                 <th className="px-5 py-3">Learner Candidate</th>
                 <th className="px-5 py-3">Curriculum Accreditation</th>
                 <th className="px-5 py-3">Merkle Verification Hash</th>
@@ -252,17 +252,17 @@ export default function Certificates() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="hover:bg-[#14141A]/50 transition-colors"
+                    className="hover:bg-[#F5F2EC] dark:bg-[#151413]/50 transition-colors"
                   >
                     <td className="px-5 py-3.5">
-                      <div className="font-medium text-[#F5F5F7]">{cert.student}</div>
-                      <div className="text-[10px] text-[#71717A]">{cert.email}</div>
+                      <div className="font-medium text-[#282521] dark:text-[#EDE8E1]">{cert.student}</div>
+                      <div className="text-[10px] text-[#756E64] dark:text-[#7A7368]">{cert.email}</div>
                     </td>
                     <td className="px-5 py-3.5 text-[#A1A1AA]">{cert.course}</td>
-                    <td className="px-5 py-3.5 font-mono text-[11px] text-[#C5A880]">
+                    <td className="px-5 py-3.5 font-mono text-[11px] text-[#5B3E57] dark:text-[#D1A7CC]">
                       {cert.code}
                     </td>
-                    <td className="px-5 py-3.5 text-[#8E8E93] font-mono text-[11px]">
+                    <td className="px-5 py-3.5 text-[#635E56] dark:text-[#A8A196] font-mono text-[11px]">
                       {cert.issueDate}
                     </td>
                     <td className="px-5 py-3.5">
@@ -278,7 +278,7 @@ export default function Certificates() {
                         href={`/verify-certificate/${cert.code}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-1 text-[11px] text-[#C5A880] hover:underline"
+                        className="inline-flex items-center gap-1 text-[11px] text-[#5B3E57] dark:text-[#D1A7CC] hover:underline"
                       >
                         <span>Verify</span>
                         <ExternalLink size={11} />

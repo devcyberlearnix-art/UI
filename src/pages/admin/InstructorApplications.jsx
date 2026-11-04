@@ -206,13 +206,13 @@ export default function InstructorApplications() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#D5C0D1] dark:border-white/10">
           <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#C5A880]/10 border border-[#C5A880]/20 text-[#C5A880] text-xs font-semibold uppercase tracking-wider mb-2">
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/30 dark:border-[#D1A7CC]/30 text-[#5B3E57] dark:text-[#D1A7CC] text-xs font-semibold uppercase tracking-wider mb-2">
               <Shield className="w-3.5 h-3.5" /> Administrative Governance
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
@@ -227,16 +227,16 @@ export default function InstructorApplications() {
             <button
               onClick={fetchApplications}
               disabled={loading}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#15151B] border border-white/10 hover:border-white/20 text-xs font-medium text-[#A1A1AA] hover:text-white transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 text-xs font-medium text-[#A1A1AA] hover:text-white transition-all"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-[#C5A880]" : ""}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-[#5B3E57] dark:text-[#D1A7CC]" : ""}`} />
               Refresh
             </button>
           </div>
         </div>
 
         {/* Filter Tabs and Search Bar */}
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[#0F0F13] p-4 rounded-2xl border border-white/10">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[#FFFEFA] dark:bg-[#1D1C1A] p-4 rounded-2xl border border-[#D5C0D1] dark:border-white/10">
           {/* Status Tabs */}
           <div className="flex items-center gap-1 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
             {["ALL", "PENDING", "APPROVED", "REJECTED", "NEED_MORE_INFO"].map((st) => (
@@ -248,7 +248,7 @@ export default function InstructorApplications() {
                 }}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                   filterStatus === st
-                    ? "bg-[#C5A880] text-[#070709] shadow-sm shadow-[#C5A880]/20 font-bold"
+                    ? "bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] shadow-sm shadow-sm font-bold"
                     : "text-[#A1A1AA] hover:text-white hover:bg-white/5"
                 }`}
               >
@@ -259,27 +259,27 @@ export default function InstructorApplications() {
 
           {/* Search Box */}
           <div className="relative min-w-[260px]">
-            <Search className="w-4 h-4 text-[#71717A] absolute left-3.5 top-3" />
+            <Search className="w-4 h-4 text-[#756E64] dark:text-[#7A7368] absolute left-3.5 top-3" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search applicant name, email, subject..."
-              className="w-full bg-[#15151B] border border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-[#C5A880]"
+              className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-[#5B3E57] dark:border-[#D1A7CC]"
             />
           </div>
         </div>
 
         {/* Table View */}
-        <div className="bg-[#0F0F13] border border-white/10 rounded-2xl overflow-hidden shadow-xl">
+        <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#D5C0D1] dark:border-white/10 rounded-2xl overflow-hidden shadow-xl">
           {loading ? (
             <div className="py-20 flex flex-col items-center justify-center">
-              <Loader2 className="w-8 h-8 text-[#C5A880] animate-spin mb-3" />
+              <Loader2 className="w-8 h-8 text-[#5B3E57] dark:text-[#D1A7CC] animate-spin mb-3" />
               <p className="text-xs text-[#A1A1AA]">Retrieving applications from backend registry...</p>
             </div>
           ) : filteredApplications.length === 0 ? (
             <div className="py-20 text-center">
-              <Shield className="w-10 h-10 text-[#71717A] mx-auto mb-3" />
+              <Shield className="w-10 h-10 text-[#756E64] dark:text-[#7A7368] mx-auto mb-3" />
               <h3 className="text-sm font-semibold text-white">No applications match criteria</h3>
               <p className="text-xs text-[#A1A1AA] mt-1">
                 {searchTerm ? "Try broadening your search term." : "No applications under this category."}
@@ -289,7 +289,7 @@ export default function InstructorApplications() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-white/10 bg-[#15151B]/60 text-[11px] font-semibold uppercase tracking-wider text-[#71717A]">
+                  <tr className="border-b border-[#D5C0D1] dark:border-white/10 bg-[#15151B]/60 text-[11px] font-semibold uppercase tracking-wider text-[#756E64] dark:text-[#7A7368]">
                     <th className="py-3.5 px-4 sm:px-6">Applicant</th>
                     <th className="py-3.5 px-4">Teaching Domain</th>
                     <th className="py-3.5 px-4">Experience</th>
@@ -308,23 +308,23 @@ export default function InstructorApplications() {
                       <tr key={appId} className="hover:bg-white/[0.02] transition-colors">
                         <td className="py-4 px-4 sm:px-6">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[#C5A880]/15 border border-[#C5A880]/30 text-[#C5A880] flex items-center justify-center font-bold text-xs">
+                            <div className="w-8 h-8 rounded-full bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 text-[#5B3E57] dark:text-[#D1A7CC] flex items-center justify-center font-bold text-xs">
                               {(u.fullName || u.name || u.email || "A").charAt(0).toUpperCase()}
                             </div>
                             <div className="min-w-0">
                               <p className="font-semibold text-white truncate">{u.fullName || u.name || "Applicant"}</p>
-                              <p className="text-[11px] text-[#71717A] truncate">{u.email || "No email"}</p>
+                              <p className="text-[11px] text-[#756E64] dark:text-[#7A7368] truncate">{u.email || "No email"}</p>
                             </div>
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <p className="font-medium text-[#F5F5F7]">{app.subject || "Not specified"}</p>
-                          <p className="text-[11px] text-[#71717A] truncate max-w-[180px]">{app.specialization || "General"}</p>
+                          <p className="font-medium text-[#282521] dark:text-[#EDE8E1]">{app.subject || "Not specified"}</p>
+                          <p className="text-[11px] text-[#756E64] dark:text-[#7A7368] truncate max-w-[180px]">{app.specialization || "General"}</p>
                         </td>
                         <td className="py-4 px-4 text-[#A1A1AA]">
                           {app.experience || "N/A"}
                         </td>
-                        <td className="py-4 px-4 text-[#71717A] whitespace-nowrap">
+                        <td className="py-4 px-4 text-[#756E64] dark:text-[#7A7368] whitespace-nowrap">
                           {app.submittedAt ? new Date(app.submittedAt).toLocaleDateString() : "Recent"}
                         </td>
                         <td className="py-4 px-4 whitespace-nowrap">
@@ -336,7 +336,7 @@ export default function InstructorApplications() {
                               setSelectedApp(item);
                               setShowDetailModal(true);
                             }}
-                            className="px-3 py-1.5 rounded-lg bg-[#C5A880]/10 hover:bg-[#C5A880] text-[#C5A880] hover:text-[#070709] border border-[#C5A880]/30 font-semibold text-xs transition-all inline-flex items-center gap-1"
+                            className="px-3 py-1.5 rounded-lg bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 hover:bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#5B3E57] dark:text-[#D1A7CC] hover:text-[#FFFEFA] dark:text-[#151413] border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 font-semibold text-xs transition-all inline-flex items-center gap-1"
                           >
                             Review Dossier <ChevronRight className="w-3.5 h-3.5" />
                           </button>
@@ -351,13 +351,13 @@ export default function InstructorApplications() {
 
           {/* Pagination Footer */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t border-white/10 text-xs text-[#71717A]">
+            <div className="flex items-center justify-between px-6 py-4 border-t border-[#D5C0D1] dark:border-white/10 text-xs text-[#756E64] dark:text-[#7A7368]">
               <span>Showing {filteredApplications.length} of {totalCount} total applications</span>
               <div className="flex items-center gap-2">
                 <button
                   disabled={currentPage === 0}
                   onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
-                  className="px-3 py-1 rounded bg-[#15151B] border border-white/10 disabled:opacity-40"
+                  className="px-3 py-1 rounded bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 disabled:opacity-40"
                 >
                   Previous
                 </button>
@@ -365,7 +365,7 @@ export default function InstructorApplications() {
                 <button
                   disabled={currentPage >= totalPages - 1}
                   onClick={() => setCurrentPage((p) => p + 1)}
-                  className="px-3 py-1 rounded bg-[#15151B] border border-white/10 disabled:opacity-40"
+                  className="px-3 py-1 rounded bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 disabled:opacity-40"
                 >
                   Next
                 </button>
@@ -379,11 +379,11 @@ export default function InstructorApplications() {
       {showDetailModal && selectedApp && (
         <Portal>
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
-            <div className="bg-[#0F0F13] border border-white/15 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative text-left p-6 sm:p-8">
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-white/15 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative text-left p-6 sm:p-8">
               {/* Modal Header */}
-              <div className="flex items-start justify-between border-b border-white/10 pb-5 mb-6">
+              <div className="flex items-start justify-between border-b border-[#D5C0D1] dark:border-white/10 pb-5 mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-[#C5A880]/15 border border-[#C5A880]/30 text-[#C5A880] flex items-center justify-center font-bold text-lg">
+                  <div className="w-12 h-12 rounded-xl bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 border border-[#5B3E57]/40 dark:border-[#D1A7CC]/40 text-[#5B3E57] dark:text-[#D1A7CC] flex items-center justify-center font-bold text-lg">
                     {((selectedApp.user?.fullName || selectedApp.user?.name || "A")[0]).toUpperCase()}
                   </div>
                   <div>
@@ -394,16 +394,16 @@ export default function InstructorApplications() {
                       {getStatusBadge(selectedApp.application?.status)}
                     </div>
                     <p className="text-xs text-[#A1A1AA] flex items-center gap-3 mt-0.5">
-                      <span className="flex items-center gap-1"><Mail className="w-3 h-3 text-[#71717A]" /> {selectedApp.user?.email}</span>
+                      <span className="flex items-center gap-1"><Mail className="w-3 h-3 text-[#756E64] dark:text-[#7A7368]" /> {selectedApp.user?.email}</span>
                       {selectedApp.application?.phone && (
-                        <span className="flex items-center gap-1"><Phone className="w-3 h-3 text-[#71717A]" /> {selectedApp.application.phone}</span>
+                        <span className="flex items-center gap-1"><Phone className="w-3 h-3 text-[#756E64] dark:text-[#7A7368]" /> {selectedApp.application.phone}</span>
                       )}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowDetailModal(false)}
-                  className="p-1.5 rounded-lg text-[#71717A] hover:text-white hover:bg-white/10 transition-colors"
+                  className="p-1.5 rounded-lg text-[#756E64] dark:text-[#7A7368] hover:text-white hover:bg-white/10 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -412,27 +412,27 @@ export default function InstructorApplications() {
               {/* Dossier Information Grid */}
               <div className="space-y-6 text-xs">
                 {/* 1. Academic & Professional Credentials */}
-                <div className="bg-[#15151B] p-4 rounded-xl border border-white/5 space-y-3">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#C5A880]">Academic & Domain Specialization</h3>
+                <div className="bg-[#15151B] p-4 rounded-xl border border-[#E3DCD3] dark:border-white/5 space-y-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#5B3E57] dark:text-[#D1A7CC]">Academic & Domain Specialization</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <span className="text-[#71717A] block">Teaching Domain</span>
+                      <span className="text-[#756E64] dark:text-[#7A7368] block">Teaching Domain</span>
                       <span className="text-white font-medium">{selectedApp.application?.subject || "N/A"}</span>
                     </div>
                     <div>
-                      <span className="text-[#71717A] block">Specialization</span>
+                      <span className="text-[#756E64] dark:text-[#7A7368] block">Specialization</span>
                       <span className="text-white font-medium">{selectedApp.application?.specialization || "N/A"}</span>
                     </div>
                     <div>
-                      <span className="text-[#71717A] block">Industry Experience</span>
+                      <span className="text-[#756E64] dark:text-[#7A7368] block">Industry Experience</span>
                       <span className="text-white font-medium">{selectedApp.application?.experience || "N/A"}</span>
                     </div>
                   </div>
 
                   {selectedApp.application?.bio && (
                     <div className="pt-2">
-                      <span className="text-[#71717A] block mb-1">Professional Bio</span>
-                      <p className="text-[#A1A1AA] leading-relaxed bg-[#070709] p-3 rounded-lg border border-white/5">
+                      <span className="text-[#756E64] dark:text-[#7A7368] block mb-1">Professional Bio</span>
+                      <p className="text-[#A1A1AA] leading-relaxed bg-[#F5F2EC] dark:bg-[#151413] p-3 rounded-lg border border-[#E3DCD3] dark:border-white/5">
                         {selectedApp.application.bio}
                       </p>
                     </div>
@@ -440,12 +440,12 @@ export default function InstructorApplications() {
 
                   <div className="flex items-center gap-4 pt-1 flex-wrap">
                     {selectedApp.application?.linkedinUrl && (
-                      <a href={selectedApp.application.linkedinUrl} target="_blank" rel="noreferrer" className="text-[#C5A880] hover:underline flex items-center gap-1">
+                      <a href={selectedApp.application.linkedinUrl} target="_blank" rel="noreferrer" className="text-[#5B3E57] dark:text-[#D1A7CC] hover:underline flex items-center gap-1">
                         <Linkedin className="w-3.5 h-3.5" /> LinkedIn Profile
                       </a>
                     )}
                     {selectedApp.application?.websiteUrl && (
-                      <a href={selectedApp.application.websiteUrl} target="_blank" rel="noreferrer" className="text-[#C5A880] hover:underline flex items-center gap-1">
+                      <a href={selectedApp.application.websiteUrl} target="_blank" rel="noreferrer" className="text-[#5B3E57] dark:text-[#D1A7CC] hover:underline flex items-center gap-1">
                         <Globe className="w-3.5 h-3.5" /> Portfolio Website
                       </a>
                     )}
@@ -453,8 +453,8 @@ export default function InstructorApplications() {
                 </div>
 
                 {/* 2. Verification Documents */}
-                <div className="bg-[#15151B] p-4 rounded-xl border border-white/5 space-y-3">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#C5A880]">Submitted Documents</h3>
+                <div className="bg-[#15151B] p-4 rounded-xl border border-[#E3DCD3] dark:border-white/5 space-y-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#5B3E57] dark:text-[#D1A7CC]">Submitted Documents</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {DOCUMENT_FIELDS.map((df) => {
                       const docUrls = selectedApp.application?.documentUrls || {};
@@ -462,12 +462,12 @@ export default function InstructorApplications() {
                       const docUrl = docUrls[df.key];
 
                       return (
-                        <div key={df.key} className="bg-[#070709] p-2.5 rounded-lg border border-white/5 flex items-center justify-between">
+                        <div key={df.key} className="bg-[#F5F2EC] dark:bg-[#151413] p-2.5 rounded-lg border border-[#E3DCD3] dark:border-white/5 flex items-center justify-between">
                           <div className="flex items-center gap-2 min-w-0">
                             {hasDoc ? (
                               <CheckCircle className="w-4 h-4 text-[#10B981] flex-shrink-0" />
                             ) : (
-                              <XCircle className="w-4 h-4 text-[#71717A] flex-shrink-0" />
+                              <XCircle className="w-4 h-4 text-[#756E64] dark:text-[#7A7368] flex-shrink-0" />
                             )}
                             <span className="font-medium text-white truncate">{df.label}</span>
                           </div>
@@ -477,7 +477,7 @@ export default function InstructorApplications() {
                               href={docUrl}
                               target="_blank"
                               rel="noreferrer"
-                              className="px-2 py-1 rounded bg-[#C5A880]/15 hover:bg-[#C5A880] text-[#C5A880] hover:text-[#070709] font-semibold text-[10px] transition-colors flex items-center gap-1 flex-shrink-0"
+                              className="px-2 py-1 rounded bg-[#F2ECF1] dark:bg-[#D1A7CC]/15 hover:bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#5B3E57] dark:text-[#D1A7CC] hover:text-[#FFFEFA] dark:text-[#151413] font-semibold text-[10px] transition-colors flex items-center gap-1 flex-shrink-0"
                             >
                               <Eye className="w-3 h-3" /> View Proof
                             </a>
@@ -498,11 +498,11 @@ export default function InstructorApplications() {
               </div>
 
               {/* Administrative Action Bar */}
-              <div className="flex items-center justify-between gap-3 pt-6 mt-6 border-t border-white/10 flex-wrap">
+              <div className="flex items-center justify-between gap-3 pt-6 mt-6 border-t border-[#D5C0D1] dark:border-white/10 flex-wrap">
                 <button
                   type="button"
                   onClick={() => setShowDetailModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-[#A1A1AA] hover:text-white border border-white/10 hover:border-white/20 transition-colors bg-[#15151B]"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-[#A1A1AA] hover:text-white border border-[#D5C0D1] dark:border-white/10 hover:border-white/20 transition-colors bg-[#15151B]"
                 >
                   Close
                 </button>
@@ -548,7 +548,7 @@ export default function InstructorApplications() {
       {showRejectModal && (
         <Portal>
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-            <div className="bg-[#0F0F13] border border-white/15 rounded-2xl max-w-md w-full p-6 shadow-2xl relative text-left">
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-white/15 rounded-2xl max-w-md w-full p-6 shadow-2xl relative text-left">
               <div className="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center mb-3">
                 <AlertTriangle className="w-5 h-5" />
               </div>
@@ -562,14 +562,14 @@ export default function InstructorApplications() {
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 placeholder="e.g. Scanned copy of government ID is unreadable. Please submit high-resolution document."
-                className="w-full bg-[#15151B] border border-white/10 rounded-xl p-3 text-xs text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-rose-400 mb-4 resize-none"
+                className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl p-3 text-xs text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-rose-400 mb-4 resize-none"
               />
 
               <div className="flex items-center justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setShowRejectModal(false)}
-                  className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-[#A1A1AA] hover:text-white bg-[#15151B] border border-white/10"
+                  className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-[#A1A1AA] hover:text-white bg-[#15151B] border border-[#D5C0D1] dark:border-white/10"
                 >
                   Cancel
                 </button>
@@ -591,7 +591,7 @@ export default function InstructorApplications() {
       {showInfoModal && (
         <Portal>
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-            <div className="bg-[#0F0F13] border border-white/15 rounded-2xl max-w-md w-full p-6 shadow-2xl relative text-left">
+            <div className="bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-white/15 rounded-2xl max-w-md w-full p-6 shadow-2xl relative text-left">
               <div className="w-10 h-10 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-400 flex items-center justify-center mb-3">
                 <MessageSquare className="w-5 h-5" />
               </div>
@@ -605,14 +605,14 @@ export default function InstructorApplications() {
                 value={infoRequestNotes}
                 onChange={(e) => setInfoRequestNotes(e.target.value)}
                 placeholder="e.g. Please provide a work portfolio link or prior syllabus outline."
-                className="w-full bg-[#15151B] border border-white/10 rounded-xl p-3 text-xs text-[#F5F5F7] placeholder-[#71717A] focus:outline-none focus:border-sky-400 mb-4 resize-none"
+                className="w-full bg-[#15151B] border border-[#D5C0D1] dark:border-white/10 rounded-xl p-3 text-xs text-[#282521] dark:text-[#EDE8E1] placeholder-[#71717A] focus:outline-none focus:border-sky-400 mb-4 resize-none"
               />
 
               <div className="flex items-center justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setShowInfoModal(false)}
-                  className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-[#A1A1AA] hover:text-white bg-[#15151B] border border-white/10"
+                  className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-[#A1A1AA] hover:text-white bg-[#15151B] border border-[#D5C0D1] dark:border-white/10"
                 >
                   Cancel
                 </button>

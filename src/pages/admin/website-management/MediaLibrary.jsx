@@ -67,28 +67,28 @@ export default function MediaLibrary() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070709] text-[#F5F5F7] p-6 lg:p-8">
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#151413] text-[#282521] dark:text-[#EDE8E1] p-6 lg:p-8">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between pb-6 border-b border-white/[0.04]">
+        <div className="flex items-center justify-between pb-6 border-b border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/admin/website-management')}
-              className="p-2 rounded-xl bg-[#0F0F13] border border-white/[0.06] hover:border-[#C5A880]/30 text-[#A1A1AA] hover:text-white"
+              className="p-2 rounded-xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-white/[0.06] hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 text-[#A1A1AA] hover:text-white"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-[#F5F5F7] flex items-center gap-2">
-                <ImageIcon className="w-5 h-5 text-[#C5A880]" />
+              <h1 className="text-xl font-bold tracking-tight text-[#282521] dark:text-[#EDE8E1] flex items-center gap-2">
+                <ImageIcon className="w-5 h-5 text-[#5B3E57] dark:text-[#D1A7CC]" />
                 Media Asset Library
               </h1>
-              <p className="text-xs text-[#71717A] mt-0.5">
+              <p className="text-xs text-[#756E64] dark:text-[#7A7368] mt-0.5">
                 Centralized storage for landing page imagery, badges, and brand vectors
               </p>
             </div>
           </div>
-          <label className="px-4 py-2 rounded-xl bg-[#C5A880] text-[#070709] hover:bg-[#D4BC98] text-xs font-bold flex items-center gap-2 cursor-pointer transition-colors shadow-lg shadow-[#C5A880]/10">
+          <label className="px-4 py-2 rounded-xl bg-[#5B3E57] dark:bg-[#D1A7CC] text-[#FFFEFA] dark:text-[#151413] hover:bg-[#462D42] dark:hover:bg-[#C293BD] text-xs font-bold flex items-center gap-2 cursor-pointer transition-colors shadow-lg shadow-sm">
             <Upload className="w-4 h-4" />
             {isUploading ? 'Uploading...' : 'Upload Asset'}
             <input type="file" accept="image/*" onChange={handleUpload} className="hidden" />
@@ -97,23 +97,23 @@ export default function MediaLibrary() {
 
         {/* Media Grid */}
         {isLoading ? (
-          <div className="p-12 text-center text-sm text-[#71717A] bg-[#0F0F13] rounded-2xl border border-white/[0.04]">
+          <div className="p-12 text-center text-sm text-[#756E64] dark:text-[#7A7368] bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
             Hydrating media catalog...
           </div>
         ) : media.length === 0 ? (
-          <div className="p-12 text-center bg-[#0F0F13] rounded-2xl border border-white/[0.04] space-y-2">
-            <ImageIcon className="w-8 h-8 text-[#71717A] mx-auto" />
-            <p className="text-sm font-semibold text-[#F5F5F7]">No media uploaded yet</p>
-            <p className="text-xs text-[#71717A]">Upload banners, badges, and logos to link them in sections</p>
+          <div className="p-12 text-center bg-[#FFFEFA] dark:bg-[#1D1C1A] rounded-2xl border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] space-y-2">
+            <ImageIcon className="w-8 h-8 text-[#756E64] dark:text-[#7A7368] mx-auto" />
+            <p className="text-sm font-semibold text-[#282521] dark:text-[#EDE8E1]">No media uploaded yet</p>
+            <p className="text-xs text-[#756E64] dark:text-[#7A7368]">Upload banners, badges, and logos to link them in sections</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {media.map(item => (
               <div
                 key={item.id}
-                className="group relative rounded-2xl bg-[#0F0F13] border border-white/[0.04] overflow-hidden flex flex-col hover:border-[#C5A880]/30 transition-all"
+                className="group relative rounded-2xl bg-[#FFFEFA] dark:bg-[#1D1C1A] border border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06] overflow-hidden flex flex-col hover:border-[#5B3E57]/40 dark:hover:border-[#D1A7CC]/40 transition-all"
               >
-                <div className="aspect-video w-full bg-[#14141A] flex items-center justify-center overflow-hidden">
+                <div className="aspect-video w-full bg-[#F5F2EC] dark:bg-[#151413] flex items-center justify-center overflow-hidden">
                   <img
                     src={item.fileUrl}
                     alt={item.altText || item.fileName}
@@ -124,15 +124,15 @@ export default function MediaLibrary() {
                   />
                 </div>
                 <div className="p-3 space-y-1">
-                  <p className="text-xs font-semibold text-[#F5F5F7] truncate">{item.fileName}</p>
-                  <p className="text-[10px] text-[#71717A]">
+                  <p className="text-xs font-semibold text-[#282521] dark:text-[#EDE8E1] truncate">{item.fileName}</p>
+                  <p className="text-[10px] text-[#756E64] dark:text-[#7A7368]">
                     {(item.fileSize / 1024).toFixed(1)} KB · {item.mimeType?.split('/')[1]?.toUpperCase()}
                   </p>
-                  <div className="flex items-center justify-between pt-2 border-t border-white/[0.04]">
+                  <div className="flex items-center justify-between pt-2 border-t border-[#E3DCD3] dark:border-[#E3DCD3] dark:border-white/[0.06]">
                     <button
                       type="button"
                       onClick={() => handleCopyUrl(item.fileUrl, item.id)}
-                      className="p-1.5 rounded-lg text-[#71717A] hover:text-[#C5A880] hover:bg-white/[0.04] flex items-center gap-1 text-[10px]"
+                      className="p-1.5 rounded-lg text-[#756E64] dark:text-[#7A7368] hover:text-[#5B3E57] dark:hover:text-[#D1A7CC] hover:bg-white/[0.04] flex items-center gap-1 text-[10px]"
                     >
                       {copiedId === item.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                       <span>{copiedId === item.id ? 'Copied' : 'Copy URL'}</span>
@@ -140,7 +140,7 @@ export default function MediaLibrary() {
                     <button
                       type="button"
                       onClick={() => handleDelete(item.id)}
-                      className="p-1.5 rounded-lg text-[#71717A] hover:text-rose-400 hover:bg-rose-500/10"
+                      className="p-1.5 rounded-lg text-[#756E64] dark:text-[#7A7368] hover:text-rose-400 hover:bg-rose-500/10"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
